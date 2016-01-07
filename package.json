@@ -1,0 +1,25 @@
+{
+  "name": "vuefire",
+  "version": "1.0.0",
+  "description": "Firebase mixin for Vue.js",
+  "main": "src/vuefire.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/firebase/vuefire.git"
+  },
+  "keywords": [
+    "vue",
+    "mixin",
+    "firebase",
+    "realtime"
+  ],
+  "author": "Evan You",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/firebase/vuefire/issues"
+  },
+  "homepage": "https://github.com/firebase/vuefire#readme"
+}

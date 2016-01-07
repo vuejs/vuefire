@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>VueFire Todo App Demo</title>
+    <script src="https://cdn.firebase.com/js/client/2.3.2/firebase.js"></script>
+    <script src="https://cdn.jsdelivr.net/vue/1.0.13/vue.js"></script>
+    <script src="../../src/vuefire.js"></script>
+  </head>
+  <body>
+
+    <div id="app">
+      <ul>
+        <li v-for="item in items" track-by="_key">
+          {{ item.text }}
+          <span @click="removeTodo(item._key)">X</span>
+        </li>
+      </ul>
+      <form @submit.prevent="addTodo">
+        <input v-model="newTodo">
+        <button>Add #{{ items.length }}</button>
+      </form>
+    </div>
+
+    <script>
+      var app = new Vue({
+        el: '#app',
+        data: {
+          newTodo: ''
+        },
+        firebase: {
+          items: {
+            source: new Firebase('https://ReactFireTodoApp.firebaseio.com/items/').limitToLast(25),
+            asArray: true
+          }
+        },
+        methods: {
+          removeTodo: function (key) {
+            this.$firebaseRefs.items.child(key).remove()
+          },
+          addTodo: function () {
+            if (this.newTodo.trim()) {
+              this.$firebaseRefs.items.push({
+                text: this.newTodo
+              })
+              this.newTodo = ''
+            }
+          }
+        }
+      })
+    </script>
+  </body>
+</html>
