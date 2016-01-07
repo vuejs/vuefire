@@ -18,12 +18,13 @@
 var vm = new Vue({
   el: '#demo',
   firebase: {
-    // bind as an object
+    // simple syntax, bind as an object
     anObject: new Firebase('url/to/my/object'),
-    // bind as an array
+    // full syntax
     anArray: {
       // the source can be either a ref or a query
       source: new Firebase('url/to/my/list').limitToLast(25),
+      // bind as an array
       asArray: true,
       // optionally provide the cancelCallback
       cancelCallback: function () {}
