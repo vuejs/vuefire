@@ -9,9 +9,6 @@
     root["VueFire"] = factory()
 })(this, function () {
 
-  // late bind
-  var Vue
-
   /**
    * Check if a value is an object.
    *
@@ -192,10 +189,9 @@
   /**
    * Install function passed to Vue.use() in manual installation.
    *
-   * @param {function} _Vue
+   * @param {function} Vue
    */
-  function install (_Vue) {
-    Vue = _Vue
+  function install (Vue) {
     Vue.mixin(VueFireMixin)
   }
 
