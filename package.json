@@ -1,7 +1,7 @@
 {
   "name": "vuefire",
   "version": "1.0.0",
-  "description": "Firebase mixin for Vue.js",
+  "description": "Firebase bindings for Vue.js",
   "main": "src/vuefire.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
