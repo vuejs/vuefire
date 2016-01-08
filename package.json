@@ -4,6 +4,7 @@
   "description": "Firebase bindings for Vue.js",
   "main": "src/vuefire.js",
   "scripts": {
+    "lint": "eslint src tests examples --ext js,html",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -21,5 +22,9 @@
   "bugs": {
     "url": "https://github.com/firebase/vuefire/issues"
   },
-  "homepage": "https://github.com/firebase/vuefire#readme"
+  "homepage": "https://github.com/firebase/vuefire#readme",
+  "devDependencies": {
+    "eslint": "^1.10.3",
+    "eslint-plugin-html": "^1.1.0"
+  }
 }

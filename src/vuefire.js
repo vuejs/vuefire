@@ -1,12 +1,13 @@
 (function (root, factory) {
-  if (typeof exports === 'object' && typeof module === 'object')
+  if (typeof exports === 'object' && typeof module === 'object') {
     module.exports = factory()
-  else if (typeof define === 'function' && define.amd)
+  } else if (typeof define === 'function' && define.amd) {
     define([], factory)
-  else if (typeof exports === 'object')
-    exports["VueFire"] = factory()
-  else
-    root["VueFire"] = factory()
+  } else if (typeof exports === 'object') {
+    exports.VueFire = factory()
+  } else {
+    root.VueFire = factory()
+  }
 })(this, function () {
 
   /**
@@ -60,7 +61,7 @@
    */
   function bind (vm, data, key, source) {
     if (!isObject(source)) {
-      throw new Error('Invalid Firebase binding source');
+      throw new Error('Invalid Firebase binding source')
     }
     var asArray = false
     var cancelCallback = null
