@@ -5,7 +5,10 @@
   "globals": {
     "define": true,
     "Vue": true,
-    "Firebase": true
+    "Firebase": true,
+    "describe": true,
+    "it": true,
+    "expect": true
   },
   "plugins": [
     "html"

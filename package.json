@@ -4,8 +4,8 @@
   "description": "Firebase bindings for Vue.js",
   "main": "src/vuefire.js",
   "scripts": {
-    "lint": "eslint src tests examples --ext js,html",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "eslint --ext=js,html src tests examples karma.conf.js",
+    "test": "npm run lint && karma start karma.conf.js --single-run"
   },
   "repository": {
     "type": "git",
@@ -25,6 +25,13 @@
   "homepage": "https://github.com/firebase/vuefire#readme",
   "devDependencies": {
     "eslint": "^1.10.3",
-    "eslint-plugin-html": "^1.1.0"
+    "eslint-plugin-html": "^1.1.0",
+    "jasmine-core": "^2.4.1",
+    "karma": "^0.13.19",
+    "karma-coverage": "^0.5.3",
+    "karma-jasmine": "^0.3.6",
+    "karma-phantomjs-launcher": "^0.2.3",
+    "phantomjs": "^1.9.19",
+    "vue": "^1.0.13"
   }
 }
