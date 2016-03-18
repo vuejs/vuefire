@@ -181,8 +181,8 @@
       for (var key in this.$firebaseRefs) {
         unbind(this, key)
       }
-      this.$firebaseRefs =
-      this._firebaseSources =
+      this.$firebaseRefs = null
+      this._firebaseSources = null
       this._firebaseListeners = null
     }
   }
