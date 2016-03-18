@@ -30,8 +30,8 @@
     var value = snapshot.val()
     var res = value && typeof value === 'object'
       ? value
-      : { _value: value }
-    res._key = snapshot.key()
+      : { '.value': value }
+    res['.key'] = snapshot.key()
     return res
   }
 
@@ -44,7 +44,7 @@
    */
   function indexForKey (array, key) {
     for (var i = 0; i < array.length; i++) {
-      if (array[i]._key === key) {
+      if (array[i]['.key'] === key) {
         return i
       }
     }

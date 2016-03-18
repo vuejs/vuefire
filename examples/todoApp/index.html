@@ -11,9 +11,9 @@
 
     <div id="app">
       <ul>
-        <li v-for="item in items" track-by="_key">
+        <li v-for="item in items" track-by=".key">
           {{ item.text }}
-          <span @click="removeTodo(item._key)">X</span>
+          <span @click="removeTodo(item['.key'])">X</span>
         </li>
       </ul>
       <form @submit.prevent="addTodo">
