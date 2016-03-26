@@ -6,6 +6,7 @@
   "scripts": {
     "lint": "eslint --ext=js,html src tests examples karma.conf.js",
     "test": "npm run lint && karma start karma.conf.js --single-run",
+    "dev": "webpack src/vuefire.js dist/vuefire.js --watch",
     "build-dev": "webpack src/vuefire.js dist/vuefire.js --output-library=VueFire --output-library-target=umd",
     "build-prod": "webpack src/vuefire.js dist/vuefire.min.js --output-library=VueFire --output-library-target=umd -p",
     "build": "npm run build-dev && npm run build-prod"
