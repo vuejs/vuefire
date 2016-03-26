@@ -77,16 +77,16 @@ The resulting bound array stored in `vm.items` will be:
 ``` json
 [
   {
-    "_key": "-Jtjl482BaXBCI7brMT8",
-    "_value": 100
+    ".key": "-Jtjl482BaXBCI7brMT8",
+    ".value": 100
   },
   {
-    "_key": "-Jtjl6tmqjNeAnQvyD4l",
+    ".key": "-Jtjl6tmqjNeAnQvyD4l",
     "first": "Fred",
     "last": "Flintstone"
   },
   {
-    "_key": "-JtjlAXoQ3VAoNiJcka9",
+    ".key": "-JtjlAXoQ3VAoNiJcka9",
     "_value": "foo"
   }
 ]
