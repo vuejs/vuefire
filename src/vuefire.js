@@ -9,7 +9,6 @@
     root.VueFire = factory()
   }
 })(this, function () {
-
   /**
    * Check if a value is an object.
    *
