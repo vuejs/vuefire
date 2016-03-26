@@ -91,3 +91,14 @@ The resulting bound array stored in `vm.items` will be:
   }
 ]
 ```
+
+## Contributing
+
+Clone the repo, then:
+
+```bash
+$ npm install    # install dependencies
+$ npm test       # run test suite with coverage report
+$ npm run dev    # watch and build dist/vuefire.js
+$ npm run build  # build dist/vuefire.js and vuefire.min.js
+```
