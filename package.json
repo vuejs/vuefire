@@ -5,7 +5,10 @@
   "main": "src/vuefire.js",
   "scripts": {
     "lint": "eslint --ext=js,html src tests examples karma.conf.js",
-    "test": "npm run lint && karma start karma.conf.js --single-run"
+    "test": "npm run lint && karma start karma.conf.js --single-run",
+    "build-dev": "webpack src/vuefire.js dist/vuefire.js --output-library=VueFire --output-library-target=umd",
+    "build-prod": "webpack src/vuefire.js dist/vuefire.min.js --output-library=VueFire --output-library-target=umd -p",
+    "build": "npm run build-dev && npm run build-prod"
   },
   "repository": {
     "type": "git",
@@ -29,12 +32,18 @@
     "eslint-plugin-html": "^1.4.0",
     "eslint-plugin-promise": "^1.1.0",
     "eslint-plugin-standard": "^1.3.2",
+    "firebase": "^2.4.1",
+    "istanbul-instrumenter-loader": "^0.2.0",
     "jasmine-core": "^2.4.1",
     "karma": "^0.13.22",
     "karma-coverage": "^0.5.5",
     "karma-jasmine": "^0.3.8",
     "karma-phantomjs-launcher": "^1.0.0",
+    "karma-sourcemap-loader": "^0.3.7",
+    "karma-spec-reporter": "0.0.24",
+    "karma-webpack": "^1.7.0",
     "phantomjs-prebuilt": "^2.1.3",
-    "vue": "^1.0.19"
+    "vue": "^1.0.19",
+    "webpack": "^1.12.14"
   }
 }
