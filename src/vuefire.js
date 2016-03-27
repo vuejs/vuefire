@@ -1,3 +1,5 @@
+let Vue // late binding
+
 /**
  * Check if a value is an object.
  *
@@ -43,13 +45,12 @@ function indexForKey (array, key) {
  * Bind a firebase data source to a key on a vm.
  *
  * @param {Vue} vm
- * @param {object} data
  * @param {string} key
  * @param {object} source
  */
-function bind (vm, data, key, source) {
+function bind (vm, key, source) {
   if (!isObject(source)) {
-    throw new Error('Invalid Firebase binding source')
+    throw new Error('VueFire: invalid Firebase binding source.')
   }
   var asArray = false
   var cancelCallback = null
@@ -68,9 +69,9 @@ function bind (vm, data, key, source) {
   vm._firebaseSources[key] = source
   // bind based on initial value type
   if (asArray) {
-    bindAsArray(vm, data, key, source, cancelCallback)
+    bindAsArray(vm, key, source, cancelCallback)
   } else {
-    bindAsObject(vm, data, key, source, cancelCallback)
+    bindAsObject(vm, key, source, cancelCallback)
   }
 }
 
@@ -78,13 +79,13 @@ function bind (vm, data, key, source) {
  * Bind a firebase data source to a key on a vm as an Array.
  *
  * @param {Vue} vm
- * @param {object} data
  * @param {string} key
  * @param {object} source
  * @param {function|null} cancelCallback
  */
-function bindAsArray (vm, data, key, source, cancelCallback) {
-  var array = data[key] = []
+function bindAsArray (vm, key, source, cancelCallback) {
+  var array = []
+  Vue.util.defineReactive(vm, key, array)
 
   var onAdd = source.on('child_added', function (snapshot, prevKey) {
     var index = prevKey ? indexForKey(array, prevKey) + 1 : 0
@@ -120,13 +121,12 @@ function bindAsArray (vm, data, key, source, cancelCallback) {
  * Bind a firebase data source to a key on a vm as an Object.
  *
  * @param {Vue} vm
- * @param {object} data
  * @param {string} key
  * @param {Object} source
  * @param {function|null} cancelCallback
  */
-function bindAsObject (vm, data, key, source, cancelCallback) {
-  data[key] = {}
+function bindAsObject (vm, key, source, cancelCallback) {
+  Vue.util.defineReactive(vm, key, {})
   var cb = source.on('value', function (snapshot) {
     vm[key] = snapshot.val()
   }, cancelCallback)
@@ -154,15 +154,8 @@ var VueFireMixin = {
     this.$firebaseRefs = Object.create(null)
     this._firebaseSources = Object.create(null)
     this._firebaseListeners = Object.create(null)
-    // wrap data fn
-    var vm = this
-    var getData = this.$options.data
-    this.$options.data = function () {
-      var data = getData()
-      for (var key in bindings) {
-        bind(vm, data, key, bindings[key])
-      }
-      return data
+    for (var key in bindings) {
+      bind(this, key, bindings[key])
     }
   },
   beforeDestroy: function () {
@@ -178,13 +171,21 @@ var VueFireMixin = {
 /**
  * Install function passed to Vue.use() in manual installation.
  *
- * @param {function} Vue
+ * @param {function} _Vue
  */
-function install (Vue) {
+function install (_Vue) {
+  Vue = _Vue
   Vue.mixin(VueFireMixin)
   // use object-based merge strategy
   var mergeStrats = Vue.config.optionMergeStrategies
   mergeStrats.firebase = mergeStrats.methods
+  // extend instance methods
+  Vue.prototype.$bind = function (key, source) {
+    bind(this, key, source)
+  }
+  Vue.prototype.$unbind = function (key) {
+    unbind(this, key)
+  }
 }
 
 // auto install
