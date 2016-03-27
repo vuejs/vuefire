@@ -182,6 +182,9 @@ var VueFireMixin = {
  */
 function install (Vue) {
   Vue.mixin(VueFireMixin)
+  // use object-based merge strategy
+  var mergeStrats = Vue.config.optionMergeStrategies
+  mergeStrats.firebase = mergeStrats.methods
 }
 
 // auto install
