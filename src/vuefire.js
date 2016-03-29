@@ -1,4 +1,4 @@
-let Vue // late binding
+var Vue // late binding
 
 /**
  * Check if a value is an object.

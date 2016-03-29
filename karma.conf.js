@@ -2,7 +2,7 @@ var path = require('path')
 
 module.exports = function (config) {
   config.set({
-    frameworks: ['jasmine'],
+    frameworks: ['mocha', 'sinon-chai'],
     browsers: ['PhantomJS'],
     reporters: ['spec', 'coverage'],
     files: [
