@@ -49,16 +49,16 @@ function indexForKey (array, key) {
  * @param {object} source
  */
 function bind (vm, key, source) {
-  if (!isObject(source)) {
-    throw new Error('VueFire: invalid Firebase binding source.')
-  }
   var asObject = false
   var cancelCallback = null
   // check { source, asArray, cancelCallback } syntax
-  if (isObject(source.source)) {
+  if (isObject(source) && source.hasOwnProperty('source')) {
     asObject = source.asObject
     cancelCallback = source.cancelCallback
     source = source.source
+  }
+  if (!isObject(source)) {
+    throw new Error('VueFire: invalid Firebase binding source.')
   }
   // get the original ref for possible queries
   var ref = source
@@ -128,7 +128,7 @@ function bindAsArray (vm, key, source, cancelCallback) {
 function bindAsObject (vm, key, source, cancelCallback) {
   Vue.util.defineReactive(vm, key, {})
   var cb = source.on('value', function (snapshot) {
-    vm[key] = snapshot.val()
+    vm[key] = createRecord(snapshot)
   }, cancelCallback)
   vm._firebaseListeners[key] = { value: cb }
 }
