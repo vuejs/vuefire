@@ -32,10 +32,7 @@
           newTodo: ''
         },
         firebase: {
-          items: {
-            source: itemsRef.limitToLast(25),
-            asArray: true
-          }
+          items: itemsRef.limitToLast(25)
         },
         methods: {
           removeTodo: function (key) {
