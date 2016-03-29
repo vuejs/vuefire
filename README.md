@@ -18,14 +18,15 @@
 var vm = new Vue({
   el: '#demo',
   firebase: {
-    // simple syntax, bind as an object
-    anObject: new Firebase('url/to/my/object'),
+    // simple syntax, bind as an array by default
+    anArray: new Firebase('url/to/my/collection'),
+    // can also bind to a query
+    // anArray: new Firebase('url/to/my/collection').limitToLast(25)
     // full syntax
-    anArray: {
-      // the source can be either a ref or a query
-      source: new Firebase('url/to/my/list').limitToLast(25),
-      // bind as an array
-      asArray: true,
+    anObject: {
+      source: new Firebase('url/to/my/object'),
+      // optionally bind as an object
+      asObject: true,
       // optionally provide the cancelCallback
       cancelCallback: function () {}
     }
@@ -37,7 +38,7 @@ var vm = new Vue({
 <div id="demo">
   <pre>{{ anObject | json }}</pre>
   <ul>
-    <li v-for="item in anArray">{{ item.text }}</li>
+    <li v-for="item in items">{{ item.text }}</li>
   </ul>
 </div>
 ```

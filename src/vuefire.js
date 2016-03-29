@@ -52,11 +52,11 @@ function bind (vm, key, source) {
   if (!isObject(source)) {
     throw new Error('VueFire: invalid Firebase binding source.')
   }
-  var asArray = false
+  var asObject = false
   var cancelCallback = null
   // check { source, asArray, cancelCallback } syntax
   if (isObject(source.source)) {
-    asArray = source.asArray
+    asObject = source.asObject
     cancelCallback = source.cancelCallback
     source = source.source
   }
@@ -68,10 +68,10 @@ function bind (vm, key, source) {
   vm.$firebaseRefs[key] = ref
   vm._firebaseSources[key] = source
   // bind based on initial value type
-  if (asArray) {
-    bindAsArray(vm, key, source, cancelCallback)
-  } else {
+  if (asObject) {
     bindAsObject(vm, key, source, cancelCallback)
+  } else {
+    bindAsArray(vm, key, source, cancelCallback)
   }
 }
 
