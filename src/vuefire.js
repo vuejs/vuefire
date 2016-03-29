@@ -18,7 +18,7 @@ function isObject (val) {
  */
 function createRecord (snapshot) {
   var value = snapshot.val()
-  var res = value && typeof value === 'object'
+  var res = isObject(value)
     ? value
     : { '.value': value }
   res['.key'] = snapshot.key()

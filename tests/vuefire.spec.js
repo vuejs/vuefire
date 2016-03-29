@@ -503,5 +503,192 @@ describe('VueFire', function () {
         })
       })
     })
+
+    it('binds to a primitive', function (done) {
+      var vm = new Vue({
+        firebase: {
+          items: {
+            source: firebaseRef.child('items'),
+            asObject: true
+          }
+        },
+        template: '<div>{{ items | json }}</div>'
+      }).$mount()
+      firebaseRef.child('items').set('foo', function () {
+        expect(vm.items).to.deep.equal({
+          '.key': 'items',
+          '.value': 'foo'
+        })
+        Vue.nextTick(function () {
+          expect(vm.$el.textContent).to.contain(JSON.stringify(vm.items, null, 2))
+          done()
+        })
+      })
+    })
+
+    it('binds to Firebase reference with no data', function (done) {
+      var vm = new Vue({
+        firebase: {
+          items: {
+            source: firebaseRef.child('items'),
+            asObject: true
+          }
+        },
+        template: '<div>{{ items | json }}</div>'
+      }).$mount()
+      firebaseRef.child('items').set(null, function () {
+        expect(vm.items).to.deep.equal({
+          '.key': 'items',
+          '.value': null
+        })
+        Vue.nextTick(function () {
+          expect(vm.$el.textContent).to.contain(JSON.stringify(vm.items, null, 2))
+          done()
+        })
+      })
+    })
+
+    it('sets the key as null when bound to the root of the database', function (done) {
+      var rootRef = firebaseRef.root()
+      var vm = new Vue({
+        firebase: {
+          items: {
+            source: rootRef,
+            asObject: true
+          }
+        },
+        template: '<div>{{ items | json }}</div>'
+      }).$mount()
+      rootRef.set('foo', function () {
+        expect(vm.items).to.deep.equal({
+          '.key': null,
+          '.value': 'foo'
+        })
+        Vue.nextTick(function () {
+          expect(vm.$el.textContent).to.contain(JSON.stringify(vm.items, null, 2))
+          done()
+        })
+      })
+    })
+
+    it('binds with limit queries', function (done) {
+      var vm = new Vue({
+        firebase: {
+          items: {
+            source: firebaseRef.child('items').limitToLast(2),
+            asObject: true
+          }
+        },
+        template: '<div>{{ items | json }}</div>'
+      }).$mount()
+      firebaseRef.child('items').set({
+        first: { index: 0 },
+        second: { index: 1 },
+        third: { index: 2 }
+      }, function () {
+        expect(vm.items).to.deep.equal({
+          '.key': 'items',
+          second: { index: 1 },
+          third: { index: 2 }
+        })
+        Vue.nextTick(function () {
+          expect(vm.$el.textContent).to.contain(JSON.stringify(vm.items, null, 2))
+          done()
+        })
+      })
+    })
+
+    it('binds multiple Firebase references to state variables at the same time', function (done) {
+      var vm = new Vue({
+        firebase: {
+          bindVar0: {
+            source: firebaseRef.child('items0'),
+            asObject: true
+          },
+          bindVar1: {
+            source: firebaseRef.child('items1'),
+            asObject: true
+          }
+        },
+        template: '<div>{{ bindVar0 | json }} {{ bindVar1 | json }}</div>'
+      }).$mount()
+
+      var items0 = {
+        first: { index: 0 },
+        second: { index: 1 },
+        third: { index: 2 }
+      }
+
+      var items1 = {
+        bar: {
+          foo: 'baz'
+        },
+        baz: true,
+        foo: 100
+      }
+
+      firebaseRef.set({
+        items0: items0,
+        items1: items1
+      }, function () {
+        items0['.key'] = 'items0'
+        expect(vm.bindVar0).to.deep.equal(items0)
+        items1['.key'] = 'items1'
+        expect(vm.bindVar1).to.deep.equal(items1)
+        Vue.nextTick(function () {
+          expect(vm.$el.textContent).to.contain(JSON.stringify(vm.bindVar0, null, 2))
+          expect(vm.$el.textContent).to.contain(JSON.stringify(vm.bindVar1, null, 2))
+          done()
+        })
+      })
+    })
+
+    it('binds a mixture of arrays and objects to state variables at the same time', function (done) {
+      var vm = new Vue({
+        firebase: {
+          bindVar0: {
+            source: firebaseRef.child('items0'),
+            asObject: true
+          },
+          bindVar1: {
+            source: firebaseRef.child('items1'),
+            asObject: false
+          }
+        },
+        template: '<div>{{ bindVar0 | json }} {{ bindVar1 | json }}</div>'
+      }).$mount()
+
+      var items0 = {
+        first: { index: 0 },
+        second: { index: 1 },
+        third: { index: 2 }
+      }
+
+      var items1 = {
+        bar: {
+          foo: 'baz'
+        },
+        baz: true,
+        foo: 100
+      }
+
+      firebaseRef.set({
+        items0: items0,
+        items1: items1
+      }, function () {
+        items0['.key'] = 'items0'
+        expect(vm.bindVar0).to.deep.equal(items0)
+        expect(vm.bindVar1).to.deep.equal([
+          { '.key': 'bar', foo: 'baz' },
+          { '.key': 'baz', '.value': true },
+          { '.key': 'foo', '.value': 100 }
+        ])
+        Vue.nextTick(function () {
+          expect(vm.$el.textContent).to.contain(JSON.stringify(vm.bindVar0, null, 2))
+          expect(vm.$el.textContent).to.contain(JSON.stringify(vm.bindVar1, null, 2))
+          done()
+        })
+      })
+    })
   })
 })
