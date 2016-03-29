@@ -3,6 +3,11 @@
   "version": "1.0.0",
   "description": "Firebase bindings for Vue.js",
   "main": "src/vuefire.js",
+  "files": [
+    "dist/**",
+    "LICENSE",
+    "README.md"
+  ],
   "scripts": {
     "lint": "eslint --ext=js,html src tests examples karma.conf.js",
     "test": "npm run lint && karma start karma.conf.js --single-run",
