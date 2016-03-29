@@ -11,6 +11,11 @@ module.exports = function (config) {
     preprocessors: {
       'tests/vuefire.spec.js': ['webpack', 'sourcemap']
     },
+    client: {
+      mocha: {
+        timeout: 10000
+      }
+    },
     webpack: {
       devtool: '#inline-source-map',
       module: {
