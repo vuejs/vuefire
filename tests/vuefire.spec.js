@@ -59,6 +59,30 @@ describe('VueFire', function () {
       })
     })
 
+    it('bind using $bindAsArray', function (done) {
+      var vm = new Vue({
+        template: '<div><div v-for="item in items">{{ item[".key"] }} {{ item.index }} </div></div>',
+        created: function () {
+          this.$bindAsArray('items', firebaseRef)
+        }
+      }).$mount()
+      firebaseRef.set({
+        first: { index: 0 },
+        second: { index: 1 },
+        third: { index: 2 }
+      }, function () {
+        expect(vm.items).to.deep.equal([
+          { '.key': 'first', index: 0 },
+          { '.key': 'second', index: 1 },
+          { '.key': 'third', index: 2 }
+        ])
+        Vue.nextTick(function () {
+          expect(vm.$el.textContent).to.contain('first 0 second 1 third 2')
+          done()
+        })
+      })
+    })
+
     it('binds array records which are primitives', function (done) {
       var vm = new Vue({
         firebase: {
@@ -504,6 +528,28 @@ describe('VueFire', function () {
       })
     })
 
+    it('binds with $bindAsObject', function (done) {
+      var obj = {
+        first: { index: 0 },
+        second: { index: 1 },
+        third: { index: 2 }
+      }
+      var vm = new Vue({
+        template: '<div>{{ items | json }}</div>',
+        created: function () {
+          this.$bindAsObject('items', firebaseRef.child('items'))
+        }
+      }).$mount()
+      firebaseRef.child('items').set(obj, function () {
+        obj['.key'] = 'items'
+        expect(vm.items).to.deep.equal(obj)
+        Vue.nextTick(function () {
+          expect(vm.$el.textContent).to.contain(JSON.stringify(obj, null, 2))
+          done()
+        })
+      })
+    })
+
     it('binds to a primitive', function (done) {
       var vm = new Vue({
         firebase: {
@@ -698,6 +744,13 @@ describe('VueFire', function () {
       expect(function () {
         vm.$unbind('items')
       }).to.throw(/not bound to a Firebase reference/)
+    })
+
+    it('should work properly for instances with no firebase bindings', function () {
+      expect(function () {
+        var vm = new Vue()
+        vm.$destroy()
+      }).not.to.throw()
     })
 
     it('unbinds the state bound to Firebase as an array', function (done) {

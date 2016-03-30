@@ -38,6 +38,7 @@ function indexForKey (array, key) {
       return i
     }
   }
+  /* istanbul ignore next */
   return -1
 }
 
@@ -157,13 +158,24 @@ function unbind (vm, key) {
   vm._firebaseListeners[key] = null
 }
 
+/**
+ * Ensure the related bookkeeping variables on an instance.
+ *
+ * @param {Vue} vm
+ */
+function ensureRefs (vm) {
+  if (!vm.$firebaseRefs) {
+    vm.$firebaseRefs = Object.create(null)
+    vm._firebaseSources = Object.create(null)
+    vm._firebaseListeners = Object.create(null)
+  }
+}
+
 var VueFireMixin = {
   init: function () {
     var bindings = this.$options.firebase
     if (!bindings) return
-    this.$firebaseRefs = Object.create(null)
-    this._firebaseSources = Object.create(null)
-    this._firebaseListeners = Object.create(null)
+    ensureRefs(this)
     for (var key in bindings) {
       bind(this, key, bindings[key])
     }
@@ -196,6 +208,7 @@ function install (_Vue) {
 
   // extend instance methods
   Vue.prototype.$bindAsObject = function (key, source, cancelCallback) {
+    ensureRefs(this)
     bind(this, key, {
       source: source,
       asObject: true,
@@ -204,6 +217,7 @@ function install (_Vue) {
   }
 
   Vue.prototype.$bindAsArray = function (key, source, cancelCallback) {
+    ensureRefs(this)
     bind(this, key, {
       source: source,
       cancelCallback: cancelCallback
@@ -216,6 +230,7 @@ function install (_Vue) {
 }
 
 // auto install
+/* istanbul ignore if */
 if (typeof window !== 'undefined' && window.Vue) {
   install(window.Vue)
 }
