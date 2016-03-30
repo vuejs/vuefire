@@ -691,4 +691,105 @@ describe('VueFire', function () {
       })
     })
   })
+
+  describe('unbind', function () {
+    it('throws error given unbound key', function () {
+      var vm = new Vue()
+      expect(function () {
+        vm.$unbind('items')
+      }).to.throw(/not bound to a Firebase reference/)
+    })
+
+    it('unbinds the state bound to Firebase as an array', function (done) {
+      var vm = new Vue({
+        firebase: {
+          items: firebaseRef
+        }
+      })
+      firebaseRef.set({
+        first: { index: 0 },
+        second: { index: 1 },
+        third: { index: 2 }
+      }, function () {
+        vm.$unbind('items')
+        expect(vm.items).to.be.null
+        expect(vm.$firebaseRefs.items).to.be.null
+        expect(vm._firebaseSources.items).to.be.null
+        expect(vm._firebaseListeners.items).to.be.null
+        done()
+      })
+    })
+
+    it('unbinds the state bound to Firebase as an object', function (done) {
+      var vm = new Vue({
+        firebase: {
+          items: {
+            source: firebaseRef,
+            asObject: true
+          }
+        }
+      })
+      firebaseRef.set({
+        first: { index: 0 },
+        second: { index: 1 },
+        third: { index: 2 }
+      }, function () {
+        vm.$unbind('items')
+        expect(vm.items).to.be.null
+        expect(vm.$firebaseRefs.items).to.be.null
+        expect(vm._firebaseSources.items).to.be.null
+        expect(vm._firebaseListeners.items).to.be.null
+        done()
+      })
+    })
+
+    it('unbinds all bound state when the component unmounts', function (done) {
+      var vm = new Vue({
+        firebase: {
+          item0: firebaseRef,
+          item1: {
+            source: firebaseRef,
+            asObject: true
+          }
+        }
+      })
+      sinon.spy(vm, '$unbind')
+      firebaseRef.set({
+        first: { index: 0 },
+        second: { index: 1 },
+        third: { index: 2 }
+      }, function () {
+        vm.$destroy()
+        expect(vm.$unbind).to.have.been.calledTwice
+        expect(vm.item0).to.be.null
+        expect(vm.item1).to.be.null
+        done()
+      })
+    })
+
+    it('handles already unbound state when the component unmounts', function (done) {
+      var vm = new Vue({
+        firebase: {
+          item0: firebaseRef,
+          item1: {
+            source: firebaseRef,
+            asObject: true
+          }
+        }
+      })
+      sinon.spy(vm, '$unbind')
+      firebaseRef.set({
+        first: { index: 0 },
+        second: { index: 1 },
+        third: { index: 2 }
+      }, function () {
+        vm.$unbind('item0')
+        vm.$destroy()
+        expect(vm.$unbind).to.have.been.calledTwice
+        expect(vm.item0).to.be.null
+        expect(vm.item1).to.be.null
+        done()
+      })
+    })
+  })
 })

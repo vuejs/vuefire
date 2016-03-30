@@ -140,11 +140,21 @@ function bindAsObject (vm, key, source, cancelCallback) {
  * @param {string} key
  */
 function unbind (vm, key) {
-  var source = vm._firebaseSources[key]
+  var source = vm._firebaseSources && vm._firebaseSources[key]
+  if (!source) {
+    throw new Error(
+      'VueFire: unbind failed: "' + key + '" is not bound to ' +
+      'a Firebase reference.'
+    )
+  }
   var listeners = vm._firebaseListeners[key]
   for (var event in listeners) {
     source.off(event, listeners[event])
   }
+  vm[key] = null
+  vm.$firebaseRefs[key] = null
+  vm._firebaseSources[key] = null
+  vm._firebaseListeners[key] = null
 }
 
 var VueFireMixin = {
@@ -159,8 +169,11 @@ var VueFireMixin = {
     }
   },
   beforeDestroy: function () {
+    if (!this.$firebaseRefs) return
     for (var key in this.$firebaseRefs) {
-      unbind(this, key)
+      if (this.$firebaseRefs[key]) {
+        this.$unbind(key)
+      }
     }
     this.$firebaseRefs = null
     this._firebaseSources = null
@@ -176,13 +189,27 @@ var VueFireMixin = {
 function install (_Vue) {
   Vue = _Vue
   Vue.mixin(VueFireMixin)
+
   // use object-based merge strategy
   var mergeStrats = Vue.config.optionMergeStrategies
   mergeStrats.firebase = mergeStrats.methods
+
   // extend instance methods
-  Vue.prototype.$bind = function (key, source) {
-    bind(this, key, source)
+  Vue.prototype.$bindAsObject = function (key, source, cancelCallback) {
+    bind(this, key, {
+      source: source,
+      asObject: true,
+      cancelCallback: cancelCallback
+    })
   }
+
+  Vue.prototype.$bindAsArray = function (key, source, cancelCallback) {
+    bind(this, key, {
+      source: source,
+      cancelCallback: cancelCallback
+    })
+  }
+
   Vue.prototype.$unbind = function (key) {
     unbind(this, key)
   }
