@@ -52,6 +52,13 @@ vm.$firebaseRefs.anArray.push({
 })
 ```
 
+Alternatively, you can also manually bind to a Firebase ref with the `$bindAsObject` or `$bindAsArray` instance methods:
+
+``` js
+vm.$bindAsObject('user', myFirebaseRef.child('user'))
+vm.$bindAsArray('items', myFirebaseRef.child('items').limitToLast(25))
+```
+
 ## Data Normalization
 
 ### Array Bindings
