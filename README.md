@@ -4,11 +4,29 @@
 
 1. If included as global `<script>`: will install automatically if global `Vue` is present.
 
+  ``` html
+  <head>
+    <!-- Vue -->
+    <script src="https://cdn.jsdelivr.net/vue/latest/vue.js"></script>
+    <!-- Firebase -->
+    <script src="https://cdn.firebase.com/js/client/2.4.2/firebase.js"></script>
+    <!-- VueFire -->
+    <script src="https://cdn.firebase.com/libs/vuefire/0.1.0/vuefire.min.js"></script>
+  </head>
+  ```
+
 2. In module environments, e.g CommonJS:
+
+  ``` bash
+  npm install vue firebase vuefire --save
+  ```
 
   ``` js
   var Vue = require('vue')
   var VueFire = require('vuefire')
+  var Firebase = require('firebase')
+
+  // explicit installation required in module environments
   Vue.use(VueFire)
   ```
 
