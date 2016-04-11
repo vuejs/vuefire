@@ -1,5 +1,7 @@
 # VueFire
 
+> Vue.js binding for Firebase.
+
 ## Installation
 
 1. If included as global `<script>`: will install automatically if global `Vue` is present.
@@ -11,7 +13,7 @@
     <!-- Firebase -->
     <script src="https://cdn.firebase.com/js/client/2.4.2/firebase.js"></script>
     <!-- VueFire -->
-    <script src="https://cdn.firebase.com/libs/vuefire/0.1.0/vuefire.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/vuefire/1.0.0/vuefire.min.js"></script>
   </head>
   ```
 
