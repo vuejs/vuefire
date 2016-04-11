@@ -83,9 +83,9 @@ vm.$bindAsArray('items', myFirebaseRef.child('items').limitToLast(25))
 
 ### Array Bindings
 
-Each record in the bound array will contain a `_key` property which specifies the key where the record is stored. So if you have data at `/items/-Jtjl482BaXBCI7brMT8/`, the record for that data will have a `_key` of `"-Jtjl482BaXBCI7brMT8"`.
+Each record in the bound array will contain a `.key` property which specifies the key where the record is stored. So if you have data at `/items/-Jtjl482BaXBCI7brMT8/`, the record for that data will have a `.key` of `"-Jtjl482BaXBCI7brMT8"`.
 
-If an individual record's value in the database is a primitive (boolean, string, or number), the value will be stored in the `_value` property. If the individual record's value is an object, each of the object's properties will be stored as properties of the bound record. As an example, let's assume the `/items/` node you bind to contains the following data:
+If an individual record's value in the database is a primitive (boolean, string, or number), the value will be stored in the `.value` property. If the individual record's value is an object, each of the object's properties will be stored as properties of the bound record. As an example, let's assume the `/items/` node you bind to contains the following data:
 
 ``` json
 {
@@ -115,7 +115,7 @@ The resulting bound array stored in `vm.items` will be:
   },
   {
     ".key": "-JtjlAXoQ3VAoNiJcka9",
-    "_value": "foo"
+    ".value": "foo"
   }
 ]
 ```
