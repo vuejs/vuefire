@@ -18,7 +18,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/firebase/vuefire.git"
+    "url": "git+https://github.com/vuejs/vuefire.git"
   },
   "keywords": [
     "vue",
@@ -29,9 +29,9 @@
   "author": "Evan You",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/firebase/vuefire/issues"
+    "url": "https://github.com/vuejs/vuefire/issues"
   },
-  "homepage": "https://github.com/firebase/vuefire#readme",
+  "homepage": "https://github.com/vuejs/vuefire#readme",
   "devDependencies": {
     "chai": "^3.5.0",
     "eslint": "^2.5.1",
