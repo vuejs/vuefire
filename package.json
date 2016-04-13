@@ -2,7 +2,7 @@
   "name": "vuefire",
   "version": "1.0.0",
   "description": "Firebase bindings for Vue.js",
-  "main": "src/vuefire.js",
+  "main": "dist/vuefire.js",
   "files": [
     "dist/**",
     "LICENSE",
