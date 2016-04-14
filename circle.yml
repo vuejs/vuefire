@@ -1,0 +1,7 @@
+machine:
+  node:
+    version: 5
+
+test:
+  override:
+    - bash ./build/ci.sh
