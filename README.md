@@ -58,7 +58,7 @@ var vm = new Vue({
 <div id="demo">
   <pre>{{ anObject | json }}</pre>
   <ul>
-    <li v-for="item in items">{{ item.text }}</li>
+    <li v-for="item in anArray">{{ item.text }}</li>
   </ul>
 </div>
 ```
