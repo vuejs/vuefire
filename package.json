@@ -1,6 +1,6 @@
 {
   "name": "vuefire",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Firebase bindings for Vue.js",
   "main": "dist/vuefire.js",
   "files": [
@@ -32,6 +32,9 @@
     "url": "https://github.com/vuejs/vuefire/issues"
   },
   "homepage": "https://github.com/vuejs/vuefire#readme",
+  "peerDependencies": {
+    "firebase": "^2.4.1 || 3.x.x"
+  },
   "devDependencies": {
     "chai": "^3.5.0",
     "codecov": "^1.0.1",
@@ -40,7 +43,6 @@
     "eslint-plugin-html": "^1.4.0",
     "eslint-plugin-promise": "^1.1.0",
     "eslint-plugin-standard": "^1.3.2",
-    "firebase": "^2.4.1",
     "istanbul-instrumenter-loader": "^0.2.0",
     "karma": "^0.13.22",
     "karma-coverage": "^0.5.5",

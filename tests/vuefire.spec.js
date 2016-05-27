@@ -5,13 +5,16 @@ var helpers = require('./helpers')
 
 Vue.use(VueFire)
 
-var demoFirebaseUrl = 'https://' + helpers.generateRandomString() + '.firebaseio-demo.com'
+var firebaseApp = Firebase.initializeApp({
+  apiKey: helpers.generateRandomString(),
+  databaseURL: 'https://' + helpers.generateRandomString() + '.firebaseio-demo.com'
+})
 
 describe('VueFire', function () {
   var firebaseRef
 
   beforeEach(function (done) {
-    firebaseRef = new Firebase(demoFirebaseUrl)
+    firebaseRef = firebaseApp.database().ref()
     firebaseRef.remove(function (error) {
       if (error) {
         done(error)
@@ -595,7 +598,7 @@ describe('VueFire', function () {
     })
 
     it('sets the key as null when bound to the root of the database', function (done) {
-      var rootRef = firebaseRef.root()
+      var rootRef = firebaseRef.root
       var vm = new Vue({
         firebase: {
           items: {
