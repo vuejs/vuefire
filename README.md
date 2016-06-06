@@ -130,3 +130,7 @@ $ npm test       # run test suite with coverage report
 $ npm run dev    # watch and build dist/vuefire.js
 $ npm run build  # build dist/vuefire.js and vuefire.min.js
 ```
+
+## License
+
+[MIT](http://opensource.org/licenses/MIT)
