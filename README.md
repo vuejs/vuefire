@@ -9,7 +9,7 @@
   ``` html
   <head>
     <!-- Vue -->
-    <script src="https://cdn.jsdelivr.net/vue/latest/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/vue/1.0.24/vue.js"></script>
     <!-- Firebase -->
     <script src="https://cdn.firebase.com/js/client/2.4.2/firebase.js"></script>
     <!-- VueFire -->
