@@ -11,9 +11,9 @@
     <!-- Vue -->
     <script src="https://cdn.jsdelivr.net/vue/1.0.24/vue.js"></script>
     <!-- Firebase -->
-    <script src="https://cdn.firebase.com/js/client/2.4.2/firebase.js"></script>
+    <script src="https://gstatic.com/firebasejs/3.0.3/firebase.js"></script>
     <!-- VueFire -->
-    <script src="https://cdn.jsdelivr.net/vuefire/1.0.0/vuefire.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/vuefire/1.1.0/vuefire.min.js"></script>
   </head>
   ```
 
@@ -35,16 +35,19 @@
 ## Usage
 
 ``` js
+var firebaseApp = firebase.initializeApp({ ... })
+var db = firebaseApp.database()
+
 var vm = new Vue({
   el: '#demo',
   firebase: {
     // simple syntax, bind as an array by default
-    anArray: new Firebase('url/to/my/collection'),
+    anArray: db.ref('url/to/my/collection'),
     // can also bind to a query
-    // anArray: new Firebase('url/to/my/collection').limitToLast(25)
+    // anArray: db.ref('url/to/my/collection').limitToLast(25)
     // full syntax
     anObject: {
-      source: new Firebase('url/to/my/object'),
+      source: db.ref('url/to/my/object'),
       // optionally bind as an object
       asObject: true,
       // optionally provide the cancelCallback
