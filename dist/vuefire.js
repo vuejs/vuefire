@@ -57,6 +57,34 @@ return /******/ (function(modules) { // webpackBootstrap
 	var Vue // late binding
 
 	/**
+	 * Returns the key of a Firebase snapshot across SDK versions.
+	 *
+	 * @param {FirebaseSnapshot} snapshot
+	 * @return {string|null}
+	 */
+	function _getKey (snapshot) {
+	  return typeof snapshot.key === 'function'
+	    ? snapshot.key()
+	    : snapshot.key
+	}
+
+	/**
+	 * Returns the original reference of a Firebase reference or query across SDK versions.
+	 *
+	 * @param {FirebaseReference|FirebaseQuery} refOrQuery
+	 * @return {FirebaseReference}
+	 */
+	function _getRef (refOrQuery) {
+	  if (typeof refOrQuery.ref === 'function') {
+	    refOrQuery = refOrQuery.ref()
+	  } else if (typeof refOrQuery.ref === 'object') {
+	    refOrQuery = refOrQuery.ref
+	  }
+
+	  return refOrQuery
+	}
+
+	/**
 	 * Check if a value is an object.
 	 *
 	 * @param {*} val
@@ -77,7 +105,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  var res = isObject(value)
 	    ? value
 	    : { '.value': value }
-	  res['.key'] = snapshot.key()
+	  res['.key'] = _getKey(snapshot)
 	  return res
 	}
 
@@ -117,11 +145,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  if (!isObject(source)) {
 	    throw new Error('VueFire: invalid Firebase binding source.')
 	  }
-	  // get the original ref for possible queries
-	  var ref = source
-	  if (typeof source.ref === 'function') {
-	    ref = source.ref()
-	  }
+	  var ref = _getRef(source)
 	  vm.$firebaseRefs[key] = ref
 	  vm._firebaseSources[key] = source
 	  // bind based on initial value type
@@ -150,17 +174,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, cancelCallback)
 
 	  var onRemove = source.on('child_removed', function (snapshot) {
-	    var index = indexForKey(array, snapshot.key())
+	    var index = indexForKey(array, _getKey(snapshot))
 	    array.splice(index, 1)
 	  }, cancelCallback)
 
 	  var onChange = source.on('child_changed', function (snapshot) {
-	    var index = indexForKey(array, snapshot.key())
+	    var index = indexForKey(array, _getKey(snapshot))
 	    array.splice(index, 1, createRecord(snapshot))
 	  }, cancelCallback)
 
 	  var onMove = source.on('child_moved', function (snapshot, prevKey) {
-	    var index = indexForKey(array, snapshot.key())
+	    var index = indexForKey(array, _getKey(snapshot))
 	    var record = array.splice(index, 1)[0]
 	    var newIndex = prevKey ? indexForKey(array, prevKey) + 1 : 0
 	    array.splice(newIndex, 0, record)
