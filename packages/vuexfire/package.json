@@ -1,0 +1,29 @@
+{
+  "name": "vuefirex",
+  "version": "0.0.1",
+  "description": "Opinionated firebase binding for vuex",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/posva/vuefirex.git"
+  },
+  "keywords": [
+    "vuex",
+    "fire",
+    "vue",
+    "firebase",
+    "redux",
+    "store",
+    "bind",
+    "opinionated"
+  ],
+  "author": "Eduardo San Martin Morote <posva13@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/posva/vuefirex/issues"
+  },
+  "homepage": "https://github.com/posva/vuefirex#readme"
+}
