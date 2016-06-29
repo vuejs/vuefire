@@ -1,0 +1,10 @@
+{
+  "extends": "standard",
+    "plugins": ["html"],
+    "env": {
+      "amd": true
+    },
+    "rules": {
+      "no-new": 0
+    }
+}
