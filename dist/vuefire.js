@@ -166,6 +166,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	function bindAsArray (vm, key, source, cancelCallback) {
 	  var array = []
+	  Vue.delete(vm, key)
 	  Vue.util.defineReactive(vm, key, array)
 
 	  var onAdd = source.on('child_added', function (snapshot, prevKey) {
