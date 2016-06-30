@@ -6,10 +6,10 @@ module.exports = function (config) {
     browsers: ['PhantomJS'],
     reporters: ['spec', 'coverage'],
     files: [
-      'test/index.spec.js'
+      'test/*.spec.js'
     ],
     preprocessors: {
-      'test/index.spec.js': ['webpack', 'sourcemap']
+      'test/*.spec.js': ['webpack', 'sourcemap']
     },
     client: {
       mocha: {
@@ -20,7 +20,8 @@ module.exports = function (config) {
       devtool: '#inline-source-map',
       module: {
         loaders: [{
-          include: path.resolve(__dirname, 'src/index.js'),
+          test: /\.js$/,
+          include: path.resolve('src'),
           loader: 'istanbul-instrumenter'
         }]
       }
