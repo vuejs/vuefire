@@ -4,11 +4,11 @@ const VUEXFIRE_ARRAY_ADD = 'VUEXFIRE_ARRAY_ADD'
 const VUEXFIRE_ARRAY_REMOVE = 'VUEXFIRE_ARRAY_REMOVE'
 const VUEXFIRE_ARRAY_MOVE = 'VUEXFIRE_ARRAY_MOVE'
 
-exports.VUEXFIRE_ARRAY_MOVE = VUEXFIRE_ARRAY_MOVE
-exports.VUEXFIRE_ARRAY_REMOVE = VUEXFIRE_ARRAY_REMOVE
-exports.VUEXFIRE_ARRAY_ADD = VUEXFIRE_ARRAY_ADD
-exports.VUEXFIRE_ARRAY_CHANGE = VUEXFIRE_ARRAY_CHANGE
-exports.VUEXFIRE_OBJECT_VALUE = VUEXFIRE_OBJECT_VALUE
+// exports.VUEXFIRE_ARRAY_MOVE = VUEXFIRE_ARRAY_MOVE
+// exports.VUEXFIRE_ARRAY_REMOVE = VUEXFIRE_ARRAY_REMOVE
+// exports.VUEXFIRE_ARRAY_ADD = VUEXFIRE_ARRAY_ADD
+// exports.VUEXFIRE_ARRAY_CHANGE = VUEXFIRE_ARRAY_CHANGE
+// exports.VUEXFIRE_OBJECT_VALUE = VUEXFIRE_OBJECT_VALUE
 
 /**
  * Returns the key of a Firebase snapshot across SDK versions.
@@ -131,6 +131,9 @@ function bind (vm, key, source) {
  * @param {function|null} cancelCallback
  */
 function bindAsArray (vm, key, source, cancelCallback) {
+  // set it as an array
+  vm.$store.state[key] = []
+
   const onAdd = source.on('child_added', function (snapshot, prevKey) {
     const array = vm.$store.state[key]
     const index = prevKey ? indexForKey(array, prevKey) + 1 : 0
@@ -265,7 +268,7 @@ const VuexFireInit = function () {
   }
 }
 
-exports.plugin = function plugin (Vue) {
+function install (Vue) {
   // override init to get called after vuex
   const _init = Vue.prototype._init
   Vue.prototype._init = function (options) {
@@ -295,4 +298,10 @@ exports.plugin = function plugin (Vue) {
   Vue.prototype.$unbind = function (key) {
     unbind(this, key)
   }
+}
+
+module.exports = install
+
+if (typeof window !== 'undefined' && window.Vue) {
+  install(window.Vue)
 }
