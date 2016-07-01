@@ -316,6 +316,7 @@
 	  const bindings = this.$options.firebase
 	  if (!bindings) return
 	  ensureRefs(this)
+	  // TODO check for bindings in store
 	  for (var key in bindings) {
 	    bind(this, key, bindings[key])
 	  }
