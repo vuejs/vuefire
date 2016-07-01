@@ -6,7 +6,12 @@ module.exports = function (config) {
     browsers: ['PhantomJS'],
     reporters: ['spec', 'coverage'],
     files: [
-      'test/*.spec.js'
+      {
+        pattern: 'test/*.spec.js',
+        watched: false,
+        included: true,
+        served: true
+      }
     ],
     preprocessors: {
       'test/*.spec.js': ['webpack', 'sourcemap']
@@ -21,7 +26,7 @@ module.exports = function (config) {
       module: {
         loaders: [{
           test: /\.js$/,
-          include: path.resolve('src'),
+          include: path.resolve(__dirname, 'src'),
           loader: 'istanbul-instrumenter'
         }]
       }
