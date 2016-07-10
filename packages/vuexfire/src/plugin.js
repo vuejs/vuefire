@@ -37,7 +37,6 @@ function _getRef (refOrQuery) {
 
   return refOrQuery
 }
-_getRef
 
 /**
  * Check if a value is an object.
