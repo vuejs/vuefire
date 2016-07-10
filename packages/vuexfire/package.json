@@ -1,6 +1,6 @@
 {
   "name": "vuexfire",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "description": "Opinionated firebase binding for vuex",
   "main": "index.js",
   "scripts": {
@@ -11,7 +11,7 @@
     "build-dev": "webpack src/index.js dist/vuexfire.js --output-library=VuexFire --output-library-target=umd",
     "build-prod": "webpack src/index.js dist/vuexfire.min.js --output-library=VuexFire --output-library-target=umd -p",
     "build": "npm run build-dev && npm run build-prod",
-    "prepublish": "npm run build"
+    "preversion": "npm run build"
   },
   "repository": {
     "type": "git",
