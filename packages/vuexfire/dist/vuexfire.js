@@ -333,13 +333,22 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	function install (Vue) {
 	  // override init to get called after vuex
-	  const _init = Vue.prototype._init
-	  Vue.prototype._init = function (options) {
-	    options = options || {}
-	    options.init = options.init
-	      ? [VuexFireInit].concat(options.init)
-	      : VuexFireInit
-	    _init.call(this, options)
+	  const version = Number(Vue.version.split('.')[0])
+
+	  if (version >= 2) {
+	    const usesInit = Vue.config._lifecycleHooks.indexOf('init') > -1
+	    Vue.mixin(usesInit ? { init: VuexFireInit } : { beforeCreate: VuexFireInit })
+	  } else {
+	    // override init and inject vuex init procedure
+	    // for 1.x backwards compatibility.
+	    const _init = Vue.prototype._init
+	    Vue.prototype._init = function (options) {
+	      options = options || {}
+	      options.init = options.init
+	        ? [VuexFireInit].concat(options.init)
+	        : VuexFireInit
+	      _init.call(this, options)
+	    }
 	  }
 	  Vue.mixin(VuexFireMixin)
 
