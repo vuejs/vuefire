@@ -2,7 +2,7 @@ var firebase = require('firebase')
 var Vue = require('vue')
 var Vuex = require('vuex')
 var helpers = require('./helpers')
-var VueFirex = require('../src')
+var VuexFire = require('../src')
 
 var firebaseApp = firebase.initializeApp({
   apiKey: helpers.generateRandomString(),
@@ -10,9 +10,9 @@ var firebaseApp = firebase.initializeApp({
 })
 
 Vue.use(Vuex)
-Vue.use(VueFirex)
+Vue.use(VuexFire)
 
-describe('VueFirex', function () {
+describe('VuexFire', function () {
   var firebaseRef
 
   beforeEach(function (done) {

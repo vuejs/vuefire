@@ -2,11 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>VueFirex Todo App Demo</title>
+    <title>VuexFire Todo App Demo</title>
     <script src="https://www.gstatic.com/firebasejs/3.1.0/firebase.js"></script>
     <script src="https://cdn.jsdelivr.net/vue/1.0.26/vue.js"></script>
     <script src="https://cdn.jsdelivr.net/vuex/0.8.2/vuex.js"></script>
-    <script src="../../dist/vuefirex.js"></script>
+    <script src="../../dist/vuexfire.js"></script>
   </head>
   <body>
 
@@ -24,10 +24,10 @@
     </div>
 
     <script>
-    /* global Vue, Firebase */
+    /* global Vue, Vuex, firebase */
     var config = {
-      apiKey: "AIzaSyDs3VTO0osu4j_gZlsxvI4QUGD89w4ZuBs",
-      databaseURL: "https://vuefirexdemo.firebaseio.com",
+      apiKey: 'AIzaSyB45odnFhUCczEEKGluijNNS4gPFEAf2G8',
+      databaseURL: 'https://vuexfire.firebaseio.com'
     }
     var firebaseApp = firebase.initializeApp(config)
     var db = firebaseApp.database()
@@ -41,7 +41,7 @@
 
     var store = new Vuex.Store({state: state, mutations: mutations})
 
-    var vm = new Vue({
+    new Vue({
       el: '#app',
       store: store,
       vuex: {
@@ -54,9 +54,6 @@
       },
       data: {
         newTodo: ''
-      },
-      firebase: {
-        items: itemsRef.limitToLast(25)
       },
       methods: {
         removeTodo: function (key) {

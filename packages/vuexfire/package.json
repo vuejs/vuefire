@@ -1,21 +1,21 @@
 {
-  "name": "vuefirex",
+  "name": "vuexfire",
   "version": "0.0.1",
   "description": "Opinionated firebase binding for vuex",
   "main": "index.js",
   "scripts": {
     "lint": "eslint --ext=js,html src tests examples karma.conf.js",
     "test": "npm run lint && karma start karma.conf.js --single-run",
-    "dev": "webpack src/index.js dist/vuefirex.js --watch",
+    "dev": "webpack src/index.js dist/vuexfire.js --watch",
     "dev:test": "karma start karma.conf.js",
-    "build-dev": "webpack src/index.js dist/vuefirex.js --output-library=VueFirex --output-library-target=umd",
-    "build-prod": "webpack src/index.js dist/vuefirex.min.js --output-library=VueFirex --output-library-target=umd -p",
+    "build-dev": "webpack src/index.js dist/vuexfire.js --output-library=VuexFire --output-library-target=umd",
+    "build-prod": "webpack src/index.js dist/vuexfire.min.js --output-library=VuexFire --output-library-target=umd -p",
     "build": "npm run build-dev && npm run build-prod",
     "prepublish": "npm run build"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/posva/vuefirex.git"
+    "url": "git+https://github.com/posva/vuexfire.git"
   },
   "keywords": [
     "vuex",
@@ -33,9 +33,9 @@
   "author": "Eduardo San Martin Morote <posva13@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/posva/vuefirex/issues"
+    "url": "https://github.com/posva/vuexfire/issues"
   },
-  "homepage": "https://github.com/posva/vuefirex#readme",
+  "homepage": "https://github.com/posva/vuexfire#readme",
   "devDependencies": {
     "chai": "^3.5.0",
     "eslint": "^2.13.1",
