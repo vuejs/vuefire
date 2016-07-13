@@ -1,6 +1,6 @@
 {
   "name": "vuefire",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "Firebase bindings for Vue.js",
   "main": "dist/vuefire.js",
   "files": [
