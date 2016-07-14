@@ -196,15 +196,18 @@ function ensureRefs (vm) {
   }
 }
 
+var init = function () {
+  var bindings = this.$options.firebase
+  if (!bindings) return
+  ensureRefs(this)
+  for (var key in bindings) {
+    bind(this, key, bindings[key])
+  }
+}
+
 var VueFireMixin = {
-  init: function () {
-    var bindings = this.$options.firebase
-    if (!bindings) return
-    ensureRefs(this)
-    for (var key in bindings) {
-      bind(this, key, bindings[key])
-    }
-  },
+  init: init, // 1.x
+  beforeCreate: init, // 2.x
   beforeDestroy: function () {
     if (!this.$firebaseRefs) return
     for (var key in this.$firebaseRefs) {
