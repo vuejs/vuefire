@@ -130,7 +130,7 @@ describe('VueFire', function () {
       })
     })
 
-    it('binds array records which are a mix of objects and primitives', function (done) {
+    it('binds an empty array by default', function (done) {
       var vm = new Vue({
         firebase: {
           items: firebaseRef
