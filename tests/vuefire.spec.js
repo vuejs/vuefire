@@ -86,6 +86,32 @@ describe('VueFire', function () {
       })
     })
 
+    it('bind using $bindAsArray after $unbind', function (done) {
+      var vm = new Vue({
+        template: '<div><div v-for="item in items">{{ item[".key"] }} {{ item.index }} </div></div>',
+        created: function () {
+          this.$bindAsArray('items', firebaseRef)
+          this.$unbind('items')
+          this.$bindAsArray('items', firebaseRef)
+        }
+      }).$mount()
+      firebaseRef.set({
+        first: { index: 0 },
+        second: { index: 1 },
+        third: { index: 2 }
+      }, function () {
+        expect(vm.items).to.deep.equal([
+          { '.key': 'first', index: 0 },
+          { '.key': 'second', index: 1 },
+          { '.key': 'third', index: 2 }
+        ])
+        Vue.nextTick(function () {
+          expect(vm.$el.textContent).to.contain('first 0 second 1 third 2')
+          done()
+        })
+      })
+    })
+
     it('binds array records which are primitives', function (done) {
       var vm = new Vue({
         firebase: {
