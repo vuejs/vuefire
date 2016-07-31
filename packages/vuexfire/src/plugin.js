@@ -57,12 +57,6 @@ function createRecord (snapshot) {
   return res
 }
 
-function createVal (snapshot) {
-  var value = snapshot.val()
-  value['.key'] = _getKey(snapshot)
-  return value
-}
-
 /**
  * Find the index for an object with given key.
  *
@@ -130,7 +124,7 @@ function bindAsArray (vm, key, source, cancelCallback) {
   const onAdd = source.on('child_added', function (snapshot, prevKey) {
     const array = vm.$store.state[key]
     const index = prevKey ? indexForKey(array, prevKey) + 1 : 0
-    vm.$store.dispatch(VUEXFIRE_ARRAY_ADD, key, index, createVal(snapshot))
+    vm.$store.dispatch(VUEXFIRE_ARRAY_ADD, key, index, createRecord(snapshot))
   }, cancelCallback)
 
   const onRemove = source.on('child_removed', function (snapshot) {
@@ -234,6 +228,9 @@ function ensureRefs (vm) {
     vm.$firebaseRefs = Object.create(null)
     vm._firebaseSources = Object.create(null)
     vm._firebaseListeners = Object.create(null)
+    if (!vm.$store) {
+      throw new Error('VuexFire: missing Vuex. Install Vuex before VuexFire')
+    }
     setupMutations(vm.$store)
   }
 }

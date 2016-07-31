@@ -1,3 +1,5 @@
+exports.invalidFirebaseRefs = [null, undefined, true, false, [], 0, 5, '', 'a', ['hi', 1]]
+
 /* Returns a random alphabetic string of variable length */
 exports.generateRandomString = function () {
   const possibleCharacters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'

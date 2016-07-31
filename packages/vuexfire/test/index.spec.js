@@ -27,9 +27,59 @@ describe('VuexFire', function () {
     })
   })
 
-  describe('Array binding', function () {
-    var store, vm
+  describe('Errors', function () {
+    var store
+    beforeEach(function () {
+      store = new Vuex.Store({
+        state: {
+          items: []
+        },
+        mutations: {}
+      })
+    })
 
+    it('throws error for invalid firebase ref', function () {
+      helpers.invalidFirebaseRefs.forEach(function (ref) {
+        expect(function () {
+          new Vue({
+            store: store,
+            firebase: {
+              items: ref
+            }
+          })
+        }).to.throw('VuexFire: invalid Firebase binding source.')
+      })
+    })
+
+    it('throws if vuex is not available', function () {
+      expect(function () {
+        new Vue({
+          firebase: {}
+        })
+      }).to.throw('VuexFire: missing Vuex. Install Vuex before VuexFire')
+    })
+
+    it('throws when trying to binding to a non existing key', function () {
+      expect(function () {
+        new Vue({
+          store: store,
+          firebase: {
+            foo: firebaseRef
+          }
+        })
+      }).to.throw('VuexFire: bind failed: "foo" is not defined in the store state')
+    })
+
+    it('throws with wrong source')
+  })
+
+  describe('Array binding', function () {
+    var store, vuex
+    vuex = {
+      getters: {
+        items: function (state) { return state.items }
+      }
+    }
     beforeEach(function () {
       store = new Vuex.Store({
         state: {
@@ -39,21 +89,15 @@ describe('VuexFire', function () {
         },
         mutations: {}
       })
-      vm = new Vue({
-        store: store,
-        vuex: {
-          getters: {
-            items: function (state) { return state.items }
-          }
-        },
-        firebase: {
-          items: firebaseRef
-        },
-        template: '<div><div v-for="item in items">{{ item[".key"] }} {{ item.index }} </div></div>'
-      }).$mount()
     })
 
-    it('binds an array by default', function (done) {
+    it('binds an array of objects', function (done) {
+      var vm = new Vue({
+        store: store,
+        vuex: vuex,
+        firebase: {items: firebaseRef},
+        template: '<div><div v-for="item in items">{{ item[".key"] }} {{ item.index }} </div></div>'
+      }).$mount()
       firebaseRef.set({
         first: { index: 0 },
         second: { index: 1 },
@@ -66,6 +110,27 @@ describe('VuexFire', function () {
         ])
         Vue.nextTick(function () {
           expect(vm.$el.textContent).to.contain('first 0 second 1 third 2')
+          done()
+        })
+      })
+    })
+
+    it('binds an array of primitives', function (done) {
+      var vm = new Vue({
+        store: store,
+        vuex: vuex,
+        firebase: {items: firebaseRef},
+        template: '<div><div v-for="item in items">{{ item[".key"] }} {{ item[".value"] }} </div></div>'
+      }).$mount()
+      firebaseRef.set([0, 1, 2], function () {
+        console.log(vm.items)
+        expect(vm.items).to.deep.equal([
+          { '.key': '0', '.value': 0 },
+          { '.key': '1', '.value': 1 },
+          { '.key': '2', '.value': 2 }
+        ])
+        Vue.nextTick(function () {
+          expect(vm.$el.textContent).to.contain('0 0 1 1 2 2')
           done()
         })
       })
