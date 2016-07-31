@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <title>VuexFire Todo App Demo</title>
     <script src="https://www.gstatic.com/firebasejs/3.1.0/firebase.js"></script>
-    <script src="https://cdn.jsdelivr.net/vue/2.0.0-beta.1/vue.js"></script>
+    <script src="https://npmcdn.com/vue@next/dist/vue.js"></script>
     <script src="https://cdn.jsdelivr.net/vuex/1.0.0-rc.2/vuex.js"></script>
     <script src="../../dist/vuexfire.js"></script>
   </head>
@@ -41,7 +41,7 @@
 
     var store = new Vuex.Store({state: state, mutations: mutations})
 
-    windowvm = new Vue({ // eslint-disable-line no-unused-vars
+    window.vm = new Vue({ // eslint-disable-line no-unused-vars
       el: '#app',
       store: store,
       vuex: {
