@@ -185,6 +185,7 @@ function unbind (vm, key) {
         'a Firebase reference.'
     )
   }
+  vm.$store.dispatch(VUEXFIRE_OBJECT_VALUE, key, null)
   const listeners = vm._firebaseListeners[key]
   for (var event in listeners) {
     source.off(event, listeners[event])

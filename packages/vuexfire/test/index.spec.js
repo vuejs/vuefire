@@ -71,6 +71,13 @@ describe('VuexFire', function () {
     })
 
     it('throws with wrong source')
+
+    it('throws error given unbound key', function () {
+      var vm = new Vue()
+      expect(function () {
+        vm.$unbind('items')
+      }).to.throw(/not bound to a Firebase reference/)
+    })
   })
 
   describe('Array binding', function () {
@@ -535,6 +542,383 @@ describe('VuexFire', function () {
             done()
           })
         })
+      })
+    })
+  })
+
+  describe('Object binding', function () {
+    var store, vuex
+    vuex = {
+      getters: {
+        items: function (state) { return state.items },
+        bindVar0: function (state) { return state.bindVar0 },
+        bindVar1: function (state) { return state.bindVar1 }
+      }
+    }
+    beforeEach(function () {
+      store = new Vuex.Store({
+        state: {
+          items: {
+            '.ref': 'items'
+          },
+          bindVar0: null,
+          bindVar1: null
+        },
+        mutations: {}
+      })
+    })
+
+    it('binds to an Object', function (done) {
+      var obj = {
+        first: { index: 0 },
+        second: { index: 1 },
+        third: { index: 2 }
+      }
+      var vm = new Vue({
+        store: store,
+        vuex: vuex,
+        firebase: {
+          items: {
+            source: firebaseRef.child('items'),
+            asObject: true
+          }
+        },
+        template: '<div>{{ items | json }}</div>'
+      }).$mount()
+      firebaseRef.child('items').set(obj, function () {
+        obj['.key'] = 'items'
+        expect(vm.items).to.deep.equal(obj)
+        Vue.nextTick(function () {
+          expect(vm.$el.textContent).to.contain(JSON.stringify(obj, null, 2))
+          done()
+        })
+      })
+    })
+
+    it('binds to a primitive', function (done) {
+      var vm = new Vue({
+        store: store,
+        vuex: vuex,
+        firebase: {
+          items: {
+            source: firebaseRef.child('items'),
+            asObject: true
+          }
+        },
+        template: '<div>{{ items | json }}</div>'
+      }).$mount()
+      firebaseRef.child('items').set('foo', function () {
+        expect(vm.items).to.deep.equal({
+          '.key': 'items',
+          '.value': 'foo'
+        })
+        Vue.nextTick(function () {
+          expect(vm.$el.textContent).to.contain(JSON.stringify(vm.items, null, 2))
+          done()
+        })
+      })
+    })
+
+    it('binds to Firebase reference with no data', function (done) {
+      var vm = new Vue({
+        store: store,
+        vuex: vuex,
+        firebase: {
+          items: {
+            source: firebaseRef.child('items'),
+            asObject: true
+          }
+        },
+        template: '<div>{{ items | json }}</div>'
+      }).$mount()
+      firebaseRef.child('items').set(null, function () {
+        expect(vm.items).to.deep.equal({
+          '.key': 'items',
+          '.value': null
+        })
+        Vue.nextTick(function () {
+          expect(vm.$el.textContent).to.contain(JSON.stringify(vm.items, null, 2))
+          done()
+        })
+      })
+    })
+
+    it('sets the key as null when bound to the root of the database', function (done) {
+      var rootRef = firebaseRef.root
+      var vm = new Vue({
+        store: store,
+        vuex: vuex,
+        firebase: {
+          items: {
+            source: rootRef,
+            asObject: true
+          }
+        },
+        template: '<div>{{ items | json }}</div>'
+      }).$mount()
+      rootRef.set('foo', function () {
+        expect(vm.items).to.deep.equal({
+          '.key': null,
+          '.value': 'foo'
+        })
+        Vue.nextTick(function () {
+          expect(vm.$el.textContent).to.contain(JSON.stringify(vm.items, null, 2))
+          done()
+        })
+      })
+    })
+
+    it('binds with limit queries', function (done) {
+      var vm = new Vue({
+        store: store,
+        vuex: vuex,
+        firebase: {
+          items: {
+            source: firebaseRef.child('items').limitToLast(2),
+            asObject: true
+          }
+        },
+        template: '<div>{{ items | json }}</div>'
+      }).$mount()
+      firebaseRef.child('items').set({
+        first: { index: 0 },
+        second: { index: 1 },
+        third: { index: 2 }
+      }, function () {
+        expect(vm.items).to.deep.equal({
+          '.key': 'items',
+          second: { index: 1 },
+          third: { index: 2 }
+        })
+        Vue.nextTick(function () {
+          expect(vm.$el.textContent).to.contain(JSON.stringify(vm.items, null, 2))
+          done()
+        })
+      })
+    })
+
+    it('binds multiple Firebase references to state variables at the same time', function (done) {
+      var vm = new Vue({
+        store: store,
+        vuex: vuex,
+        firebase: {
+          bindVar0: {
+            source: firebaseRef.child('items0'),
+            asObject: true
+          },
+          bindVar1: {
+            source: firebaseRef.child('items1'),
+            asObject: true
+          }
+        },
+        template: '<div>{{ bindVar0 | json }} {{ bindVar1 | json }}</div>'
+      }).$mount()
+
+      var items0 = {
+        first: { index: 0 },
+        second: { index: 1 },
+        third: { index: 2 }
+      }
+
+      var items1 = {
+        bar: {
+          foo: 'baz'
+        },
+        baz: true,
+        foo: 100
+      }
+
+      firebaseRef.set({
+        items0: items0,
+        items1: items1
+      }, function () {
+        items0['.key'] = 'items0'
+        expect(vm.bindVar0).to.deep.equal(items0)
+        items1['.key'] = 'items1'
+        expect(vm.bindVar1).to.deep.equal(items1)
+        Vue.nextTick(function () {
+          expect(vm.$el.textContent).to.contain(JSON.stringify(vm.bindVar0, null, 2))
+          expect(vm.$el.textContent).to.contain(JSON.stringify(vm.bindVar1, null, 2))
+          done()
+        })
+      })
+    })
+
+    it('binds a mixture of arrays and objects to state variables at the same time', function (done) {
+      var vm = new Vue({
+        store: store,
+        vuex: vuex,
+        firebase: {
+          bindVar0: {
+            source: firebaseRef.child('items0'),
+            asObject: true
+          },
+          bindVar1: {
+            source: firebaseRef.child('items1'),
+            asObject: false
+          }
+        },
+        template: '<div>{{ bindVar0 | json }} {{ bindVar1 | json }}</div>'
+      }).$mount()
+
+      var items0 = {
+        first: { index: 0 },
+        second: { index: 1 },
+        third: { index: 2 }
+      }
+
+      var items1 = {
+        bar: {
+          foo: 'baz'
+        },
+        baz: true,
+        foo: 100
+      }
+
+      firebaseRef.set({
+        items0: items0,
+        items1: items1
+      }, function () {
+        items0['.key'] = 'items0'
+        expect(vm.bindVar0).to.deep.equal(items0)
+        expect(vm.bindVar1).to.deep.equal([
+          { '.key': 'bar', foo: 'baz' },
+          { '.key': 'baz', '.value': true },
+          { '.key': 'foo', '.value': 100 }
+        ])
+        Vue.nextTick(function () {
+          expect(vm.$el.textContent).to.contain(JSON.stringify(vm.bindVar0, null, 2))
+          expect(vm.$el.textContent).to.contain(JSON.stringify(vm.bindVar1, null, 2))
+          done()
+        })
+      })
+    })
+  })
+
+  describe('Unbind', function () {
+    var store, vuex
+    vuex = {
+      getters: {
+        items: function (state) { return state.items },
+        item0: function (state) { return state.item0 },
+        item1: function (state) { return state.item1 }
+      }
+    }
+    beforeEach(function () {
+      store = new Vuex.Store({
+        state: {
+          items: null,
+          item0: null,
+          item1: null
+        },
+        mutations: {}
+      })
+    })
+
+    it('should work properly for instances with no firebase bindings', function () {
+      expect(function () {
+        var vm = new Vue()
+        vm.$destroy()
+      }).not.to.throw()
+    })
+
+    it('unbinds the state bound to Firebase as an array', function (done) {
+      var vm = new Vue({
+        store: store,
+        vuex: vuex,
+        firebase: {
+          items: firebaseRef
+        }
+      })
+      firebaseRef.set({
+        first: { index: 0 },
+        second: { index: 1 },
+        third: { index: 2 }
+      }, function () {
+        vm.$unbind('items')
+        expect(vm.items).to.be.null
+        expect(vm.$firebaseRefs.items).to.be.null
+        expect(vm._firebaseSources.items).to.be.null
+        expect(vm._firebaseListeners.items).to.be.null
+        done()
+      })
+    })
+
+    it('unbinds the state bound to Firebase as an object', function (done) {
+      var vm = new Vue({
+        store: store,
+        vuex: vuex,
+        firebase: {
+          items: {
+            source: firebaseRef,
+            asObject: true
+          }
+        }
+      })
+      firebaseRef.set({
+        first: { index: 0 },
+        second: { index: 1 },
+        third: { index: 2 }
+      }, function () {
+        vm.$unbind('items')
+        expect(vm.items).to.be.null
+        expect(vm.$firebaseRefs.items).to.be.null
+        expect(vm._firebaseSources.items).to.be.null
+        expect(vm._firebaseListeners.items).to.be.null
+        done()
+      })
+    })
+
+    it('unbinds all bound state when the component unmounts', function (done) {
+      var vm = new Vue({
+        store: store,
+        vuex: vuex,
+        firebase: {
+          item0: firebaseRef,
+          item1: {
+            source: firebaseRef,
+            asObject: true
+          }
+        }
+      })
+      sinon.spy(vm, '$unbind')
+      firebaseRef.set({
+        first: { index: 0 },
+        second: { index: 1 },
+        third: { index: 2 }
+      }, function () {
+        vm.$destroy()
+        expect(vm.$unbind).to.have.been.calledTwice
+        expect(vm.item0).to.be.null
+        expect(vm.item1).to.be.null
+        done()
+      })
+    })
+
+    it('handles already unbound state when the component unmounts', function (done) {
+      var vm = new Vue({
+        store: store,
+        vuex: vuex,
+        firebase: {
+          item0: firebaseRef,
+          item1: {
+            source: firebaseRef,
+            asObject: true
+          }
+        }
+      })
+      sinon.spy(vm, '$unbind')
+      firebaseRef.set({
+        first: { index: 0 },
+        second: { index: 1 },
+        third: { index: 2 }
+      }, function () {
+        vm.$unbind('item0')
+        vm.$destroy()
+        expect(vm.$unbind).to.have.been.calledTwice
+        expect(vm.item0).to.be.null
+        expect(vm.item1).to.be.null
+        done()
       })
     })
   })
