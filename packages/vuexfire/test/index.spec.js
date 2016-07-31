@@ -544,6 +544,71 @@ describe('VuexFire', function () {
         })
       })
     })
+
+    it('bind using $bindAsArray', function (done) {
+      var vm = new Vue({
+        store: store,
+        vuex: vuex,
+        template: '<div><div v-for="item in items">{{ item[".key"] }} {{ item.index }} </div></div>',
+        created: function () {
+          this.$bindAsArray('items', firebaseRef)
+        }
+      }).$mount()
+      firebaseRef.set({
+        first: { index: 0 },
+        second: { index: 1 },
+        third: { index: 2 }
+      }, function () {
+        expect(vm.items).to.deep.equal([
+          { '.key': 'first', index: 0 },
+          { '.key': 'second', index: 1 },
+          { '.key': 'third', index: 2 }
+        ])
+        Vue.nextTick(function () {
+          expect(vm.$el.textContent).to.contain('first 0 second 1 third 2')
+          done()
+        })
+      })
+    })
+
+    it('bind using $bindAsArray after $unbind', function (done) {
+      var refItems = firebaseRef.child('items')
+      var refOther = firebaseRef.child('other')
+      var vm = new Vue({
+        store: store,
+        vuex: vuex,
+        template: '<div><div v-for="item in items">{{ item[".key"] }} {{ item.index }} </div></div>',
+        created: function () {
+          this.$bindAsArray('items', refItems)
+        }
+      }).$mount()
+      refItems.set({
+        first: { index: 0 },
+        second: { index: 1 },
+        third: { index: 2 }
+      }, function () {
+        expect(vm.items).to.deep.equal([
+          { '.key': 'first', index: 0 },
+          { '.key': 'second', index: 1 },
+          { '.key': 'third', index: 2 }
+        ])
+        vm.$unbind('items')
+        vm.$bindAsArray('items', refOther)
+        refOther.set({
+          a: { index: 0 },
+          b: { index: 1 },
+          c: { index: 2 }
+        }, function () {
+          expect(vm.items).to.deep.equal([
+            { '.key': 'a', index: 0 },
+            { '.key': 'b', index: 1 },
+            { '.key': 'c', index: 2 }
+          ])
+          done()
+        })
+      })
+    })
+
   })
 
   describe('Object binding', function () {
@@ -789,6 +854,61 @@ describe('VuexFire', function () {
         Vue.nextTick(function () {
           expect(vm.$el.textContent).to.contain(JSON.stringify(vm.bindVar0, null, 2))
           expect(vm.$el.textContent).to.contain(JSON.stringify(vm.bindVar1, null, 2))
+          done()
+        })
+      })
+    })
+
+    it('binds with $bindAsObject after $unbind', function (done) {
+      var obj = {
+        first: { index: 0 },
+        second: { index: 1 },
+        third: { index: 2 }
+      }
+      var objOther = {
+        onlyOne: { index: 0 },
+        second: { index: 1 }
+      }
+      var vm = new Vue({
+        store: store,
+        vuex: vuex,
+        template: '<div>{{ items | json }}</div>',
+        created: function () {
+          this.$bindAsObject('items', firebaseRef.child('items'))
+        }
+      }).$mount()
+      firebaseRef.child('items').set(obj, function () {
+        obj['.key'] = 'items'
+        expect(vm.items).to.deep.equal(obj)
+        vm.$unbind('items')
+        vm.$bindAsObject('items', firebaseRef.child('others'))
+        firebaseRef.child('others').set(objOther, function () {
+          objOther['.key'] = 'others'
+          expect(vm.items).to.deep.equal(objOther)
+          done()
+        })
+      })
+    })
+
+    it('binds with $bindAsObject', function (done) {
+      var obj = {
+        first: { index: 0 },
+        second: { index: 1 },
+        third: { index: 2 }
+      }
+      var vm = new Vue({
+        store: store,
+        vuex: vuex,
+        template: '<div>{{ items | json }}</div>',
+        created: function () {
+          this.$bindAsObject('items', firebaseRef.child('items'))
+        }
+      }).$mount()
+      firebaseRef.child('items').set(obj, function () {
+        obj['.key'] = 'items'
+        expect(vm.items).to.deep.equal(obj)
+        Vue.nextTick(function () {
+          expect(vm.$el.textContent).to.contain(JSON.stringify(obj, null, 2))
           done()
         })
       })
