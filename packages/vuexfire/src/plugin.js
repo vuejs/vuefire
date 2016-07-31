@@ -142,7 +142,6 @@ function bindAsArray (vm, key, source, cancelCallback) {
   const onMove = source.on('child_moved', function (snapshot, prevKey) {
     const array = vm.$store.state[key]
     const index = indexForKey(array, _getKey(snapshot))
-    console.log('moved')
     var newIndex = prevKey ? indexForKey(array, prevKey) + 1 : 0
     // TODO refactor + 1
     newIndex += index < newIndex ? -1 : 0
