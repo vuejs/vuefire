@@ -67,12 +67,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	const VUEXFIRE_ARRAY_REMOVE = 'VUEXFIRE_ARRAY_REMOVE'
 	const VUEXFIRE_ARRAY_MOVE = 'VUEXFIRE_ARRAY_MOVE'
 
-	// exports.VUEXFIRE_ARRAY_MOVE = VUEXFIRE_ARRAY_MOVE
-	// exports.VUEXFIRE_ARRAY_REMOVE = VUEXFIRE_ARRAY_REMOVE
-	// exports.VUEXFIRE_ARRAY_ADD = VUEXFIRE_ARRAY_ADD
-	// exports.VUEXFIRE_ARRAY_CHANGE = VUEXFIRE_ARRAY_CHANGE
-	// exports.VUEXFIRE_OBJECT_VALUE = VUEXFIRE_OBJECT_VALUE
-
 	/**
 	 * Returns the key of a Firebase snapshot across SDK versions.
 	 *
@@ -124,12 +118,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    : { '.value': value }
 	  res['.key'] = _getKey(snapshot)
 	  return res
-	}
-
-	function createVal (snapshot) {
-	  var value = snapshot.val()
-	  value['.key'] = _getKey(snapshot)
-	  return value
 	}
 
 	/**
@@ -199,7 +187,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  const onAdd = source.on('child_added', function (snapshot, prevKey) {
 	    const array = vm.$store.state[key]
 	    const index = prevKey ? indexForKey(array, prevKey) + 1 : 0
-	    vm.$store.dispatch(VUEXFIRE_ARRAY_ADD, key, index, createVal(snapshot))
+	    vm.$store.dispatch(VUEXFIRE_ARRAY_ADD, key, index, createRecord(snapshot))
 	  }, cancelCallback)
 
 	  const onRemove = source.on('child_removed', function (snapshot) {
@@ -217,7 +205,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	  const onMove = source.on('child_moved', function (snapshot, prevKey) {
 	    const array = vm.$store.state[key]
 	    const index = indexForKey(array, _getKey(snapshot))
-	    console.log('moved')
 	    var newIndex = prevKey ? indexForKey(array, prevKey) + 1 : 0
 	    // TODO refactor + 1
 	    newIndex += index < newIndex ? -1 : 0
@@ -261,6 +248,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        'a Firebase reference.'
 	    )
 	  }
+	  vm.$store.dispatch(VUEXFIRE_OBJECT_VALUE, key, null)
 	  const listeners = vm._firebaseListeners[key]
 	  for (var event in listeners) {
 	    source.off(event, listeners[event])
@@ -303,6 +291,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    vm.$firebaseRefs = Object.create(null)
 	    vm._firebaseSources = Object.create(null)
 	    vm._firebaseListeners = Object.create(null)
+	    if (!vm.$store) {
+	      throw new Error('VuexFire: missing Vuex. Install Vuex before VuexFire')
+	    }
 	    setupMutations(vm.$store)
 	  }
 	}
