@@ -12,9 +12,11 @@ var firebaseApp = Firebase.initializeApp({
 
 describe('VueFire', function () {
   var firebaseRef
+  var firebaseDb
 
   beforeEach(function (done) {
-    firebaseRef = firebaseApp.database().ref()
+    firebaseDb = firebaseApp.database()
+    firebaseRef = firebaseDb.ref()
     firebaseRef.remove(function (error) {
       if (error) {
         done(error)
@@ -22,6 +24,36 @@ describe('VueFire', function () {
         firebaseRef = firebaseRef.child(helpers.generateRandomString())
         done()
       }
+    })
+  })
+
+  describe('is callable as Function', function () {
+    it('returns correct ref on function call', function (done) {
+      var ChildComponent = Vue.extend({
+        name: 'ChildComponent',
+        firebase: function () {
+          expect(this.$root.database).to.deep.equal(firebaseDb)
+          done()
+        },
+        template: '<div>test</div>'
+      })
+      new Vue({
+        data: function () {
+          return {
+            database: firebaseDb
+          }
+        },
+        ready: function () {
+          expect('poop').to.equal('notpoop')
+        },
+        components: {
+          'child-component': ChildComponent
+        },
+        template: '<div><child-component></child-component></div>'
+      }).$mount()
+      Vue.nextTick(function () {
+
+      })
     })
   })
 
