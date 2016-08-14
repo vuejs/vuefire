@@ -26,26 +26,15 @@ describe('VueFire', function () {
   })
 
   describe('support Function options', function () {
-    it('returns correct ref on function call', function (done) {
-      var firebaseDb = firebaseApp.database()
-      new Vue({
-        data: function () {
-          return {
-            database: firebaseDb
+    it('option is callable as function', function (done) {
+      expect(function () {
+        new Vue({
+          firebase: function () {
+
           }
-        },
-        components: {
-          'child-component': Vue.extend({
-            name: 'ChildComponent',
-            firebase: function () {
-              expect(this.$root.database).to.deep.equal(firebaseDb)
-              done()
-            },
-            template: '<div>test</div>'
-          })
-        },
-        template: '<div><child-component></child-component></div>'
-      }).$mount()
+        }).$mount()
+      }).to.not.throw(/not a function/)
+      done()
     })
   })
 
