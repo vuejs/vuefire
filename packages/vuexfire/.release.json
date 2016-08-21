@@ -1,0 +1,12 @@
+{
+  "buildCommand": "npm run build",
+  "github": {
+    "release": true,
+    "releaseName": "Release %s",
+    "tokenRef": "GITHUB_TOKEN"
+  },
+  "npm": {
+    "publish": true
+  },
+  "changelogCommand": "git log --pretty=format:'* %s (%h)' [REV_RANGE]"
+}
