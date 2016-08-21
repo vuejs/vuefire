@@ -3,6 +3,8 @@ var Vue = require('vue')
 var Vuex = require('vuex')
 var helpers = require('./helpers')
 var VuexFire = require('../src')
+/* eslint-disable no-native-reassign, no-global-assign */
+window.Promise = require('promise-polyfill')
 
 var firebaseApp = firebase.initializeApp({
   apiKey: helpers.generateRandomString(),
@@ -11,6 +13,8 @@ var firebaseApp = firebase.initializeApp({
 
 Vue.use(Vuex)
 Vue.use(VuexFire)
+
+var mapGetters = Vuex.mapGetters
 
 describe('VuexFire', function () {
   var firebaseRef
@@ -34,7 +38,10 @@ describe('VuexFire', function () {
         state: {
           items: []
         },
-        mutations: {}
+        getters: {
+          items: function (state) { return state.items }
+        },
+        mutations: VuexFire.mutations
       })
     })
 
@@ -81,14 +88,8 @@ describe('VuexFire', function () {
   })
 
   describe('Array binding', function () {
-    var store, vuex
-    vuex = {
-      getters: {
-        items: function (state) { return state.items },
-        bindVar0: function (state) { return state.bindVar0 },
-        bindVar1: function (state) { return state.bindVar1 }
-      }
-    }
+    var store, computed
+    computed = mapGetters(['items', 'bindVar0', 'bindVar1'])
     beforeEach(function () {
       store = new Vuex.Store({
         state: {
@@ -98,14 +99,19 @@ describe('VuexFire', function () {
           bindVar0: null,
           bindVar1: null
         },
-        mutations: {}
+        getters: {
+          items: function (state) { return state.items },
+          bindVar0: function (state) { return state.bindVar0 },
+          bindVar1: function (state) { return state.bindVar1 }
+        },
+        mutations: VuexFire.mutations
       })
     })
 
     it('binds an array of objects', function (done) {
       var vm = new Vue({
         store: store,
-        vuex: vuex,
+        computed: computed,
         firebase: {items: firebaseRef},
         template: '<div><div v-for="item in items">{{ item[".key"] }} {{ item.index }} </div></div>'
       }).$mount()
@@ -129,7 +135,7 @@ describe('VuexFire', function () {
     it('binds an array of primitives', function (done) {
       var vm = new Vue({
         store: store,
-        vuex: vuex,
+        computed: computed,
         firebase: {items: firebaseRef},
         template: '<div><div v-for="item in items">{{ item[".key"] }} {{ item[".value"] }} </div></div>'
       }).$mount()
@@ -149,7 +155,7 @@ describe('VuexFire', function () {
     it('binds an array mixed with objects and primitives', function (done) {
       var vm = new Vue({
         store: store,
-        vuex: vuex,
+        computed: computed,
         firebase: {
           items: firebaseRef
         },
@@ -175,7 +181,7 @@ describe('VuexFire', function () {
     it('binds an empty array by default', function (done) {
       var vm = new Vue({
         store: store,
-        vuex: vuex,
+        computed: computed,
         firebase: {
           items: firebaseRef
         }
@@ -189,7 +195,7 @@ describe('VuexFire', function () {
     it('binds only a subset of records when using limit queries', function (done) {
       var vm = new Vue({
         store: store,
-        vuex: vuex,
+        computed: computed,
         firebase: {
           items: firebaseRef.limitToLast(2)
         },
@@ -210,7 +216,7 @@ describe('VuexFire', function () {
     it('removes records when they fall outside of a limit query', function (done) {
       var vm = new Vue({
         store: store,
-        vuex: vuex,
+        computed: computed,
         firebase: {
           items: firebaseRef.limitToLast(2)
         },
@@ -233,7 +239,7 @@ describe('VuexFire', function () {
     it('adds a new record when an existing record in the limit query is removed', function (done) {
       var vm = new Vue({
         store: store,
-        vuex: vuex,
+        computed: computed,
         firebase: {
           items: firebaseRef.limitToLast(2)
         },
@@ -256,7 +262,7 @@ describe('VuexFire', function () {
     it('binds records in the correct order when using ordered queries', function (done) {
       var vm = new Vue({
         store: store,
-        vuex: vuex,
+        computed: computed,
         firebase: {
           items: firebaseRef.orderByValue()
         },
@@ -278,7 +284,7 @@ describe('VuexFire', function () {
     it('binds multiple Firebase references to state variables at the same time', function (done) {
       var vm = new Vue({
         store: store,
-        vuex: vuex,
+        computed: computed,
         firebase: {
           bindVar0: firebaseRef.child('items0'),
           bindVar1: firebaseRef.child('items1')
@@ -319,7 +325,7 @@ describe('VuexFire', function () {
     it('updates an array record when its value changes', function (done) {
       var vm = new Vue({
         store: store,
-        vuex: vuex,
+        computed: computed,
         firebase: {
           items: firebaseRef
         },
@@ -343,7 +349,7 @@ describe('VuexFire', function () {
     it('removes an array record when it is deleted', function (done) {
       var vm = new Vue({
         store: store,
-        vuex: vuex,
+        computed: computed,
         firebase: {
           items: firebaseRef
         },
@@ -363,10 +369,10 @@ describe('VuexFire', function () {
       })
     })
 
-    it('moves an array record when it\'s order changes (moved to start of array) [orderByValue()]', function (done) {
+    it('moves an array record when its order changes (moved to start of array) [orderByValue()]', function (done) {
       var vm = new Vue({
         store: store,
-        vuex: vuex,
+        computed: computed,
         firebase: {
           items: firebaseRef.orderByValue()
         },
@@ -387,16 +393,21 @@ describe('VuexFire', function () {
       })
     })
 
-    it('moves an array record when it\'s order changes (moved to middle of array) [orderByValue()]', function (done) {
+    it('moves an array record when its order changes (moved to middle of array) [orderByValue()]', function (done) {
       var vm = new Vue({
         store: store,
-        vuex: vuex,
+        computed: computed,
         firebase: {
           items: firebaseRef.orderByValue()
         },
         template: '<div><div v-for="item in items">{{ item[".key"] }} {{ item[".value"] }} </div></div>'
       }).$mount()
       firebaseRef.set({ a: 2, b: 1, c: 4 }, function () {
+        expect(vm.items).to.deep.equal([
+          { '.key': 'b', '.value': 1 },
+          { '.key': 'a', '.value': 2 },
+          { '.key': 'c', '.value': 4 }
+        ])
         firebaseRef.child('b').set(3, function () {
           expect(vm.items).to.deep.equal([
             { '.key': 'a', '.value': 2 },
@@ -414,7 +425,7 @@ describe('VuexFire', function () {
     it('moves an array record when it\'s order changes (moved to end of array) [orderByValue()]', function (done) {
       var vm = new Vue({
         store: store,
-        vuex: vuex,
+        computed: computed,
         firebase: {
           items: firebaseRef.orderByValue()
         },
@@ -438,7 +449,7 @@ describe('VuexFire', function () {
     it('moves an array record when it\'s order changes (moved to start of array) [orderByChild()]', function (done) {
       var vm = new Vue({
         store: store,
-        vuex: vuex,
+        computed: computed,
         firebase: {
           items: firebaseRef.orderByChild('value')
         },
@@ -466,7 +477,7 @@ describe('VuexFire', function () {
     it('moves an array record when it\'s order changes (moved to middle of array) [orderByChild()]', function (done) {
       var vm = new Vue({
         store: store,
-        vuex: vuex,
+        computed: computed,
         firebase: {
           items: firebaseRef.orderByChild('value')
         },
@@ -494,7 +505,7 @@ describe('VuexFire', function () {
     it('moves an array record when it\'s order changes (moved to end of array) [orderByChild()]', function (done) {
       var vm = new Vue({
         store: store,
-        vuex: vuex,
+        computed: computed,
         firebase: {
           items: firebaseRef.orderByChild('value')
         },
@@ -522,7 +533,7 @@ describe('VuexFire', function () {
     it('works with orderByKey() queries', function (done) {
       var vm = new Vue({
         store: store,
-        vuex: vuex,
+        computed: computed,
         firebase: {
           items: firebaseRef.orderByKey()
         },
@@ -548,7 +559,7 @@ describe('VuexFire', function () {
     it('bind using $bindAsArray', function (done) {
       var vm = new Vue({
         store: store,
-        vuex: vuex,
+        computed: computed,
         template: '<div><div v-for="item in items">{{ item[".key"] }} {{ item.index }} </div></div>',
         created: function () {
           this.$bindAsArray('items', firebaseRef)
@@ -576,7 +587,7 @@ describe('VuexFire', function () {
       var refOther = firebaseRef.child('other')
       var vm = new Vue({
         store: store,
-        vuex: vuex,
+        computed: computed,
         template: '<div><div v-for="item in items">{{ item[".key"] }} {{ item.index }} </div></div>',
         created: function () {
           this.$bindAsArray('items', refItems)
@@ -608,18 +619,11 @@ describe('VuexFire', function () {
         })
       })
     })
-
   })
 
   describe('Object binding', function () {
-    var store, vuex
-    vuex = {
-      getters: {
-        items: function (state) { return state.items },
-        bindVar0: function (state) { return state.bindVar0 },
-        bindVar1: function (state) { return state.bindVar1 }
-      }
-    }
+    var store, computed
+    computed = mapGetters(['items', 'bindVar0', 'bindVar1'])
     beforeEach(function () {
       store = new Vuex.Store({
         state: {
@@ -629,7 +633,12 @@ describe('VuexFire', function () {
           bindVar0: null,
           bindVar1: null
         },
-        mutations: {}
+        getters: {
+          items: function (state) { return state.items },
+          bindVar0: function (state) { return state.bindVar0 },
+          bindVar1: function (state) { return state.bindVar1 }
+        },
+        mutations: VuexFire.mutations
       })
     })
 
@@ -641,7 +650,7 @@ describe('VuexFire', function () {
       }
       var vm = new Vue({
         store: store,
-        vuex: vuex,
+        computed: mapGetters(['items', 'bindVar0', 'bindVar1']),
         firebase: {
           items: {
             source: firebaseRef.child('items'),
@@ -663,7 +672,7 @@ describe('VuexFire', function () {
     it('binds to a primitive', function (done) {
       var vm = new Vue({
         store: store,
-        vuex: vuex,
+        computed: computed,
         firebase: {
           items: {
             source: firebaseRef.child('items'),
@@ -687,7 +696,7 @@ describe('VuexFire', function () {
     it('binds to Firebase reference with no data', function (done) {
       var vm = new Vue({
         store: store,
-        vuex: vuex,
+        computed: computed,
         firebase: {
           items: {
             source: firebaseRef.child('items'),
@@ -712,7 +721,7 @@ describe('VuexFire', function () {
       var rootRef = firebaseRef.root
       var vm = new Vue({
         store: store,
-        vuex: vuex,
+        computed: computed,
         firebase: {
           items: {
             source: rootRef,
@@ -736,7 +745,7 @@ describe('VuexFire', function () {
     it('binds with limit queries', function (done) {
       var vm = new Vue({
         store: store,
-        vuex: vuex,
+        computed: computed,
         firebase: {
           items: {
             source: firebaseRef.child('items').limitToLast(2),
@@ -765,7 +774,7 @@ describe('VuexFire', function () {
     it('binds multiple Firebase references to state variables at the same time', function (done) {
       var vm = new Vue({
         store: store,
-        vuex: vuex,
+        computed: computed,
         firebase: {
           bindVar0: {
             source: firebaseRef.child('items0'),
@@ -812,7 +821,7 @@ describe('VuexFire', function () {
     it('binds a mixture of arrays and objects to state variables at the same time', function (done) {
       var vm = new Vue({
         store: store,
-        vuex: vuex,
+        computed: computed,
         firebase: {
           bindVar0: {
             source: firebaseRef.child('items0'),
@@ -871,7 +880,7 @@ describe('VuexFire', function () {
       }
       var vm = new Vue({
         store: store,
-        vuex: vuex,
+        computed: computed,
         template: '<div>{{ items | json }}</div>',
         created: function () {
           this.$bindAsObject('items', firebaseRef.child('items'))
@@ -898,7 +907,7 @@ describe('VuexFire', function () {
       }
       var vm = new Vue({
         store: store,
-        vuex: vuex,
+        computed: computed,
         template: '<div>{{ items | json }}</div>',
         created: function () {
           this.$bindAsObject('items', firebaseRef.child('items'))
@@ -916,14 +925,8 @@ describe('VuexFire', function () {
   })
 
   describe('Unbind', function () {
-    var store, vuex
-    vuex = {
-      getters: {
-        items: function (state) { return state.items },
-        item0: function (state) { return state.item0 },
-        item1: function (state) { return state.item1 }
-      }
-    }
+    var store, computed
+    computed = mapGetters(['items', 'item0', 'item1'])
     beforeEach(function () {
       store = new Vuex.Store({
         state: {
@@ -931,7 +934,12 @@ describe('VuexFire', function () {
           item0: null,
           item1: null
         },
-        mutations: {}
+        getters: {
+          items: function (state) { return state.items },
+          item0: function (state) { return state.item0 },
+          item1: function (state) { return state.item1 }
+        },
+        mutations: VuexFire.mutations
       })
     })
 
@@ -945,7 +953,7 @@ describe('VuexFire', function () {
     it('unbinds the state bound to Firebase as an array', function (done) {
       var vm = new Vue({
         store: store,
-        vuex: vuex,
+        computed: computed,
         firebase: {
           items: firebaseRef
         }
@@ -967,7 +975,7 @@ describe('VuexFire', function () {
     it('unbinds the state bound to Firebase as an object', function (done) {
       var vm = new Vue({
         store: store,
-        vuex: vuex,
+        computed: computed,
         firebase: {
           items: {
             source: firebaseRef,
@@ -992,7 +1000,7 @@ describe('VuexFire', function () {
     it('unbinds all bound state when the component unmounts', function (done) {
       var vm = new Vue({
         store: store,
-        vuex: vuex,
+        computed: computed,
         firebase: {
           item0: firebaseRef,
           item1: {
@@ -1007,10 +1015,12 @@ describe('VuexFire', function () {
         second: { index: 1 },
         third: { index: 2 }
       }, function () {
+        expect(vm.$store.state.item0).to.not.be.null
+        expect(vm.$store.state.item1).to.not.be.null
         vm.$destroy()
         expect(vm.$unbind).to.have.been.calledTwice
-        expect(vm.item0).to.be.null
-        expect(vm.item1).to.be.null
+        expect(vm.$store.state.item0).to.be.null
+        expect(vm.$store.state.item1).to.be.null
         done()
       })
     })
@@ -1018,7 +1028,7 @@ describe('VuexFire', function () {
     it('handles already unbound state when the component unmounts', function (done) {
       var vm = new Vue({
         store: store,
-        vuex: vuex,
+        computed: computed,
         firebase: {
           item0: firebaseRef,
           item1: {
@@ -1033,11 +1043,13 @@ describe('VuexFire', function () {
         second: { index: 1 },
         third: { index: 2 }
       }, function () {
+        expect(vm.$store.state.item0).to.not.be.null
+        expect(vm.$store.state.item1).to.not.be.null
         vm.$unbind('item0')
         vm.$destroy()
         expect(vm.$unbind).to.have.been.calledTwice
-        expect(vm.item0).to.be.null
-        expect(vm.item1).to.be.null
+        expect(vm.$store.state.item0).to.be.null
+        expect(vm.$store.state.item1).to.be.null
         done()
       })
     })

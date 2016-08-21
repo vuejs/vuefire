@@ -6,7 +6,7 @@
   "scripts": {
     "lint": "eslint --ext=js,html src tests examples karma.conf.js",
     "test": "npm run lint && karma start karma.conf.js --single-run",
-    "dev": "webpack src/index.js dist/vuexfire.js --watch",
+    "dev": "webpack src/index.js dist/vuexfire.js --output-library=VuexFire --output-library-target=umd --watch",
     "dev:test": "karma start karma.conf.js",
     "build-dev": "webpack src/index.js dist/vuexfire.js --output-library=VuexFire --output-library-target=umd",
     "build-prod": "webpack src/index.js dist/vuexfire.min.js --output-library=VuexFire --output-library-target=umd -p",
@@ -56,10 +56,11 @@
     "lolex": "^1.5.1",
     "mocha": "^3.0.2",
     "phantomjs-prebuilt": "^2.1.12",
+    "promise-polyfill": "^6.0.1",
     "sinon": "^1.17.5",
     "sinon-chai": "^2.8.0",
     "vue": "^1.0.26",
-    "vuex": "^1.0.0-rc.2",
+    "vuex": "^2.0.0-rc.5",
     "webpack": "^1.13.2"
   }
 }
