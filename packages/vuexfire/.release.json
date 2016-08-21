@@ -1,5 +1,6 @@
 {
   "buildCommand": "npm run build",
+  "tagName": "v%s",
   "github": {
     "release": true,
     "releaseName": "Release %s",
