@@ -230,7 +230,12 @@ function ensureRefs (vm) {
     if (!vm.$store) {
       throw new Error('VuexFire: missing Vuex. Install Vuex before VuexFire')
     }
-    // TODO check mutations
+
+    // Vuex v1
+    if (!vm.$store.commit) {
+      setupMutations(vm.$store)
+      vm.$store.commit = vm.$store.dispatch
+    }
   }
 }
 
@@ -319,6 +324,12 @@ install.mutations[VUEXFIRE_ARRAY_REMOVE] = function (state, payload) {
 install.mutations[VUEXFIRE_ARRAY_MOVE] = function (state, payload) {
   const array = state[payload.key]
   array.splice(payload.newIndex, 0, array.splice(payload.index, 1)[0])
+}
+
+function setupMutations (store) {
+  for (var key in install.mutations) {
+    store._mutations[key] = install.mutations[key]
+  }
 }
 
 module.exports = install
