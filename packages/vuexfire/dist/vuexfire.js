@@ -61,11 +61,11 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 1 */
 /***/ function(module, exports) {
 
-	const VUEXFIRE_OBJECT_VALUE = 'VUEXFIRE_OBJECT_VALUE'
-	const VUEXFIRE_ARRAY_CHANGE = 'VUEXFIRE_ARRAY_CHANGE'
-	const VUEXFIRE_ARRAY_ADD = 'VUEXFIRE_ARRAY_ADD'
-	const VUEXFIRE_ARRAY_REMOVE = 'VUEXFIRE_ARRAY_REMOVE'
-	const VUEXFIRE_ARRAY_MOVE = 'VUEXFIRE_ARRAY_MOVE'
+	const VUEXFIRE_OBJECT_VALUE = 'VUEXFIRE/objectValue'
+	const VUEXFIRE_ARRAY_CHANGE = 'VUEXFIRE/arrayChange'
+	const VUEXFIRE_ARRAY_ADD = 'VUEXFIRE/arrayAdd'
+	const VUEXFIRE_ARRAY_REMOVE = 'VUEXFIRE/arrayRemove'
+	const VUEXFIRE_ARRAY_MOVE = 'VUEXFIRE/arrayMove'
 
 	/**
 	 * Returns the key of a Firebase snapshot across SDK versions.
@@ -187,19 +187,30 @@ return /******/ (function(modules) { // webpackBootstrap
 	  const onAdd = source.on('child_added', function (snapshot, prevKey) {
 	    const array = vm.$store.state[key]
 	    const index = prevKey ? indexForKey(array, prevKey) + 1 : 0
-	    vm.$store.dispatch(VUEXFIRE_ARRAY_ADD, key, index, createRecord(snapshot))
+	    vm.$store.commit(VUEXFIRE_ARRAY_ADD, {
+	      key: key,
+	      index: index,
+	      record: createRecord(snapshot)
+	    })
 	  }, cancelCallback)
 
 	  const onRemove = source.on('child_removed', function (snapshot) {
 	    const array = vm.$store.state[key]
 	    const index = indexForKey(array, _getKey(snapshot))
-	    vm.$store.dispatch(VUEXFIRE_ARRAY_REMOVE, key, index)
+	    vm.$store.commit(VUEXFIRE_ARRAY_REMOVE, {
+	      key: key,
+	      index: index
+	    })
 	  }, cancelCallback)
 
 	  const onChange = source.on('child_changed', function (snapshot) {
 	    const array = vm.$store.state[key]
 	    const index = indexForKey(array, _getKey(snapshot))
-	    vm.$store.dispatch(VUEXFIRE_ARRAY_CHANGE, key, index, createRecord(snapshot))
+	    vm.$store.commit(VUEXFIRE_ARRAY_CHANGE, {
+	      key: key,
+	      index: index,
+	      record: createRecord(snapshot)
+	    })
 	  }, cancelCallback)
 
 	  const onMove = source.on('child_moved', function (snapshot, prevKey) {
@@ -208,7 +219,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var newIndex = prevKey ? indexForKey(array, prevKey) + 1 : 0
 	    // TODO refactor + 1
 	    newIndex += index < newIndex ? -1 : 0
-	    vm.$store.dispatch(VUEXFIRE_ARRAY_MOVE, key, index, newIndex, createRecord(snapshot))
+	    vm.$store.commit(VUEXFIRE_ARRAY_MOVE, {
+	      key: key,
+	      index: index,
+	      newIndex: newIndex,
+	      record: createRecord(snapshot)
+	    })
 	  }, cancelCallback)
 
 	  vm._firebaseListeners[key] = {
@@ -229,7 +245,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	function bindAsObject (vm, key, source, cancelCallback) {
 	  const cb = source.on('value', function (snapshot) {
-	    vm.$store.dispatch(VUEXFIRE_OBJECT_VALUE, key, createRecord(snapshot))
+	    vm.$store.commit(VUEXFIRE_OBJECT_VALUE, {
+	      key: key,
+	      record: createRecord(snapshot)
+	    })
 	  }, cancelCallback)
 	  vm._firebaseListeners[key] = { value: cb }
 	}
@@ -248,7 +267,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        'a Firebase reference.'
 	    )
 	  }
-	  vm.$store.dispatch(VUEXFIRE_OBJECT_VALUE, key, null)
+	  vm.$store.commit(VUEXFIRE_OBJECT_VALUE, {
+	    key: key,
+	    record: null
+	  })
 	  const listeners = vm._firebaseListeners[key]
 	  for (var event in listeners) {
 	    source.off(event, listeners[event])
@@ -256,29 +278,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	  vm.$firebaseRefs[key] = null
 	  vm._firebaseSources[key] = null
 	  vm._firebaseListeners[key] = null
-	}
-
-	function setupMutations (store) {
-	  store._mutations[VUEXFIRE_OBJECT_VALUE] = function (state, key, record) {
-	    state[key] = record
-	  }
-
-	  store._mutations[VUEXFIRE_ARRAY_CHANGE] = function (state, key, index, record) {
-	    state[key].splice(index, 1, record)
-	  }
-
-	  store._mutations[VUEXFIRE_ARRAY_ADD] = function (state, key, index, record) {
-	    state[key].splice(index, 0, record)
-	  }
-
-	  store._mutations[VUEXFIRE_ARRAY_REMOVE] = function (state, key, index) {
-	    state[key].splice(index, 1)
-	  }
-
-	  store._mutations[VUEXFIRE_ARRAY_MOVE] = function (state, key, index, newIndex) {
-	    const array = state[key]
-	    array.splice(newIndex, 0, array.splice(index, 1)[0])
-	  }
 	}
 
 	/**
@@ -294,7 +293,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (!vm.$store) {
 	      throw new Error('VuexFire: missing Vuex. Install Vuex before VuexFire')
 	    }
-	    setupMutations(vm.$store)
+
+	    // Vuex v1
+	    if (!vm.$store.commit) {
+	      setupMutations(vm.$store)
+	      vm.$store.commit = vm.$store.dispatch
+	    }
 	  }
 	}
 
@@ -360,6 +364,34 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  Vue.prototype.$unbind = function (key) {
 	    unbind(this, key)
+	  }
+	}
+
+	install.mutations = {}
+	install.mutations[VUEXFIRE_OBJECT_VALUE] = function (state, payload) {
+	  state[payload.key] = payload.record
+	}
+
+	install.mutations[VUEXFIRE_ARRAY_CHANGE] = function (state, payload) {
+	  state[payload.key].splice(payload.index, 1, payload.record)
+	}
+
+	install.mutations[VUEXFIRE_ARRAY_ADD] = function (state, payload) {
+	  state[payload.key].splice(payload.index, 0, payload.record)
+	}
+
+	install.mutations[VUEXFIRE_ARRAY_REMOVE] = function (state, payload) {
+	  state[payload.key].splice(payload.index, 1)
+	}
+
+	install.mutations[VUEXFIRE_ARRAY_MOVE] = function (state, payload) {
+	  const array = state[payload.key]
+	  array.splice(payload.newIndex, 0, array.splice(payload.index, 1)[0])
+	}
+
+	function setupMutations (store) {
+	  for (var key in install.mutations) {
+	    store._mutations[key] = install.mutations[key]
 	  }
 	}
 
