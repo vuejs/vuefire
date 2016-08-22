@@ -2,7 +2,7 @@
   "name": "vuexfire",
   "version": "0.2.0",
   "description": "Opinionated firebase binding for vuex",
-  "main": "index.js",
+  "main": "dist/vuexfire.js",
   "scripts": {
     "lint": "eslint --ext=js,html src tests examples karma.conf.js",
     "test": "npm run lint && karma start karma.conf.js --single-run",
