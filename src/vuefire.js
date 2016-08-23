@@ -196,8 +196,8 @@ function ensureRefs (vm) {
 }
 
 var init = function () {
+  if (!this.$options.firebase) return
   var bindings = this.$options.firebase
-  if (!bindings) return
   if (typeof bindings === 'function') bindings = bindings.call(this)
   ensureRefs(this)
   for (var key in bindings) {
