@@ -27,13 +27,13 @@ describe('VueFire', function () {
 
   describe('support Function options', function () {
     it('option is callable as function', function (done) {
+      var spy = sinon.spy()
       expect(function () {
         new Vue({
-          firebase: function () {
-
-          }
+          firebase: spy
         }).$mount()
-      }).to.not.throw(/not a function/)
+      }).to.not.throw()
+      expect(spy.calledOnce).to.be.true
       done()
     })
   })
