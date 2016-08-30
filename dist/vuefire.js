@@ -254,7 +254,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	var init = function () {
 	  var bindings = this.$options.firebase
 	  if (!bindings) return
-	  if (typeof bindings === 'function') bindings = bindings.call(this)
 	  ensureRefs(this)
 	  for (var key in bindings) {
 	    bind(this, key, bindings[key])
