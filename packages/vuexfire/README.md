@@ -28,16 +28,16 @@ Supports:
 2. In module environments, e.g CommonJS:
 
   ``` bash
-  npm install vue firebase vuefire --save
+  npm install vue firebase vuexfire --save
   ```
 
   ``` js
   var Vue = require('vue')
-  var VueFire = require('vuefire')
+  var VuexFire = require('vuexfire')
   var Firebase = require('firebase')
 
   // explicit installation required in module environments
-  Vue.use(VueFire)
+  Vue.use(VuexFire)
   ```
 
 ## Usage
