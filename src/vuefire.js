@@ -101,6 +101,22 @@ function bind (vm, key, source) {
 }
 
 /**
+ * Define a reactive property in a given vm if it's not defined
+ * yet
+ *
+ * @param {Vue} vm
+ * @param {string} key
+ * @param {*} val
+ */
+function defineReactive (vm, key, val) {
+  if (key in vm) {
+    vm[key] = val
+  } else {
+    Vue.util.defineReactive(vm, key, val)
+  }
+}
+
+/**
  * Bind a firebase data source to a key on a vm as an Array.
  *
  * @param {Vue} vm
@@ -110,7 +126,7 @@ function bind (vm, key, source) {
  */
 function bindAsArray (vm, key, source, cancelCallback) {
   var array = []
-  Vue.util.defineReactive(vm, key, array)
+  defineReactive(vm, key, array)
 
   var onAdd = source.on('child_added', function (snapshot, prevKey) {
     var index = prevKey ? indexForKey(array, prevKey) + 1 : 0
@@ -151,7 +167,7 @@ function bindAsArray (vm, key, source, cancelCallback) {
  * @param {function|null} cancelCallback
  */
 function bindAsObject (vm, key, source, cancelCallback) {
-  Vue.util.defineReactive(vm, key, {})
+  defineReactive(vm, key, {})
   var cb = source.on('value', function (snapshot) {
     vm[key] = createRecord(snapshot)
   }, cancelCallback)
