@@ -26,7 +26,7 @@ describe('VueFire', function () {
   })
 
   describe('support Function options', function () {
-    it('option is callable as function', function (done) {
+    it('option is callable as function', function () {
       var spy = sinon.spy()
       expect(function () {
         new Vue({
@@ -34,7 +34,6 @@ describe('VueFire', function () {
         }).$mount()
       }).to.not.throw()
       expect(spy.calledOnce).to.be.true
-      done()
     })
   })
 
