@@ -213,6 +213,7 @@ function ensureRefs (vm) {
 
 var init = function () {
   var bindings = this.$options.firebase
+  if (typeof bindings === 'function') bindings = bindings.call(this)
   if (!bindings) return
   ensureRefs(this)
   for (var key in bindings) {

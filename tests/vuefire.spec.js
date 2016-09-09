@@ -25,6 +25,19 @@ describe('VueFire', function () {
     })
   })
 
+  describe('support Function options', function () {
+    it('option is callable as function', function (done) {
+      var spy = sinon.spy()
+      expect(function () {
+        new Vue({
+          firebase: spy
+        }).$mount()
+      }).to.not.throw()
+      expect(spy.calledOnce).to.be.true
+      done()
+    })
+  })
+
   describe('bind as Array', function () {
     it('throws error for invalid firebase ref', function () {
       helpers.invalidFirebaseRefs.forEach(function (ref) {
