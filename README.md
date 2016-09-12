@@ -82,39 +82,28 @@ vm.$bindAsObject('user', myFirebaseRef.child('user'))
 vm.$bindAsArray('items', myFirebaseRef.child('items').limitToLast(25))
 ```
 
-To save user-input to your Firebase database, simply push the data onto `this.$firebaseRefs.messages` (instead of `this.messages`) within a Vue method to automatically sync with Firebase.
+To save user-input to your Firebase database, simply push the data onto `this.$firebaseRefs.items` (instead of `this.items`) within a Vue method to automatically sync with Firebase.
 For example, in your template you could add something simple like
 ```html
-<input v-model="message" placeholder="Add message"/>
-<button @click="addMessage">Add message</button>
+<input v-model="item" placeholder="Add an item"/>
+<button @click="addItem">Add item</button>
 
 ```
 And within your Vue component
 ```js
-methods: {
-  addMessage () {
-    this.$firebaseRefs.messages.push({
-      name: this.message
-    })
-  }
-}
-
-```
-Our complete component would then look like the following.
-```js
 export default {
   data () {
     return {
-      message: ''
+      item: ''
     }
   },
   firebase: {
-    users: db.ref('messages')
+    items: db.ref('items')
   },
   methods: {
-    addMessage () {
-      this.$firebaseRefs.messages.push({
-        name: this.message
+    addItem () {
+      this.$firebaseRefs.items.push({
+        name: this.item
       })
     }
   }
