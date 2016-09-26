@@ -1,6 +1,6 @@
 # VueFire [![Build Status](https://img.shields.io/circleci/project/vuejs/vuefire.svg)](https://circleci.com/gh/vuejs/vuefire) [![npm package](https://img.shields.io/npm/v/vuefire.svg)](https://www.npmjs.com/package/vuefire) [![coverage](https://img.shields.io/codecov/c/github/vuejs/vuefire.svg)](https://codecov.io/github/vuejs/vuefire)
 
-> Vue.js binding for Firebase.
+> Vue.js 1 & 2 binding for Firebase 2 & 3
 
 ## Installation
 
