@@ -6,8 +6,10 @@ var helpers = require('./helpers')
 Vue.use(VueFire)
 
 var firebaseApp = Firebase.initializeApp({
-  apiKey: helpers.generateRandomString(),
-  databaseURL: 'https://' + helpers.generateRandomString() + '.firebaseio-demo.com'
+  apiKey: 'AIzaSyC3eBV8N95k_K67GTfPqf67Mk1P-IKcYng',
+  authDomain: 'oss-test.firebaseapp.com',
+  databaseURL: 'https://oss-test.firebaseio.com',
+  storageBucket: 'oss-test.appspot.com'
 })
 
 describe('VueFire', function () {
