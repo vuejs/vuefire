@@ -21,7 +21,7 @@
     the latest published version of VueFire, you
     play with the code in this fiddle:
 
-    https://jsfiddle.net/chrisvfritz/zoL58hqg/
+    https://jsfiddle.net/posva/wtyop5jy/
     -->
 
     <div id="app">
@@ -66,9 +66,7 @@
             }
           },
           updateTodoText: function (todo, newText) {
-            var updates = {}
-            updates[todo['.key'] + '/text'] = newText
-            todosRef.update(updates)
+            todosRef.child(todo['.key']).child('text').set(newText)
           },
           removeTodo: function (todo) {
             todosRef.child(todo['.key']).remove()
