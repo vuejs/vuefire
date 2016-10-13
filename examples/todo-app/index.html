@@ -21,7 +21,7 @@
     the latest published version of VueFire, you
     play with the code in this fiddle:
 
-    https://jsfiddle.net/chrisvfritz/acy5n6j6/
+    https://jsfiddle.net/chrisvfritz/zoL58hqg/
     -->
 
     <div id="app">
@@ -32,7 +32,10 @@
       >
       <ul>
         <li v-for="todo in todos">
-          {{ todo.text }}
+          <input
+            :value="todo.text"
+            @input="updateTodoText(todo, $event.target.value)"
+          >
           <button @click="removeTodo(todo)">X</button>
         </li>
       </ul>
@@ -61,6 +64,11 @@
               })
               this.newTodoText = ''
             }
+          },
+          updateTodoText: function (todo, newText) {
+            var updates = {}
+            updates[todo['.key'] + '/text'] = newText
+            todosRef.update(updates)
           },
           removeTodo: function (todo) {
             todosRef.child(todo['.key']).remove()
