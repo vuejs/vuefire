@@ -80,6 +80,10 @@ Alternatively, you can also manually bind to a Firebase ref with the `$bindAsObj
 ``` js
 vm.$bindAsObject('user', myFirebaseRef.child('user'))
 vm.$bindAsArray('items', myFirebaseRef.child('items').limitToLast(25))
+
+// References are unbinded when the component is destroyed but you can manually unbind a reference
+// if needed
+vm.$unbind('items')
 ```
 
 To save user-input to your Firebase database, simply push the data onto `this.$firebaseRefs.items` (instead of `this.items`) within a Vue method to automatically sync with Firebase.
