@@ -66,7 +66,7 @@ var vm = new Vue({
 </div>
 ```
 
-or if you need access to the vm instance via `this`:
+or if you need access to the vm instance via `this`, you can specify the property as a function instead and return an object:
 
 ``` js
 
