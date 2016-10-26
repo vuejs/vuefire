@@ -66,6 +66,35 @@ var vm = new Vue({
 </div>
 ```
 
+or if you need access to the vm instance via `this`:
+
+``` js
+
+var firebaseApp = firebase.initializeApp({ ... })
+var db = firebaseApp.database()
+
+var vm = new Vue({
+  el: '#demo',
+  firebase() {
+    return {
+      // simple syntax, bind as an array by default
+      anArray: db.ref('url/to/my/collection/' + this.$route.params.id),
+      // can also bind to a query
+      // anArray: db.ref('url/to/my/collection' + this.$route.params.id).limitToLast(25)
+      // full syntax
+      anObject: {
+        source: db.ref('url/to/my/object/' + this.$route.params.id),
+        // optionally bind as an object
+        asObject: true,
+        // optionally provide the cancelCallback
+        cancelCallback: function () {}
+      }
+    }
+  }
+})
+
+```
+
 The above will bind the Vue instance's `anObject` and `anArray` to the respective Firebase data sources. In addition, the instance also gets the `$firebaseRefs` property, which holds the refs for each binding:
 
 ``` js
