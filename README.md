@@ -95,7 +95,7 @@ var vm = new Vue({
 
 ```
 
-The above will bind the Vue instance's `anObject` and `anArray` to the respective Firebase data sources. In addition, the instance also gets the `$firebaseRefs` property, which holds the refs for each binding:
+Both of the above examples will bind the Vue instance's `anObject` and `anArray` to the respective Firebase data sources. In addition, the instance also gets the `$firebaseRefs` property, which holds the refs for each binding:
 
 ``` js
 // add an item to the array
