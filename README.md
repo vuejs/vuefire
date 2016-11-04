@@ -154,7 +154,20 @@ The resulting bound array stored in `vm.items` will be:
   }
 ]
 ```
-
+Therefore to delete or update an item: first you have to obtain a reference to the '.key' property or the item object. In your Vue instance you could add 
+``` js
+//pass '.key' property from html
+vm.deleteItem = function(key) {
+  var ref = db.ref('items/'+key)
+  ref.remove()
+}
+//pass in item object from html
+vm.updateItem = function(item) { 
+  var key = item['.key']
+  var ref = db.ref('items/'+key)
+  ref.set(item)
+} 
+```
 ## Contributing
 
 Clone the repo, then:
