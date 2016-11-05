@@ -155,6 +155,20 @@ The resulting bound array stored in `vm.items` will be:
 ]
 ```
 
+To delete or update an item you can use the `.key` property of a given object:
+
+``` js
+ // Vue instance methods
+ deleteItem: function (item) {
+   this.$firebaseRefs.items.child(item['.key']).remove()
+ },
+ updateItem: function (item) { 
+   this.$firebaseRefs.items.child(item['.key']).set(item)
+ } 
+```
+
+You can check the full example at [examples/todo-app](examples/todo-app/index.html).
+
 ## Contributing
 
 Clone the repo, then:
