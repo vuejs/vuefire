@@ -9,11 +9,11 @@
   ``` html
   <head>
     <!-- Vue -->
-    <script src="https://cdn.jsdelivr.net/vue/1.0.24/vue.js"></script>
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
     <!-- Firebase -->
-    <script src="https://gstatic.com/firebasejs/3.0.3/firebase.js"></script>
+    <script src="https://gstatic.com/firebasejs/3.5.2/firebase.js"></script>
     <!-- VueFire -->
-    <script src="https://cdn.jsdelivr.net/vuefire/1.1.0/vuefire.min.js"></script>
+    <script src="https://unpkg.com/vuefire/dist/vuefire.js"></script>
   </head>
   ```
 
