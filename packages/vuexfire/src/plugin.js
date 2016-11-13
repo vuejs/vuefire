@@ -272,8 +272,7 @@ function install (Vue) {
 
   /* istanbul ignore else: Vue 1 */
   if (version >= 2) {
-    const usesInit = Vue.config._lifecycleHooks.indexOf('init') > -1
-    Vue.mixin(usesInit ? { init: VuexFireInit } : { beforeCreate: VuexFireInit })
+    Vue.mixin({ beforeCreate: VuexFireInit })
   } else {
     // override init and inject vuex init procedure
     // for 1.x backwards compatibility.
