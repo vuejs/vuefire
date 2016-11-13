@@ -19,7 +19,7 @@ Supports:
     <!-- Vue -->
     <script src="https://unpkg.com/vue/dist/vue.js"></script>
     <!-- Firebase -->
-    <script src="https://gstatic.com/firebasejs/3.0.3/firebase.js"></script>
+    <script src="https://gstatic.com/firebasejs/3.5.2/firebase.js"></script>
     <!-- VuexFire -->
     <script src="https://unpkg.com/vuexfire/dist/vuexfire.js"></script>
   </head>
