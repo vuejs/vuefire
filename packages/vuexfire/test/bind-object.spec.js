@@ -1,36 +1,27 @@
-var firebase = require('firebase')
-var Vue = require('vue')
+var Vue = require('vue/dist/vue.js')
 var Vuex = require('vuex')
 var helpers = require('./helpers')
 var VuexFire = require('../src')
 /* eslint-disable no-native-reassign, no-global-assign */
 window.Promise = require('promise-polyfill')
 
-var firebaseApp = firebase.initializeApp({
-  apiKey: 'AIzaSyC3eBV8N95k_K67GTfPqf67Mk1P-IKcYng',
-  authDomain: 'oss-test.firebaseapp.com',
-  databaseURL: 'https://oss-test.firebaseio.com',
-  storageBucket: 'oss-test.appspot.com'
-})
+var firebaseApp = helpers.createFirebaseApp()
 
 Vue.use(Vuex)
 Vue.use(VuexFire)
 
 var mapGetters = Vuex.mapGetters
 
-describe('Object binding', function () {
+describe('Vuex Modules', function () {
   var firebaseRef
 
   beforeEach(function (done) {
-    firebaseRef = firebaseApp.database().ref()
-    firebaseRef.remove(function (error) {
-      if (error) {
-        done(error)
-      } else {
-        firebaseRef = firebaseRef.child(helpers.generateRandomString())
+    helpers.createRef(firebaseApp)
+      .then(function (ref) {
+        firebaseRef = ref
         done()
-      }
-    })
+      })
+      .catch(done)
   })
 
   var store, computed
@@ -68,7 +59,7 @@ describe('Object binding', function () {
           asObject: true
         }
       },
-      template: '<div>{{ items | json }}</div>'
+      template: '<div>{{ items }}</div>'
     }).$mount()
     firebaseRef.child('items').set(obj, function () {
       obj['.key'] = 'items'
@@ -90,7 +81,7 @@ describe('Object binding', function () {
           asObject: true
         }
       },
-      template: '<div>{{ items | json }}</div>'
+      template: '<div>{{ items }}</div>'
     }).$mount()
     firebaseRef.child('items').set('foo', function () {
       expect(vm.items).to.deep.equal({
@@ -114,7 +105,7 @@ describe('Object binding', function () {
           asObject: true
         }
       },
-      template: '<div>{{ items | json }}</div>'
+      template: '<div>{{ items }}</div>'
     }).$mount()
     firebaseRef.child('items').set(null, function () {
       expect(vm.items).to.deep.equal({
@@ -139,7 +130,7 @@ describe('Object binding', function () {
           asObject: true
         }
       },
-      template: '<div>{{ items | json }}</div>'
+      template: '<div>{{ items }}</div>'
     }).$mount()
     rootRef.set('foo', function () {
       expect(vm.items).to.deep.equal({
@@ -163,7 +154,7 @@ describe('Object binding', function () {
           asObject: true
         }
       },
-      template: '<div>{{ items | json }}</div>'
+      template: '<div>{{ items }}</div>'
     }).$mount()
     firebaseRef.child('items').set({
       first: { index: 0 },
@@ -196,7 +187,7 @@ describe('Object binding', function () {
           asObject: true
         }
       },
-      template: '<div>{{ bindVar0 | json }} {{ bindVar1 | json }}</div>'
+      template: '<div>{{ bindVar0 }} {{ bindVar1 }}</div>'
     }).$mount()
 
     var items0 = {
@@ -243,7 +234,7 @@ describe('Object binding', function () {
           asObject: false
         }
       },
-      template: '<div>{{ bindVar0 | json }} {{ bindVar1 | json }}</div>'
+      template: '<div>{{ bindVar0 }} {{ bindVar1 }}</div>'
     }).$mount()
 
     var items0 = {
@@ -292,7 +283,7 @@ describe('Object binding', function () {
     var vm = new Vue({
       store: store,
       computed: computed,
-      template: '<div>{{ items | json }}</div>',
+      template: '<div>{{ items }}</div>',
       created: function () {
         this.$bindAsObject('items', firebaseRef.child('items'))
       }
@@ -319,7 +310,7 @@ describe('Object binding', function () {
     var vm = new Vue({
       store: store,
       computed: computed,
-      template: '<div>{{ items | json }}</div>',
+      template: '<div>{{ items }}</div>',
       created: function () {
         this.$bindAsObject('items', firebaseRef.child('items'))
       }

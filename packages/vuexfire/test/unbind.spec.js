@@ -1,17 +1,11 @@
-var firebase = require('firebase')
-var Vue = require('vue')
+var Vue = require('vue/dist/vue.js')
 var Vuex = require('vuex')
 var helpers = require('./helpers')
 var VuexFire = require('../src')
 /* eslint-disable no-native-reassign, no-global-assign */
 window.Promise = require('promise-polyfill')
 
-var firebaseApp = firebase.initializeApp({
-  apiKey: 'AIzaSyC3eBV8N95k_K67GTfPqf67Mk1P-IKcYng',
-  authDomain: 'oss-test.firebaseapp.com',
-  databaseURL: 'https://oss-test.firebaseio.com',
-  storageBucket: 'oss-test.appspot.com'
-})
+var firebaseApp = helpers.createFirebaseApp()
 
 Vue.use(Vuex)
 Vue.use(VuexFire)
@@ -22,15 +16,12 @@ describe('Unbind', function () {
   var firebaseRef
 
   beforeEach(function (done) {
-    firebaseRef = firebaseApp.database().ref()
-    firebaseRef.remove(function (error) {
-      if (error) {
-        done(error)
-      } else {
-        firebaseRef = firebaseRef.child(helpers.generateRandomString())
+    helpers.createRef(firebaseApp)
+      .then(function (ref) {
+        firebaseRef = ref
         done()
-      }
-    })
+      })
+      .catch(done)
   })
 
   var store, computed
