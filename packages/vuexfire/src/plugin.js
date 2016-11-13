@@ -12,6 +12,7 @@ const VUEXFIRE_ARRAY_MOVE = 'VUEXFIRE/arrayMove'
  */
 function _getKey (snapshot) {
   return typeof snapshot.key === 'function'
+  /* istanbul ignore next: Firebase 2.x */
     ? snapshot.key()
     : snapshot.key
 }
@@ -23,8 +24,10 @@ function _getKey (snapshot) {
  * @return {FirebaseReference}
  */
 function _getRef (refOrQuery) {
+  /* istanbul ignore if: Firebase 2.x */
   if (typeof refOrQuery.ref === 'function') {
     refOrQuery = refOrQuery.ref()
+    /* istanbul ignore else: Fallback */
   } else if (typeof refOrQuery.ref === 'object') {
     refOrQuery = refOrQuery.ref
   }
@@ -70,7 +73,7 @@ function indexForKey (array, key) {
       return i
     }
   }
-  /* istanbul ignore next */
+  /* istanbul ignore next: Fallback */
   return -1
 }
 
@@ -231,7 +234,7 @@ function ensureRefs (vm) {
       throw new Error('VuexFire: missing Vuex. Install Vuex before VuexFire')
     }
 
-    // Vuex v1
+    /* istanbul ignore if: Vuex 1 */
     if (!vm.$store.commit) {
       setupMutations(vm.$store)
       vm.$store.commit = vm.$store.dispatch
@@ -267,6 +270,7 @@ function install (Vue) {
   // override init to get called after vuex
   const version = Number(Vue.version.split('.')[0])
 
+  /* istanbul ignore else: Vue 1 */
   if (version >= 2) {
     const usesInit = Vue.config._lifecycleHooks.indexOf('init') > -1
     Vue.mixin(usesInit ? { init: VuexFireInit } : { beforeCreate: VuexFireInit })
@@ -326,6 +330,12 @@ install.mutations[VUEXFIRE_ARRAY_MOVE] = function (state, payload) {
   array.splice(payload.newIndex, 0, array.splice(payload.index, 1)[0])
 }
 
+/**
+ * Setup mutations for Vuex 1
+ *
+ * @param {VueStore} store
+ */
+/* istanbul ignore next: Vuex 1 */
 function setupMutations (store) {
   for (var key in install.mutations) {
     store._mutations[key] = install.mutations[key]
@@ -334,6 +344,7 @@ function setupMutations (store) {
 
 module.exports = install
 
+/* istanbul ignore if: only works when using <script/> */
 if (typeof window !== 'undefined' && window.Vue) {
   install(window.Vue)
 }
