@@ -96,6 +96,39 @@ new Vue({
 })
 ```
 
+#### Modules
+
+In larger applications you may consider splitting up your store
+into [modules](http://vuex.vuejs.org/en/modules.html). If that's your case you
+can use module with vuexfire by using a dot separated key like `cart.items` or
+`user.cart.items`. You must use the `moduleMutations()` method to generate the
+mutations for your module
+
+``` js
+  // Define a module
+  var cart = {
+    state: {
+      items: null // Initialize the variable
+    },
+    // Getters receive the cart module state only
+    getters: {
+      lastItem: function (state) {
+        return state.items[state.items.length - 1]
+      },
+      items: function (state) { return state.items }
+    },
+    mutations: VuexFire.moduleMutations('cart') // This is the name given to the store
+  }
+
+  // Create the store
+  var store = new Vuex.Store({
+    modules: {
+      cart: cart
+    }
+  }
+
+```
+
 Everything else works just as [vuefire](https://github.com/vuejs/vuefire). Refer
 to its readme for more documentation.
 
