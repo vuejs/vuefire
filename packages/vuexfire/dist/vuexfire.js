@@ -59,7 +59,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 1 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
+
+	var utils = __webpack_require__(2)
 
 	const VUEXFIRE_OBJECT_VALUE = 'VUEXFIRE/objectValue'
 	const VUEXFIRE_ARRAY_CHANGE = 'VUEXFIRE/arrayChange'
@@ -75,6 +77,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	function _getKey (snapshot) {
 	  return typeof snapshot.key === 'function'
+	  /* istanbul ignore next: Firebase 2.x */
 	    ? snapshot.key()
 	    : snapshot.key
 	}
@@ -86,8 +89,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @return {FirebaseReference}
 	 */
 	function _getRef (refOrQuery) {
+	  /* istanbul ignore if: Firebase 2.x */
 	  if (typeof refOrQuery.ref === 'function') {
 	    refOrQuery = refOrQuery.ref()
+	    /* istanbul ignore else: Fallback */
 	  } else if (typeof refOrQuery.ref === 'object') {
 	    refOrQuery = refOrQuery.ref
 	  }
@@ -133,7 +138,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return i
 	    }
 	  }
-	  /* istanbul ignore next */
+	  /* istanbul ignore next: Fallback */
 	  return -1
 	}
 
@@ -144,9 +149,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @param {string} key
 	 * @param {object} source
 	 */
-	function bind (vm, key, source) {
+	function bind (vm, fullKey, source) {
 	  var asObject = false
 	  var cancelCallback = null
+	  var module = utils.modules.getModuleFromKey(fullKey)
+	  var key = utils.modules.getKey(fullKey)
 	  // check { source, asArray, cancelCallback } syntax
 	  if (isObject(source) && source.hasOwnProperty('source')) {
 	    asObject = source.asObject
@@ -156,19 +163,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	  if (!isObject(source)) {
 	    throw new Error('VuexFire: invalid Firebase binding source.')
 	  }
-	  if (!(key in vm.$store.state)) {
+	  if (!utils.vuex.isKeyInState(vm.$store.state, module, key)) {
+	    // TODO better error if module
 	    throw new Error(
-	      'VuexFire: bind failed: "' + key + '" is not defined in the store state'
+	      'VuexFire: bind failed: "' + (module && module + '/' || '') + key + '" is not defined in the store state'
 	    )
 	  }
 	  var ref = _getRef(source)
-	  vm.$firebaseRefs[key] = ref
-	  vm._firebaseSources[key] = source
+
+	  vm.$firebaseRefs[fullKey] = ref
+	  vm._firebaseSources[fullKey] = source
 	  // bind based on initial value type
 	  if (asObject) {
-	    bindAsObject(vm, key, source, cancelCallback)
+	    bindAsObject(vm, fullKey, module, key, source, cancelCallback)
 	  } else {
-	    bindAsArray(vm, key, source, cancelCallback)
+	    bindAsArray(vm, fullKey, module, key, source, cancelCallback)
 	  }
 	}
 
@@ -176,18 +185,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * Bind a firebase data source to a key on a vm as an Array.
 	 *
 	 * @param {Vue} vm
+	 * @param {string} module
 	 * @param {string} key
 	 * @param {object} source
 	 * @param {function|null} cancelCallback
 	 */
-	function bindAsArray (vm, key, source, cancelCallback) {
+	function bindAsArray (vm, fullKey, module, key, source, cancelCallback) {
+	  var state = vm.$store.state
 	  // set it as an array
-	  vm.$store.state[key] = []
+	  utils.vuex.initWithValue(state, module, key, [])
 
 	  const onAdd = source.on('child_added', function (snapshot, prevKey) {
-	    const array = vm.$store.state[key]
+	    const array = utils.vuex.get(state, module, key)
 	    const index = prevKey ? indexForKey(array, prevKey) + 1 : 0
-	    vm.$store.commit(VUEXFIRE_ARRAY_ADD, {
+	    vm.$store.commit(utils.vuex.getMutationName(module, VUEXFIRE_ARRAY_ADD), {
 	      key: key,
 	      index: index,
 	      record: createRecord(snapshot)
@@ -195,18 +206,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, cancelCallback)
 
 	  const onRemove = source.on('child_removed', function (snapshot) {
-	    const array = vm.$store.state[key]
+	    const array = utils.vuex.get(state, module, key)
 	    const index = indexForKey(array, _getKey(snapshot))
-	    vm.$store.commit(VUEXFIRE_ARRAY_REMOVE, {
+	    vm.$store.commit(utils.vuex.getMutationName(module, VUEXFIRE_ARRAY_REMOVE), {
 	      key: key,
 	      index: index
 	    })
 	  }, cancelCallback)
 
 	  const onChange = source.on('child_changed', function (snapshot) {
-	    const array = vm.$store.state[key]
+	    const array = utils.vuex.get(state, module, key)
 	    const index = indexForKey(array, _getKey(snapshot))
-	    vm.$store.commit(VUEXFIRE_ARRAY_CHANGE, {
+	    vm.$store.commit(utils.vuex.getMutationName(module, VUEXFIRE_ARRAY_CHANGE), {
 	      key: key,
 	      index: index,
 	      record: createRecord(snapshot)
@@ -214,12 +225,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, cancelCallback)
 
 	  const onMove = source.on('child_moved', function (snapshot, prevKey) {
-	    const array = vm.$store.state[key]
+	    const array = utils.vuex.get(state, module, key)
 	    const index = indexForKey(array, _getKey(snapshot))
 	    var newIndex = prevKey ? indexForKey(array, prevKey) + 1 : 0
 	    // TODO refactor + 1
 	    newIndex += index < newIndex ? -1 : 0
-	    vm.$store.commit(VUEXFIRE_ARRAY_MOVE, {
+	    vm.$store.commit(utils.vuex.getMutationName(module, VUEXFIRE_ARRAY_MOVE), {
 	      key: key,
 	      index: index,
 	      newIndex: newIndex,
@@ -227,7 +238,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    })
 	  }, cancelCallback)
 
-	  vm._firebaseListeners[key] = {
+	  vm._firebaseListeners[fullKey] = {
 	    child_added: onAdd,
 	    child_removed: onRemove,
 	    child_changed: onChange,
@@ -243,14 +254,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @param {Object} source
 	 * @param {function|null} cancelCallback
 	 */
-	function bindAsObject (vm, key, source, cancelCallback) {
+	function bindAsObject (vm, fullKey, module, key, source, cancelCallback) {
 	  const cb = source.on('value', function (snapshot) {
-	    vm.$store.commit(VUEXFIRE_OBJECT_VALUE, {
+	    vm.$store.commit(utils.vuex.getMutationName(module, VUEXFIRE_OBJECT_VALUE), {
 	      key: key,
 	      record: createRecord(snapshot)
 	    })
 	  }, cancelCallback)
-	  vm._firebaseListeners[key] = { value: cb }
+	  vm._firebaseListeners[fullKey] = { value: cb }
 	}
 
 	/**
@@ -260,6 +271,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @param {string} key
 	 */
 	function unbind (vm, key) {
+	  var module = utils.modules.getModuleFromKey(key)
 	  var source = vm._firebaseSources && vm._firebaseSources[key]
 	  if (!source) {
 	    throw new Error(
@@ -267,7 +279,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        'a Firebase reference.'
 	    )
 	  }
-	  vm.$store.commit(VUEXFIRE_OBJECT_VALUE, {
+	  vm.$store.commit(utils.vuex.getMutationName(module, VUEXFIRE_OBJECT_VALUE), {
 	    key: key,
 	    record: null
 	  })
@@ -294,7 +306,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      throw new Error('VuexFire: missing Vuex. Install Vuex before VuexFire')
 	    }
 
-	    // Vuex v1
+	    /* istanbul ignore if: Vuex 1 */
 	    if (!vm.$store.commit) {
 	      setupMutations(vm.$store)
 	      vm.$store.commit = vm.$store.dispatch
@@ -330,9 +342,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	  // override init to get called after vuex
 	  const version = Number(Vue.version.split('.')[0])
 
+	  /* istanbul ignore else: Vue 1 */
 	  if (version >= 2) {
-	    const usesInit = Vue.config._lifecycleHooks.indexOf('init') > -1
-	    Vue.mixin(usesInit ? { init: VuexFireInit } : { beforeCreate: VuexFireInit })
+	    Vue.mixin({ beforeCreate: VuexFireInit })
 	  } else {
 	    // override init and inject vuex init procedure
 	    // for 1.x backwards compatibility.
@@ -389,6 +401,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	  array.splice(payload.newIndex, 0, array.splice(payload.index, 1)[0])
 	}
 
+	/**
+	 * Setup mutations for a module (Vuex 2)
+	 *
+	 * @param {String} module
+	 */
+	install.moduleMutations = function moduleMutations (module) {
+	  return Object.keys(install.mutations).reduce(function (mutations, m) {
+	    mutations[module.replace('.', '/') + '/' + m] = install.mutations[m]
+	    return mutations
+	  }, {})
+	}
+
+	/**
+	 * Setup mutations for Vuex 1
+	 *
+	 * @param {VueStore} store
+	 */
+	/* istanbul ignore next: Vuex 1 */
 	function setupMutations (store) {
 	  for (var key in install.mutations) {
 	    store._mutations[key] = install.mutations[key]
@@ -397,8 +427,89 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	module.exports = install
 
+	/* istanbul ignore if: only works when using <script/> */
 	if (typeof window !== 'undefined' && window.Vue) {
 	  install(window.Vue)
+	}
+
+
+/***/ },
+/* 2 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports.modules = __webpack_require__(3)
+	exports.vuex = __webpack_require__(4)
+
+
+/***/ },
+/* 3 */
+/***/ function(module, exports) {
+
+	/**
+	 * Returns the module name of a given key
+	 * getModuleFromKey('items') => ''
+	 * getModuleFromKey('cart.items') => 'cart'
+	 * getModuleFromKey('user.cart.items') => 'user/cart'
+	 *
+	 * @param {string} key
+	 * @return {string} module name
+	 */
+	exports.getModuleFromKey = function getModuleFromKey (key) {
+	  var keys = key.split('.')
+	  return keys.slice(0, keys.length - 1).reduce(function (module, sub) {
+	    return module ? module + '/' + sub : sub
+	  }, '')
+	}
+
+	/**
+	 * Returns the key of a module + key string
+	 * getKey('items') => 'items'
+	 * getKey('cart.items') => 'items'
+	 * getKey('user.cart.items') => 'items'
+	 *
+	 * @param {string} key
+	 * @return {string} key as defined in the state
+	 */
+	exports.getKey = function getKey (key) {
+	  var keys = key.split('.')
+	  return keys[keys.length - 1] || ''
+	}
+
+
+/***/ },
+/* 4 */
+/***/ function(module, exports) {
+
+	exports.isKeyInState = function isKeyInState (state, module, key) {
+	  return (module
+	    ? walkObject(state, module.split('/'))[key]
+	    : state[key]) !== undefined
+	}
+
+	exports.initWithValue = function initWithValue (state, module, key, value) {
+	  if (module) {
+	    walkObject(state, module.split('/'))[key] = value
+	  } else {
+	    state[key] = value
+	  }
+	}
+
+	exports.get = function get (state, module, key) {
+	  return module
+	    ? walkObject(state, module.split('/'))[key]
+	    : state[key]
+	}
+
+	exports.getMutationName = function getMutationName (module, mutation) {
+	  return module
+	    ? module + '/' + mutation
+	    : mutation
+	}
+
+	function walkObject (obj, keys) {
+	  return keys.reduce(function (target, key) {
+	    return target[key]
+	  }, obj)
 	}
 
 
