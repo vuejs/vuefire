@@ -18,6 +18,8 @@ Supports:
   <head>
     <!-- Vue -->
     <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <!-- Vuex -->
+    <script src="https://unpkg.com/vuex/dist/vuex.js"></script>
     <!-- Firebase -->
     <script src="https://gstatic.com/firebasejs/3.5.2/firebase.js"></script>
     <!-- VuexFire -->
@@ -33,10 +35,12 @@ Supports:
 
   ``` js
   var Vue = require('vue')
+  var Vuex = require('vuex')
   var VuexFire = require('vuexfire')
   var Firebase = require('firebase')
 
   // explicit installation required in module environments
+  Vue.use(Vuex)
   Vue.use(VuexFire)
   ```
 
