@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <title>VuexFire Todo App Demo</title>
-    <script src="https://www.gstatic.com/firebasejs/3.3.0/firebase.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/3.5.2/firebase.js"></script>
     <script src="https://unpkg.com/vue@next/dist/vue.js"></script>
     <script src="https://unpkg.com/vuex@next/dist/vuex.js"></script>
     <script src="../../dist/vuexfire.js"></script>
@@ -31,18 +31,22 @@
     }
     var firebaseApp = firebase.initializeApp(config)
     var db = firebaseApp.database()
-    var itemsRef = db.ref('items')
+    var itemsRef = db.ref('todos-modules')
 
-    var state = {
-      items: null
+    var todos = {
+      state: { items: null },
+      getters: {
+        items: state => state.items
+      },
+      mutations: Object.assign({
+        setItems (state, items) {
+          state.items = items
+        }
+      }, VuexFire.moduleMutations('todos'))
     }
 
     var store = new Vuex.Store({
-      state: state,
-      mutations: VuexFire.mutations,
-      getters: {
-        items: state => state.items
-      }
+      modules: { todos }
     })
 
     window.vm = new Vue({ // eslint-disable-line no-unused-vars
@@ -52,7 +56,7 @@
         'items'
       ]),
       firebase: {
-        items: db.ref('items')
+        'todos.items': itemsRef
       },
       data: {
         newTodo: ''

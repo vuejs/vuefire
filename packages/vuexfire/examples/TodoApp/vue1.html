@@ -4,15 +4,15 @@
     <meta charset="utf-8">
     <title>VuexFire Todo App Demo</title>
     <script src="https://www.gstatic.com/firebasejs/3.5.2/firebase.js"></script>
-    <script src="https://unpkg.com/vue@next/dist/vue.js"></script>
-    <script src="https://unpkg.com/vuex@next/dist/vuex.js"></script>
+    <script src="https://unpkg.com/vue@1.0.28/dist/vue.js"></script>
+    <script src="https://unpkg.com/vuex@1.0.0"></script>
     <script src="../../dist/vuexfire.js"></script>
   </head>
   <body>
 
     <div id="app">
       <ul>
-        <li v-for="item in items" :key="item['.key']">
+        <li v-for="item in items" track-by=".key">
           {{ item.text }}
           <button @click="removeTodo(item['.key'])">X</button>
         </li>
@@ -24,7 +24,7 @@
     </div>
 
     <script>
-    /* global Vue, Vuex, firebase, VuexFire */
+    /* global Vue, Vuex, firebase */
     var config = {
       apiKey: 'AIzaSyB45odnFhUCczEEKGluijNNS4gPFEAf2G8',
       databaseURL: 'https://vuexfire.firebaseio.com'
@@ -37,22 +37,20 @@
       items: null
     }
 
-    var store = new Vuex.Store({
-      state: state,
-      mutations: VuexFire.mutations,
-      getters: {
-        items: state => state.items
-      }
-    })
+    var mutations = {}
+
+    var store = new Vuex.Store({state: state, mutations: mutations})
 
     window.vm = new Vue({ // eslint-disable-line no-unused-vars
       el: '#app',
       store: store,
-      computed: Vuex.mapGetters([
-        'items'
-      ]),
+      vuex: {
+        getters: {
+          items: function (state) { return state.items }
+        }
+      },
       firebase: {
-        items: itemsRef
+        items: db.ref('items')
       },
       data: {
         newTodo: ''
