@@ -57,6 +57,15 @@ var vm = new Vue({
 })
 ```
 
+**About the cancelCallback**: This callback is actually an error handler that
+is called if the read/write doesn't succeed. You can of course also use it with
+`asObject: false` and apply it to arrays. The firebase doc stateees:
+
+> We can pass an optional cancel callback to our event subscription that will
+> be called if the read is ever cancelled. A read would be cancelled if the app
+> client doesn't have permission to read from that database reference. This
+> callback will be passed an error object indicating why the failure occurrede.
+
 ``` html
 <div id="demo">
   <pre>{{ anObject | json }}</pre>
