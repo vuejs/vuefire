@@ -64,7 +64,7 @@ is called if the read/write doesn't succeed. You can of course also use it with
 > We can pass an optional cancel callback to our event subscription that will
 > be called if the read is ever cancelled. A read would be cancelled if the app
 > client doesn't have permission to read from that database reference. This
-> callback will be passed an error object indicating why the failure occurrede.
+> callback will be passed an error object indicating why the failure occurred.
 
 ``` html
 <div id="demo">
