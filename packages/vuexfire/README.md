@@ -4,10 +4,8 @@
 
 This is heavily inspired from [vuefire](https://github.com/vuejs/vuefire).
 
-Supports:
-
-- Vue 1/2 with Vuex 1
-- Vue 2 with Vuex 2
+Supports only Vue 2, Vuex 2 and Firebase 3
+If you need an older version check the `v1` tag: `npm i -D vuexfire@v1`
 
 ## Installation
 

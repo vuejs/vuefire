@@ -1,327 +1,61 @@
-var Vue = require('vue/dist/vue.js')
-var Vuex = require('vuex')
-var helpers = require('./helpers')
-var VuexFire = require('../src')
-/* eslint-disable no-native-reassign, no-global-assign */
-window.Promise = require('promise-polyfill')
+import test from 'ava'
+import Vue from 'vue'
+import Vuex from 'vuex'
+import { MockFirebase } from 'firebase-mock'
 
-var firebaseApp = helpers.createFirebaseApp()
+import VuexFire, {
+  mutations,
+  generateBind
+} from '../src'
 
-Vue.use(Vuex)
-Vue.use(VuexFire)
+const root = new MockFirebase()
 
-var mapGetters = Vuex.mapGetters
+test.before(t => {
+  Vue.use(Vuex)
+})
 
-describe('Vuex Modules', function () {
-  var firebaseRef
-
-  beforeEach(function (done) {
-    helpers.createRef(firebaseApp)
-      .then(function (ref) {
-        firebaseRef = ref
-        done()
-      })
-      .catch(done)
-  })
-
-  var store, computed
-  computed = mapGetters(['items', 'bindVar0', 'bindVar1'])
-  beforeEach(function () {
-    store = new Vuex.Store({
-      state: {
-        items: {
-          '.ref': 'items'
-        },
-        bindVar0: null,
-        bindVar1: null
-      },
-      getters: {
-        items: function (state) { return state.items },
-        bindVar0: function (state) { return state.bindVar0 },
-        bindVar1: function (state) { return state.bindVar1 }
-      },
-      mutations: VuexFire.mutations
-    })
-  })
-
-  it('binds to an Object', function (done) {
-    var obj = {
-      first: { index: 0 },
-      second: { index: 1 },
-      third: { index: 2 }
-    }
-    var vm = new Vue({
-      store: store,
-      computed: mapGetters(['items', 'bindVar0', 'bindVar1']),
-      firebase: {
-        items: {
-          source: firebaseRef.child('items'),
-          asObject: true
-        }
-      },
-      template: '<div>{{ items }}</div>'
-    }).$mount()
-    firebaseRef.child('items').set(obj, function () {
-      obj['.key'] = 'items'
-      expect(vm.items).to.deep.equal(obj)
-      Vue.nextTick(function () {
-        expect(vm.$el.textContent).to.contain(JSON.stringify(obj, null, 2))
-        done()
-      })
-    })
-  })
-
-  it('binds to a primitive', function (done) {
-    var vm = new Vue({
-      store: store,
-      computed: computed,
-      firebase: {
-        items: {
-          source: firebaseRef.child('items'),
-          asObject: true
-        }
-      },
-      template: '<div>{{ items }}</div>'
-    }).$mount()
-    firebaseRef.child('items').set('foo', function () {
-      expect(vm.items).to.deep.equal({
-        '.key': 'items',
-        '.value': 'foo'
-      })
-      Vue.nextTick(function () {
-        expect(vm.$el.textContent).to.contain(JSON.stringify(vm.items, null, 2))
-        done()
-      })
-    })
-  })
-
-  it('binds to Firebase reference with no data', function (done) {
-    var vm = new Vue({
-      store: store,
-      computed: computed,
-      firebase: {
-        items: {
-          source: firebaseRef.child('items'),
-          asObject: true
-        }
-      },
-      template: '<div>{{ items }}</div>'
-    }).$mount()
-    firebaseRef.child('items').set(null, function () {
-      expect(vm.items).to.deep.equal({
-        '.key': 'items',
-        '.value': null
-      })
-      Vue.nextTick(function () {
-        expect(vm.$el.textContent).to.contain(JSON.stringify(vm.items, null, 2))
-        done()
-      })
-    })
-  })
-
-  it('sets the key as null when bound to the root of the database', function (done) {
-    var rootRef = firebaseRef.root
-    var vm = new Vue({
-      store: store,
-      computed: computed,
-      firebase: {
-        items: {
-          source: rootRef,
-          asObject: true
-        }
-      },
-      template: '<div>{{ items }}</div>'
-    }).$mount()
-    rootRef.set('foo', function () {
-      expect(vm.items).to.deep.equal({
-        '.key': null,
-        '.value': 'foo'
-      })
-      Vue.nextTick(function () {
-        expect(vm.$el.textContent).to.contain(JSON.stringify(vm.items, null, 2))
-        done()
-      })
-    })
-  })
-
-  it('binds with limit queries', function (done) {
-    var vm = new Vue({
-      store: store,
-      computed: computed,
-      firebase: {
-        items: {
-          source: firebaseRef.child('items').limitToLast(2),
-          asObject: true
-        }
-      },
-      template: '<div>{{ items }}</div>'
-    }).$mount()
-    firebaseRef.child('items').set({
-      first: { index: 0 },
-      second: { index: 1 },
-      third: { index: 2 }
-    }, function () {
-      expect(vm.items).to.deep.equal({
-        '.key': 'items',
-        second: { index: 1 },
-        third: { index: 2 }
-      })
-      Vue.nextTick(function () {
-        expect(vm.$el.textContent).to.contain(JSON.stringify(vm.items, null, 2))
-        done()
-      })
-    })
-  })
-
-  it('binds multiple Firebase references to state variables at the same time', function (done) {
-    var vm = new Vue({
-      store: store,
-      computed: computed,
-      firebase: {
-        bindVar0: {
-          source: firebaseRef.child('items0'),
-          asObject: true
-        },
-        bindVar1: {
-          source: firebaseRef.child('items1'),
-          asObject: true
-        }
-      },
-      template: '<div>{{ bindVar0 }} {{ bindVar1 }}</div>'
-    }).$mount()
-
-    var items0 = {
-      first: { index: 0 },
-      second: { index: 1 },
-      third: { index: 2 }
-    }
-
-    var items1 = {
-      bar: {
-        foo: 'baz'
-      },
-      baz: true,
-      foo: 100
-    }
-
-    firebaseRef.set({
-      items0: items0,
-      items1: items1
-    }, function () {
-      items0['.key'] = 'items0'
-      expect(vm.bindVar0).to.deep.equal(items0)
-      items1['.key'] = 'items1'
-      expect(vm.bindVar1).to.deep.equal(items1)
-      Vue.nextTick(function () {
-        expect(vm.$el.textContent).to.contain(JSON.stringify(vm.bindVar0, null, 2))
-        expect(vm.$el.textContent).to.contain(JSON.stringify(vm.bindVar1, null, 2))
-        done()
-      })
-    })
-  })
-
-  it('binds a mixture of arrays and objects to state variables at the same time', function (done) {
-    var vm = new Vue({
-      store: store,
-      computed: computed,
-      firebase: {
-        bindVar0: {
-          source: firebaseRef.child('items0'),
-          asObject: true
-        },
-        bindVar1: {
-          source: firebaseRef.child('items1'),
-          asObject: false
-        }
-      },
-      template: '<div>{{ bindVar0 }} {{ bindVar1 }}</div>'
-    }).$mount()
-
-    var items0 = {
-      first: { index: 0 },
-      second: { index: 1 },
-      third: { index: 2 }
-    }
-
-    var items1 = {
-      bar: {
-        foo: 'baz'
-      },
-      baz: true,
-      foo: 100
-    }
-
-    firebaseRef.set({
-      items0: items0,
-      items1: items1
-    }, function () {
-      items0['.key'] = 'items0'
-      expect(vm.bindVar0).to.deep.equal(items0)
-      expect(vm.bindVar1).to.deep.equal([
-        { '.key': 'bar', foo: 'baz' },
-        { '.key': 'baz', '.value': true },
-        { '.key': 'foo', '.value': 100 }
-      ])
-      Vue.nextTick(function () {
-        expect(vm.$el.textContent).to.contain(JSON.stringify(vm.bindVar0, null, 2))
-        expect(vm.$el.textContent).to.contain(JSON.stringify(vm.bindVar1, null, 2))
-        done()
-      })
-    })
-  })
-
-  it('binds with $bindAsObject after $unbind', function (done) {
-    var obj = {
-      first: { index: 0 },
-      second: { index: 1 },
-      third: { index: 2 }
-    }
-    var objOther = {
-      onlyOne: { index: 0 },
-      second: { index: 1 }
-    }
-    var vm = new Vue({
-      store: store,
-      computed: computed,
-      template: '<div>{{ items }}</div>',
-      created: function () {
-        this.$bindAsObject('items', firebaseRef.child('items'))
+test.beforeEach(t => {
+  t.context.store = new Vuex.Store({
+    state: {
+      items: null
+    },
+    getters: {
+      items (state) { return state.items }
+    },
+    actions: {
+      setItemsRef (context, ref) {
+        bind('items', ref)
       }
-    }).$mount()
-    firebaseRef.child('items').set(obj, function () {
-      obj['.key'] = 'items'
-      expect(vm.items).to.deep.equal(obj)
-      vm.$unbind('items')
-      vm.$bindAsObject('items', firebaseRef.child('others'))
-      firebaseRef.child('others').set(objOther, function () {
-        objOther['.key'] = 'others'
-        expect(vm.items).to.deep.equal(objOther)
-        done()
-      })
-    })
+    },
+    mutations: {
+      ...mutations
+    },
+    plugins: [VuexFire]
   })
 
-  it('binds with $bindAsObject', function (done) {
-    var obj = {
-      first: { index: 0 },
-      second: { index: 1 },
-      third: { index: 2 }
-    }
-    var vm = new Vue({
-      store: store,
-      computed: computed,
-      template: '<div>{{ items }}</div>',
-      created: function () {
-        this.$bindAsObject('items', firebaseRef.child('items'))
-      }
-    }).$mount()
-    firebaseRef.child('items').set(obj, function () {
-      obj['.key'] = 'items'
-      expect(vm.items).to.deep.equal(obj)
-      Vue.nextTick(function () {
-        expect(vm.$el.textContent).to.contain(JSON.stringify(obj, null, 2))
-        done()
-      })
-    })
+  const bind = generateBind(t.context.store.commit)
+
+  // Create a fresh ref for the test
+  const ref = root.push({
+    test: null
   })
+  root.flush()
+  t.context.ref = ref
+})
+
+test('pass', t => {
+  const items = {
+    foo: 1,
+    bar: 2,
+    '.key': t.context.ref.key
+  }
+  t.context.store.dispatch('setItemsRef', t.context.ref)
+  t.context.ref.set(items)
+  t.context.ref.flush()
+
+  t.is(t.context.ref.getData().foo, 1)
+  t.deepEqual(t.context.store.state.items, items)
+  t.context.ref.child('foo').set(3)
+  t.context.ref.flush()
+  t.deepEqual(t.context.store.state.items.foo, 3)
 })

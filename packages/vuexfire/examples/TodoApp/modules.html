@@ -4,8 +4,8 @@
     <meta charset="utf-8">
     <title>VuexFire Todo App Demo</title>
     <script src="https://www.gstatic.com/firebasejs/3.5.2/firebase.js"></script>
-    <script src="https://unpkg.com/vue@next/dist/vue.js"></script>
-    <script src="https://unpkg.com/vuex@next/dist/vuex.js"></script>
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/vuex/dist/vuex.js"></script>
     <script src="../../dist/vuexfire.js"></script>
   </head>
   <body>
@@ -38,6 +38,11 @@
       getters: {
         items: state => state.items
       },
+      actions: {
+        test (context) {
+          debugger
+        }
+      },
       mutations: Object.assign({
         setItems (state, items) {
           state.items = items
@@ -45,8 +50,14 @@
       }, VuexFire.moduleMutations('todos'))
     }
 
+    function vuexPlugin (store) {
+      store._modules.root._children.todos.context.bind = () => console.log(arguments)
+    }
     var store = new Vuex.Store({
-      modules: { todos }
+      modules: { todos },
+      plugins: [
+        vuexPlugin
+      ]
     })
 
     window.vm = new Vue({ // eslint-disable-line no-unused-vars

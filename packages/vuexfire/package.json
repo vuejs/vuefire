@@ -7,7 +7,8 @@
     "lint": "eslint --ext=js,html src tests examples karma.conf.js",
     "test": "npm run lint && karma start karma.conf.js --single-run",
     "dev": "webpack src/index.js dist/vuexfire.js --output-library=VuexFire --output-library-target=umd --watch",
-    "dev:test": "karma start karma.conf.js",
+    "test:unit": "ava",
+    "dev:test": "npm run test:unit -- --watch",
     "build-dev": "webpack src/index.js dist/vuexfire.js --output-library=VuexFire --output-library-target=umd",
     "build-prod": "webpack src/index.js dist/vuexfire.min.js --output-library=VuexFire --output-library-target=umd -p",
     "build": "npm run build-dev && npm run build-prod",
@@ -37,6 +38,8 @@
   },
   "homepage": "https://github.com/posva/vuexfire#readme",
   "devDependencies": {
+    "ava": "^0.17.0",
+    "browser-env": "^2.0.19",
     "chai": "^3.5.0",
     "eslint": "^3.12.2",
     "eslint-config-standard": "^6.2.1",
@@ -44,6 +47,7 @@
     "eslint-plugin-promise": "^3.4.0",
     "eslint-plugin-standard": "^2.0.1",
     "firebase": "^3.6.4",
+    "firebase-mock": "^1.0.3",
     "istanbul-instrumenter-loader": "^1.2.0",
     "karma": "^1.3.0",
     "karma-coverage": "^1.1.1",
@@ -62,5 +66,12 @@
     "vue": "^2.1.8",
     "vuex": "^2.1.1",
     "webpack": "^1.14.0"
+  },
+  "ava": {
+    "babel": "inherit",
+    "modules": false,
+    "require": [
+      "babel-register"
+    ]
   }
 }
