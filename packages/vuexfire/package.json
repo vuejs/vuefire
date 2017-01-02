@@ -4,7 +4,7 @@
   "description": "Opinionated firebase binding for vuex",
   "main": "dist/vuexfire.js",
   "scripts": {
-    "lint": "eslint --ext=js,html src tests examples karma.conf.js",
+    "lint": "eslint --ext=js,html src test examples",
     "test": "npm run lint && karma start karma.conf.js --single-run",
     "dev": "webpack src/index.js dist/vuexfire.js --output-library=VuexFire --output-library-target=umd --watch",
     "test:unit": "ava",
@@ -12,7 +12,18 @@
     "build": "node build/build.js",
     "build-dev": "webpack src/index.js dist/vuexfire.js --output-library=VuexFire --output-library-target=umd",
     "build-prod": "webpack src/index.js dist/vuexfire.min.js --output-library=VuexFire --output-library-target=umd -p",
-    "preversion": "npm run build"
+    "preversion": "npm run build",
+    "watch": "npm-watch"
+  },
+  "watch": {
+    "build": "src/**/*.js",
+    "lint": {
+      "extensions": "js,html",
+      "patterns": [
+        "{src,test}/**/*.js",
+        "examples/**/*.html"
+      ]
+    }
   },
   "repository": {
     "type": "git",
@@ -59,6 +70,7 @@
     "karma-webpack": "^1.8.1",
     "lolex": "^1.5.2",
     "mocha": "^3.2.0",
+    "npm-watch": "^0.1.7",
     "phantomjs-prebuilt": "^2.1.14",
     "promise-polyfill": "^6.0.2",
     "rollup": "^0.39.2",

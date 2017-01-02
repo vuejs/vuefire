@@ -44,6 +44,7 @@ function _getRef (refOrQuery) {
 
   return refOrQuery
 }
+_getRef
 
 const mutations = {
   [VUEXFIRE_OBJECT_VALUE] (state, payload) {
@@ -95,6 +96,7 @@ export function generateBind (commit) {
         record: createRecord(snapshot)
       })
     }, cancelCallback)
+    cb
     // vm._firebaseListeners[fullKey] = { value: cb }
   }
 }
