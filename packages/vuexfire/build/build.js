@@ -5,6 +5,7 @@ const packageData = require('../package.json')
 const { version, author, name } = packageData
 // remove the email at the end
 const authorName = author.replace(/\s+<.*/, '')
+const moduleName = 'VuexFire'
 
 const {
   logError,
@@ -27,8 +28,8 @@ rollup({
   var code = bundle.generate({
     format: 'umd',
     exports: 'named',
-    banner: banner,
-    moduleName: name
+    banner,
+    moduleName
   }).code
   return write(`dist/${name}.js`, code).then(function () {
     return code
