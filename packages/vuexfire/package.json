@@ -5,13 +5,11 @@
   "main": "dist/vuexfire.js",
   "scripts": {
     "lint": "eslint --ext=js,html src test examples",
-    "test": "npm run lint && karma start karma.conf.js --single-run",
+    "test": "npm run lint && npm run test:unit && npm run build",
     "dev": "webpack src/index.js dist/vuexfire.js --output-library=VuexFire --output-library-target=umd --watch",
     "test:unit": "ava",
     "dev:test": "npm run test:unit -- --watch",
     "build": "node build/build.js",
-    "build-dev": "webpack src/index.js dist/vuexfire.js --output-library=VuexFire --output-library-target=umd",
-    "build-prod": "webpack src/index.js dist/vuexfire.min.js --output-library=VuexFire --output-library-target=umd -p",
     "preversion": "npm run build",
     "watch": "npm-watch"
   },
