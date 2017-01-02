@@ -4,13 +4,14 @@
     <meta charset="utf-8">
     <title>VuexFire Todo App Demo</title>
     <script src="https://www.gstatic.com/firebasejs/3.5.2/firebase.js"></script>
-    <script src="https://unpkg.com/vue@next/dist/vue.js"></script>
-    <script src="https://unpkg.com/vuex@next/dist/vuex.js"></script>
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/vuex/dist/vuex.js"></script>
     <script src="../../dist/vuexfire.js"></script>
   </head>
   <body>
 
     <div id="app">
+      <pre>{{ test }}</pre>
       <ul>
         <li v-for="item in items" :key="item['.key']">
           {{ item.text }}
@@ -31,32 +32,41 @@
     }
     var firebaseApp = firebase.initializeApp(config)
     var db = firebaseApp.database()
-    var itemsRef = db.ref('items')
+    var itemsRef = db.ref('test')
 
     var state = {
-      items: null
+      items: [],
+      test: null
     }
 
     var store = new Vuex.Store({
       state: state,
       mutations: VuexFire.mutations,
       getters: {
-        items: state => state.items
-      }
+        items: state => state.items,
+        test: state => state.test
+      },
+      actions: {
+        setTestRef (context, ref) {
+          bind('test', ref)
+        }
+      },
+      plugins: [VuexFire.default]
     })
 
-    window.vm = new Vue({ // eslint-disable-line no-unused-vars
+    const bind = VuexFire.generateBind(store.commit)
+
+    window.vm = new Vue({
       el: '#app',
       store: store,
       computed: Vuex.mapGetters([
-        'items'
+        'items',
+        'test'
       ]),
-      firebase: {
-        items: itemsRef
-      },
       data: {
         newTodo: ''
       },
+
       methods: {
         removeTodo: function (key) {
           itemsRef.child(key).remove()
@@ -69,6 +79,10 @@
             this.newTodo = ''
           }
         }
+      },
+
+      mounted () {
+        this.$store.dispatch('setTestRef', itemsRef)
       }
     })
     </script>
