@@ -1,6 +1,9 @@
 {
-  "extends": "standard",
-    "plugins": ["html"],
+  "extends": [
+    "standard",
+    "plugin:ava/recommended"
+  ],
+    "plugins": ["html", "ava"],
     "env": {
       "amd": true
     },
