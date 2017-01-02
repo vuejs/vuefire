@@ -9,9 +9,9 @@
     "dev": "webpack src/index.js dist/vuexfire.js --output-library=VuexFire --output-library-target=umd --watch",
     "test:unit": "ava",
     "dev:test": "npm run test:unit -- --watch",
+    "build": "node build/build.js",
     "build-dev": "webpack src/index.js dist/vuexfire.js --output-library=VuexFire --output-library-target=umd",
     "build-prod": "webpack src/index.js dist/vuexfire.min.js --output-library=VuexFire --output-library-target=umd -p",
-    "build": "npm run build-dev && npm run build-prod",
     "preversion": "npm run build"
   },
   "repository": {
@@ -61,8 +61,11 @@
     "mocha": "^3.2.0",
     "phantomjs-prebuilt": "^2.1.14",
     "promise-polyfill": "^6.0.2",
+    "rollup": "^0.39.2",
+    "rollup-plugin-buble": "^0.15.0",
     "sinon": "^1.17.7",
     "sinon-chai": "^2.8.0",
+    "uglify-js": "^2.7.5",
     "vue": "^2.1.8",
     "vuex": "^2.1.1",
     "webpack": "^1.14.0"
