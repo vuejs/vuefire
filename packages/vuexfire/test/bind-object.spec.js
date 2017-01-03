@@ -104,3 +104,22 @@ test('binds multiple references at the same time', t => {
   t.deepEqual(t.context.store.state.options, {'.key': 'foo', '.value': 'foo'})
   t.deepEqual(t.context.store.state.primitive, {'.key': 'bar', '.value': 'bar'})
 })
+
+test('unbinds old reference when binding a new one', t => {
+  const foo = t.context.ref.child('foo')
+  const bar = t.context.ref.child('bar')
+  t.context.store.dispatch('setOptionsRef', foo)
+
+  foo.set('foo')
+  t.context.ref.flush()
+  t.deepEqual(t.context.store.state.options, {'.key': 'foo', '.value': 'foo'})
+
+  t.context.store.dispatch('setOptionsRef', bar)
+  bar.set('bar')
+  t.context.ref.flush()
+  t.deepEqual(t.context.store.state.options, {'.key': 'bar', '.value': 'bar'})
+
+  foo.set('foo 2')
+  t.context.ref.flush()
+  t.deepEqual(t.context.store.state.options, {'.key': 'bar', '.value': 'bar'})
+})

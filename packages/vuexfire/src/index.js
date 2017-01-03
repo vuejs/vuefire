@@ -38,15 +38,27 @@ export default function VuexFire (store) {
 }
 
 export function generateBind (commit) {
+  const listeners = Object.create(null)
+  const sources = Object.create(null)
+
   return function bind (key, source, cancelCallback) {
+    // Unbind if it already exists
+    if (key in sources) {
+      // Commits to reset to null?
+      const oldSource = sources[key]
+      const oldListeners = listeners[key]
+      for (let event in oldListeners) {
+        oldSource.off(event, oldListeners[event])
+      }
+    }
+    sources[key] = getRef(source)
     const cb = source.on('value', function (snapshot) {
       commit(VUEXFIRE_OBJECT_VALUE, {
         key: key,
         record: createRecord(snapshot)
       })
     }, cancelCallback)
-    cb
-    // vm._firebaseListeners[fullKey] = { value: cb }
+    listeners[key] = { value: cb }
   }
 }
 
