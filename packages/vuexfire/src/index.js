@@ -89,7 +89,6 @@ export default function VuexFire (store) {
 
 export function generateBind (commit) {
   return function bind (key, source, cancelCallback) {
-    console.log(key)
     const cb = source.on('value', function (snapshot) {
       commit(VUEXFIRE_OBJECT_VALUE, {
         key: key,
