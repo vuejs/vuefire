@@ -13,5 +13,5 @@ dependencies:
 test:
   override:
     - yarn test
- post:
-   - yarn coverage
+  post:
+    - yarn coverage
