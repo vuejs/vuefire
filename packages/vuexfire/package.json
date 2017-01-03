@@ -5,7 +5,8 @@
   "main": "dist/vuexfire.js",
   "scripts": {
     "lint": "eslint --color --ext=js,html src test examples",
-    "test": "npm run lint && npm run test:unit && npm run build",
+    "test": "npm run lint && nyc npm run test:unit && npm run build",
+    "coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
     "dev": "npm-watch",
     "test:unit": "ava",
     "dev:test": "npm run test:unit -- --watch",
@@ -23,6 +24,23 @@
       ],
       "quiet": true
     }
+  },
+  "ava": {
+    "babel": "inherit",
+    "modules": false,
+    "require": [
+      "babel-register"
+    ],
+    "source": [
+      "**/*.js",
+      "!dist/**/*"
+    ]
+  },
+  "nyc": {
+    "reporter": [
+      "lcov",
+      "text-summary"
+    ]
   },
   "repository": {
     "type": "git",
@@ -50,6 +68,7 @@
   "devDependencies": {
     "ava": "^0.17.0",
     "browser-env": "^2.0.19",
+    "codecov": "^1.0.1",
     "eslint": "^3.12.2",
     "eslint-config-standard": "^6.2.1",
     "eslint-plugin-ava": "^4.0.0",
@@ -59,17 +78,11 @@
     "firebase": "^3.6.4",
     "firebase-mock": "^1.0.3",
     "npm-watch": "^0.1.7",
+    "nyc": "^10.0.0",
     "rollup": "^0.39.2",
     "rollup-plugin-buble": "^0.15.0",
     "uglify-js": "^2.7.5",
     "vue": "^2.1.8",
     "vuex": "^2.1.1"
-  },
-  "ava": {
-    "babel": "inherit",
-    "modules": false,
-    "require": [
-      "babel-register"
-    ]
   }
 }

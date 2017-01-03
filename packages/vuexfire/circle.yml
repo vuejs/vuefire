@@ -13,6 +13,5 @@ dependencies:
 test:
   override:
     - yarn test
-# TODO add once coverage is added
-#  post:
-#    - bash <(curl -s https://codecov.io/bash)
+ post:
+   - yarn coverage
