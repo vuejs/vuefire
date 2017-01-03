@@ -1,50 +1,15 @@
-const VUEXFIRE_OBJECT_VALUE = 'vuexfire/OBJECT_VALUE'
-const VUEXFIRE_ARRAY_CHANGE = 'vuexfire/ARRAY_CHANGE'
-const VUEXFIRE_ARRAY_ADD = 'vuexfire/ARRAY_ADD'
-const VUEXFIRE_ARRAY_REMOVE = 'vuexfire/ARRAY_REMOVE'
-const VUEXFIRE_ARRAY_MOVE = 'vuexfire/ARRAY_MOVE'
+import {
+  VUEXFIRE_OBJECT_VALUE,
+  VUEXFIRE_ARRAY_ADD,
+  VUEXFIRE_ARRAY_CHANGE,
+  VUEXFIRE_ARRAY_MOVE,
+  VUEXFIRE_ARRAY_REMOVE
+} from './types.js'
 
-/**
- * Check if a value is an object.
- *
- * @param {*} val
- * @return {boolean}
- */
-function isObject (val) {
-  return Object.prototype.toString.call(val) === '[object Object]'
-}
-
-/**
- * Returns the key of a Firebase snapshot across SDK versions.
- *
- * @param {FirebaseSnapshot} snapshot
- * @return {string|null}
- */
-function _getKey (snapshot) {
-  return typeof snapshot.key === 'function'
-  /* istanbul ignore next: Firebase 2.x */
-    ? snapshot.key()
-    : snapshot.key
-}
-
-/**
- * Returns the original reference of a Firebase reference or query across SDK versions.
- *
- * @param {FirebaseReference|FirebaseQuery} refOrQuery
- * @return {FirebaseReference}
- */
-function _getRef (refOrQuery) {
-  /* istanbul ignore if: Firebase 2.x */
-  if (typeof refOrQuery.ref === 'function') {
-    refOrQuery = refOrQuery.ref()
-    /* istanbul ignore else: Fallback */
-  } else if (typeof refOrQuery.ref === 'object') {
-    refOrQuery = refOrQuery.ref
-  }
-
-  return refOrQuery
-}
-_getRef
+import {
+  createRecord,
+  getRef
+} from './utils.js'
 
 const mutations = {
   [VUEXFIRE_OBJECT_VALUE] (state, payload) {
@@ -67,21 +32,6 @@ const mutations = {
     const array = state[payload.key]
     array.splice(payload.newIndex, 0, array.splice(payload.index, 1)[0])
   }
-}
-
-/**
- * Convert firebase snapshot into a bindable data record.
- *
- * @param {FirebaseSnapshot} snapshot
- * @return {Object}
- */
-function createRecord (snapshot) {
-  var value = snapshot.val()
-  var res = isObject(value)
-        ? value
-        : { '.value': value }
-  res['.key'] = _getKey(snapshot)
-  return res
 }
 
 export default function VuexFire (store) {
