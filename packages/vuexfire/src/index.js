@@ -41,15 +41,10 @@ export function generateBind (commit) {
   const listeners = Object.create(null)
   const sources = Object.create(null)
 
-  return function bind (key, source, cancelCallback) {
+  function bind (key, source, cancelCallback) {
     // Unbind if it already exists
     if (key in sources) {
-      // Commits to reset to null?
-      const oldSource = sources[key]
-      const oldListeners = listeners[key]
-      for (let event in oldListeners) {
-        oldSource.off(event, oldListeners[event])
-      }
+      unbind(key)
     }
     sources[key] = getRef(source)
     const cb = source.on('value', function (snapshot) {
@@ -59,6 +54,19 @@ export function generateBind (commit) {
       })
     }, cancelCallback)
     listeners[key] = { value: cb }
+  }
+
+  function unbind (key) {
+    const oldSource = sources[key]
+    const oldListeners = listeners[key]
+    for (let event in oldListeners) {
+      oldSource.off(event, oldListeners[event])
+    }
+  }
+
+  return {
+    bind,
+    unbind
   }
 }
 

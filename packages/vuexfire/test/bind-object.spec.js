@@ -29,6 +29,9 @@ test.beforeEach(t => {
       },
       setOptionsRef (context, ref) {
         bind('options', ref)
+      },
+      unbindOptionsRef (context) {
+        unbind('options')
       }
     },
     mutations: {
@@ -37,7 +40,7 @@ test.beforeEach(t => {
     plugins: [VuexFire]
   })
 
-  const bind = generateBind(t.context.store.commit)
+  const { bind, unbind } = generateBind(t.context.store.commit)
 
   // Create a fresh ref for the test
   const ref = root.push({
@@ -122,4 +125,18 @@ test('unbinds old reference when binding a new one', t => {
   foo.set('foo 2')
   t.context.ref.flush()
   t.deepEqual(t.context.store.state.options, {'.key': 'bar', '.value': 'bar'})
+})
+
+test('unbind a reference', t => {
+  const foo = t.context.ref.child('foo')
+  t.context.store.dispatch('setOptionsRef', foo)
+
+  foo.set('foo')
+  t.context.ref.flush()
+  t.deepEqual(t.context.store.state.options, {'.key': 'foo', '.value': 'foo'})
+
+  t.context.store.dispatch('unbindOptionsRef')
+  foo.set('foo 2')
+  t.context.ref.flush()
+  t.deepEqual(t.context.store.state.options, {'.key': 'foo', '.value': 'foo'})
 })
