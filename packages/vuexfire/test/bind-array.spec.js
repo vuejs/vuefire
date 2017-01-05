@@ -116,6 +116,14 @@ test('add records to the array', t => {
   ])
 })
 
+// // limit is not yet fully implemented in firebase mock
+// test('binds to a subset of records when using limit queries', t => {
+//   t.context.store.dispatch('setItemsRef', t.context.ref.limit(2))
+//   t.context.ref.set({ a: 0, b: 1, c: 2 })
+//   t.context.ref.flush()
+//   t.deepEqual(t.context.store.state.items, [{ '.key': 'c', '.value': 2 }])
+// })
+
 test('unbinds an array reference', t => {
   const foo = t.context.ref.child('foo')
   t.context.store.dispatch('setItemsRef', foo)
