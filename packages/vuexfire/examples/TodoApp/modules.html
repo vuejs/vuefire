@@ -31,47 +31,38 @@
     }
     var firebaseApp = firebase.initializeApp(config)
     var db = firebaseApp.database()
-    var itemsRef = db.ref('todos-modules')
+    var itemsRef = db.ref('test')
 
     var todos = {
-      state: { items: null },
+      state: { items: [] },
       getters: {
         items: state => state.items
       },
       actions: {
-        test (context) {
-          // debugger
+        setItemsRef (context, ref) {
+          bind('items', ref)
         }
       },
-      mutations: Object.assign({
-        setItems (state, items) {
-          state.items = items
-        }
-      }, VuexFire.moduleMutations('todos'))
+      mutations: VuexFire.mutations
     }
 
-    function vuexPlugin (store) {
-      store._modules.root._children.todos.context.bind = () => console.log(arguments)
-    }
     var store = new Vuex.Store({
       modules: { todos },
-      plugins: [
-        vuexPlugin
-      ]
+      plugins: [VuexFire.default]
     })
 
-    window.vm = new Vue({ // eslint-disable-line no-unused-vars
+    const { bind, unbind } = VuexFire.generateBind(store._modules.get(['todos']))
+    // unbind is unused here
+    unbind
+
+    window.vm = new Vue({
       el: '#app',
       store: store,
-      computed: Vuex.mapGetters([
-        'items'
-      ]),
-      firebase: {
-        'todos.items': itemsRef
-      },
+      computed: Vuex.mapGetters([ 'items' ]),
       data: {
         newTodo: ''
       },
+
       methods: {
         removeTodo: function (key) {
           itemsRef.child(key).remove()
@@ -84,6 +75,10 @@
             this.newTodo = ''
           }
         }
+      },
+
+      created () {
+        this.$store.dispatch('setItemsRef', itemsRef)
       }
     })
     </script>

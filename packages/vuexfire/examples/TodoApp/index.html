@@ -11,7 +11,6 @@
   <body>
 
     <div id="app">
-      <pre>{{ test }}</pre>
       <ul>
         <li v-for="item in items" :key="item['.key']">
           {{ item.text }}
@@ -34,35 +33,30 @@
     var db = firebaseApp.database()
     var itemsRef = db.ref('test')
 
-    var state = {
-      items: [],
-      test: null
-    }
-
     var store = new Vuex.Store({
-      state: state,
+      // VuexFire will check the type of the property to bind as an array or as
+      // an object
+      state: { items: [] },
       mutations: VuexFire.mutations,
       getters: {
-        items: state => state.items,
-        test: state => state.test
+        items: state => state.items
       },
       actions: {
-        setTestRef (context, ref) {
-          bind('test', ref)
+        setItemsRef (context, ref) {
+          bind('items', ref)
         }
       },
       plugins: [VuexFire.default]
     })
 
-    const bind = VuexFire.generateBind(store.commit)
+    const { bind, unbind } = VuexFire.generateBind(store)
+    // unbind is unused here
+    unbind
 
     window.vm = new Vue({
       el: '#app',
       store: store,
-      computed: Vuex.mapGetters([
-        'items',
-        'test'
-      ]),
+      computed: Vuex.mapGetters([ 'items' ]),
       data: {
         newTodo: ''
       },
@@ -81,8 +75,8 @@
         }
       },
 
-      mounted () {
-        this.$store.dispatch('setTestRef', itemsRef)
+      created () {
+        this.$store.dispatch('setItemsRef', itemsRef)
       }
     })
     </script>
