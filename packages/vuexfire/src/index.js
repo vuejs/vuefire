@@ -121,9 +121,11 @@ function bindAsArray ({
   }
 }
 
-export function generateBind ({ commit, state }) {
+export function generateBind ({ commit, state, context }) {
   const listeners = Object.create(null)
   const sources = Object.create(null)
+  // Make it work for modules
+  if (context && context.commit) commit = context.commit
 
   function bind (key, source, cancelCallback) {
     // Unbind if it already exists
