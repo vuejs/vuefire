@@ -1,4 +1,5 @@
 export const VUEXFIRE_OBJECT_VALUE = 'vuexfire/OBJECT_VALUE'
+export const VUEXFIRE_ARRAY_INITIALIZE = 'VUEXFIRE_ARRAY_INITIALIZE'
 export const VUEXFIRE_ARRAY_ADD = 'vuexfire/ARRAY_ADD'
 export const VUEXFIRE_ARRAY_CHANGE = 'vuexfire/ARRAY_CHANGE'
 export const VUEXFIRE_ARRAY_MOVE = 'vuexfire/ARRAY_MOVE'

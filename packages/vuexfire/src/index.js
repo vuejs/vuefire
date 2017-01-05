@@ -1,5 +1,6 @@
 import {
   VUEXFIRE_OBJECT_VALUE,
+  VUEXFIRE_ARRAY_INITIALIZE,
   VUEXFIRE_ARRAY_ADD,
   VUEXFIRE_ARRAY_CHANGE,
   VUEXFIRE_ARRAY_MOVE,
@@ -18,21 +19,25 @@ const mutations = {
     state[payload.key] = payload.record
   },
 
-  [VUEXFIRE_ARRAY_CHANGE] (state, payload) {
-    state[payload.key].splice(payload.index, 1, payload.record)
+  [VUEXFIRE_ARRAY_INITIALIZE] (state, payload) {
+    state[payload.key] = []
   },
 
   [VUEXFIRE_ARRAY_ADD] (state, payload) {
     state[payload.key].splice(payload.index, 0, payload.record)
   },
 
-  [VUEXFIRE_ARRAY_REMOVE] (state, payload) {
-    state[payload.key].splice(payload.index, 1)
+  [VUEXFIRE_ARRAY_CHANGE] (state, payload) {
+    state[payload.key].splice(payload.index, 1, payload.record)
   },
 
   [VUEXFIRE_ARRAY_MOVE] (state, payload) {
     const array = state[payload.key]
     array.splice(payload.newIndex, 0, array.splice(payload.index, 1)[0])
+  },
+
+  [VUEXFIRE_ARRAY_REMOVE] (state, payload) {
+    state[payload.key].splice(payload.index, 1)
   }
 }
 
@@ -63,7 +68,8 @@ function bindAsArray ({
   commit,
   state
 }) {
-  // TODO initialise with []
+  // Initialise the array to an empty one
+  commit(VUEXFIRE_ARRAY_INITIALIZE, { key })
   const onAdd = source.on('child_added', function (snapshot, prevKey) {
     const array = state[key]
     const index = prevKey ? indexForKey(array, prevKey) + 1 : 0

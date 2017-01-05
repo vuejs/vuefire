@@ -60,55 +60,43 @@ test('binds to an array', t => {
   t.deepEqual(t.context.store.state.items[0].index, 3)
 })
 
-test.skip('binds to a reference array with no data', t => {
-  t.context.store.dispatch('setOptionsRef', t.context.ref.child('foo'))
+test('binds to a reference array with no data', t => {
+  t.context.store.dispatch('setItemsRef', t.context.ref.child('foo'))
   t.context.ref.flush()
 
-  t.deepEqual(t.context.store.state.options, { '.key': 'foo', '.value': null })
+  t.deepEqual(t.context.store.state.items, [])
 })
 
-test.skip('binds multiple array references at the same time', t => {
+test('unbinds an array reference', t => {
+  const foo = t.context.ref.child('foo')
+  t.context.store.dispatch('setItemsRef', foo)
+
+  foo.child('foo').set('foo')
+  t.context.ref.flush()
+  t.deepEqual(t.context.store.state.items, [{'.key': 'foo', '.value': 'foo'}])
+
+  t.context.store.dispatch('unbindItemsRef')
+  foo.child('foo').set('foo 2')
+  t.context.ref.flush()
+  t.deepEqual(t.context.store.state.items, [{'.key': 'foo', '.value': 'foo'}])
+})
+
+test('unbinds old array reference when binding a new one', t => {
   const foo = t.context.ref.child('foo')
   const bar = t.context.ref.child('bar')
-  t.context.store.dispatch('setOptionsRef', foo)
-  t.context.store.dispatch('setPrimitiveRef', bar)
-  foo.set('foo')
-  bar.set('bar')
-  t.context.ref.flush()
+  t.context.store.dispatch('setItemsRef', foo)
 
-  t.deepEqual(t.context.store.state.options, {'.key': 'foo', '.value': 'foo'})
-  t.deepEqual(t.context.store.state.primitive, {'.key': 'bar', '.value': 'bar'})
+  foo.child('foo').set('foo')
+  t.context.ref.flush()
+  t.deepEqual(t.context.store.state.items, [{'.key': 'foo', '.value': 'foo'}])
+
+  t.context.store.dispatch('setItemsRef', bar)
+  bar.child('bar').set('bar')
+  t.context.ref.flush()
+  t.deepEqual(t.context.store.state.items, [{'.key': 'bar', '.value': 'bar'}])
+
+  foo.child('foo').set('foo 2')
+  t.context.ref.flush()
+  t.deepEqual(t.context.store.state.items, [{'.key': 'bar', '.value': 'bar'}])
 })
 
-test.skip('unbinds old array reference when binding a new one', t => {
-  const foo = t.context.ref.child('foo')
-  const bar = t.context.ref.child('bar')
-  t.context.store.dispatch('setOptionsRef', foo)
-
-  foo.set('foo')
-  t.context.ref.flush()
-  t.deepEqual(t.context.store.state.options, {'.key': 'foo', '.value': 'foo'})
-
-  t.context.store.dispatch('setOptionsRef', bar)
-  bar.set('bar')
-  t.context.ref.flush()
-  t.deepEqual(t.context.store.state.options, {'.key': 'bar', '.value': 'bar'})
-
-  foo.set('foo 2')
-  t.context.ref.flush()
-  t.deepEqual(t.context.store.state.options, {'.key': 'bar', '.value': 'bar'})
-})
-
-test.skip('unbinds an array reference', t => {
-  const foo = t.context.ref.child('foo')
-  t.context.store.dispatch('setOptionsRef', foo)
-
-  foo.set('foo')
-  t.context.ref.flush()
-  t.deepEqual(t.context.store.state.options, {'.key': 'foo', '.value': 'foo'})
-
-  t.context.store.dispatch('unbindOptionsRef')
-  foo.set('foo 2')
-  t.context.ref.flush()
-  t.deepEqual(t.context.store.state.options, {'.key': 'foo', '.value': 'foo'})
-})
