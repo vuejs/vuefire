@@ -80,6 +80,15 @@ function bindAsArray ({
     })
   }, cancelCallback)
 
+  const onRemove = source.on('child_removed', function (snapshot) {
+    const array = state[key]
+    const index = indexForKey(array, getKey(snapshot))
+    commit(VUEXFIRE_ARRAY_REMOVE, {
+      key,
+      index
+    })
+  }, cancelCallback)
+
   const onChange = source.on('child_changed', function (snapshot) {
     const array = state[key]
     const index = indexForKey(array, getKey(snapshot))
@@ -90,9 +99,25 @@ function bindAsArray ({
     })
   }, cancelCallback)
 
+  const onMove = source.on('child_moved', function (snapshot, prevKey) {
+    const array = state[key]
+    const index = indexForKey(array, getKey(snapshot))
+    var newIndex = prevKey ? indexForKey(array, prevKey) + 1 : 0
+    // TODO refactor + 1
+    newIndex += index < newIndex ? -1 : 0
+    commit(VUEXFIRE_ARRAY_MOVE, {
+      key,
+      index,
+      newIndex,
+      record: createRecord(snapshot)
+    })
+  }, cancelCallback)
+
   listeners[key] = {
     child_added: onAdd,
-    child_changed: onChange
+    child_changed: onChange,
+    child_removed: onRemove,
+    child_moved: onMove
   }
 }
 
