@@ -41,7 +41,7 @@ test.beforeEach(t => {
   t.context.ref = ref
 })
 
-test('binds to an array', t => {
+test('binds an array of objects', t => {
   t.context.store.dispatch('setItemsRef', t.context.ref)
   t.context.ref.set({
     first: { index: 0 },
@@ -60,11 +60,60 @@ test('binds to an array', t => {
   t.deepEqual(t.context.store.state.items[0].index, 3)
 })
 
+test('binds an array of primitives', t => {
+  t.context.store.dispatch('setItemsRef', t.context.ref)
+  t.context.ref.set([0, 1, 2])
+  t.context.ref.flush()
+
+  t.deepEqual(t.context.store.state.items, [
+    { '.key': '0', '.value': 0 },
+    { '.key': '1', '.value': 1 },
+    { '.key': '2', '.value': 2 }
+  ])
+})
+
+test('binds a mixed array', t => {
+  t.context.store.dispatch('setItemsRef', t.context.ref)
+  t.context.ref.set({
+    0: 'first',
+    1: 'second',
+    third: { index: 2 }
+  })
+  t.context.ref.flush()
+
+  t.deepEqual(t.context.store.state.items, [
+    { '.key': '0', '.value': 'first' },
+    { '.key': '1', '.value': 'second' },
+    { '.key': 'third', index: 2 }
+  ])
+})
+
 test('binds to a reference array with no data', t => {
   t.context.store.dispatch('setItemsRef', t.context.ref.child('foo'))
   t.context.ref.flush()
 
   t.deepEqual(t.context.store.state.items, [])
+})
+
+test('add records to the array', t => {
+  t.context.store.dispatch('setItemsRef', t.context.ref)
+  t.context.ref.set({
+    first: { index: 0 },
+    second: { index: 1 },
+    third: { index: 2 }
+  })
+  t.context.ref.flush()
+  t.context.ref.child('fourth').set({ index: 3 })
+  t.context.ref.flush()
+
+  // MockFirebase doesn't keep order :(
+  const sorted = [...t.context.store.state.items].sort((a, b) => a.index - b.index)
+  t.deepEqual(sorted, [
+    { '.key': 'first', index: 0 },
+    { '.key': 'second', index: 1 },
+    { '.key': 'third', index: 2 },
+    { '.key': 'fourth', index: 3 }
+  ])
 })
 
 test('unbinds an array reference', t => {
