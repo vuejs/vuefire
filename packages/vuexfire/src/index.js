@@ -8,8 +8,10 @@ import {
 
 import {
   createRecord,
-  getRef
-} from './utils.js'
+  getRef,
+  indexForKey,
+  getKey
+} from './utils/index.js'
 
 const mutations = {
   [VUEXFIRE_OBJECT_VALUE] (state, payload) {
@@ -37,7 +39,58 @@ const mutations = {
 export default function VuexFire (store) {
 }
 
-export function generateBind (commit) {
+function bindAsObject ({
+  key,
+  source,
+  cancelCallback,
+  listeners,
+  commit
+}) {
+  const cb = source.on('value', function (snapshot) {
+    commit(VUEXFIRE_OBJECT_VALUE, {
+      key,
+      record: createRecord(snapshot)
+    })
+  }, cancelCallback)
+  listeners[key] = { value: cb }
+}
+
+function bindAsArray ({
+  key,
+  source,
+  cancelCallback,
+  listeners,
+  commit,
+  state
+}) {
+  // TODO initialise with []
+  const onAdd = source.on('child_added', function (snapshot, prevKey) {
+    const array = state[key]
+    const index = prevKey ? indexForKey(array, prevKey) + 1 : 0
+    commit(VUEXFIRE_ARRAY_ADD, {
+      key,
+      index,
+      record: createRecord(snapshot)
+    })
+  }, cancelCallback)
+
+  const onChange = source.on('child_changed', function (snapshot) {
+    const array = state[key]
+    const index = indexForKey(array, getKey(snapshot))
+    commit(VUEXFIRE_ARRAY_CHANGE, {
+      key,
+      index,
+      record: createRecord(snapshot)
+    })
+  }, cancelCallback)
+
+  listeners[key] = {
+    child_added: onAdd,
+    child_changed: onChange
+  }
+}
+
+export function generateBind ({ commit, state }) {
   const listeners = Object.create(null)
   const sources = Object.create(null)
 
@@ -47,13 +100,11 @@ export function generateBind (commit) {
       unbind(key)
     }
     sources[key] = getRef(source)
-    const cb = source.on('value', function (snapshot) {
-      commit(VUEXFIRE_OBJECT_VALUE, {
-        key: key,
-        record: createRecord(snapshot)
-      })
-    }, cancelCallback)
-    listeners[key] = { value: cb }
+    if (state[key] && 'length' in state[key]) {
+      bindAsArray({ key, source, cancelCallback, commit, state, listeners })
+    } else {
+      bindAsObject({ key, source, cancelCallback, commit, listeners })
+    }
   }
 
   function unbind (key) {

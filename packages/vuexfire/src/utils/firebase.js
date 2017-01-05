@@ -1,12 +1,6 @@
-/**
- * Check if a value is an object.
- *
- * @param {*} val
- * @return {boolean}
- */
-export function isObject (val) {
-  return Object.prototype.toString.call(val) === '[object Object]'
-}
+import {
+  isObject
+} from './misc.js'
 
 /**
  * Returns the key of a Firebase snapshot across SDK versions.

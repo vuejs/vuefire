@@ -17,18 +17,14 @@ test.before(t => {
 test.beforeEach(t => {
   t.context.store = new Vuex.Store({
     state: {
-      options: null,
-      primitive: null
+      items: []
     },
     actions: {
-      setPrimitiveRef (context, ref) {
-        bind('primitive', ref)
+      setItemsRef (context, ref) {
+        bind('items', ref)
       },
-      setOptionsRef (context, ref) {
-        bind('options', ref)
-      },
-      unbindOptionsRef (context) {
-        unbind('options')
+      unbindItemsRef (context) {
+        unbind('items')
       }
     },
     mutations: {
@@ -45,52 +41,33 @@ test.beforeEach(t => {
   t.context.ref = ref
 })
 
-test('binds to an object', t => {
-  const options = {
-    foo: 1,
-    bar: 2,
-    '.key': t.context.ref.key
-  }
-  t.context.store.dispatch('setOptionsRef', t.context.ref)
-  t.context.ref.set(options)
+test('binds to an array', t => {
+  t.context.store.dispatch('setItemsRef', t.context.ref)
+  t.context.ref.set({
+    first: { index: 0 },
+    second: { index: 1 },
+    third: { index: 2 }
+  })
   t.context.ref.flush()
 
-  t.is(t.context.ref.getData().foo, 1)
-  t.deepEqual(t.context.store.state.options, options)
-  t.context.ref.child('foo').set(3)
+  t.deepEqual(t.context.store.state.items, [
+    { '.key': 'first', index: 0 },
+    { '.key': 'second', index: 1 },
+    { '.key': 'third', index: 2 }
+  ])
+  t.context.ref.child('first').child('index').set(3)
   t.context.ref.flush()
-  t.deepEqual(t.context.store.state.options.foo, 3)
+  t.deepEqual(t.context.store.state.items[0].index, 3)
 })
 
-test('binds to a primitive', t => {
-  const primitive = 2
-  t.context.store.dispatch('setPrimitiveRef', t.context.ref)
-  t.context.ref.set(primitive)
-  t.context.ref.flush()
-
-  t.is(t.context.store.state.primitive['.value'], 2)
-  t.is(t.context.store.state.primitive['.key'], t.context.ref.key)
-  t.context.ref.set('foo')
-  t.context.ref.flush()
-  t.is(t.context.store.state.primitive['.value'], 'foo')
-  t.is(t.context.store.state.primitive['.key'], t.context.ref.key)
-})
-
-test('binds to a reference with no data', t => {
+test.skip('binds to a reference array with no data', t => {
   t.context.store.dispatch('setOptionsRef', t.context.ref.child('foo'))
   t.context.ref.flush()
 
   t.deepEqual(t.context.store.state.options, { '.key': 'foo', '.value': null })
 })
 
-test('sets the key as null when bound to the root', t => {
-  t.context.store.dispatch('setOptionsRef', root)
-  t.context.ref.flush()
-
-  t.is(t.context.store.state.options['.key'], null)
-})
-
-test('binds multiple references at the same time', t => {
+test.skip('binds multiple array references at the same time', t => {
   const foo = t.context.ref.child('foo')
   const bar = t.context.ref.child('bar')
   t.context.store.dispatch('setOptionsRef', foo)
@@ -103,7 +80,7 @@ test('binds multiple references at the same time', t => {
   t.deepEqual(t.context.store.state.primitive, {'.key': 'bar', '.value': 'bar'})
 })
 
-test('unbinds old reference when binding a new one', t => {
+test.skip('unbinds old array reference when binding a new one', t => {
   const foo = t.context.ref.child('foo')
   const bar = t.context.ref.child('bar')
   t.context.store.dispatch('setOptionsRef', foo)
@@ -122,7 +99,7 @@ test('unbinds old reference when binding a new one', t => {
   t.deepEqual(t.context.store.state.options, {'.key': 'bar', '.value': 'bar'})
 })
 
-test('unbinds a reference', t => {
+test.skip('unbinds an array reference', t => {
   const foo = t.context.ref.child('foo')
   t.context.store.dispatch('setOptionsRef', foo)
 
