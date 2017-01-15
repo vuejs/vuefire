@@ -1,12 +1,16 @@
 machine:
-  pre:
-    - mkdir ~/.yarn-cache
   node:
     version: 6
+  environment:
+    PATH: "${PATH}:${HOME}/.yarn/bin:${HOME}/${CIRCLE_PROJECT_REPONAME}/node_modules/.bin"
 dependencies:
   pre:
-    - curl -o- -L https://yarnpkg.com/install.sh | bash
+    - |
+      if [[ ! -e ~/.yarn/bin/yarn ]]; then
+        curl -o- -L https://yarnpkg.com/install.sh | bash -s
+      fi
   cache_directories:
+    - ~/.yarn
     - ~/.yarn-cache
   override:
     - yarn install
