@@ -23,10 +23,10 @@ export function getKey (snapshot) {
  * @return {FirebaseReference}
  */
 export function getRef (refOrQuery) {
-  /* istanbul ignore if: Firebase 2.x */
+  /* istanbul ignore else: Fallback */
+  /* istanbul ignore next: Firebase 2.x */
   if (typeof refOrQuery.ref === 'function') {
     refOrQuery = refOrQuery.ref()
-    /* istanbul ignore else: Fallback */
   } else if (typeof refOrQuery.ref === 'object') {
     refOrQuery = refOrQuery.ref
   }
