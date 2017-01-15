@@ -3,3 +3,4 @@ coverage
 npm-debug.log
 yarn-error.log
 .nyc_output
+coverage.lcov
