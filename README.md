@@ -57,6 +57,19 @@ var vm = new Vue({
 })
 ```
 
+If you need to access properties from the Vue instance, use the function syntax:
+
+```js
+var vm = new Vue({
+  el: '#demo',
+  firebase: function () {
+    return {
+      anArray: db.ref('url/to/my/collection')
+    }
+  }
+})
+```
+
 **About the cancelCallback**: This callback is actually an error handler that
 is called if the read/write doesn't succeed. You can of course also use it with
 `asObject: false` and apply it to arrays. The firebase doc states:
@@ -68,7 +81,7 @@ is called if the read/write doesn't succeed. You can of course also use it with
 
 ``` html
 <div id="demo">
-  <pre>{{ anObject | json }}</pre>
+  <pre>{{ anObject }}</pre>
   <ul>
     <li v-for="item in anArray">{{ item.text }}</li>
   </ul>
