@@ -2,6 +2,8 @@
 
 > Firebase binding for [Vuex](https://github.com/vuejs/vuex)
 
+## :construction: This readme is for v1. It hasn't been updated yet
+
 This is heavily inspired from [vuefire](https://github.com/vuejs/vuefire).
 
 Supports only Vue 2, Vuex 2 and Firebase 3
