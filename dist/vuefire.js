@@ -278,8 +278,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 	var VueFireMixin = {
-	  init: init, // 1.x
-	  beforeCreate: init, // 2.x
+	  created: init, // 1.x and 2.x
 	  beforeDestroy: function () {
 	    if (!this.$firebaseRefs) return
 	    for (var key in this.$firebaseRefs) {
