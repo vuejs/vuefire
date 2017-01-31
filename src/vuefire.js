@@ -80,10 +80,12 @@ function indexForKey (array, key) {
 function bind (vm, key, source) {
   var asObject = false
   var cancelCallback = null
+  var doneCallback = null
   // check { source, asArray, cancelCallback } syntax
   if (isObject(source) && source.hasOwnProperty('source')) {
     asObject = source.asObject
     cancelCallback = source.cancelCallback
+    doneCallback = source.doneCallback
     source = source.source
   }
   if (!isObject(source)) {
@@ -94,9 +96,9 @@ function bind (vm, key, source) {
   vm._firebaseSources[key] = source
   // bind based on initial value type
   if (asObject) {
-    bindAsObject(vm, key, source, cancelCallback)
+    bindAsObject(vm, key, source, cancelCallback, doneCallback)
   } else {
-    bindAsArray(vm, key, source, cancelCallback)
+    bindAsArray(vm, key, source, cancelCallback, doneCallback)
   }
 }
 
@@ -123,24 +125,28 @@ function defineReactive (vm, key, val) {
  * @param {string} key
  * @param {object} source
  * @param {function|null} cancelCallback
+ * @param {function|null} doneCallback
  */
-function bindAsArray (vm, key, source, cancelCallback) {
+function bindAsArray (vm, key, source, cancelCallback, doneCallback) {
   var array = []
   defineReactive(vm, key, array)
 
   var onAdd = source.on('child_added', function (snapshot, prevKey) {
     var index = prevKey ? indexForKey(array, prevKey) + 1 : 0
     array.splice(index, 0, createRecord(snapshot))
+    doneCallback()
   }, cancelCallback)
 
   var onRemove = source.on('child_removed', function (snapshot) {
     var index = indexForKey(array, _getKey(snapshot))
     array.splice(index, 1)
+    doneCallback()
   }, cancelCallback)
 
   var onChange = source.on('child_changed', function (snapshot) {
     var index = indexForKey(array, _getKey(snapshot))
     array.splice(index, 1, createRecord(snapshot))
+    doneCallback()
   }, cancelCallback)
 
   var onMove = source.on('child_moved', function (snapshot, prevKey) {
@@ -148,6 +154,7 @@ function bindAsArray (vm, key, source, cancelCallback) {
     var record = array.splice(index, 1)[0]
     var newIndex = prevKey ? indexForKey(array, prevKey) + 1 : 0
     array.splice(newIndex, 0, record)
+    doneCallback()
   }, cancelCallback)
 
   vm._firebaseListeners[key] = {
@@ -165,11 +172,13 @@ function bindAsArray (vm, key, source, cancelCallback) {
  * @param {string} key
  * @param {Object} source
  * @param {function|null} cancelCallback
+ * @param {function|null} doneCallback
  */
-function bindAsObject (vm, key, source, cancelCallback) {
+function bindAsObject (vm, key, source, cancelCallback, doneCallback) {
   defineReactive(vm, key, {})
   var cb = source.on('value', function (snapshot) {
     vm[key] = createRecord(snapshot)
+    doneCallback()
   }, cancelCallback)
   vm._firebaseListeners[key] = { value: cb }
 }
@@ -250,20 +259,22 @@ function install (_Vue) {
   mergeStrats.firebase = mergeStrats.methods
 
   // extend instance methods
-  Vue.prototype.$bindAsObject = function (key, source, cancelCallback) {
+  Vue.prototype.$bindAsObject = function (key, source, cancelCallback, doneCallback) {
     ensureRefs(this)
     bind(this, key, {
       source: source,
       asObject: true,
-      cancelCallback: cancelCallback
+      cancelCallback: cancelCallback,
+      doneCallback: doneCallback
     })
   }
 
-  Vue.prototype.$bindAsArray = function (key, source, cancelCallback) {
+  Vue.prototype.$bindAsArray = function (key, source, cancelCallback, doneCallback) {
     ensureRefs(this)
     bind(this, key, {
       source: source,
-      cancelCallback: cancelCallback
+      cancelCallback: cancelCallback,
+      doneCallback: doneCallback
     })
   }
 
