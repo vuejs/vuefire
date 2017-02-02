@@ -2,144 +2,123 @@
 
 > Firebase binding for [Vuex](https://github.com/vuejs/vuex)
 
-## :construction: This readme is for v1. It hasn't been updated yet
+## :construction: This readme is a WIP. It hasn't been fully updated yet
 
 This is heavily inspired from [vuefire](https://github.com/vuejs/vuefire).
 
-Supports only Vue 2, Vuex 2 and Firebase 3
+Supports only Vue 2, Vuex 2 and Firebase 2/3
 If you need an older version check the `v1` tag: `npm i -D vuexfire@v1`
 
 ## Installation
 
-1. If included as global `<script>`: will install automatically if global `Vue`
-   is present.
+1. Using a CDN:
 
-  ``` html
-  <head>
-    <!-- Vue -->
-    <script src="https://unpkg.com/vue/dist/vue.js"></script>
-    <!-- Vuex -->
-    <script src="https://unpkg.com/vuex/dist/vuex.js"></script>
-    <!-- Firebase -->
-    <script src="https://gstatic.com/firebasejs/3.5.2/firebase.js"></script>
-    <!-- VuexFire -->
-    <script src="https://unpkg.com/vuexfire/dist/vuexfire.js"></script>
-  </head>
-  ```
+``` html
+<script src="https://unpkg.com/vuexfire/dist/vuexfire.js"></script>
+```
 
 2. In module environments, e.g CommonJS:
 
-  ``` bash
-  npm install vue firebase vuexfire --save
-  ```
+``` bash
+npm install vue firebase vuexfire --save
+```
 
-  ``` js
-  var Vue = require('vue')
-  var Vuex = require('vuex')
-  var VuexFire = require('vuexfire')
-  var Firebase = require('firebase')
-
-  // explicit installation required in module environments
-  Vue.use(Vuex)
-  Vue.use(VuexFire)
-  ```
+3. Add it to your store plugins
+``` js
+const store = new Vuex.Store({
+  // your options
+  plugins: [VuexFire]
+})
+```
 
 ## Usage
 
-When binding
+Make sure to define the property in the state first:
 
-### Vuex v1
-
-``` js
-var store = new Vuex.Store({
+```js
+const store = new Vuex.Store({
   state: {
-    items: null // items must be declared on the state
-  }
-},
-// actions, mutations, etc
-)
-
-new Vue({
-  el: '#app',
-  store: store,
-  vuex: {
-    getters: {
-      items: function (state) { return state.items }
-    }
+    todos: [], // Will be bound as an array
+    user: null // Will be bound as an object
   },
-  firebase: {
-    items: db.ref('items') // bind as an array
+  actions: {
+    setTodosRef,
+    setUserRef
   }
+  // other options
 })
 ```
 
-### Vuex v2
-
-Setup mutations
-
-``` js
-var store = new Vuex.Store({
-  state: {
-    items: null
-  },
-  mutations: VuexFire.mutations,
-  getters: {
-    items: function (state) { return state.items }
-  }
-})
-
-new Vue({
-  el: '#app',
-  store: store,
-  computed: Vuex.mapGetters([
-    'items'
-  ]),
-  firebase: {
-    items: db.ref('items')
-  }
-})
-```
-
-#### Modules
-
-In larger applications you may consider splitting up your store
-into [modules](http://vuex.vuejs.org/en/modules.html). If that's your case you
-can use module with vuexfire by using a dot separated key like `cart.items` or
-`user.cart.items`. You must use the `moduleMutations()` method to generate the
-mutations for your module
-
-``` js
-  // Define a module
-  var cart = {
-    state: {
-      items: null // Initialize the variable
-    },
-    // Getters receive the cart module state only
-    getters: {
-      lastItem: function (state) {
-        return state.items[state.items.length - 1]
+It works the same with **modules**, define it in the module state:
+```js
+const store = new Vuex.Store({
+  modules: {
+    todos: {
+      state: {
+        todos: [], // Will be bound as an array
+        user: null // Will be bound as an object
       },
-      items: function (state) { return state.items }
-    },
-    mutations: VuexFire.moduleMutations('cart') // This is the name given to the store
-  }
-
-  // Create the store
-  var store = new Vuex.Store({
-    modules: {
-      cart: cart
+      actions: {
+        setTodosRef,
+        setUserRef
+      }
     }
   }
-
+  // other options
+})
 ```
 
-Everything else works just as [vuefire](https://github.com/vuejs/vuefire). Refer
-to its readme for more documentation.
+Bind a firebase reference inside actions
 
-### Examples
+```js
+function setTodosRef({ bind }, { ref }) {
+  bind('todos', ref)
+}
+function setUserRef({ bind }, { ref }) {
+  bind('user', ref)
+}
+```
+
+Access it as an usual piece of the state:
+
+```js
+const Component = {
+  template: '<div>{{ todos }}</div>',
+  computed: Vuex.mapState(['todos']),
+  created () {
+    this.$store.dispatch('setTodosRef', db.ref('todos'))
+  }
+}
+```
+
+## How does it work?
+
+VuexFire creates some mutations to modify objects and arrays. It listen for
+updates to your firebase database and commit mutations to sync your state.
+
+## Examples
 
 You can checkout the examples by serving an `http-server` at the root of this
 project.
+
+## API
+
+### VuexFire
+
+Use it as a Vuex plugin by feeding it to the `plugins` array in a Store
+
+### bind(key, ref)
+
+_Only available inside of an action_
+
+Binds a firebase reference to property in the state. If there was already
+another reference bound to the same property, it unbinds it first.
+
+### unbind(key)
+
+_Only available inside of an action_
+
+Unbinds a bound firebase reference to a given property in the state.
 
 ## Support on Beerpay
 Hey dude! Help me out for a couple of :beers:!
