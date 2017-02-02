@@ -11,7 +11,8 @@ import {
   createRecord,
   getRef,
   indexForKey,
-  getKey
+  getKey,
+  isObject
 } from './utils/index.js'
 
 const mutations = {
@@ -128,6 +129,12 @@ export function generateBind ({ commit, state, context }) {
   if (context && context.commit) commit = context.commit
 
   function bind (key, source, cancelCallback) {
+    if (!isObject(source)) {
+      throw new Error('VuexFire: invalid Firebase binding source.')
+    }
+    if (!(key in state)) {
+      throw new Error(`VuexFire: cannot bind undefined property '${key}'. Define it on the state first.`)
+    }
     // Unbind if it already exists
     if (key in sources) {
       unbind(key)
@@ -141,11 +148,17 @@ export function generateBind ({ commit, state, context }) {
   }
 
   function unbind (key) {
+    if (!(key in sources)) {
+      throw new Error(`VuexFire: cannot unbind '${key}' because it wasn't bound.`)
+    }
     const oldSource = sources[key]
     const oldListeners = listeners[key]
     for (let event in oldListeners) {
       oldSource.off(event, oldListeners[event])
     }
+    // clean up
+    delete sources[key]
+    delete listeners[key]
   }
 
   return {
