@@ -20,9 +20,7 @@ test.beforeEach(t => {
     state: {
       options: null
     },
-    mutations: {
-      ...mutations
-    },
+    mutations,
     plugins: [VuexFire]
   })
 

@@ -31,9 +31,7 @@ test.beforeEach(t => {
         unbind('options')
       }
     },
-    mutations: {
-      ...mutations
-    },
+    mutations,
     plugins: [VuexFire]
   })
 

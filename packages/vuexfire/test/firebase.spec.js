@@ -30,9 +30,7 @@ test.beforeEach(async (t) => {
         unbind('items')
       }
     },
-    mutations: {
-      ...mutations
-    },
+    mutations,
     plugins: [VuexFire]
   })
 

@@ -36,9 +36,7 @@ test.beforeEach(t => {
             unbind('items')
           }
         },
-        mutations: {
-          ...mutations
-        }
+        mutations
       }
     },
     plugins: [VuexFire]
