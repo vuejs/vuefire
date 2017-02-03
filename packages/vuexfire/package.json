@@ -5,14 +5,14 @@
   "main": "dist/vuexfire.js",
   "scripts": {
     "lint": "eslint --color --ext=js,html src test examples",
-    "test": "npm run lint && npm run test:coverage && npm run build",
+    "test": "yon run lint && yon run test:coverage && yon run build",
     "coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
     "dev": "npm-watch",
     "test:unit": "ava",
-    "test:coverage": "nyc npm run test:unit",
-    "dev:test": "npm run test:unit -- --watch",
+    "test:coverage": "nyc yon run test:unit",
+    "dev:test": "yon run test:unit -- --watch",
     "build": "node build/build.js",
-    "preversion": "npm run build",
+    "preversion": "yon run build",
     "watch": "npm-watch"
   },
   "watch": {
