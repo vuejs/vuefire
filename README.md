@@ -72,12 +72,9 @@ var vm = new Vue({
 
 **About the cancelCallback**:
 
-> We can pass an optional cancel callback to our event subscription that will
-> be called if the read is ever cancelled. A read would be cancelled if the app
-> client doesn't have permission to read from that database reference. This
-> callback will be passed an error object indicating why the failure occurred.
+> An optional callback that will be notified if your event subscription is ever canceled because your client does not have permission to read this data (or it had permission but has now lost it). This callback will be passed an `Error` object indicating why the failure occurred.
 
-[From Firebase docs](https://firebase.google.com/docs/database/admin/retrieve-data)
+[From Firebase API Reference](https://firebase.google.com/docs/reference/js/firebase.database.Query#on)
 
 ``` html
 <div id="demo">
