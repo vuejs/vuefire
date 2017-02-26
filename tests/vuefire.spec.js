@@ -39,6 +39,91 @@ describe('VueFire', function () {
     })
   })
 
+  describe('on ready callback', function () {
+    it('arrays', function (done) {
+      firebaseRef.set({
+        first: { index: 0 },
+        second: { index: 1 },
+        third: { index: 2 }
+      }, function () {
+        new Vue({
+          firebase: {
+            items: {
+              source: firebaseRef,
+              readyCallback: function () {
+                expect(this.items).to.deep.equal([
+                  { '.key': 'first', index: 0 },
+                  { '.key': 'second', index: 1 },
+                  { '.key': 'third', index: 2 }
+                ])
+                done()
+              }
+            }
+          }
+        }).$mount()
+      })
+    })
+
+    it('objects', function (done) {
+      firebaseRef.child('first').set({
+        index: 0
+      }, function () {
+        new Vue({
+          firebase: {
+            item: {
+              source: firebaseRef.child('first'),
+              asObject: true,
+              readyCallback: function () {
+                expect(this.item).to.deep.equal(
+                  { '.key': 'first', index: 0 }
+                )
+                done()
+              }
+            }
+          }
+        }).$mount()
+      })
+    })
+
+    it('$bindAsArray', function (done) {
+      firebaseRef.set({
+        first: { index: 0 },
+        second: { index: 1 },
+        third: { index: 2 }
+      }, function () {
+        new Vue({
+          created: function () {
+            this.$bindAsArray('items', firebaseRef, null, function () {
+              expect(this.items).to.deep.equal([
+                { '.key': 'first', index: 0 },
+                { '.key': 'second', index: 1 },
+                { '.key': 'third', index: 2 }
+              ])
+              done()
+            })
+          }
+        }).$mount()
+      })
+    })
+
+    it('$bindAsObject', function (done) {
+      firebaseRef.child('first').set({
+        index: 0
+      }, function () {
+        new Vue({
+          created: function () {
+            this.$bindAsObject('item', firebaseRef.child('first'), null, function () {
+              expect(this.item).to.deep.equal(
+                { '.key': 'first', index: 0 }
+              )
+              done()
+            })
+          }
+        }).$mount()
+      })
+    })
+  })
+
   describe('bind as Array', function () {
     it('throws error for invalid firebase ref', function () {
       helpers.invalidFirebaseRefs.forEach(function (ref) {
