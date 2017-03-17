@@ -136,10 +136,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	function bind (vm, key, source) {
 	  var asObject = false
 	  var cancelCallback = null
+	  var readyCallback = null
 	  // check { source, asArray, cancelCallback } syntax
 	  if (isObject(source) && source.hasOwnProperty('source')) {
 	    asObject = source.asObject
 	    cancelCallback = source.cancelCallback
+	    readyCallback = source.readyCallback
 	    source = source.source
 	  }
 	  if (!isObject(source)) {
@@ -153,6 +155,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    bindAsObject(vm, key, source, cancelCallback)
 	  } else {
 	    bindAsArray(vm, key, source, cancelCallback)
+	  }
+	  if (readyCallback) {
+	    source.once('value', readyCallback.bind(vm))
 	  }
 	}
 
@@ -306,20 +311,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	  mergeStrats.firebase = mergeStrats.methods
 
 	  // extend instance methods
-	  Vue.prototype.$bindAsObject = function (key, source, cancelCallback) {
+	  Vue.prototype.$bindAsObject = function (key, source, cancelCallback, readyCallback) {
 	    ensureRefs(this)
 	    bind(this, key, {
 	      source: source,
 	      asObject: true,
-	      cancelCallback: cancelCallback
+	      cancelCallback: cancelCallback,
+	      readyCallback: readyCallback
 	    })
 	  }
 
-	  Vue.prototype.$bindAsArray = function (key, source, cancelCallback) {
+	  Vue.prototype.$bindAsArray = function (key, source, cancelCallback, readyCallback) {
 	    ensureRefs(this)
 	    bind(this, key, {
 	      source: source,
-	      cancelCallback: cancelCallback
+	      cancelCallback: cancelCallback,
+	      readyCallback: readyCallback
 	    })
 	  }
 
