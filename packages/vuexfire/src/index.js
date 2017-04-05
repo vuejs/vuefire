@@ -212,12 +212,10 @@ export function firebaseAction (action) {
   return function firebaseEnhancedActionFn (context, payload) {
     // get the local state and commit. These may be bound to a module
     const { state, commit } = context
-    context.bindFirebaseRef = (key, source, options = {}) => {
+    context.bindFirebaseRef = (key, source, options = {}) =>
       bind({ state, commit, key, source, options })
-    }
-    context.unbindFirebaseRef = (key) => {
+    context.unbindFirebaseRef = (key) =>
       unbind({ commit, key })
-    }
     action(context, payload)
   }
 }
