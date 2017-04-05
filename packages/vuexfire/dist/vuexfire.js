@@ -9,14 +9,6 @@
 	(factory((global.VuexFire = global.VuexFire || {})));
 }(this, (function (exports) { 'use strict';
 
-var VUEXFIRE_OBJECT_VALUE = 'vuexfire/OBJECT_VALUE';
-var VUEXFIRE_ARRAY_INITIALIZE = 'VUEXFIRE_ARRAY_INITIALIZE';
-var VUEXFIRE_ARRAY_ADD = 'vuexfire/ARRAY_ADD';
-var VUEXFIRE_ARRAY_CHANGE = 'vuexfire/ARRAY_CHANGE';
-var VUEXFIRE_ARRAY_MOVE = 'vuexfire/ARRAY_MOVE';
-var VUEXFIRE_ARRAY_REMOVE = 'vuexfire/ARRAY_REMOVE';
-var VUEXFIRE_MUTATION = 'vuexfire/MUTATION';
-
 /**
  * Find the index for an object with given key.
  *
@@ -89,6 +81,14 @@ function createRecord (snapshot) {
   return res
 }
 
+var VUEXFIRE_OBJECT_VALUE = 'vuexfire/OBJECT_VALUE';
+var VUEXFIRE_ARRAY_INITIALIZE = 'VUEXFIRE_ARRAY_INITIALIZE';
+var VUEXFIRE_ARRAY_ADD = 'vuexfire/ARRAY_ADD';
+var VUEXFIRE_ARRAY_CHANGE = 'vuexfire/ARRAY_CHANGE';
+var VUEXFIRE_ARRAY_MOVE = 'vuexfire/ARRAY_MOVE';
+var VUEXFIRE_ARRAY_REMOVE = 'vuexfire/ARRAY_REMOVE';
+var VUEXFIRE_MUTATION = 'vuexfire/MUTATION';
+
 var mutations = {};
 mutations[VUEXFIRE_OBJECT_VALUE] = function (state, ref) {
     var key = ref.key;
@@ -148,7 +148,7 @@ function bindAsObject (ref) {
       type: VUEXFIRE_OBJECT_VALUE,
       key: key,
       record: createRecord(snapshot),
-      state: state
+      state: state,
     });
   }, cancelCallback);
 
@@ -167,7 +167,7 @@ function bindAsArray (ref) {
   commit(VUEXFIRE_MUTATION, {
     type: VUEXFIRE_ARRAY_INITIALIZE,
     state: state,
-    key: key
+    key: key,
   });
   var onAdd = source.on('child_added', function (snapshot, prevKey) {
     var array = state[key];
@@ -177,7 +177,7 @@ function bindAsArray (ref) {
       state: state,
       key: key,
       index: index,
-      record: createRecord(snapshot)
+      record: createRecord(snapshot),
     });
   }, cancelCallback);
 
@@ -188,7 +188,7 @@ function bindAsArray (ref) {
       type: VUEXFIRE_ARRAY_REMOVE,
       state: state,
       key: key,
-      index: index
+      index: index,
     });
   }, cancelCallback);
 
@@ -200,7 +200,7 @@ function bindAsArray (ref) {
       state: state,
       key: key,
       index: index,
-      record: createRecord(snapshot)
+      record: createRecord(snapshot),
     });
   }, cancelCallback);
 
@@ -216,7 +216,7 @@ function bindAsArray (ref) {
       key: key,
       index: index,
       newIndex: newIndex,
-      record: createRecord(snapshot)
+      record: createRecord(snapshot),
     });
   }, cancelCallback);
 
@@ -225,7 +225,7 @@ function bindAsArray (ref) {
     child_added: onAdd,
     child_changed: onChange,
     child_removed: onRemove,
-    child_moved: onMove
+    child_moved: onMove,
   }
 }
 
@@ -250,7 +250,7 @@ function bind (ref) {
   if (!binding) {
     binding = {
       sources: Object.create(null),
-      listeners: Object.create(null)
+      listeners: Object.create(null),
     };
     bindings.set(commit, binding);
   }
@@ -278,7 +278,7 @@ function unbind (ref) {
   if (!binding) {
     binding = {
       sources: Object.create(null),
-      listeners: Object.create(null)
+      listeners: Object.create(null),
     };
     bindings.set(commit, binding);
   }
