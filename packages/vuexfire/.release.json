@@ -1,9 +1,10 @@
 {
   "buildCommand": "npm run build",
+  "commitMessage": "🔖 %s",
   "tagName": "v%s",
   "github": {
     "release": true,
-    "releaseName": "Release %s",
+    "releaseName": "🚀 Release %s",
     "tokenRef": "GITHUB_TOKEN"
   },
   "npm": {
