@@ -36,22 +36,18 @@
     var store = new Vuex.Store({
       // VuexFire will check the type of the property to bind as an array or as
       // an object
+      strict: true,
       state: { items: [] },
-      mutations: VuexFire.mutations,
+      mutations: VuexFire.firebaseMutations,
       getters: {
         items: state => state.items
       },
       actions: {
-        setItemsRef (context, ref) {
-          bind('items', ref)
-        }
-      },
-      plugins: [VuexFire.default]
+        setItemsRef: VuexFire.firebaseAction(({ bindFirebaseRef }, ref) => {
+          bindFirebaseRef('items', ref)
+        })
+      }
     })
-
-    const { bind, unbind } = VuexFire.generateBind(store)
-    // unbind is unused here
-    unbind
 
     window.vm = new Vue({
       el: '#app',

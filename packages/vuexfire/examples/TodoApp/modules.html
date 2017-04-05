@@ -35,25 +35,20 @@
 
     var todos = {
       state: { items: [] },
+      mutations: VuexFire.firebaseMutations,
       getters: {
         items: state => state.items
       },
       actions: {
-        setItemsRef (context, ref) {
-          bind('items', ref)
-        }
-      },
-      mutations: VuexFire.mutations
+        setItemsRef: VuexFire.firebaseAction(({ bindFirebaseRef }, ref) => {
+          bindFirebaseRef('items', ref)
+        })
+      }
     }
 
     var store = new Vuex.Store({
-      modules: { todos },
-      plugins: [VuexFire.default]
+      modules: { todos }
     })
-
-    const { bind, unbind } = VuexFire.generateBind(store._modules.get(['todos']))
-    // unbind is unused here
-    unbind
 
     window.vm = new Vue({
       el: '#app',

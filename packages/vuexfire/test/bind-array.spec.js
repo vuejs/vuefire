@@ -170,4 +170,3 @@ test('unbinds old array reference when binding a new one', t => {
   t.context.ref.flush()
   t.deepEqual(t.context.store.state.items, [{'.key': 'bar', '.value': 'bar'}])
 })
-
