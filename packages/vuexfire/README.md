@@ -1,9 +1,9 @@
-# VuexFire [![Build Status](https://img.shields.io/circleci/project/posva/vuexfire/master.svg)](https://circleci.com/gh/posva/vuexfire) [![npm package](https://img.shields.io/npm/v/vuexfire.svg)](https://www.npmjs.com/package/vuexfire) [![coverage](https://img.shields.io/codecov/c/github/posva/vuexfire/master.svg)](https://codecov.io/github/posva/vuexfire)
+# VuexFire [![Build Status](https://img.shields.io/circleci/project/posva/vuexfire/master.svg)](https://circleci.com/gh/posva/vuexfire) [![npm package](https://img.shields.io/npm/v/vuexfire.svg)](https://www.npmjs.com/package/vuexfire) [![coverage](https://img.shields.io/codecov/c/github/posva/vuexfire/master.svg)](https://codecov.io/github/posva/vuexfire)![size](http://img.badgesize.io/posva/vuexfire/master/dist/vuexfire.min.js.svg?compression=gzip)
 
 > Firebase binding for [Vuex](https://github.com/vuejs/vuex)
 
 Supports only Vue 2, Vuex 2 and Firebase 2/3
-If you need an older version check the `v1` tag: `npm i -D vuexfire@v1`
+If you need an older version check the `v1` branch: `npm i -D vuexfire@v1`
 
 ## Installation
 
