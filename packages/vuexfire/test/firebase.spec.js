@@ -6,7 +6,7 @@ import {
   createFirebaseApp
 } from './helpers/firebase.js'
 
-import VuexFire, {
+import {
   firebaseMutations,
   firebaseAction
 } from '../src'

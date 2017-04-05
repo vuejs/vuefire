@@ -49,9 +49,6 @@ const firebaseMutations = {
   }
 }
 
-export default function VuexFire (store) {
-}
-
 function bindAsObject ({
   key,
   source,
@@ -142,51 +139,6 @@ function bindAsArray ({
     child_changed: onChange,
     child_removed: onRemove,
     child_moved: onMove
-  }
-}
-
-export function generateBind ({ commit, state, context }) {
-  const listeners = Object.create(null)
-  const sources = Object.create(null)
-  // Make it work for modules
-  if (context && context.commit) commit = context.commit
-
-  function bind (key, source, cancelCallback) {
-    if (!isObject(source)) {
-      throw new Error('VuexFire: invalid Firebase binding source.')
-    }
-    if (!(key in state)) {
-      throw new Error(`VuexFire: cannot bind undefined property '${key}'. Define it on the state first.`)
-    }
-    // Unbind if it already exists
-    if (key in sources) {
-      unbind(key)
-    }
-    sources[key] = getRef(source)
-    if (state[key] && 'length' in state[key]) {
-      bindAsArray({ key, source, cancelCallback, commit, state, listeners })
-    } else {
-      bindAsObject({ key, source, cancelCallback, commit, state, listeners })
-    }
-  }
-
-  function unbind (key) {
-    if (!(key in sources)) {
-      throw new Error(`VuexFire: cannot unbind '${key}' because it wasn't bound.`)
-    }
-    const oldSource = sources[key]
-    const oldListeners = listeners[key]
-    for (let event in oldListeners) {
-      oldSource.off(event, oldListeners[event])
-    }
-    // clean up
-    delete sources[key]
-    delete listeners[key]
-  }
-
-  return {
-    bind,
-    unbind
   }
 }
 
