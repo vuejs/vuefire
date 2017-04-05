@@ -2,10 +2,14 @@ const rollup = require('rollup').rollup
 const buble = require('rollup-plugin-buble')
 const uglify = require('uglify-js')
 const packageData = require('../package.json')
+const mkdirp = require('mkdirp')
 const { version, author, name } = packageData
 // remove the email at the end
 const authorName = author.replace(/\s+<.*/, '')
 const moduleName = 'VuexFire'
+
+// Make sure dist dir exists
+mkdirp('dist')
 
 const {
   logError,
@@ -19,28 +23,58 @@ const banner =
       ' * Released under the MIT License.\n' +
       ' */'
 
-rollup({
-  entry: 'src/index.js',
-  plugins: [
-    buble()
-  ]
-}).then(function (bundle) {
-  var code = bundle.generate({
-    format: 'umd',
-    exports: 'named',
-    banner,
-    moduleName
-  }).code
-  return write(`dist/${name}.js`, code).then(function () {
-    return code
-  })
-}).then(function (code) {
-  var minified = uglify.minify(code, {
-    fromString: true,
-    output: {
-      preamble: banner,
-      ascii_only: true
+const bundleOptions = {
+  banner,
+  exports: 'named',
+  format: 'umd',
+  moduleName
+}
+
+function createBundle ({ name, format }) {
+  rollup({
+    entry: 'src/index.js',
+    plugins: [
+      buble({
+        objectAssign: 'Object.assign'
+      })
+    ]
+  }).then(function (bundle) {
+    const options = Object.assign({}, bundleOptions)
+    if (format) options.format = format
+    const code = bundle.generate(options).code
+    if (/min$/.test(name)) {
+      const minified = uglify.minify(code, {
+        fromString: true,
+        output: {
+          preamble: banner,
+          ascii_only: true
+        }
+      }).code
+      return write(`dist/${name}.js`, minified)
+    } else {
+      return write(`dist/${name}.js`, code)
     }
-  }).code
-  return write(`dist/${name}.min.js`, minified)
-}).catch(logError)
+  }).catch(logError)
+}
+
+// Browser bundle (can be used with script)
+createBundle({
+  name
+})
+
+// Commonjs bundle (preserves process.env.NODE_ENV) so
+// the user can replace it in dev and prod mode
+createBundle({
+  name: `${name}.esm`,
+  format: 'es'
+})
+
+createBundle({
+  name: `${name}.common`,
+  format: 'cjs'
+})
+
+// Minified version for browser
+createBundle({
+  name: `${name}.min`
+})

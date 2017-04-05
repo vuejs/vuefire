@@ -1,8 +1,15 @@
 {
   "name": "vuexfire",
-  "version": "0.3.0",
+  "version": "2.0.0",
   "description": "Opinionated firebase binding for vuex",
-  "main": "dist/vuexfire.js",
+  "main": "dist/vuexfire.common.js",
+  "module": "dist/vuexfire.esm.js",
+  "unpkg": "dist/vuexfire.js",
+  "browser": "dist/vuexfire.js",
+  "files": [
+    "dist",
+    "src"
+  ],
   "scripts": {
     "lint": "eslint --color --ext=js,html src test examples",
     "test": "yon run lint && yon run test:coverage && yon run build",
@@ -11,6 +18,7 @@
     "test:unit": "ava",
     "test:coverage": "nyc yon run test:unit",
     "dev:test": "yon run test:unit -- --watch",
+    "prebuild": "rimraf dist",
     "build": "node build/build.js",
     "preversion": "yon run build",
     "watch": "npm-watch"
@@ -80,8 +88,10 @@
     "eslint-plugin-standard": "^2.2.0",
     "firebase": "^3.7.5",
     "firebase-mock": "^1.0.3",
+    "mkdirp": "^0.5.1",
     "npm-watch": "^0.1.8",
     "nyc": "^10.2.0",
+    "rimraf": "^2.6.1",
     "rollup": "^0.41.6",
     "rollup-plugin-buble": "^0.15.0",
     "uglify-js": "^2.8.21",
