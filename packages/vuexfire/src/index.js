@@ -44,8 +44,9 @@ const oldmutations = {
 }
 
 const firebaseMutations = {
-  [VUEXFIRE_MUTATION] (_, { commit, state, type, ...payload }) {
-    oldmutations[type](state, payload)
+  // the { commit, state, type, ...payload } syntax is not supported by buble...
+  [VUEXFIRE_MUTATION] (_, context) {
+    oldmutations[context.type](context.state, context)
   }
 }
 
