@@ -4,8 +4,8 @@ import Vuex from 'vuex'
 import { MockFirebase } from 'firebase-mock'
 
 import VuexFire, {
-  mutations,
-  generateBind
+  firebaseMutations,
+  firebaseAction
 } from '../src'
 
 const root = new MockFirebase()
@@ -20,13 +20,15 @@ test.beforeEach(t => {
     state: {
       options: null
     },
-    mutations,
-    plugins: [VuexFire]
+    actions: {
+      setup: firebaseAction(({ bindFirebaseRef, unbindFirebaseRef }) => {
+        t.context.bind = bindFirebaseRef
+        t.context.unbind = unbindFirebaseRef
+      })
+    },
+    mutations: firebaseMutations
   })
-
-  const { bind, unbind } = generateBind(t.context.store)
-  t.context.bind = bind
-  t.context.unbind = unbind
+  t.context.store.dispatch('setup')
 
   // Create a fresh ref for the test
   const ref = root.push({})

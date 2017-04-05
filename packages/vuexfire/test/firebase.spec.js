@@ -7,8 +7,8 @@ import {
 } from './helpers/firebase.js'
 
 import VuexFire, {
-  mutations,
-  generateBind
+  firebaseMutations,
+  firebaseAction
 } from '../src'
 
 const firebaseApp = createFirebaseApp()
@@ -23,18 +23,15 @@ test.beforeEach(async (t) => {
       items: []
     },
     actions: {
-      setItemsRef (context, ref) {
-        bind('items', ref)
-      },
-      unbindItemsRef (context) {
-        unbind('items')
-      }
+      setItemsRef: firebaseAction(({ bindFirebaseRef }, ref) => {
+        bindFirebaseRef('items', ref)
+      }),
+      unbindItemsRef: firebaseAction(({ unbindFirebaseRef }) => {
+        unbindFirebaseRef('items')
+      })
     },
-    mutations,
-    plugins: [VuexFire]
+    mutations: firebaseMutations
   })
-
-  const { bind, unbind } = generateBind(t.context.store)
 
   // Create a fresh ref for the test
   const ref = await createRef(firebaseApp)
