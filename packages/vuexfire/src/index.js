@@ -4,7 +4,8 @@ import {
   VUEXFIRE_ARRAY_ADD,
   VUEXFIRE_ARRAY_CHANGE,
   VUEXFIRE_ARRAY_MOVE,
-  VUEXFIRE_ARRAY_REMOVE
+  VUEXFIRE_ARRAY_REMOVE,
+  VUEXFIRE_MUTATION
 } from './types.js'
 
 import {
@@ -15,7 +16,7 @@ import {
   isObject
 } from './utils/index.js'
 
-const mutations = {
+const oldmutations = {
   [VUEXFIRE_OBJECT_VALUE] (state, payload) {
     state[payload.key] = payload.record
   },
@@ -42,6 +43,12 @@ const mutations = {
   }
 }
 
+const firebaseMutations = {
+  [VUEXFIRE_MUTATION] (_, { commit, state, type, ...payload }) {
+    oldmutations[type](state, payload)
+  }
+}
+
 export default function VuexFire (store) {
 }
 
@@ -49,16 +56,20 @@ function bindAsObject ({
   key,
   source,
   cancelCallback,
-  listeners,
-  commit
+  commit,
+  state
 }) {
   const cb = source.on('value', function (snapshot) {
-    commit(VUEXFIRE_OBJECT_VALUE, {
+    commit(VUEXFIRE_MUTATION, {
+      type: VUEXFIRE_OBJECT_VALUE,
       key,
-      record: createRecord(snapshot)
+      record: createRecord(snapshot),
+      state
     })
   }, cancelCallback)
-  listeners[key] = { value: cb }
+
+  // return the listeners that have been setup
+  return { value: cb }
 }
 
 function bindAsArray ({
@@ -143,7 +154,7 @@ export function generateBind ({ commit, state, context }) {
     if (state[key] && 'length' in state[key]) {
       bindAsArray({ key, source, cancelCallback, commit, state, listeners })
     } else {
-      bindAsObject({ key, source, cancelCallback, commit, listeners })
+      bindAsObject({ key, source, cancelCallback, commit, state, listeners })
     }
   }
 
@@ -167,4 +178,83 @@ export function generateBind ({ commit, state, context }) {
   }
 }
 
-export { mutations }
+// Firebase binding
+const bindings = new WeakMap()
+
+function bind ({
+  state,
+  commit,
+  key,
+  source,
+  options: {
+    cancelCallback
+  }
+}) {
+  if (!isObject(source)) {
+    throw new Error('VuexFire: invalid Firebase binding source.')
+  }
+  if (!(key in state)) {
+    throw new Error(`VuexFire: cannot bind undefined property '${key}'. Define it on the state first.`)
+  }
+  // Unbind if it already exists
+  let binding = bindings.get(commit)
+  if (!binding) {
+    binding = {
+      sources: Object.create(null),
+      listeners: Object.create(null)
+    }
+    bindings.set(commit, binding)
+  }
+  if (key in binding.sources) {
+    unbind({ commit, key })
+  }
+  binding.sources[key] = getRef(source)
+
+  // Automatically detects if it should be bound as an array or as an object
+  let listener
+  if (state[key] && 'length' in state[key]) {
+    bindAsArray({ key, source, cancelCallback, commit, state })
+  } else {
+    listener = bindAsObject({ key, source, cancelCallback, commit, state })
+  }
+
+  binding.listeners[key] = listener
+}
+
+function unbind ({ commit, key }) {
+  let binding = bindings.get(commit)
+  if (!binding) {
+    binding = {
+      sources: Object.create(null),
+      listeners: Object.create(null)
+    }
+    bindings.set(commit, binding)
+  }
+  if (!(key in binding.sources)) {
+    throw new Error(`VuexFire: cannot unbind '${key}' because it wasn't bound.`)
+  }
+  const oldSource = binding.sources[key]
+  const oldListeners = binding.listeners[key]
+  for (let event in oldListeners) {
+    oldSource.off(event, oldListeners[event])
+  }
+  // clean up
+  delete binding.sources[key]
+  delete binding.listeners[key]
+}
+
+export function firebaseAction (action) {
+  return function firebaseEnhancedActionFn (context, payload) {
+    // get the local state and commit. These may be bound to a module
+    const { state, commit } = context
+    context.bindFirebaseRef = (key, source, options = {}) => {
+      bind({ state, commit, key, source, options })
+    }
+    context.unbindFirebaseRef = (key) => {
+      unbind({ commit, key })
+    }
+    action(context, payload)
+  }
+}
+
+export { firebaseMutations }

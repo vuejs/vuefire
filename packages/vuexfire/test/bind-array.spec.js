@@ -3,9 +3,9 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import { MockFirebase } from 'firebase-mock'
 
-import VuexFire, {
-  mutations,
-  generateBind
+import {
+  firebaseMutations,
+  firebaseAction
 } from '../src'
 
 const root = new MockFirebase()
