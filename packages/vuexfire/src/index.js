@@ -76,16 +76,21 @@ function bindAsArray ({
   key,
   source,
   cancelCallback,
-  listeners,
   commit,
   state
 }) {
   // Initialise the array to an empty one
-  commit(VUEXFIRE_ARRAY_INITIALIZE, { key })
+  commit(VUEXFIRE_MUTATION, {
+    type: VUEXFIRE_ARRAY_INITIALIZE,
+    state,
+    key
+  })
   const onAdd = source.on('child_added', function (snapshot, prevKey) {
     const array = state[key]
     const index = prevKey ? indexForKey(array, prevKey) + 1 : 0
-    commit(VUEXFIRE_ARRAY_ADD, {
+    commit(VUEXFIRE_MUTATION, {
+      type: VUEXFIRE_ARRAY_ADD,
+      state,
       key,
       index,
       record: createRecord(snapshot)
@@ -95,7 +100,9 @@ function bindAsArray ({
   const onRemove = source.on('child_removed', function (snapshot) {
     const array = state[key]
     const index = indexForKey(array, getKey(snapshot))
-    commit(VUEXFIRE_ARRAY_REMOVE, {
+    commit(VUEXFIRE_MUTATION, {
+      type: VUEXFIRE_ARRAY_REMOVE,
+      state,
       key,
       index
     })
@@ -104,7 +111,9 @@ function bindAsArray ({
   const onChange = source.on('child_changed', function (snapshot) {
     const array = state[key]
     const index = indexForKey(array, getKey(snapshot))
-    commit(VUEXFIRE_ARRAY_CHANGE, {
+    commit(VUEXFIRE_MUTATION, {
+      type: VUEXFIRE_ARRAY_CHANGE,
+      state,
       key,
       index,
       record: createRecord(snapshot)
@@ -117,7 +126,9 @@ function bindAsArray ({
     var newIndex = prevKey ? indexForKey(array, prevKey) + 1 : 0
     // TODO refactor + 1
     newIndex += index < newIndex ? -1 : 0
-    commit(VUEXFIRE_ARRAY_MOVE, {
+    commit(VUEXFIRE_MUTATION, {
+      type: VUEXFIRE_ARRAY_MOVE,
+      state,
       key,
       index,
       newIndex,
@@ -125,7 +136,8 @@ function bindAsArray ({
     })
   }, cancelCallback)
 
-  listeners[key] = {
+  // return the listeners that have been setup
+  return {
     child_added: onAdd,
     child_changed: onChange,
     child_removed: onRemove,
@@ -213,7 +225,7 @@ function bind ({
   // Automatically detects if it should be bound as an array or as an object
   let listener
   if (state[key] && 'length' in state[key]) {
-    bindAsArray({ key, source, cancelCallback, commit, state })
+    listener = bindAsArray({ key, source, cancelCallback, commit, state })
   } else {
     listener = bindAsObject({ key, source, cancelCallback, commit, state })
   }

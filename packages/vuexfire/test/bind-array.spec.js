@@ -20,18 +20,15 @@ test.beforeEach(t => {
       items: []
     },
     actions: {
-      setItemsRef (context, ref) {
-        bind('items', ref)
-      },
-      unbindItemsRef (context) {
-        unbind('items')
-      }
+      setItemsRef: firebaseAction(({ bindFirebaseRef }, ref) => {
+        bindFirebaseRef('items', ref)
+      }),
+      unbindItemsRef: firebaseAction(({ unbindFirebaseRef }) => {
+        unbindFirebaseRef('items')
+      })
     },
-    mutations,
-    plugins: [VuexFire]
+    mutations: firebaseMutations
   })
-
-  const { bind, unbind } = generateBind(t.context.store)
 
   // Create a fresh ref for the test
   const ref = root.push({})
