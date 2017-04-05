@@ -4,7 +4,7 @@ import {
   VUEXFIRE_ARRAY_ADD,
   VUEXFIRE_ARRAY_CHANGE,
   VUEXFIRE_ARRAY_MOVE,
-  VUEXFIRE_ARRAY_REMOVE
+  VUEXFIRE_ARRAY_REMOVE,
 } from './types.js'
 
 export const mutations = {
@@ -31,5 +31,5 @@ export const mutations = {
 
   [VUEXFIRE_ARRAY_REMOVE] (state, { key, index }) {
     state[key].splice(index, 1)
-  }
+  },
 }

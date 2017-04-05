@@ -20,7 +20,7 @@ exports.createFirebaseApp = function createFirebaseApp () {
     apiKey: 'AIzaSyC3eBV8N95k_K67GTfPqf67Mk1P-IKcYng',
     authDomain: 'oss-test.firebaseapp.com',
     databaseURL: 'https://oss-test.firebaseio.com',
-    storageBucket: 'oss-test.appspot.com'
+    storageBucket: 'oss-test.appspot.com',
   })
 }
 

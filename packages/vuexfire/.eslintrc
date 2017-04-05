@@ -8,6 +8,7 @@
       "amd": true
     },
     "rules": {
-      "no-new": 0
+      "no-new": 0,
+      "comma-dangle": ["error", "always-multiline"]
     }
 }

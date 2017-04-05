@@ -5,7 +5,7 @@ import { MockFirebase } from 'firebase-mock'
 
 import {
   firebaseMutations,
-  firebaseAction
+  firebaseAction,
 } from '../src'
 
 const root = new MockFirebase()
@@ -18,15 +18,15 @@ test.before(t => {
 test.beforeEach(t => {
   t.context.store = new Vuex.Store({
     state: {
-      options: null
+      options: null,
     },
     actions: {
       setup: firebaseAction(({ bindFirebaseRef, unbindFirebaseRef }) => {
         t.context.bind = bindFirebaseRef
         t.context.unbind = unbindFirebaseRef
-      })
+      }),
     },
-    mutations: firebaseMutations
+    mutations: firebaseMutations,
   })
   t.context.store.dispatch('setup')
 

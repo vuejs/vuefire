@@ -11,14 +11,14 @@ import {
   VUEXFIRE_ARRAY_MOVE,
   VUEXFIRE_ARRAY_REMOVE,
   VUEXFIRE_MUTATION,
-  mutations
+  mutations,
 } from './utils/index.js'
 
 export const firebaseMutations = {
   // the { commit, state, type, ...payload } syntax is not supported by buble...
   [VUEXFIRE_MUTATION] (_, context) {
     mutations[context.type](context.state, context)
-  }
+  },
 }
 
 function bindAsObject ({
@@ -26,14 +26,14 @@ function bindAsObject ({
   source,
   cancelCallback,
   commit,
-  state
+  state,
 }) {
   const cb = source.on('value', function (snapshot) {
     commit(VUEXFIRE_MUTATION, {
       type: VUEXFIRE_OBJECT_VALUE,
       key,
       record: createRecord(snapshot),
-      state
+      state,
     })
   }, cancelCallback)
 
@@ -46,13 +46,13 @@ function bindAsArray ({
   source,
   cancelCallback,
   commit,
-  state
+  state,
 }) {
   // Initialise the array to an empty one
   commit(VUEXFIRE_MUTATION, {
     type: VUEXFIRE_ARRAY_INITIALIZE,
     state,
-    key
+    key,
   })
   const onAdd = source.on('child_added', function (snapshot, prevKey) {
     const array = state[key]
@@ -62,7 +62,7 @@ function bindAsArray ({
       state,
       key,
       index,
-      record: createRecord(snapshot)
+      record: createRecord(snapshot),
     })
   }, cancelCallback)
 
@@ -73,7 +73,7 @@ function bindAsArray ({
       type: VUEXFIRE_ARRAY_REMOVE,
       state,
       key,
-      index
+      index,
     })
   }, cancelCallback)
 
@@ -85,7 +85,7 @@ function bindAsArray ({
       state,
       key,
       index,
-      record: createRecord(snapshot)
+      record: createRecord(snapshot),
     })
   }, cancelCallback)
 
@@ -101,7 +101,7 @@ function bindAsArray ({
       key,
       index,
       newIndex,
-      record: createRecord(snapshot)
+      record: createRecord(snapshot),
     })
   }, cancelCallback)
 
@@ -110,7 +110,7 @@ function bindAsArray ({
     child_added: onAdd,
     child_changed: onChange,
     child_removed: onRemove,
-    child_moved: onMove
+    child_moved: onMove,
   }
 }
 
@@ -123,8 +123,8 @@ function bind ({
   key,
   source,
   options: {
-    cancelCallback
-  }
+    cancelCallback,
+  },
 }) {
   if (!isObject(source)) {
     throw new Error('VuexFire: invalid Firebase binding source.')
@@ -137,7 +137,7 @@ function bind ({
   if (!binding) {
     binding = {
       sources: Object.create(null),
-      listeners: Object.create(null)
+      listeners: Object.create(null),
     }
     bindings.set(commit, binding)
   }
@@ -162,7 +162,7 @@ function unbind ({ commit, key }) {
   if (!binding) {
     binding = {
       sources: Object.create(null),
-      listeners: Object.create(null)
+      listeners: Object.create(null),
     }
     bindings.set(commit, binding)
   }

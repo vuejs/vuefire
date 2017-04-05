@@ -5,7 +5,7 @@ import { MockFirebase } from 'firebase-mock'
 
 import {
   firebaseMutations,
-  firebaseAction
+  firebaseAction,
 } from '../src'
 
 const root = new MockFirebase()
@@ -17,7 +17,7 @@ test.before(t => {
 test.beforeEach(t => {
   t.context.store = new Vuex.Store({
     state: {
-      items: []
+      items: [],
     },
     actions: {
       setItemsRef: firebaseAction(({ bindFirebaseRef }, ref) => {
@@ -25,9 +25,9 @@ test.beforeEach(t => {
       }),
       unbindItemsRef: firebaseAction(({ unbindFirebaseRef }) => {
         unbindFirebaseRef('items')
-      })
+      }),
     },
-    mutations: firebaseMutations
+    mutations: firebaseMutations,
   })
 
   // Create a fresh ref for the test
@@ -41,14 +41,14 @@ test('binds an array of objects', t => {
   t.context.ref.set({
     first: { index: 0 },
     second: { index: 1 },
-    third: { index: 2 }
+    third: { index: 2 },
   })
   t.context.ref.flush()
 
   t.deepEqual(t.context.store.state.items, [
     { '.key': 'first', index: 0 },
     { '.key': 'second', index: 1 },
-    { '.key': 'third', index: 2 }
+    { '.key': 'third', index: 2 },
   ])
   t.context.ref.child('first').child('index').set(3)
   t.context.ref.flush()
@@ -63,7 +63,7 @@ test('binds an array of primitives', t => {
   t.deepEqual(t.context.store.state.items, [
     { '.key': '0', '.value': 0 },
     { '.key': '1', '.value': 1 },
-    { '.key': '2', '.value': 2 }
+    { '.key': '2', '.value': 2 },
   ])
 })
 
@@ -72,14 +72,14 @@ test('binds a mixed array', t => {
   t.context.ref.set({
     0: 'first',
     1: 'second',
-    third: { index: 2 }
+    third: { index: 2 },
   })
   t.context.ref.flush()
 
   t.deepEqual(t.context.store.state.items, [
     { '.key': '0', '.value': 'first' },
     { '.key': '1', '.value': 'second' },
-    { '.key': 'third', index: 2 }
+    { '.key': 'third', index: 2 },
   ])
 })
 
@@ -95,7 +95,7 @@ test('add records to the array', t => {
   t.context.ref.set({
     first: { index: 0 },
     second: { index: 1 },
-    third: { index: 2 }
+    third: { index: 2 },
   })
   t.context.ref.flush()
   t.context.ref.child('fourth').set({ index: 3 })
@@ -107,7 +107,7 @@ test('add records to the array', t => {
     { '.key': 'first', index: 0 },
     { '.key': 'second', index: 1 },
     { '.key': 'third', index: 2 },
-    { '.key': 'fourth', index: 3 }
+    { '.key': 'fourth', index: 3 },
   ])
 })
 
@@ -116,7 +116,7 @@ test('removes records from array', t => {
   t.context.ref.set({
     first: { index: 0 },
     second: { index: 1 },
-    third: { index: 2 }
+    third: { index: 2 },
   })
   t.context.ref.flush()
   t.context.ref.child('second').remove()
@@ -126,7 +126,7 @@ test('removes records from array', t => {
   const sorted = [...t.context.store.state.items].sort((a, b) => a.index - b.index)
   t.deepEqual(sorted, [
     { '.key': 'first', index: 0 },
-    { '.key': 'third', index: 2 }
+    { '.key': 'third', index: 2 },
   ])
 })
 

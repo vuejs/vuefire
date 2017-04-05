@@ -1,5 +1,5 @@
 import {
-  isObject
+  isObject,
 } from './misc.js'
 
 /**

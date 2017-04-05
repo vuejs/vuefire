@@ -5,7 +5,7 @@ import { MockFirebase } from 'firebase-mock'
 
 import {
   firebaseMutations,
-  firebaseAction
+  firebaseAction,
 } from '../src'
 
 const root = new MockFirebase()
@@ -18,7 +18,7 @@ test.beforeEach(t => {
   t.context.store = new Vuex.Store({
     state: {
       options: null,
-      primitive: null
+      primitive: null,
     },
     actions: {
       setPrimitiveRef: firebaseAction(({ bindFirebaseRef }, ref) => {
@@ -29,9 +29,9 @@ test.beforeEach(t => {
       }),
       unbindOptionsRef: firebaseAction(({ unbindFirebaseRef }) => {
         unbindFirebaseRef('options')
-      })
+      }),
     },
-    mutations: firebaseMutations
+    mutations: firebaseMutations,
   })
 
   // Create a fresh ref for the test
@@ -44,7 +44,7 @@ test('binds to an object', t => {
   const options = {
     foo: 1,
     bar: 2,
-    '.key': t.context.ref.key
+    '.key': t.context.ref.key,
   }
   t.context.store.dispatch('setOptionsRef', t.context.ref)
   t.context.ref.set(options)
