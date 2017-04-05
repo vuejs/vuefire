@@ -16,37 +16,37 @@ import {
   isObject
 } from './utils/index.js'
 
-const oldmutations = {
-  [VUEXFIRE_OBJECT_VALUE] (state, payload) {
-    state[payload.key] = payload.record
+const mutations = {
+  [VUEXFIRE_OBJECT_VALUE] (state, { key, record }) {
+    state[key] = record
   },
 
-  [VUEXFIRE_ARRAY_INITIALIZE] (state, payload) {
-    state[payload.key] = []
+  [VUEXFIRE_ARRAY_INITIALIZE] (state, { key }) {
+    state[key] = []
   },
 
-  [VUEXFIRE_ARRAY_ADD] (state, payload) {
-    state[payload.key].splice(payload.index, 0, payload.record)
+  [VUEXFIRE_ARRAY_ADD] (state, { key, index, record }) {
+    state[key].splice(index, 0, record)
   },
 
-  [VUEXFIRE_ARRAY_CHANGE] (state, payload) {
-    state[payload.key].splice(payload.index, 1, payload.record)
+  [VUEXFIRE_ARRAY_CHANGE] (state, { key, index, record }) {
+    state[key].splice(index, 1, record)
   },
 
-  [VUEXFIRE_ARRAY_MOVE] (state, payload) {
-    const array = state[payload.key]
-    array.splice(payload.newIndex, 0, array.splice(payload.index, 1)[0])
+  [VUEXFIRE_ARRAY_MOVE] (state, { key, index, record, newIndex }) {
+    const array = state[key]
+    array.splice(newIndex, 0, array.splice(index, 1)[0])
   },
 
-  [VUEXFIRE_ARRAY_REMOVE] (state, payload) {
-    state[payload.key].splice(payload.index, 1)
+  [VUEXFIRE_ARRAY_REMOVE] (state, { key, index }) {
+    state[key].splice(index, 1)
   }
 }
 
-const firebaseMutations = {
+export const firebaseMutations = {
   // the { commit, state, type, ...payload } syntax is not supported by buble...
   [VUEXFIRE_MUTATION] (_, context) {
-    oldmutations[context.type](context.state, context)
+    mutations[context.type](context.state, context)
   }
 }
 
@@ -221,5 +221,3 @@ export function firebaseAction (action) {
     action(context, payload)
   }
 }
-
-export { firebaseMutations }
