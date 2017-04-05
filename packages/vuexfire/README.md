@@ -2,10 +2,6 @@
 
 > Firebase binding for [Vuex](https://github.com/vuejs/vuex)
 
-## :construction: This readme is a WIP. It hasn't been fully updated yet
-
-This is heavily inspired from [vuefire](https://github.com/vuejs/vuefire).
-
 Supports only Vue 2, Vuex 2 and Firebase 2/3
 If you need an older version check the `v1` tag: `npm i -D vuexfire@v1`
 
@@ -14,7 +10,7 @@ If you need an older version check the `v1` tag: `npm i -D vuexfire@v1`
 1. Using a CDN:
 
 ``` html
-<script src="https://unpkg.com/vuexfire/dist/vuexfire.js"></script>
+<script src="https://unpkg.com/vuexfire"></script>
 ```
 
 2. In module environments, e.g CommonJS:
@@ -23,33 +19,26 @@ If you need an older version check the `v1` tag: `npm i -D vuexfire@v1`
 npm install vue firebase vuexfire --save
 ```
 
-3. Add it to your store plugins
-``` js
-const store = new Vuex.Store({
-  // your options
-  plugins: [VuexFire]
-})
-```
-
 ## Usage
 
-Make sure to define the property in the state first:
+Add the mutations to your root Store and make sure to define the property you
+want to bind in the state first:
 
-```js
+``` js
+import { firebaseMutations } from 'vuexfire'
 const store = new Vuex.Store({
   state: {
     todos: [], // Will be bound as an array
     user: null // Will be bound as an object
   },
-  actions: {
-    setTodosRef,
-    setUserRef
+  mutations: {
+    // your mutations
+    ...firebaseMutations
   }
-  // other options
 })
 ```
 
-It works the same with **modules**, define it in the module state:
+It works with modules as well, but **you don't need to add the mutations there**:
 ```js
 const store = new Vuex.Store({
   modules: {
@@ -58,25 +47,24 @@ const store = new Vuex.Store({
         todos: [], // Will be bound as an array
         user: null // Will be bound as an object
       },
-      actions: {
-        setTodosRef,
-        setUserRef
-      }
     }
   }
-  // other options
 })
 ```
 
-Bind a firebase reference inside actions
+in order to use VuexFire, you have to enhance actions. This action enhancer
+takes the actual action and enhance it with two additional parameters in the
+context, `bindFirebaseRef` and `unbindFirebaseRef`:
 
 ```js
-function setTodosRef({ bind }, { ref }) {
-  bind('todos', ref)
-}
-function setUserRef({ bind }, { ref }) {
-  bind('user', ref)
-}
+import { firebaseAction } from 'vuexfire'
+
+const setTodosRef = firebaseAction(({ bindFirebaseRef, unbindFirebaseRef }, { ref }) => {
+  // this will unbind any previously bound ref to 'todos'
+  bindFirebaseRef('todos', ref)
+  // you can unbind it easily too
+  unbindFirebaseRef('todos')
+})
 ```
 
 Access it as an usual piece of the state:
@@ -91,32 +79,50 @@ const Component = {
 }
 ```
 
+## Browser support
+
+VuexFire requires basic `WeakMap` support, which means that if you need to
+support any of these browsers:
+
+- IE < 11
+- Safari < 7.1
+- Android < 5.0
+
+You'll have to include a polyfill. You can
+use [Benvie/WeakMap](https://github.com/Benvie/WeakMap)
+
+You can find more information about `WeakMap`
+support [here](http://kangax.github.io/compat-table/es6/#test-WeakMap)
+
 ## How does it work?
 
-VuexFire creates some mutations to modify objects and arrays. It listen for
-updates to your firebase database and commit mutations to sync your state.
+VuexFire uses a global mutations `vuexfire/MUTATION` to call the actual
+mutations to modify objects and arrays. It listen for updates to your firebase
+database and commit mutations to sync your state. Thanks to the action enhancer
+`firebaseAction`, it gets access to the local `state` and `commit` so it works
+with modules too :+1:
 
 ## Examples
 
-You can checkout the examples by serving an `http-server` at the root of this
-project.
+You can checkout the examples by opening the html files in your browser, or check [this online Demo](#TODO)
 
 ## API
 
-### VuexFire
+### firebaseMutations
 
-Use it as a Vuex plugin by feeding it to the `plugins` array in a Store
+This objects contain the global mutation `vuexfire/MUTATION`, and must be added
+in the root Store mutations object
 
-### bind(key, ref)
+### bindFirebaseRef(key, ref[, options])
 
-_Only available inside of an action_
+_Only available inside of an enhanced action_
 
 Binds a firebase reference to property in the state. If there was already
 another reference bound to the same property, it unbinds it first.
 
-### unbind(key)
+### unbindFirebaseRef(key)
 
-_Only available inside of an action_
+_Only available inside of an enhanced action_
 
 Unbinds a bound firebase reference to a given property in the state.
 
