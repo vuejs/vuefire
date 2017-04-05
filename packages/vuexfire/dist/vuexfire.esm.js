@@ -3,12 +3,6 @@
  * (c) 2017 Eduardo San Martin Morote
  * Released under the MIT License.
  */
-(function (global, factory) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
-	typeof define === 'function' && define.amd ? define(['exports'], factory) :
-	(factory((global.VuexFire = global.VuexFire || {})));
-}(this, (function (exports) { 'use strict';
-
 var VUEXFIRE_OBJECT_VALUE = 'vuexfire/OBJECT_VALUE';
 var VUEXFIRE_ARRAY_INITIALIZE = 'VUEXFIRE_ARRAY_INITIALIZE';
 var VUEXFIRE_ARRAY_ADD = 'vuexfire/ARRAY_ADD';
@@ -310,9 +304,4 @@ function firebaseAction (action) {
   }
 }
 
-exports.firebaseMutations = firebaseMutations;
-exports.firebaseAction = firebaseAction;
-
-Object.defineProperty(exports, '__esModule', { value: true });
-
-})));
+export { firebaseMutations, firebaseAction };
