@@ -104,7 +104,7 @@ with modules too :+1:
 
 ## Examples
 
-You can checkout the examples by opening the html files in your browser, or check [this online Demo](#TODO)
+You can checkout the examples by opening the html files in your browser, or check [this online Demo](https://jsfiddle.net/posva/6w3ks04x/)
 
 ## API
 
