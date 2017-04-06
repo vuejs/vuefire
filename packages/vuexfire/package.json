@@ -79,7 +79,7 @@
     "babel-preset-stage-2": "^6.22.0",
     "codecov": "^2.1.0",
     "eslint": "^3.19.0",
-    "eslint-config-standard": "^10.0.0",
+    "eslint-config-standard": "^10.1.0",
     "eslint-plugin-ava": "^4.2.0",
     "eslint-plugin-html": "^2.0.1",
     "eslint-plugin-import": "^2.2.0",
