@@ -250,9 +250,9 @@ function install (_Vue) {
   Vue = _Vue
   Vue.mixin(VueFireMixin)
 
-  // use data-like merge strategy
+  // use object-based merge strategy
   var mergeStrats = Vue.config.optionMergeStrategies
-  mergeStrats.firebase = mergeStrats.data
+  mergeStrats.firebase = mergeStrats.methods
 
   // extend instance methods
   Vue.prototype.$bindAsObject = function (key, source, cancelCallback, readyCallback) {

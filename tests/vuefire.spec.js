@@ -1012,30 +1012,4 @@ describe('VueFire', function () {
       })
     })
   })
-
-  describe('mixins', function () {
-    var mixinFn
-    beforeEach(function () {
-      mixinFn = {
-        firebase: function () {
-          return {
-            items: firebaseRef.child('items')
-          }
-        }
-      }
-    })
-
-    it('func/func', function () {
-      var vm = new Vue({
-        firebase: function () {
-          return {
-            item: firebaseRef.child('first')
-          }
-        },
-        mixins: [mixinFn]
-      }).$mount()
-      expect(vm.items).to.not.be.undefined
-      expect(vm.item).to.not.be.undefined
-    })
-  })
 })
