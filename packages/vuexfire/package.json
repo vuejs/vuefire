@@ -85,7 +85,7 @@
     "eslint-plugin-import": "^2.2.0",
     "eslint-plugin-node": "^4.2.2",
     "eslint-plugin-promise": "^3.5.0",
-    "eslint-plugin-standard": "^2.2.0",
+    "eslint-plugin-standard": "^3.0.0",
     "firebase": "^3.7.5",
     "firebase-mock": "^1.0.3",
     "mkdirp": "^0.5.1",
