@@ -251,6 +251,7 @@ function install (_Vue) {
   Vue.mixin(VueFireMixin)
 
   // use object-based merge strategy
+  // TODO This makes impossible to merge functions
   var mergeStrats = Vue.config.optionMergeStrategies
   mergeStrats.firebase = mergeStrats.methods
 
