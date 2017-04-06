@@ -306,9 +306,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	  Vue = _Vue
 	  Vue.mixin(VueFireMixin)
 
-	  // use data-like merge strategy
+	  // use object-based merge strategy
+	  // TODO This makes impossible to merge functions
 	  var mergeStrats = Vue.config.optionMergeStrategies
-	  mergeStrats.firebase = mergeStrats.data
+	  mergeStrats.firebase = mergeStrats.methods
 
 	  // extend instance methods
 	  Vue.prototype.$bindAsObject = function (key, source, cancelCallback, readyCallback) {
