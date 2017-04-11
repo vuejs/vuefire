@@ -4,22 +4,20 @@ import {
   indexForKey,
   getKey,
   isObject,
-  VUEXFIRE_OBJECT_VALUE,
-  VUEXFIRE_ARRAY_INITIALIZE,
-  VUEXFIRE_ARRAY_ADD,
-  VUEXFIRE_ARRAY_CHANGE,
-  VUEXFIRE_ARRAY_MOVE,
-  VUEXFIRE_ARRAY_REMOVE,
-  VUEXFIRE_MUTATION,
   mutations,
 } from './utils/index.js'
 
-export const firebaseMutations = {
+import * as types from './utils/types.js'
+
+export const firebaseMutations = {}
+
+Object.keys(types).forEach(key => {
   // the { commit, state, type, ...payload } syntax is not supported by buble...
-  [VUEXFIRE_MUTATION] (_, context) {
-    mutations[context.type](context.state, context)
-  },
-}
+  const type = types[key]
+  firebaseMutations[type] = (_, context) => {
+    mutations[type](context.state, context)
+  }
+})
 
 function bindAsObject ({
   key,
@@ -29,8 +27,8 @@ function bindAsObject ({
   state,
 }) {
   const cb = source.on('value', function (snapshot) {
-    commit(VUEXFIRE_MUTATION, {
-      type: VUEXFIRE_OBJECT_VALUE,
+    commit(types.VUEXFIRE_OBJECT_VALUE, {
+      type: types.VUEXFIRE_OBJECT_VALUE,
       key,
       record: createRecord(snapshot),
       state,
@@ -49,16 +47,16 @@ function bindAsArray ({
   state,
 }) {
   // Initialise the array to an empty one
-  commit(VUEXFIRE_MUTATION, {
-    type: VUEXFIRE_ARRAY_INITIALIZE,
+  commit(types.VUEXFIRE_ARRAY_INITIALIZE, {
+    type: types.VUEXFIRE_ARRAY_INITIALIZE,
     state,
     key,
   })
   const onAdd = source.on('child_added', function (snapshot, prevKey) {
     const array = state[key]
     const index = prevKey ? indexForKey(array, prevKey) + 1 : 0
-    commit(VUEXFIRE_MUTATION, {
-      type: VUEXFIRE_ARRAY_ADD,
+    commit(types.VUEXFIRE_ARRAY_ADD, {
+      type: types.VUEXFIRE_ARRAY_ADD,
       state,
       key,
       index,
@@ -69,8 +67,8 @@ function bindAsArray ({
   const onRemove = source.on('child_removed', function (snapshot) {
     const array = state[key]
     const index = indexForKey(array, getKey(snapshot))
-    commit(VUEXFIRE_MUTATION, {
-      type: VUEXFIRE_ARRAY_REMOVE,
+    commit(types.VUEXFIRE_ARRAY_REMOVE, {
+      type: types.VUEXFIRE_ARRAY_REMOVE,
       state,
       key,
       index,
@@ -80,8 +78,8 @@ function bindAsArray ({
   const onChange = source.on('child_changed', function (snapshot) {
     const array = state[key]
     const index = indexForKey(array, getKey(snapshot))
-    commit(VUEXFIRE_MUTATION, {
-      type: VUEXFIRE_ARRAY_CHANGE,
+    commit(types.VUEXFIRE_ARRAY_CHANGE, {
+      type: types.VUEXFIRE_ARRAY_CHANGE,
       state,
       key,
       index,
@@ -95,8 +93,8 @@ function bindAsArray ({
     var newIndex = prevKey ? indexForKey(array, prevKey) + 1 : 0
     // TODO refactor + 1
     newIndex += index < newIndex ? -1 : 0
-    commit(VUEXFIRE_MUTATION, {
-      type: VUEXFIRE_ARRAY_MOVE,
+    commit(types.VUEXFIRE_ARRAY_MOVE, {
+      type: types.VUEXFIRE_ARRAY_MOVE,
       state,
       key,
       index,
