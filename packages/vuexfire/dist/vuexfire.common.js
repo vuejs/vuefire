@@ -1,5 +1,5 @@
 /*!
- * vuexfire v2.0.0
+ * vuexfire v2.1.0
  * (c) 2017 Eduardo San Martin Morote
  * Released under the MIT License.
  */
@@ -85,7 +85,16 @@ var VUEXFIRE_ARRAY_ADD = 'vuexfire/ARRAY_ADD';
 var VUEXFIRE_ARRAY_CHANGE = 'vuexfire/ARRAY_CHANGE';
 var VUEXFIRE_ARRAY_MOVE = 'vuexfire/ARRAY_MOVE';
 var VUEXFIRE_ARRAY_REMOVE = 'vuexfire/ARRAY_REMOVE';
-var VUEXFIRE_MUTATION = 'vuexfire/MUTATION';
+
+
+var types = Object.freeze({
+	VUEXFIRE_OBJECT_VALUE: VUEXFIRE_OBJECT_VALUE,
+	VUEXFIRE_ARRAY_INITIALIZE: VUEXFIRE_ARRAY_INITIALIZE,
+	VUEXFIRE_ARRAY_ADD: VUEXFIRE_ARRAY_ADD,
+	VUEXFIRE_ARRAY_CHANGE: VUEXFIRE_ARRAY_CHANGE,
+	VUEXFIRE_ARRAY_MOVE: VUEXFIRE_ARRAY_MOVE,
+	VUEXFIRE_ARRAY_REMOVE: VUEXFIRE_ARRAY_REMOVE
+});
 
 var mutations = {};
 mutations[VUEXFIRE_OBJECT_VALUE] = function (state, ref) {
@@ -130,9 +139,14 @@ mutations[VUEXFIRE_ARRAY_REMOVE] = function (state, ref) {
   };
 
 var firebaseMutations = {};
-firebaseMutations[VUEXFIRE_MUTATION] = function (_, context) {
-    mutations[context.type](context.state, context);
+
+Object.keys(types).forEach(function (key) {
+  // the { commit, state, type, ...payload } syntax is not supported by buble...
+  var type = types[key];
+  firebaseMutations[type] = function (_, context) {
+    mutations[type](context.state, context);
   };
+});
 
 function bindAsObject (ref) {
   var key = ref.key;
@@ -142,7 +156,7 @@ function bindAsObject (ref) {
   var state = ref.state;
 
   var cb = source.on('value', function (snapshot) {
-    commit(VUEXFIRE_MUTATION, {
+    commit(VUEXFIRE_OBJECT_VALUE, {
       type: VUEXFIRE_OBJECT_VALUE,
       key: key,
       record: createRecord(snapshot),
@@ -162,7 +176,7 @@ function bindAsArray (ref) {
   var state = ref.state;
 
   // Initialise the array to an empty one
-  commit(VUEXFIRE_MUTATION, {
+  commit(VUEXFIRE_ARRAY_INITIALIZE, {
     type: VUEXFIRE_ARRAY_INITIALIZE,
     state: state,
     key: key,
@@ -170,7 +184,7 @@ function bindAsArray (ref) {
   var onAdd = source.on('child_added', function (snapshot, prevKey) {
     var array = state[key];
     var index = prevKey ? indexForKey(array, prevKey) + 1 : 0;
-    commit(VUEXFIRE_MUTATION, {
+    commit(VUEXFIRE_ARRAY_ADD, {
       type: VUEXFIRE_ARRAY_ADD,
       state: state,
       key: key,
@@ -182,7 +196,7 @@ function bindAsArray (ref) {
   var onRemove = source.on('child_removed', function (snapshot) {
     var array = state[key];
     var index = indexForKey(array, getKey(snapshot));
-    commit(VUEXFIRE_MUTATION, {
+    commit(VUEXFIRE_ARRAY_REMOVE, {
       type: VUEXFIRE_ARRAY_REMOVE,
       state: state,
       key: key,
@@ -193,7 +207,7 @@ function bindAsArray (ref) {
   var onChange = source.on('child_changed', function (snapshot) {
     var array = state[key];
     var index = indexForKey(array, getKey(snapshot));
-    commit(VUEXFIRE_MUTATION, {
+    commit(VUEXFIRE_ARRAY_CHANGE, {
       type: VUEXFIRE_ARRAY_CHANGE,
       state: state,
       key: key,
@@ -208,7 +222,7 @@ function bindAsArray (ref) {
     var newIndex = prevKey ? indexForKey(array, prevKey) + 1 : 0;
     // TODO refactor + 1
     newIndex += index < newIndex ? -1 : 0;
-    commit(VUEXFIRE_MUTATION, {
+    commit(VUEXFIRE_ARRAY_MOVE, {
       type: VUEXFIRE_ARRAY_MOVE,
       state: state,
       key: key,
@@ -235,7 +249,9 @@ function bind (ref) {
   var commit = ref.commit;
   var key = ref.key;
   var source = ref.source;
-  var cancelCallback = ref.options.cancelCallback;
+  var ref_options = ref.options;
+  var cancelCallback = ref_options.cancelCallback;
+  var readyCallback = ref_options.readyCallback;
 
   if (!isObject(source)) {
     throw new Error('VuexFire: invalid Firebase binding source.')
@@ -266,6 +282,11 @@ function bind (ref) {
   }
 
   binding.listeners[key] = listener;
+
+  // Support for SSR
+  if (readyCallback) {
+    source.once('value', readyCallback);
+  }
 }
 
 function unbind (ref) {
