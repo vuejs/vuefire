@@ -122,6 +122,7 @@ function bind ({
   source,
   options: {
     cancelCallback,
+    readyCallback,
   },
 }) {
   if (!isObject(source)) {
@@ -153,6 +154,11 @@ function bind ({
   }
 
   binding.listeners[key] = listener
+
+  // Support for SSR
+  if (readyCallback) {
+    source.once('value', readyCallback)
+  }
 }
 
 function unbind ({ commit, key }) {

@@ -29,6 +29,11 @@ test.beforeEach(async (t) => {
       unbindItemsRef: firebaseAction(({ unbindFirebaseRef }) => {
         unbindFirebaseRef('items')
       }),
+      bindsWithCallback: firebaseAction(
+        ({ bindFirebaseRef }, { ref, readyCallback }) => {
+          bindFirebaseRef('items', ref, { readyCallback })
+        }
+      ),
     },
     mutations: firebaseMutations,
   })
@@ -119,4 +124,15 @@ test('moves a record when the order changes', async (t) => {
     { '.key': 'a', '.value': 2.5 },
     { '.key': 'c', '.value': 3 },
   ])
+})
+
+test.cb('readyCallback', t => {
+  const foo = t.context.ref.child('foo')
+  t.plan(1)
+  const readyCallback = res => {
+    t.deepEqual(res.val(), { bar: 'bar' })
+    t.end()
+  }
+  t.context.store.dispatch('bindsWithCallback', { ref: foo, readyCallback })
+  foo.child('bar').set('bar')
 })
