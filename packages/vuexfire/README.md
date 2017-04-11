@@ -96,11 +96,11 @@ support [here](http://kangax.github.io/compat-table/es6/#test-WeakMap)
 
 ## How does it work?
 
-VuexFire uses a global mutations `vuexfire/MUTATION` to call the actual
-mutations to modify objects and arrays. It listen for updates to your firebase
-database and commit mutations to sync your state. Thanks to the action enhancer
-`firebaseAction`, it gets access to the local `state` and `commit` so it works
-with modules too :+1:
+VuexFire uses multiple global mutations prefixed by `vuexfire/` to call the
+actual mutations to modify objects and arrays. It listen for updates to your
+firebase database and commit mutations to sync your state. Thanks to the action
+enhancer `firebaseAction`, it gets access to the local `state` and `commit` so
+it works with modules too :+1:
 
 ## Examples
 
@@ -110,8 +110,8 @@ You can checkout the examples by opening the html files in your browser, or chec
 
 ### firebaseMutations
 
-This objects contain the global mutation `vuexfire/MUTATION`, and must be added
-in the root Store mutations object
+This objects contains VuexFire internal mutations. They are all prefixed by
+`vuexfire/`. This object must be added in the root Store mutations object.
 
 ### bindFirebaseRef(key, ref[, options])
 
