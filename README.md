@@ -51,7 +51,7 @@ var vm = new Vue({
       // optionally bind as an object
       asObject: true,
       // optionally provide the cancelCallback
-      cancelCallback: function () {}
+      cancelCallback: function () {},
       // this is called once the data has been retrieved from firebase
       readyCallback: function () {}
     }
