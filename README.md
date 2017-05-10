@@ -176,7 +176,7 @@ The resulting bound array stored in `vm.items` will be:
 ]
 ```
 
-To delete or update an item you can use the `.key` property of a given object:
+To delete or update an item you can use the `.key` property of a given object. But keep in mind you have to remove the `.key` attribute of the updated object:
 
 ``` js
  // Vue instance methods
@@ -184,6 +184,10 @@ To delete or update an item you can use the `.key` property of a given object:
    this.$firebaseRefs.items.child(item['.key']).remove()
  },
  updateItem: function (item) { 
+   // create a copy of the item
+   item = {...item}
+   // remove the .key attribute
+   delete item['.key']
    this.$firebaseRefs.items.child(item['.key']).set(item)
  } 
 ```
