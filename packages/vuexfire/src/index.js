@@ -191,6 +191,6 @@ export function firebaseAction (action) {
       bind({ state, commit, key, source, options })
     context.unbindFirebaseRef = (key) =>
       unbind({ commit, key })
-    action(context, payload)
+    return action(context, payload)
   }
 }
