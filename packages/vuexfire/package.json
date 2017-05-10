@@ -1,6 +1,6 @@
 {
   "name": "vuexfire",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Opinionated firebase binding for vuex",
   "main": "dist/vuexfire.common.js",
   "module": "dist/vuexfire.esm.js",

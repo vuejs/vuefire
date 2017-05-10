@@ -1,5 +1,5 @@
 /*!
- * vuexfire v2.1.0
+ * vuexfire v2.1.1
  * (c) 2017 Eduardo San Martin Morote
  * Released under the MIT License.
  */
@@ -321,7 +321,7 @@ function firebaseAction (action) {
         return bind({ state: state, commit: commit, key: key, source: source, options: options });
     };
     context.unbindFirebaseRef = function (key) { return unbind({ commit: commit, key: key }); };
-    action(context, payload);
+    return action(context, payload)
   }
 }
 
