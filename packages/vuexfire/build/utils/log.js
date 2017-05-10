@@ -23,5 +23,5 @@ module.exports = {
   green,
   red,
   yellow,
-  logError
+  logError,
 }

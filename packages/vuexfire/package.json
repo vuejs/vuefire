@@ -11,7 +11,7 @@
     "src"
   ],
   "scripts": {
-    "lint": "eslint --color --ext=js,html src test examples",
+    "lint": "eslint --color --ext=js,html src test examples build",
     "test": "yon run lint && yon run test:coverage && yon run build",
     "coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
     "dev": "npm-watch",

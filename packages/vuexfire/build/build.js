@@ -13,7 +13,7 @@ mkdirp('dist')
 
 const {
   logError,
-  write
+  write,
 } = require('./utils')
 
 const banner =
@@ -27,7 +27,7 @@ const bundleOptions = {
   banner,
   exports: 'named',
   format: 'umd',
-  moduleName
+  moduleName,
 }
 
 function createBundle ({ name, format }) {
@@ -35,9 +35,9 @@ function createBundle ({ name, format }) {
     entry: 'src/index.js',
     plugins: [
       buble({
-        objectAssign: 'Object.assign'
-      })
-    ]
+        objectAssign: 'Object.assign',
+      }),
+    ],
   }).then(function (bundle) {
     const options = Object.assign({}, bundleOptions)
     if (format) options.format = format
@@ -46,8 +46,8 @@ function createBundle ({ name, format }) {
       const minified = uglify.minify(code, {
         output: {
           preamble: banner,
-          ascii_only: true
-        }
+          ascii_only: true,
+        },
       }).code
       return write(`dist/${name}.js`, minified)
     } else {
@@ -58,22 +58,22 @@ function createBundle ({ name, format }) {
 
 // Browser bundle (can be used with script)
 createBundle({
-  name
+  name,
 })
 
 // Commonjs bundle (preserves process.env.NODE_ENV) so
 // the user can replace it in dev and prod mode
 createBundle({
   name: `${name}.esm`,
-  format: 'es'
+  format: 'es',
 })
 
 createBundle({
   name: `${name}.common`,
-  format: 'cjs'
+  format: 'cjs',
 })
 
 // Minified version for browser
 createBundle({
-  name: `${name}.min`
+  name: `${name}.min`,
 })
