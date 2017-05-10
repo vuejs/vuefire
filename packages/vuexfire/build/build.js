@@ -44,7 +44,6 @@ function createBundle ({ name, format }) {
     const code = bundle.generate(options).code
     if (/min$/.test(name)) {
       const minified = uglify.minify(code, {
-        fromString: true,
         output: {
           preamble: banner,
           ascii_only: true
