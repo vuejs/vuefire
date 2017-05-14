@@ -1,5 +1,5 @@
 /*!
- * vuexfire v2.1.1
+ * vuexfire v2.1.2
  * (c) 2017 Eduardo San Martin Morote
  * Released under the MIT License.
  */
@@ -150,6 +150,8 @@ Object.keys(types).forEach(function (key) {
   };
 });
 
+var commitOptions = { root: true };
+
 function bindAsObject (ref) {
   var key = ref.key;
   var source = ref.source;
@@ -163,7 +165,7 @@ function bindAsObject (ref) {
       key: key,
       record: createRecord(snapshot),
       state: state,
-    });
+    }, commitOptions);
   }, cancelCallback);
 
   // return the listeners that have been setup
@@ -182,7 +184,7 @@ function bindAsArray (ref) {
     type: VUEXFIRE_ARRAY_INITIALIZE,
     state: state,
     key: key,
-  });
+  }, commitOptions);
   var onAdd = source.on('child_added', function (snapshot, prevKey) {
     var array = state[key];
     var index = prevKey ? indexForKey(array, prevKey) + 1 : 0;
@@ -192,7 +194,7 @@ function bindAsArray (ref) {
       key: key,
       index: index,
       record: createRecord(snapshot),
-    });
+    }, commitOptions);
   }, cancelCallback);
 
   var onRemove = source.on('child_removed', function (snapshot) {
@@ -203,7 +205,7 @@ function bindAsArray (ref) {
       state: state,
       key: key,
       index: index,
-    });
+    }, commitOptions);
   }, cancelCallback);
 
   var onChange = source.on('child_changed', function (snapshot) {
@@ -215,7 +217,7 @@ function bindAsArray (ref) {
       key: key,
       index: index,
       record: createRecord(snapshot),
-    });
+    }, commitOptions);
   }, cancelCallback);
 
   var onMove = source.on('child_moved', function (snapshot, prevKey) {
@@ -231,7 +233,7 @@ function bindAsArray (ref) {
       index: index,
       newIndex: newIndex,
       record: createRecord(snapshot),
-    });
+    }, commitOptions);
   }, cancelCallback);
 
   // return the listeners that have been setup
