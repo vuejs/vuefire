@@ -19,6 +19,8 @@ Object.keys(types).forEach(key => {
   }
 })
 
+const commitOptions = { root: true }
+
 function bindAsObject ({
   key,
   source,
@@ -32,7 +34,7 @@ function bindAsObject ({
       key,
       record: createRecord(snapshot),
       state,
-    })
+    }, commitOptions)
   }, cancelCallback)
 
   // return the listeners that have been setup
@@ -51,7 +53,7 @@ function bindAsArray ({
     type: types.VUEXFIRE_ARRAY_INITIALIZE,
     state,
     key,
-  })
+  }, commitOptions)
   const onAdd = source.on('child_added', function (snapshot, prevKey) {
     const array = state[key]
     const index = prevKey ? indexForKey(array, prevKey) + 1 : 0
@@ -61,7 +63,7 @@ function bindAsArray ({
       key,
       index,
       record: createRecord(snapshot),
-    })
+    }, commitOptions)
   }, cancelCallback)
 
   const onRemove = source.on('child_removed', function (snapshot) {
@@ -72,7 +74,7 @@ function bindAsArray ({
       state,
       key,
       index,
-    })
+    }, commitOptions)
   }, cancelCallback)
 
   const onChange = source.on('child_changed', function (snapshot) {
@@ -84,7 +86,7 @@ function bindAsArray ({
       key,
       index,
       record: createRecord(snapshot),
-    })
+    }, commitOptions)
   }, cancelCallback)
 
   const onMove = source.on('child_moved', function (snapshot, prevKey) {
@@ -100,7 +102,7 @@ function bindAsArray ({
       index,
       newIndex,
       record: createRecord(snapshot),
-    })
+    }, commitOptions)
   }, cancelCallback)
 
   // return the listeners that have been setup
