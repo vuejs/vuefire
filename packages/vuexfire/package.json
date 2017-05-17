@@ -65,7 +65,7 @@
     "opinionated"
   ],
   "peerDependencies": {
-    "firebase": "^2.4.1 || 3.x.x"
+    "firebase": "^4.0.0"
   },
   "author": "Eduardo San Martin Morote <posva13@gmail.com>",
   "license": "MIT",
