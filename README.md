@@ -1,6 +1,6 @@
 # VueFire [![Build Status](https://img.shields.io/circleci/project/vuejs/vuefire.svg)](https://circleci.com/gh/vuejs/vuefire) [![npm package](https://img.shields.io/npm/v/vuefire.svg)](https://www.npmjs.com/package/vuefire) [![coverage](https://img.shields.io/codecov/c/github/vuejs/vuefire.svg)](https://codecov.io/github/vuejs/vuefire)
 
-> Vue.js 1 & 2 binding for Firebase 2 & 3
+> Vue.js 1 & 2 binding for Firebase 2 & >=3
 
 ## Installation
 
@@ -11,7 +11,7 @@
     <!-- Vue -->
     <script src="https://unpkg.com/vue/dist/vue.js"></script>
     <!-- Firebase -->
-    <script src="https://gstatic.com/firebasejs/3.5.2/firebase.js"></script>
+    <script src="https://gstatic.com/firebasejs/4.0.0/firebase.js"></script>
     <!-- VueFire -->
     <script src="https://unpkg.com/vuefire/dist/vuefire.js"></script>
   </head>
