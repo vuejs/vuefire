@@ -82,7 +82,7 @@
     "eslint-plugin-ava": "^4.2.0",
     "eslint-plugin-html": "^2.0.3",
     "eslint-plugin-import": "^2.3.0",
-    "eslint-plugin-node": "^4.2.2",
+    "eslint-plugin-node": "^5.0.0",
     "eslint-plugin-promise": "^3.5.0",
     "eslint-plugin-standard": "^3.0.1",
     "firebase": "^4.0.0",
