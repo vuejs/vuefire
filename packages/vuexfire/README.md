@@ -52,8 +52,8 @@ const store = new Vuex.Store({
 })
 ```
 
-in order to use VuexFire, you have to enhance actions. This action enhancer
-takes the actual action and enhance it with two additional parameters in the
+In order to use VuexFire, you have to enhance actions. This action enhancer
+takes the actual action and enhances it with two additional parameters in the
 context, `bindFirebaseRef` and `unbindFirebaseRef`:
 
 ```js
@@ -67,7 +67,7 @@ const setTodosRef = firebaseAction(({ bindFirebaseRef, unbindFirebaseRef }, { re
 })
 ```
 
-Access it as an usual piece of the state:
+Access it as a usual piece of the state:
 
 ```js
 const Component = {
@@ -97,27 +97,27 @@ support [here](http://kangax.github.io/compat-table/es6/#test-WeakMap)
 ## How does it work?
 
 VuexFire uses multiple global mutations prefixed by `vuexfire/` to call the
-actual mutations to modify objects and arrays. It listen for updates to your
-firebase database and commit mutations to sync your state. Thanks to the action
+actual mutations to modify objects and arrays. It listens for updates to your
+firebase database and commits mutations to sync your state. Thanks to the action
 enhancer `firebaseAction`, it gets access to the local `state` and `commit` so
 it works with modules too :+1:
 
 ## Examples
 
-You can checkout the examples by opening the html files in your browser, or check [this online Demo](https://jsfiddle.net/posva/6w3ks04x/)
+You can check out the examples by opening the html files in your browser, or check [this online Demo](https://jsfiddle.net/posva/6w3ks04x/)
 
 ## API
 
 ### firebaseMutations
 
-This objects contains VuexFire internal mutations. They are all prefixed by
+This object contains VuexFire internal mutations. They are all prefixed by
 `vuexfire/`. This object must be added in the root Store mutations object.
 
 ### bindFirebaseRef(key, ref[, options])
 
 _Only available inside of an enhanced action_
 
-Binds a firebase reference to property in the state. If there was already
+Binds a firebase reference to a property in the state. If there was already
 another reference bound to the same property, it unbinds it first.
 
 #### options:
