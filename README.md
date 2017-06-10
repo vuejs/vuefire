@@ -101,6 +101,10 @@ Alternatively, you can also manually bind to a Firebase ref with the `$bindAsObj
 ``` js
 vm.$bindAsObject('user', myFirebaseRef.child('user'))
 vm.$bindAsArray('items', myFirebaseRef.child('items').limitToLast(25))
+//These instance methods can also take the optional cancelCallback and readyCallback callbacks functions as
+//a third and fourth arguments.
+//Example of using readyCallback:
+vm.$bindAsObject('user', myFirebaseRef.child('user'), null, function () {})
 
 // References are unbinded when the component is destroyed but you can manually unbind a reference
 // if needed
