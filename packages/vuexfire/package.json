@@ -74,7 +74,7 @@
   },
   "homepage": "https://github.com/posva/vuexfire#readme",
   "devDependencies": {
-    "ava": "^0.19.1",
+    "ava": "^0.20.0",
     "babel-preset-env": "^1.5.1",
     "codecov": "^2.2.0",
     "eslint": "^3.19.0",
