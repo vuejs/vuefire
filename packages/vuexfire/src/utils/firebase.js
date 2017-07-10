@@ -43,8 +43,8 @@ export function getRef (refOrQuery) {
 export function createRecord (snapshot) {
   var value = snapshot.val()
   var res = isObject(value)
-        ? value
-        : { '.value': value }
+    ? value
+    : { '.value': value }
   res['.key'] = getKey(snapshot)
   return res
 }
