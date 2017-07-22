@@ -1,5 +1,5 @@
 /*!
- * vuexfire v2.1.3
+ * vuexfire v2.2.0
  * (c) 2017 Eduardo San Martin Morote
  * Released under the MIT License.
  */
@@ -69,8 +69,8 @@ function getRef (refOrQuery) {
 function createRecord (snapshot) {
   var value = snapshot.val();
   var res = isObject(value)
-        ? value
-        : { '.value': value };
+    ? value
+    : { '.value': value };
   res['.key'] = getKey(snapshot);
   return res
 }
@@ -101,37 +101,45 @@ mutations[VUEXFIRE_OBJECT_VALUE] = function (state, ref) {
   };
 mutations[VUEXFIRE_ARRAY_INITIALIZE] = function (state, ref) {
     var key = ref.key;
+    var value = ref.value;
 
-    state[key] = [];
+    state[key] = value;
   };
 mutations[VUEXFIRE_ARRAY_ADD] = function (state, ref) {
     var key = ref.key;
     var index = ref.index;
     var record = ref.record;
+    var array = ref.array;
 
-    state[key].splice(index, 0, record);
+    array = array || state[key];
+    array.splice(index, 0, record);
   };
 mutations[VUEXFIRE_ARRAY_CHANGE] = function (state, ref) {
     var key = ref.key;
     var index = ref.index;
     var record = ref.record;
+    var array = ref.array;
 
-    state[key].splice(index, 1, record);
+    array = array || state[key];
+    array.splice(index, 1, record);
   };
 mutations[VUEXFIRE_ARRAY_MOVE] = function (state, ref) {
     var key = ref.key;
     var index = ref.index;
     var record = ref.record;
     var newIndex = ref.newIndex;
+    var array = ref.array;
 
-    var array = state[key];
+    array = array || state[key];
     array.splice(newIndex, 0, array.splice(index, 1)[0]);
   };
 mutations[VUEXFIRE_ARRAY_REMOVE] = function (state, ref) {
     var key = ref.key;
     var index = ref.index;
+    var array = ref.array;
 
-    state[key].splice(index, 1);
+    array = array || state[key];
+    array.splice(index, 1);
   };
 
 var firebaseMutations = {};
@@ -170,52 +178,63 @@ function bindAsArray (ref) {
   var key = ref.key;
   var source = ref.source;
   var cancelCallback = ref.cancelCallback;
+  var wait = ref.wait;
   var commit = ref.commit;
   var state = ref.state;
 
   // Initialise the array to an empty one
-  commit(VUEXFIRE_ARRAY_INITIALIZE, {
-    type: VUEXFIRE_ARRAY_INITIALIZE,
-    state: state,
-    key: key,
-  }, commitOptions);
+  var array = [];
+  var initializeArray = function () {
+    commit(VUEXFIRE_ARRAY_INITIALIZE, {
+      type: VUEXFIRE_ARRAY_INITIALIZE,
+      state: state,
+      key: key,
+      value: array,
+    }, commitOptions);
+  };
+
+  if (!wait) {
+    initializeArray();
+  } else {
+    source.once('value', initializeArray);
+  }
+
   var onAdd = source.on('child_added', function (snapshot, prevKey) {
-    var array = state[key];
     var index = prevKey ? indexForKey(array, prevKey) + 1 : 0;
     commit(VUEXFIRE_ARRAY_ADD, {
       type: VUEXFIRE_ARRAY_ADD,
       state: state,
       key: key,
       index: index,
+      array: wait && array,
       record: createRecord(snapshot),
     }, commitOptions);
   }, cancelCallback);
 
   var onRemove = source.on('child_removed', function (snapshot) {
-    var array = state[key];
     var index = indexForKey(array, getKey(snapshot));
     commit(VUEXFIRE_ARRAY_REMOVE, {
       type: VUEXFIRE_ARRAY_REMOVE,
       state: state,
       key: key,
       index: index,
+      array: wait && array,
     }, commitOptions);
   }, cancelCallback);
 
   var onChange = source.on('child_changed', function (snapshot) {
-    var array = state[key];
     var index = indexForKey(array, getKey(snapshot));
     commit(VUEXFIRE_ARRAY_CHANGE, {
       type: VUEXFIRE_ARRAY_CHANGE,
       state: state,
       key: key,
       index: index,
+      array: wait && array,
       record: createRecord(snapshot),
     }, commitOptions);
   }, cancelCallback);
 
   var onMove = source.on('child_moved', function (snapshot, prevKey) {
-    var array = state[key];
     var index = indexForKey(array, getKey(snapshot));
     var newIndex = prevKey ? indexForKey(array, prevKey) + 1 : 0;
     // TODO refactor + 1
@@ -226,6 +245,7 @@ function bindAsArray (ref) {
       key: key,
       index: index,
       newIndex: newIndex,
+      array: wait && array,
       record: createRecord(snapshot),
     }, commitOptions);
   }, cancelCallback);
@@ -250,6 +270,7 @@ function bind (ref) {
   var ref_options = ref.options;
   var cancelCallback = ref_options.cancelCallback;
   var readyCallback = ref_options.readyCallback;
+  var wait = ref_options.wait; if ( wait === void 0 ) wait = true;
 
   if (!isObject(source)) {
     throw new Error('VuexFire: invalid Firebase binding source.')
@@ -271,20 +292,22 @@ function bind (ref) {
   }
   binding.sources[key] = getRef(source);
 
+  // Support for SSR
+  // We have to listen for the readyCallback first so it
+  // gets called after the initializeArray callback
+  if (readyCallback) {
+    source.once('value', readyCallback);
+  }
+
   // Automatically detects if it should be bound as an array or as an object
   var listener;
   if (state[key] && 'length' in state[key]) {
-    listener = bindAsArray({ key: key, source: source, cancelCallback: cancelCallback, commit: commit, state: state });
+    listener = bindAsArray({ key: key, source: source, cancelCallback: cancelCallback, wait: wait, commit: commit, state: state });
   } else {
     listener = bindAsObject({ key: key, source: source, cancelCallback: cancelCallback, commit: commit, state: state });
   }
 
   binding.listeners[key] = listener;
-
-  // Support for SSR
-  if (readyCallback) {
-    source.once('value', readyCallback);
-  }
 }
 
 function unbind (ref) {
