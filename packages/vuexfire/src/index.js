@@ -63,7 +63,7 @@ function bindAsArray ({
   if (!wait) {
     initializeArray()
   } else {
-    source.on('value', initializeArray)
+    source.once('value', initializeArray)
   }
 
   const onAdd = source.on('child_added', function (snapshot, prevKey) {
