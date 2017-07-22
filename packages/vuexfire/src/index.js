@@ -137,7 +137,7 @@ function bind ({
   options: {
     cancelCallback,
     readyCallback,
-    wait,
+    wait = true,
   },
 }) {
   if (!isObject(source)) {
@@ -160,6 +160,13 @@ function bind ({
   }
   binding.sources[key] = getRef(source)
 
+  // Support for SSR
+  // We have to listen for the readyCallback first so it
+  // gets called after the initializeArray callback
+  if (readyCallback) {
+    source.once('value', readyCallback)
+  }
+
   // Automatically detects if it should be bound as an array or as an object
   let listener
   if (state[key] && 'length' in state[key]) {
@@ -169,11 +176,6 @@ function bind ({
   }
 
   binding.listeners[key] = listener
-
-  // Support for SSR
-  if (readyCallback) {
-    source.once('value', readyCallback)
-  }
 }
 
 function unbind ({ commit, key }) {

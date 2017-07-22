@@ -99,6 +99,35 @@ test('order records properly', async (t) => {
   ])
 })
 
+test('moves a record when the order changes with wait: false', async (t) => {
+  t.context.store.dispatch('bindsWithCallback', {
+    ref: t.context.ref.orderByValue(),
+  })
+  await t.context.ref.set({
+    a: 1,
+    b: 2,
+    c: 3,
+  })
+  await t.context.ref.child('a').set(4)
+  t.deepEqual(t.context.store.state.items, [
+    { '.key': 'b', '.value': 2 },
+    { '.key': 'c', '.value': 3 },
+    { '.key': 'a', '.value': 4 },
+  ])
+  await t.context.ref.child('a').set(1)
+  t.deepEqual(t.context.store.state.items, [
+    { '.key': 'a', '.value': 1 },
+    { '.key': 'b', '.value': 2 },
+    { '.key': 'c', '.value': 3 },
+  ])
+  await t.context.ref.child('a').set(2.5)
+  t.deepEqual(t.context.store.state.items, [
+    { '.key': 'b', '.value': 2 },
+    { '.key': 'a', '.value': 2.5 },
+    { '.key': 'c', '.value': 3 },
+  ])
+})
+
 test('moves a record when the order changes', async (t) => {
   t.context.store.dispatch('setItemsRef', t.context.ref.orderByValue())
   await t.context.ref.set({

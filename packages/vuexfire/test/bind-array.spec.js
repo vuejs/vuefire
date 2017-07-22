@@ -114,6 +114,28 @@ test('add records to the array', t => {
   ])
 })
 
+test('removes records from array with wait; false', t => {
+  t.context.store.dispatch('bindItemsRef', {
+    ref: t.context.ref,
+    wait: false,
+  })
+  t.context.ref.set({
+    first: { index: 0 },
+    second: { index: 1 },
+    third: { index: 2 },
+  })
+  t.context.ref.flush()
+  t.context.ref.child('second').remove()
+  t.context.ref.flush()
+
+  // MockFirebase doesn't keep order :(
+  const sorted = [...t.context.store.state.items].sort((a, b) => a.index - b.index)
+  t.deepEqual(sorted, [
+    { '.key': 'first', index: 0 },
+    { '.key': 'third', index: 2 },
+  ])
+})
+
 test('removes records from array', t => {
   t.context.store.dispatch('setItemsRef', t.context.ref)
   t.context.ref.set({
