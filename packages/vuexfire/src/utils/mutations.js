@@ -12,24 +12,27 @@ export const mutations = {
     state[key] = record
   },
 
-  [VUEXFIRE_ARRAY_INITIALIZE] (state, { key }) {
-    state[key] = []
+  [VUEXFIRE_ARRAY_INITIALIZE] (state, { key, value }) {
+    state[key] = value
   },
 
-  [VUEXFIRE_ARRAY_ADD] (state, { key, index, record }) {
-    state[key].splice(index, 0, record)
+  [VUEXFIRE_ARRAY_ADD] (state, { key, index, record, array }) {
+    array = array || state[key]
+    array.splice(index, 0, record)
   },
 
-  [VUEXFIRE_ARRAY_CHANGE] (state, { key, index, record }) {
-    state[key].splice(index, 1, record)
+  [VUEXFIRE_ARRAY_CHANGE] (state, { key, index, record, array }) {
+    array = array || state[key]
+    array.splice(index, 1, record)
   },
 
-  [VUEXFIRE_ARRAY_MOVE] (state, { key, index, record, newIndex }) {
-    const array = state[key]
+  [VUEXFIRE_ARRAY_MOVE] (state, { key, index, record, newIndex, array }) {
+    array = array || state[key]
     array.splice(newIndex, 0, array.splice(index, 1)[0])
   },
 
-  [VUEXFIRE_ARRAY_REMOVE] (state, { key, index }) {
-    state[key].splice(index, 1)
+  [VUEXFIRE_ARRAY_REMOVE] (state, { key, index, array }) {
+    array = array || state[key]
+    array.splice(index, 1)
   },
 }

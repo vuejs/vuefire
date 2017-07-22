@@ -20,6 +20,9 @@ test.beforeEach(t => {
       items: [],
     },
     actions: {
+      bindItemsRef: firebaseAction(({ bindFirebaseRef }, { ref, wait }) => {
+        bindFirebaseRef('items', ref, { wait })
+      }),
       setItemsRef: firebaseAction(({ bindFirebaseRef }, ref) => {
         bindFirebaseRef('items', ref)
       }),
@@ -169,4 +172,34 @@ test('unbinds old array reference when binding a new one', t => {
   foo.child('foo').set('foo 2')
   t.context.ref.flush()
   t.deepEqual(t.context.store.state.items, [{'.key': 'bar', '.value': 'bar'}])
+})
+
+test('works with wait: true', t => {
+  const ref = t.context.ref.child('wait')
+  t.context.store.dispatch('bindItemsRef', {
+    ref,
+    wait: true,
+  })
+  ref.child('foo').set('foo')
+  ref.flush()
+
+  t.deepEqual(t.context.store.state.items, [{'.key': 'foo', '.value': 'foo'}])
+
+  ref.child('bar').set('bar')
+  ref.flush()
+  t.deepEqual(t.context.store.state.items, [
+    {'.key': 'bar', '.value': 'bar'},
+    {'.key': 'foo', '.value': 'foo'},
+  ])
+
+  ref.child('bar').set('bar 2')
+  ref.flush()
+  t.deepEqual(t.context.store.state.items, [
+    {'.key': 'bar', '.value': 'bar 2'},
+    {'.key': 'foo', '.value': 'foo'},
+  ])
+
+  ref.child('bar').remove()
+  ref.flush()
+  t.deepEqual(t.context.store.state.items, [{'.key': 'foo', '.value': 'foo'}])
 })

@@ -26,6 +26,11 @@
         <input v-model="newTodo">
         <button>Add #{{ items.length }}</button>
       </form>
+
+      <br/>
+      <br/>
+
+      <button @click="toggleSource">Toggle Source</button>
     </div>
 
     <script>
@@ -36,6 +41,7 @@
     var firebaseApp = firebase.initializeApp(config)
     var db = firebaseApp.database()
     var itemsRef = db.ref('test')
+    var todosRef = db.ref('test_2')
 
     var store = new Vuex.Store({
       // VuexFire will check the type of the property to bind as an array or as
@@ -48,7 +54,7 @@
       },
       actions: {
         setItemsRef: VuexFire.firebaseAction(({ bindFirebaseRef }, ref) => {
-          bindFirebaseRef('items', ref)
+          bindFirebaseRef('items', ref, { wait: true })
         }),
       },
     })
@@ -62,21 +68,28 @@
       },
 
       methods: {
-        removeTodo: function (key) {
-          itemsRef.child(key).remove()
+        removeTodo (key) {
+          this.source.child(key).remove()
         },
-        addTodo: function () {
+        addTodo () {
           if (this.newTodo.trim()) {
-            itemsRef.push({
+            this.source.push({
               text: this.newTodo,
             })
             this.newTodo = ''
           }
         },
+        toggleSource () {
+          this.source = this.source === itemsRef
+            ? todosRef
+            : itemsRef
+          this.$store.dispatch('setItemsRef', this.source)
+        },
       },
 
       created () {
-        this.$store.dispatch('setItemsRef', itemsRef)
+        this.source = itemsRef
+        this.$store.dispatch('setItemsRef', this.source)
       },
     })
     </script>

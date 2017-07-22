@@ -30,8 +30,8 @@ test.beforeEach(async (t) => {
         unbindFirebaseRef('items')
       }),
       bindsWithCallback: firebaseAction(
-        ({ bindFirebaseRef }, { ref, readyCallback }) => {
-          bindFirebaseRef('items', ref, { readyCallback })
+        ({ bindFirebaseRef }, { ref, readyCallback, wait = false }) => {
+          bindFirebaseRef('items', ref, { readyCallback, wait })
         }
       ),
     },
@@ -135,4 +135,30 @@ test.cb('readyCallback', t => {
   }
   t.context.store.dispatch('bindsWithCallback', { ref: foo, readyCallback })
   foo.child('bar').set('bar')
+})
+
+test.cb('waits for the whole array to be synced', (t) => {
+  const first = t.context.ref.child('page_1')
+  const second = t.context.ref.child('page_2')
+
+  t.context.store.dispatch('setItemsRef', first)
+  t.deepEqual(t.context.store.state.items, [])
+  first.child('foo').set('item 1').then(() => {
+    t.deepEqual(t.context.store.state.items, [{'.key': 'foo', '.value': 'item 1'}])
+
+    const readyCallback = () => {
+      t.deepEqual(t.context.store.state.items, [])
+      second.child('foo').set('item 2').then(() => {
+        t.deepEqual(t.context.store.state.items, [{'.key': 'foo', '.value': 'item 2'}])
+        t.end()
+      })
+    }
+
+    t.context.store.dispatch('bindsWithCallback', {
+      ref: second,
+      readyCallback,
+      wait: true,
+    })
+    t.deepEqual(t.context.store.state.items, [{'.key': 'foo', '.value': 'item 1'}])
+  })
 })
