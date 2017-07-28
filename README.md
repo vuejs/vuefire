@@ -11,7 +11,7 @@
     <!-- Vue -->
     <script src="https://unpkg.com/vue/dist/vue.js"></script>
     <!-- Firebase -->
-    <script src="https://gstatic.com/firebasejs/4.0.0/firebase.js"></script>
+    <script src="https://gstatic.com/firebasejs/4.2.0/firebase.js"></script>
     <!-- VueFire -->
     <script src="https://unpkg.com/vuefire/dist/vuefire.js"></script>
   </head>
