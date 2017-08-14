@@ -66,11 +66,13 @@ var vm = new Vue({
   el: '#demo',
   firebase: function () {
     return {
-      anArray: db.ref('url/to/my/collection')
+      anArray: db.ref('url/to/my/collection/')
     }
   }
 })
 ```
+
+⚠️: This function will get executed only once. If you want to have automatic rebind (pretty much like a computed property) use a `$watch` and call `$unbind` and then `$bindAsArray`
 
 **About the cancelCallback**:
 
