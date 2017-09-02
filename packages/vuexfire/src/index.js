@@ -137,6 +137,7 @@ function bind ({
   options: {
     cancelCallback,
     readyCallback,
+    errorCallback,
     wait = true,
   },
 }) {
@@ -163,8 +164,8 @@ function bind ({
   // Support for SSR
   // We have to listen for the readyCallback first so it
   // gets called after the initializeArray callback
-  if (readyCallback) {
-    source.once('value', readyCallback)
+  if (readyCallback || errorCallback) {
+    source.once('value', readyCallback, errorCallback)
   }
 
   // Automatically detects if it should be bound as an array or as an object

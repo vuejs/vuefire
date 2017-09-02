@@ -126,6 +126,7 @@ another reference bound to the same property, it unbinds it first.
 {
   cancelCallback: Function, // Cancel callback passed to Firebase when listening for events
   readyCallback: Function, // Callback called once the data has been loaded. Useful for SSR
+  errorCallback: Function, // Callback called when there is an error loading the data. Useful for SSR
   wait: Boolean, // (Arrays only) Should Vuexfire wait for the whole array to be populated. Defaults to true
 }
 ```
