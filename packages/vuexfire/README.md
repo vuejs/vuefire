@@ -139,6 +139,10 @@ _Only available inside of an enhanced action_
 
 Unbinds a bound firebase reference to a given property in the state.
 
+## License
+
+[MIT](http://opensource.org/licenses/MIT)
+
 ## Support on Beerpay
 Hey dude! Help me out for a couple of :beers:!
 
