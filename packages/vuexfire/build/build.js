@@ -27,12 +27,12 @@ const bundleOptions = {
   banner,
   exports: 'named',
   format: 'umd',
-  moduleName,
+  name: moduleName,
 }
 
 function createBundle ({ name, format }) {
   rollup({
-    entry: 'src/index.js',
+    input: 'src/index.js',
     plugins: [
       buble({
         objectAssign: 'Object.assign',
