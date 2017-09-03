@@ -1,5 +1,5 @@
 /*!
- * vuexfire v2.2.0
+ * vuexfire v2.3.0
  * (c) 2017 Eduardo San Martin Morote
  * Released under the MIT License.
  */
@@ -130,7 +130,6 @@ mutations[VUEXFIRE_ARRAY_CHANGE] = function (state, ref) {
 mutations[VUEXFIRE_ARRAY_MOVE] = function (state, ref) {
     var key = ref.key;
     var index = ref.index;
-    var record = ref.record;
     var newIndex = ref.newIndex;
     var array = ref.array;
 
@@ -274,6 +273,7 @@ function bind (ref) {
   var ref_options = ref.options;
   var cancelCallback = ref_options.cancelCallback;
   var readyCallback = ref_options.readyCallback;
+  var errorCallback = ref_options.errorCallback;
   var wait = ref_options.wait; if ( wait === void 0 ) wait = true;
 
   if (!isObject(source)) {
@@ -299,8 +299,8 @@ function bind (ref) {
   // Support for SSR
   // We have to listen for the readyCallback first so it
   // gets called after the initializeArray callback
-  if (readyCallback) {
-    source.once('value', readyCallback);
+  if (readyCallback || errorCallback) {
+    source.once('value', readyCallback, errorCallback);
   }
 
   // Automatically detects if it should be bound as an array or as an object
