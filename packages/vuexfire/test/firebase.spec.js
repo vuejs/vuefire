@@ -4,7 +4,7 @@ import Vuex from 'vuex'
 import {
   createRef,
   createFirebaseApp,
-} from './helpers/firebase.js'
+} from './helpers/firebase'
 
 import {
   firebaseMutations,

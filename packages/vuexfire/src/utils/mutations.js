@@ -5,7 +5,7 @@ import {
   VUEXFIRE_ARRAY_CHANGE,
   VUEXFIRE_ARRAY_MOVE,
   VUEXFIRE_ARRAY_REMOVE,
-} from './types.js'
+} from './types'
 
 export const mutations = {
   [VUEXFIRE_OBJECT_VALUE] (state, { key, record }) {

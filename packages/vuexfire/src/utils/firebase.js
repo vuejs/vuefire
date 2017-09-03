@@ -1,6 +1,6 @@
 import {
   isObject,
-} from './misc.js'
+} from './misc'
 
 /**
  * Returns the key of a Firebase snapshot across SDK versions.

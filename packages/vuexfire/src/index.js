@@ -5,9 +5,9 @@ import {
   getKey,
   isObject,
   mutations,
-} from './utils/index.js'
+} from './utils/index'
 
-import * as types from './utils/types.js'
+import * as types from './utils/types'
 
 export const firebaseMutations = {}
 
