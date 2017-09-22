@@ -88,6 +88,9 @@ function bind (vm, key, source) {
     readyCallback = source.readyCallback
     source = source.source
   }
+  if (!cancelCallback) {
+    cancelCallback = function () {}
+  }
   if (!isObject(source)) {
     throw new Error('VueFire: invalid Firebase binding source.')
   }
@@ -96,9 +99,9 @@ function bind (vm, key, source) {
   vm._firebaseSources[key] = source
   // bind based on initial value type
   if (asObject) {
-    bindAsObject(vm, key, source, cancelCallback)
+    bindAsObject(vm, key, source, cancelCallback.bind(vm))
   } else {
-    bindAsArray(vm, key, source, cancelCallback)
+    bindAsArray(vm, key, source, cancelCallback.bind(vm))
   }
   if (readyCallback) {
     source.once('value', readyCallback.bind(vm))

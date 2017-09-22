@@ -52,7 +52,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	var Vue // late binding
 
@@ -144,6 +144,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    readyCallback = source.readyCallback
 	    source = source.source
 	  }
+	  if (!cancelCallback) {
+	    cancelCallback = function () {}
+	  }
 	  if (!isObject(source)) {
 	    throw new Error('VueFire: invalid Firebase binding source.')
 	  }
@@ -152,9 +155,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	  vm._firebaseSources[key] = source
 	  // bind based on initial value type
 	  if (asObject) {
-	    bindAsObject(vm, key, source, cancelCallback)
+	    bindAsObject(vm, key, source, cancelCallback.bind(vm))
 	  } else {
-	    bindAsArray(vm, key, source, cancelCallback)
+	    bindAsArray(vm, key, source, cancelCallback.bind(vm))
 	  }
 	  if (readyCallback) {
 	    source.once('value', readyCallback.bind(vm))
@@ -345,7 +348,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = install
 
 
-/***/ }
+/***/ })
 /******/ ])
 });
 ;
