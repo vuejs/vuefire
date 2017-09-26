@@ -94,6 +94,9 @@ function bind (vm, key, source) {
   var ref = _getRef(source)
   vm.$firebaseRefs[key] = ref
   vm._firebaseSources[key] = source
+  if (cancelCallback) {
+    cancelCallback = cancelCallback.bind(vm)
+  }
   // bind based on initial value type
   if (asObject) {
     bindAsObject(vm, key, source, cancelCallback)
