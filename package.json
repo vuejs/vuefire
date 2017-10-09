@@ -1,0 +1,46 @@
+{
+  "name": "vuefire",
+  "version": "2.0.0-alpha",
+  "description": "Firestore bindings for Vue.js",
+  "main": "dist/vuefire.js",
+  "files": [
+    "dist/**",
+    "LICENSE",
+    "README.md"
+  ],
+  "scripts": {
+    "lint": "eslint --ext=js,html src tests examples",
+    "test": "npm run lint",
+    "prepublish": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vuejs/vuefire.git"
+  },
+  "keywords": [
+    "vue",
+    "plugin",
+    "mixin",
+    "firebase",
+    "database",
+    "firestore",
+    "realtime"
+  ],
+  "author": "Eduardo San Martin Morote",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/vuejs/vuefire/issues"
+  },
+  "homepage": "https://github.com/vuejs/vuefire#readme",
+  "peerDependencies": {
+    "firebase": "^4.5.0"
+  },
+  "devDependencies": {
+    "cz-conventional-changelog": "^2.0.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
+}
