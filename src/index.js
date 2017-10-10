@@ -1,10 +1,4 @@
-function createDoc (doc) {
-  // defaults everything to false, so no need to set
-  console.log('create', doc.data())
-  return Object.defineProperty(doc.data(), 'id', {
-    value: doc.id,
-  })
-}
+import { createSnapshot } from './utils'
 
 function bindCollection({
   vm,
@@ -16,11 +10,11 @@ function bindCollection({
 
   const change = {
     added: ({ newIndex, doc }) => {
-      array.splice(newIndex, 0, createDoc(doc))
+      array.splice(newIndex, 0, createSnapshot(doc))
     },
     modified: ({ oldIndex, newIndex, doc }) => {
       array.splice(oldIndex, 1)
-      array.splice(newIndex, 0, createDoc(doc))
+      array.splice(newIndex, 0, createSnapshot(doc))
     },
     removed: ({ oldIndex }) => {
       array.splice(oldIndex, 1)
@@ -46,11 +40,16 @@ function install (Vue, options) {
       const { firestore } = this.$options
       if (!firestore) return
       Object.keys(firestore).forEach(key => {
-        bindCollection({
-          vm: this,
-          key,
-          collection: firestore[key],
-        })
+        const ref = firestore[key]
+        if (ref.add) {
+          bindCollection({
+            vm: this,
+            key,
+            collection: ref,
+          })
+        } else {
+          // TODO
+        }
       })
     }
   })
