@@ -50,5 +50,5 @@ test('does nothing with no firestore', t => {
     },
     data: () => ({ items: null }),
   })
-  t.deepEqual(t.context.vm.items, null)
+  t.deepEqual(vm.items, null)
 })
