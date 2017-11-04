@@ -35,7 +35,7 @@
 ## Usage
 
 ``` js
-var firebaseApp = firebase.initializeApp({ ... })
+var firebaseApp = Firebase.initializeApp({ ... })
 var db = firebaseApp.database()
 
 var vm = new Vue({
