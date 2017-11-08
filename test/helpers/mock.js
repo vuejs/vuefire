@@ -1,10 +1,18 @@
-import { DocumentSnapshot } from 'firebase/firestore/api/database'
+export class DocumentSnapshot {
+  constructor (firestore, key, document) {
+    this._firestore = firestore;
+    this._key = key;
+    this._document = document;
+  }
 
-DocumentSnapshot.prototype.data = function () {
-  return this._document
+  data () {
+    return this._document
+  }
+
+  get id () {
+    return this._key.path.lastSegment()
+  }
 }
-
-export { DocumentSnapshot }
 
 const noop = _ => null
 

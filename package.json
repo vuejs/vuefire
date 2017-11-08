@@ -46,11 +46,11 @@
     "cz-conventional-changelog": "^2.0.0",
     "firebase": "^4.5.0",
     "mkdirp": "^0.5.1",
-    "nyc": "^11.2.1",
-    "rollup": "^0.50.0",
+    "nyc": "^11.3.0",
+    "rollup": "^0.50.1",
     "rollup-plugin-buble": "^0.16.0",
-    "uglify-js": "^3.1.7",
-    "vue": "^2.4.4"
+    "uglify-js": "^3.1.8",
+    "vue": "^2.5.3"
   },
   "config": {
     "commitizen": {
