@@ -45,9 +45,9 @@ test('delets items', async t => {
 })
 
 test('update items', async t => {
-  const doc = await t.context.collection.add({ text: 'foo' })
+  const doc = await t.context.collection.add({ text: 'foo', more: true })
   await doc.update({ text: 'bar' })
-  t.deepEqual(t.context.vm.items[0], { text: 'bar' })
+  t.deepEqual(t.context.vm.items[0], { text: 'bar', more: true })
 })
 
 test('add properties', async t => {

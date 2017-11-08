@@ -1,6 +1,6 @@
-import { createSnapshot } from './utils'
+import { createSnapshot, extractRefs } from './utils'
 
-function bindCollection({
+function bindCollection ({
   vm,
   key,
   collection,
@@ -34,6 +34,38 @@ function bindCollection({
 
 }
 
+function bindDocument ({
+  vm,
+  key,
+  document,
+}) {
+  // TODO warning check if key exists?
+  const boundRefs = Object.create(null)
+
+  const unbind = document.onSnapshot((doc) => {
+    // TODO test doc.exist
+    console.log('doc data', doc)
+    const [data, refs] = extractRefs(createSnapshot(doc))
+    vm[key] = data
+    return
+    // TODO bind refs
+    const d = doc.data()
+    if (!boundRefs[d.path]) {
+      console.log('bound ref', d.path)
+      boundRefs[d.path] = d.onSnapshot((doc) => {
+        console.log('ref snap', doc)
+      }, err => console.log('onSnapshot ref ERR', err))
+    }
+  }, err => {
+    console.log('onSnapshot ERR' ,err)
+  })
+
+  return () => {
+    // TODO unbind all from boundRefs
+    return unbind()
+  }
+}
+
 function install (Vue, options) {
   Vue.mixin({
     created () {
@@ -48,7 +80,11 @@ function install (Vue, options) {
             collection: ref,
           })
         } else {
-          // TODO
+          bindDocument({
+            vm: this,
+            key,
+            document: ref,
+          })
         }
       })
     }

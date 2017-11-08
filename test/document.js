@@ -34,12 +34,13 @@ test.beforeEach(async t => {
   await tick()
 })
 
-test('does nothing with no firestore', t => {
-  const vm = new Vue({
-    render (h) {
-      return h('p', 'eh')
-    },
-    data: () => ({ items: null }),
-  })
-  t.deepEqual(vm.items, null)
+test('binds a document', t => {
+  t.deepEqual(t.context.vm.item, null)
+})
+
+test('updates a document', async t => {
+  await t.context.document.update({ foo: 'foo' })
+  t.deepEqual(t.context.vm.item, { foo: 'foo' })
+  await t.context.document.update({ bar: 'bar' })
+  t.deepEqual(t.context.vm.item, { foo: 'foo', bar: 'bar' })
 })

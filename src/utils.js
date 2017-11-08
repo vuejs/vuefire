@@ -4,3 +4,18 @@ export function createSnapshot (doc) {
     value: doc.id,
   })
 }
+
+export function extractRefs (doc) {
+  return Object.keys(doc).reduce((tot, key) => {
+    const ref = doc[key]
+    if (typeof ref.isEqual === 'function') {
+      tot[0][key] = null
+      // TODO handle subpathes?
+      tot[1][key] = ref
+    } else {
+      // TODO recursive check
+      tot[0][key] = ref
+    }
+    return tot
+  }, [{}, {}])
+}

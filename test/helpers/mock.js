@@ -27,7 +27,14 @@ class DocumentReference {
     this.id = id
     this.data = data
     this.index = index
+    this.cb = this.onError = noop
   }
+
+  onSnapshot (cb, onError) {
+    this.cb = cb
+    this.onError = onError
+  }
+
 
   async delete () {
     return this.collection._remove(this.id)
@@ -35,6 +42,7 @@ class DocumentReference {
 
   async update (data) {
     Object.assign(this.data, data)
+    this.cb(new DocumentSnapshot(null, this.id, this.data))
     return this.collection._modify(this.id, this.data)
   }
 }
