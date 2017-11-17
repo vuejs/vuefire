@@ -11,10 +11,12 @@
   "scripts": {
     "lint": "eslint --ext=js,html src tests examples",
     "build": "node build/build.js",
-    "test": "npm run lint",
+    "pretest": "npm run lint",
+    "test": "npm run unit",
     "unit": "nyc ava test/**/*.spec.js",
     "dev": "npm run unit -- -w",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "release": "release-it --preRelease=alpha"
   },
   "repository": {
     "type": "git",
