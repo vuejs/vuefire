@@ -3,7 +3,7 @@ import { createSnapshot, extractRefs } from './utils'
 function bindCollection ({
   vm,
   key,
-  collection,
+  collection
 }) {
   // TODO wait to get all data
   const array = vm[key] = []
@@ -31,33 +31,33 @@ function bindCollection ({
   }, err => {
     console.log('onSnapshot ERR', err)
   })
-
 }
 
 function bindDocument ({
   vm,
   key,
-  document,
+  document
 }) {
   // TODO warning check if key exists?
-  const boundRefs = Object.create(null)
+  // TODO create boundRefs object
+  // const boundRefs = Object.create(null)
 
   return document.onSnapshot(doc => {
     // TODO test doc.exist
     // console.log('doc data', doc)
-    const [data, refs] = extractRefs(createSnapshot(doc))
+    // TODO extract refs
+    const [data] = extractRefs(createSnapshot(doc))
     vm[key] = data
-    return
     // TODO bind refs
-    const d = doc.data()
-    if (!boundRefs[d.path]) {
-      console.log('bound ref', d.path)
-      boundRefs[d.path] = d.onSnapshot((doc) => {
-        console.log('ref snap', doc)
-      }, err => console.log('onSnapshot ref ERR', err))
-    }
+    // const d = doc.data()
+    // if (!boundRefs[d.path]) {
+    //   console.log('bound ref', d.path)
+    //   boundRefs[d.path] = d.onSnapshot((doc) => {
+    //     console.log('ref snap', doc)
+    //   }, err => console.log('onSnapshot ref ERR', err))
+    // }
   }, err => {
-    console.log('onSnapshot ERR' ,err)
+    console.log('onSnapshot ERR', err)
   })
 
   // TODO return a custom unbind function that unbind all refs
@@ -69,13 +69,13 @@ function bind ({ vm, key, ref }) {
     unbind = bindCollection({
       vm,
       key,
-      collection: ref,
+      collection: ref
     })
   } else {
     unbind = bindDocument({
       vm,
       key,
-      document: ref,
+      document: ref
     })
   }
   vm._firestoreUnbinds[key] = unbind
@@ -107,7 +107,7 @@ function install (Vue, options) {
     bind({
       vm: this,
       key,
-      ref,
+      ref
     })
     this.$firestoreRefs[key] = ref
   }

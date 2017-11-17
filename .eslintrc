@@ -1,0 +1,10 @@
+{
+  "root": true,
+  "extends": [
+    "plugin:vue-libs/recommended"
+  ],
+  "env": {
+    "es6": true,
+    "amd": true
+  }
+}

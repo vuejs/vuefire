@@ -10,6 +10,7 @@
   ],
   "scripts": {
     "lint": "eslint --ext=js,html src tests examples",
+    "build": "node build/build.js",
     "test": "npm run lint",
     "unit": "nyc ava test/**/*.spec.js",
     "dev": "npm run unit -- -w",
@@ -44,6 +45,9 @@
     "babel-register": "^6.26.0",
     "cross-env": "^5.1.1",
     "cz-conventional-changelog": "^2.1.0",
+    "eslint": "^4.11.0",
+    "eslint-plugin-html": "^4.0.0",
+    "eslint-plugin-vue-libs": "^1.2.1",
     "firebase": "^4.6.1",
     "mkdirp": "^0.5.1",
     "nyc": "^11.3.0",
