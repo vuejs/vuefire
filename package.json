@@ -11,7 +11,7 @@
   "scripts": {
     "lint": "eslint --ext=js,html src tests examples",
     "test": "npm run lint",
-    "unit": "nyc ava test/*.spec.js",
+    "unit": "nyc ava test/**/*.spec.js",
     "dev": "npm run unit -- -w",
     "prepublishOnly": "npm run build"
   },
