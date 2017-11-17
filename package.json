@@ -1,6 +1,6 @@
 {
   "name": "vuefire",
-  "version": "2.0.0-alpha.0",
+  "version": "2.0.0-alpha.1",
   "description": "Firestore bindings for Vue.js",
   "main": "dist/vuefire.common.js",
   "module": "dist/vuefire.esm.js",
@@ -19,7 +19,7 @@
     "unit": "nyc ava test/**/*.spec.js",
     "dev": "npm run unit -- -w",
     "prepublishOnly": "npm run build",
-    "release": "release-it premajor --preReleaseId=alpha --npm.tag=next --github.preRelease"
+    "release": "release-it pre --preReleaseId=alpha --npm.tag=next --github.preRelease"
   },
   "repository": {
     "type": "git",
