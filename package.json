@@ -1,6 +1,6 @@
 {
   "name": "vuefire",
-  "version": "2.0.0-alpha",
+  "version": "1.4.4",
   "description": "Firestore bindings for Vue.js",
   "main": "dist/vuefire.js",
   "files": [
@@ -16,7 +16,7 @@
     "unit": "nyc ava test/**/*.spec.js",
     "dev": "npm run unit -- -w",
     "prepublishOnly": "npm run build",
-    "release": "release-it --preRelease=alpha"
+    "release": "release-it premajor --preReleaseId=alpha --npm.tag=next --github.preRelease"
   },
   "repository": {
     "type": "git",
