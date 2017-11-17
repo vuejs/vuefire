@@ -1,11 +1,16 @@
 # Vuefire [![Build Status](https://img.shields.io/circleci/project/vuejs/vuefire.svg)](https://circleci.com/gh/vuejs/vuefire) [![npm package](https://img.shields.io/npm/v/vuefire.svg)](https://www.npmjs.com/package/vuefire) [![coverage](https://img.shields.io/codecov/c/github/vuejs/vuefire.svg)](https://codecov.io/github/vuejs/vuefire)
 
-> Vue.js 2 binding for Firestore
+> Vue.js 2 binding for Cloud Firestore
 
 ## Installation
 
+```sh
+npm i vuefire@next
+```
 
 ## Usage
+
+Check `test/*.spec.js` and `examples/` for some examples
 
 ## Data Normalization
 
@@ -16,8 +21,8 @@
 Clone the repo, then:
 
 ```bash
-$ npm install    # install dependencies
-$ npm test       # run test suite with coverage report
+$ npm install
+$ npm test
 ```
 
 ## License
