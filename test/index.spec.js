@@ -57,9 +57,15 @@ test('setups _firestoreUnbinds with no firestore options', t => {
   t.deepEqual(Object.keys(vm._firestoreUnbinds), [])
 })
 
-test('setups _firestoreRefs', t => {
+test('setups $firestoreRefs', t => {
   const vm = t.context.vm
   t.deepEqual(Object.keys(vm.$firestoreRefs).sort(), ['item', 'items'])
   t.is(vm.$firestoreRefs.item, t.context.document)
   t.is(vm.$firestoreRefs.items, t.context.collection)
+})
+
+test('clears $firestoreRefs on $destroy', t => {
+  const vm = t.context.vm
+  vm.$destroy()
+  t.deepEqual(vm.$firestoreRefs, null)
 })

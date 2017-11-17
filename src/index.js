@@ -101,6 +101,7 @@ function install (Vue, options) {
         unbind()
       })
       this._firestoreUnbinds = null
+      this.$firestoreRefs = null
     }
   })
 
