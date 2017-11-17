@@ -44,7 +44,7 @@ function bindDocument ({
 
   const unbind = document.onSnapshot((doc) => {
     // TODO test doc.exist
-    console.log('doc data', doc)
+    // console.log('doc data', doc)
     const [data, refs] = extractRefs(createSnapshot(doc))
     vm[key] = data
     return
@@ -66,29 +66,41 @@ function bindDocument ({
   }
 }
 
+function bind ({ vm, key, ref }) {
+  if (ref.add) {
+    bindCollection({
+      vm,
+      key,
+      collection: ref,
+    })
+  } else {
+    bindDocument({
+      vm,
+      key,
+      document: ref,
+    })
+  }
+}
+
 function install (Vue, options) {
   Vue.mixin({
     created () {
       const { firestore } = this.$options
       if (!firestore) return
       Object.keys(firestore).forEach(key => {
-        const ref = firestore[key]
-        if (ref.add) {
-          bindCollection({
-            vm: this,
-            key,
-            collection: ref,
-          })
-        } else {
-          bindDocument({
-            vm: this,
-            key,
-            document: ref,
-          })
-        }
+        this.$bind(key, firestore[key])
       })
     }
   })
+
+  // TODO test if $bind exist and warns
+  Vue.prototype.$bind = function (key, ref) {
+    bind({
+      vm: this,
+      key,
+      ref,
+    })
+  }
 }
 
 export default install
