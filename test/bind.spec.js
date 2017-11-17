@@ -39,3 +39,13 @@ test('manually binds a collection', async t => {
   await collection.add({ text: 'foo' })
   t.deepEqual(vm.items, [{ text: 'foo' }])
 })
+
+test('manually binds a document', async t => {
+  const vm = t.context.vm
+  const document = t.context.document
+  t.deepEqual(vm.item, null)
+  await vm.$bind('item', document)
+  t.deepEqual(vm.item, null)
+  await document.update({ text: 'foo' })
+  t.deepEqual(vm.item, { text: 'foo' })
+})
