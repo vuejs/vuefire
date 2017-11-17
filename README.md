@@ -1,4 +1,4 @@
-# Vuefire [![Build Status](https://img.shields.io/circleci/project/vuejs/vuefire.svg)](https://circleci.com/gh/vuejs/vuefire) [![npm package](https://img.shields.io/npm/v/vuefire.svg)](https://www.npmjs.com/package/vuefire) [![coverage](https://img.shields.io/codecov/c/github/vuejs/vuefire.svg)](https://codecov.io/github/vuejs/vuefire)
+# Vuefire [![Build Status](https://img.shields.io/circleci/project/vuejs/vuefire/firestore.svg)](https://circleci.com/gh/vuejs/vuefire) [![npm package](https://img.shields.io/npm/v/vuefire/next.svg)](https://www.npmjs.com/package/vuefire) [![coverage](https://img.shields.io/codecov/c/github/vuejs/vuefire.svg)](https://codecov.io/github/vuejs/vuefire)
 
 > Vue.js 2 binding for Cloud Firestore
 
