@@ -89,6 +89,7 @@ function install (Vue, options) {
     created () {
       const { firestore } = this.$options
       this._firestoreUnbinds = Object.create(null)
+      this.$firestoreRefs = Object.create(null)
       if (!firestore) return
       Object.keys(firestore).forEach(key => {
         this.$bind(key, firestore[key])
@@ -110,6 +111,7 @@ function install (Vue, options) {
       key,
       ref,
     })
+    this.$firestoreRefs[key] = ref
   }
 
   Vue.prototype.$unbind = function (key) {

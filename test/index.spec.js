@@ -56,3 +56,10 @@ test('setups _firestoreUnbinds with no firestore options', t => {
   t.truthy(vm._firestoreUnbinds)
   t.deepEqual(Object.keys(vm._firestoreUnbinds), [])
 })
+
+test('setups _firestoreRefs', t => {
+  const vm = t.context.vm
+  t.deepEqual(Object.keys(vm.$firestoreRefs).sort(), ['item', 'items'])
+  t.is(vm.$firestoreRefs.item, t.context.document)
+  t.is(vm.$firestoreRefs.items, t.context.collection)
+})
