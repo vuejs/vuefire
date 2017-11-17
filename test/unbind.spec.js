@@ -46,3 +46,15 @@ test('manually unbinds a collection', async t => {
   await t.context.collection.add({ text: 'foo' })
   t.deepEqual(vm.items, [])
 })
+
+test('manually unbinds a document', async t => {
+  const vm = t.context.vm
+  const spy = sinon.spy(vm._firestoreUnbinds, 'item')
+  vm.$unbind('item')
+  t.is(spy.callCount, 1)
+  t.deepEqual(Object.keys(vm._firestoreUnbinds), ['items'])
+  t.deepEqual(Object.keys(vm.$firestoreRefs), ['items'])
+  t.deepEqual(vm.item, null)
+  await t.context.document.update({ foo: 'foo' })
+  t.deepEqual(vm.item, null)
+})
