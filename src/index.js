@@ -42,7 +42,7 @@ function bindDocument ({
   // TODO warning check if key exists?
   const boundRefs = Object.create(null)
 
-  const unbind = document.onSnapshot((doc) => {
+  return document.onSnapshot(doc => {
     // TODO test doc.exist
     // console.log('doc data', doc)
     const [data, refs] = extractRefs(createSnapshot(doc))
@@ -60,10 +60,7 @@ function bindDocument ({
     console.log('onSnapshot ERR' ,err)
   })
 
-  return () => {
-    // TODO unbind all from boundRefs
-    return unbind()
-  }
+  // TODO return a custom unbind function that unbind all refs
 }
 
 function bind ({ vm, key, ref }) {
