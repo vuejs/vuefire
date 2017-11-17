@@ -36,10 +36,23 @@ test.beforeEach(async t => {
 
 test('does nothing with no firestore', t => {
   const vm = new Vue({
-    render (h) {
-      return h('p', 'eh')
-    },
+    render: h => ('p', 'foo'),
     data: () => ({ items: null }),
   })
   t.deepEqual(vm.items, null)
+})
+
+test('setups _firestoreUnbinds', t => {
+  const vm = t.context.vm
+  t.truthy(vm._firestoreUnbinds)
+  t.deepEqual(Object.keys(vm._firestoreUnbinds).sort(), ['item', 'items'])
+})
+
+test('setups _firestoreUnbinds with no firestore options', t => {
+  const vm = new Vue({
+    render: h => ('p', 'foo'),
+    data: () => ({ items: null }),
+  })
+  t.truthy(vm._firestoreUnbinds)
+  t.deepEqual(Object.keys(vm._firestoreUnbinds), [])
 })
