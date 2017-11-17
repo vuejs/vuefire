@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>VueFire Todo App Demo</title>
+    <script src="https://www.gstatic.com/firebasejs/4.6.0/firebase.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.6.0/firebase-firestore.js"></script>
+    <script src="https://unpkg.com/vue"></script>
+    <script src="../dist/vuefire.js"></script>
+  </head>
+  <body>
+
+    <!--
+    Before running this example, make sure to:
+
+    1. cd path/to/vuefire
+    2. npm install
+    3. npm run build
+
+    Then you can open this file in your browser.
+    If you just prefer to see this example with
+    the latest published version of VueFire, you
+    play with the code in this fiddle:
+
+    https://jsfiddle.net/posva/wtyop5jy/
+    -->
+
+    <div id="app">
+      <input
+        v-model.trim="newTodoText"
+        @keyup.enter="addTodo"
+        placeholder="Add new todo"
+      >
+      <ul>
+        <li v-for="todo in todos">
+          <input
+            :value="todo.text"
+            @input="updateTodoText(todo, $event.target.value)"
+          >
+          <button @click="removeTodo(todo)">X</button>
+        </li>
+      </ul>
+
+      <p>config: </p>
+      <pre>
+        {{ config }}
+      </pre>
+    </div>
+
+    <script>
+      /* global Vue, firebase, Vuefire */
+      Vue.use(Vuefire.default)
+      firebase.initializeApp({
+        projectId: 'vue-fire-store',
+        databaseURL: 'https://vue-fire-store.firebaseio.com'
+      })
+      const db = firebase.firestore()
+      var todos = db.collection('todos')
+      const config = db.collection('configs').doc('jORwjIykFo2NmkdzTkhU')
+
+      new Vue({
+        el: '#app',
+        data: {
+          todos: [],
+          config: null,
+          newTodoText: ''
+        },
+        firestore: {
+          todos,
+          config
+        },
+        methods: {
+          addTodo: function () {
+            if (this.newTodoText) {
+              todos.add({
+                text: this.newTodoText,
+                created: firebase.firestore.FieldValue.serverTimestamp()
+              })
+              this.newTodoText = ''
+            }
+          },
+          updateTodoText: function (todo, newText) {
+            todos.doc(todo.id).update({ text: newText })
+          },
+          removeTodo: function (todo) {
+            todos.doc(todo.id).delete()
+          }
+        }
+      })
+    </script>
+  </body>
+</html>
