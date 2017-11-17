@@ -116,10 +116,9 @@ function install (Vue, options) {
   }
 
   Vue.prototype.$unbind = function (key) {
-    unbind({
-      vm: this,
-      key,
-    })
+    this._firestoreUnbinds[key]()
+    delete this._firestoreUnbinds[key]
+    delete this.$firestoreRefs[key]
   }
 }
 
