@@ -1,4 +1,5 @@
 import test from 'ava'
+import sinon from 'sinon'
 import Vuefire from '../src'
 import {
   createSnapshot
@@ -54,4 +55,20 @@ test('add properties', async t => {
   const doc = await t.context.collection.add({ text: 'foo' })
   await doc.update({ other: 'bar' })
   t.deepEqual(t.context.vm.items[0], { text: 'foo', other: 'bar' })
+})
+
+test('unbinds when the instance is destroyed', async t => {
+  const vm = t.context.vm
+  t.truthy(vm._firestoreUnbinds)
+  t.deepEqual(t.context.vm.items, [])
+  const spy = sinon.spy(vm._firestoreUnbinds, 'items')
+  t.notThrows(() => {
+    vm.$destroy()
+  })
+  t.is(spy.callCount, 1)
+  t.is(vm._firestoreUnbinds, null)
+  await t.notThrows(async () => {
+    await t.context.collection.add({ text: 'foo' })
+    t.deepEqual(t.context.vm.items, [])
+  })
 })

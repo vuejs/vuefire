@@ -67,29 +67,39 @@ function bindDocument ({
 }
 
 function bind ({ vm, key, ref }) {
+  let unbind
   if (ref.add) {
-    bindCollection({
+    unbind = bindCollection({
       vm,
       key,
       collection: ref,
     })
   } else {
-    bindDocument({
+    unbind = bindDocument({
       vm,
       key,
       document: ref,
     })
   }
+  vm._firestoreUnbinds[key] = unbind
 }
 
 function install (Vue, options) {
   Vue.mixin({
     created () {
       const { firestore } = this.$options
+      this._firestoreUnbinds = Object.create(null)
       if (!firestore) return
       Object.keys(firestore).forEach(key => {
         this.$bind(key, firestore[key])
       })
+    },
+
+    beforeDestroy () {
+      Object.values(this._firestoreUnbinds).forEach(unbind => {
+        unbind()
+      })
+      this._firestoreUnbinds = null
     }
   })
 
@@ -99,6 +109,13 @@ function install (Vue, options) {
       vm: this,
       key,
       ref,
+    })
+  }
+
+  Vue.prototype.$unbind = function (key) {
+    unbind({
+      vm: this,
+      key,
     })
   }
 }

@@ -49,6 +49,7 @@
     "nyc": "^11.3.0",
     "rollup": "^0.51.1",
     "rollup-plugin-buble": "^0.17.0",
+    "sinon": "^4.1.2",
     "uglify-js": "^3.1.8",
     "vue": "^2.5.3"
   },

@@ -41,6 +41,7 @@ class DocumentReference {
   onSnapshot (cb, onError) {
     this.cb = cb
     this.onError = onError
+    return () => this.cb = this.onError = noop
   }
 
 
@@ -64,6 +65,7 @@ class CollectionReference {
   onSnapshot (cb, onError) {
     this.cb = cb
     this.onError = onError
+    return () => this.cb = this.onError = noop
   }
 
   async add (data) {
