@@ -65,7 +65,7 @@ function bindDocument ({
 
 function bind ({ vm, key, ref }) {
   let unbind
-  if (ref.add) {
+  if (ref.where) {
     unbind = bindCollection({
       vm,
       key,

@@ -87,6 +87,9 @@ class CollectionReference {
     return this.data[id]
   }
 
+  // used to check if it's a collection or document ref
+  where () {}
+
   doc (id) {
     id = id || new Key()
     return this.data[id] = this.data[id] || new DocumentReference({
