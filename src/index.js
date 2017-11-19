@@ -82,6 +82,9 @@ function bind ({ vm, key, ref }) {
 }
 
 function install (Vue, options) {
+  const strategies = Vue.config.optionMergeStrategies
+  strategies.firestore = strategies.methods
+
   Vue.mixin({
     created () {
       const { firestore } = this.$options
