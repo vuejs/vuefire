@@ -87,7 +87,7 @@
     "nyc": "^11.1.0",
     "rimraf": "^2.6.1",
     "rollup": "^0.51.0",
-    "rollup-plugin-buble": "^0.16.0",
+    "rollup-plugin-buble": "^0.18.0",
     "uglify-js": "^3.0.28",
     "vue": "^2.4.2",
     "vuex": "^3.0.0",
