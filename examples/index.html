@@ -73,6 +73,7 @@
           addTodo: function () {
             if (this.newTodoText) {
               todos.add({
+                finished: false,
                 text: this.newTodoText,
                 created: firebase.firestore.FieldValue.serverTimestamp()
               })
