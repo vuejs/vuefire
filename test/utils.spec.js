@@ -1,9 +1,8 @@
 import test from 'ava'
 import {
-  createSnapshot,
+  createSnapshot
 } from '../src/utils'
 import {
-  collection,
   Key,
   id,
   DocumentSnapshot

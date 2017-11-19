@@ -12,7 +12,7 @@
     "README.md"
   ],
   "scripts": {
-    "lint": "eslint --ext=js,html src tests examples",
+    "lint": "eslint --ext=js,html src test examples",
     "build": "node build/build.js",
     "pretest": "npm run lint",
     "test": "npm run unit",

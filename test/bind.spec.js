@@ -1,9 +1,6 @@
 import test from 'ava'
 import Vuefire from '../src'
 import {
-  createSnapshot
-} from '../src/utils'
-import {
   db,
   tick,
   Vue
@@ -24,8 +21,8 @@ test.beforeEach(async t => {
     // but it's a good practice to set it to an empty array
     data: () => ({
       items: null,
-      item: null,
-    }),
+      item: null
+    })
   }).$mount()
   await tick()
 })

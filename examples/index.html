@@ -66,7 +66,7 @@
           newTodoText: ''
         },
         firestore: {
-          todos,
+          todos: todos.where('finished', '==', false),
           config
         },
         methods: {

@@ -2,9 +2,6 @@ import test from 'ava'
 import sinon from 'sinon'
 import Vuefire from '../src'
 import {
-  createSnapshot
-} from '../src/utils'
-import {
   db,
   tick,
   Vue

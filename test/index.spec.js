@@ -1,9 +1,6 @@
 import test from 'ava'
 import Vuefire from '../src'
 import {
-  createSnapshot
-} from '../src/utils'
-import {
   db,
   tick,
   Vue
@@ -24,7 +21,7 @@ test.beforeEach(async t => {
     // but it's a good practice to set it to an empty array
     data: () => ({
       items: null,
-      item: null,
+      item: null
     }),
     firestore: {
       items: t.context.collection,
@@ -36,8 +33,8 @@ test.beforeEach(async t => {
 
 test('does nothing with no firestore', t => {
   const vm = new Vue({
-    render: h => ('p', 'foo'),
-    data: () => ({ items: null }),
+    render: h => h('p', 'foo'),
+    data: () => ({ items: null })
   })
   t.deepEqual(vm.items, null)
 })
@@ -50,8 +47,8 @@ test('setups _firestoreUnbinds', t => {
 
 test('setups _firestoreUnbinds with no firestore options', t => {
   const vm = new Vue({
-    render: h => ('p', 'foo'),
-    data: () => ({ items: null }),
+    render: h => h('p', 'foo'),
+    data: () => ({ items: null })
   })
   t.truthy(vm._firestoreUnbinds)
   t.deepEqual(Object.keys(vm._firestoreUnbinds), [])

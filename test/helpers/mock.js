@@ -1,8 +1,8 @@
 export class DocumentSnapshot {
   constructor (firestore, key, document) {
-    this._firestore = firestore;
-    this._key = key;
-    this._document = document;
+    this._firestore = firestore
+    this._key = key
+    this._document = document
   }
 
   data () {
@@ -41,9 +41,10 @@ class DocumentReference {
   onSnapshot (cb, onError) {
     this.cb = cb
     this.onError = onError
-    return () => this.cb = this.onError = noop
+    return () => {
+      this.cb = this.onError = noop
+    }
   }
-
 
   async delete () {
     return this.collection._remove(this.id)
@@ -65,7 +66,9 @@ class CollectionReference {
   onSnapshot (cb, onError) {
     this.cb = cb
     this.onError = onError
-    return () => this.cb = this.onError = noop
+    return () => {
+      this.cb = this.onError = noop
+    }
   }
 
   async add (data) {
@@ -81,7 +84,7 @@ class CollectionReference {
         type: 'added',
         doc: new DocumentSnapshot(null, id, data),
         newIndex: Object.keys(this.data).length,
-        oldIndex: -1,
+        oldIndex: -1
       }]
     })
     return this.data[id]
@@ -92,12 +95,12 @@ class CollectionReference {
 
   doc (id) {
     id = id || new Key()
-    return this.data[id] = this.data[id] || new DocumentReference({
+    return (this.data[id] = this.data[id] || new DocumentReference({
       collection: this,
       id,
       data: {},
       index: Object.keys(this.data).length
-    })
+    }))
   }
 
   async _remove (id) {
@@ -106,7 +109,7 @@ class CollectionReference {
     this.cb({
       docChanges: [{
         doc: new DocumentSnapshot(null, id, ref.data),
-        type: 'removed',
+        type: 'removed'
       }]
     })
     ref.collection = null
@@ -119,10 +122,9 @@ class CollectionReference {
         type: 'modified',
         doc: new DocumentSnapshot(null, id, data),
         oldIndex: this.data[id].index,
-        newIndex: this.data[id].index,
+        newIndex: this.data[id].index
       }]
     })
-
   }
 }
 
@@ -133,6 +135,6 @@ export const db = {
   collection (name) {
     // create a collection if no name provided
     name = name || `random__${this.n++}`
-    return db[name] = db[name] || new CollectionReference()
+    return (db[name] = db[name] || new CollectionReference())
   }
 }
