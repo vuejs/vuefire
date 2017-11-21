@@ -1,9 +1,10 @@
 var path = require('path')
+process.env.CHROME_BIN = require('puppeteer').executablePath()
 
 module.exports = function (config) {
   config.set({
     frameworks: ['mocha', 'sinon-chai'],
-    browsers: ['PhantomJS'],
+    browsers: ['ChromeHeadless'],
     reporters: ['spec', 'coverage'],
     files: [
       'tests/vuefire.spec.js'
