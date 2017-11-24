@@ -1,4 +1,5 @@
 import test from 'ava'
+import sinon from 'sinon'
 import Vuefire from '../src'
 import {
   db,
@@ -49,4 +50,17 @@ test('returs a promise', t => {
   const { vm, document, collection } = t.context
   t.true(vm.$bind('items', collection) instanceof Promise)
   t.true(vm.$bind('item', document) instanceof Promise)
+})
+
+test('rejects the promise when errors', async t => {
+  const { vm, document, collection } = t.context
+  const fakeOnSnapshot = (_, fail) => {
+    fail(new Error('nope'))
+  }
+  sinon.stub(document, 'onSnapshot').callsFake(fakeOnSnapshot)
+  sinon.stub(collection, 'onSnapshot').callsFake(fakeOnSnapshot)
+  await t.throws(vm.$bind('items', collection))
+  await t.throws(vm.$bind('item', document))
+  document.onSnapshot.restore()
+  collection.onSnapshot.restore()
 })

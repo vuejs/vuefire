@@ -4,7 +4,8 @@ function bindCollection ({
   vm,
   key,
   collection,
-  resolve
+  resolve,
+  reject
 }) {
   // TODO wait to get all data
   const array = vm[key] = []
@@ -34,16 +35,15 @@ function bindCollection ({
       ready = true
       resolve(array)
     }
-  }, err => {
-    console.log('onSnapshot ERR', err)
-  })
+  }, reject)
 }
 
 function bindDocument ({
   vm,
   key,
   document,
-  resolve
+  resolve,
+  reject
 }) {
   // TODO warning check if key exists?
   // TODO create boundRefs object
@@ -68,29 +68,29 @@ function bindDocument ({
     //     console.log('ref snap', doc)
     //   }, err => console.log('onSnapshot ref ERR', err))
     // }
-  }, err => {
-    console.log('onSnapshot ERR', err)
-  })
+  }, reject)
 
   // TODO return a custom unbind function that unbind all refs
 }
 
 function bind ({ vm, key, ref }) {
-  return new Promise(resolve => {
+  return new Promise((resolve, reject) => {
     let unbind
     if (ref.where) {
       unbind = bindCollection({
         vm,
         key,
         collection: ref,
-        resolve
+        resolve,
+        reject
       })
     } else {
       unbind = bindDocument({
         vm,
         key,
         document: ref,
-        resolve
+        resolve,
+        reject
       })
     }
     vm._firestoreUnbinds[key] = unbind
