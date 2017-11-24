@@ -1,6 +1,7 @@
 {
   "src": {
-    "tagName": "v%s"
+    "tagName": "v%s",
+    "commitMessage": "chore(release): %s"
   },
   "github": {
     "release": true,
