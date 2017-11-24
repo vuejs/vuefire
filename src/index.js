@@ -123,6 +123,9 @@ function install (Vue, options) {
 
   // TODO test if $bind exist and warns
   Vue.prototype.$bind = function (key, ref) {
+    if (this._firestoreUnbinds[key]) {
+      this.$unbind(key)
+    }
     const promise = bind({
       vm: this,
       key,

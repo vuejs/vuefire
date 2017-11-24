@@ -64,3 +64,18 @@ test('rejects the promise when errors', async t => {
   document.onSnapshot.restore()
   collection.onSnapshot.restore()
 })
+
+test('unbinds previously bound refs', async t => {
+  const { vm, document } = t.context
+  await document.update({ foo: 'foo' })
+  const doc2 = db.collection().doc()
+  await doc2.update({ bar: 'bar' })
+  await vm.$bind('item', document)
+  t.is(vm.$firestoreRefs.item, document)
+  t.deepEqual(vm.item, { foo: 'foo' })
+  await vm.$bind('item', doc2)
+  t.deepEqual(vm.item, { bar: 'bar' })
+  await document.update({ foo: 'baz' })
+  t.is(vm.$firestoreRefs.item, doc2)
+  t.deepEqual(vm.item, { bar: 'bar' })
+})
