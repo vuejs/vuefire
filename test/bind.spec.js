@@ -10,7 +10,7 @@ Vue.use(Vuefire)
 
 test.beforeEach(async t => {
   t.context.collection = db.collection()
-  t.context.document = t.context.collection.doc()
+  t.context.document = db.collection().doc()
   t.context.vm = new Vue({
     render (h) {
       return h('ul', this.items && this.items.map(
@@ -28,8 +28,7 @@ test.beforeEach(async t => {
 })
 
 test('manually binds a collection', async t => {
-  const vm = t.context.vm
-  const collection = t.context.collection
+  const { vm, collection } = t.context
   t.deepEqual(vm.items, null)
   await vm.$bind('items', collection)
   t.deepEqual(vm.items, [])
@@ -38,11 +37,16 @@ test('manually binds a collection', async t => {
 })
 
 test('manually binds a document', async t => {
-  const vm = t.context.vm
-  const document = t.context.document
+  const { vm, document } = t.context
   t.deepEqual(vm.item, null)
   await vm.$bind('item', document)
   t.deepEqual(vm.item, null)
   await document.update({ text: 'foo' })
   t.deepEqual(vm.item, { text: 'foo' })
+})
+
+test('returs a promise', t => {
+  const { vm, document, collection } = t.context
+  t.true(vm.$bind('items', collection) instanceof Promise)
+  t.true(vm.$bind('item', document) instanceof Promise)
 })

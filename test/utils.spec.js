@@ -4,12 +4,12 @@ import {
 } from '../src/utils'
 import {
   Key,
-  id,
+  _id,
   DocumentSnapshot
 } from './helpers'
 
 test.beforeEach(t => {
-  t.context.id = id
+  t.context.id = _id
   t.context.doc = new DocumentSnapshot(null, new Key(), {
     n: 42,
     is: true,
@@ -19,7 +19,7 @@ test.beforeEach(t => {
 })
 
 test('createSnapshot adds an id', t => {
-  t.is(t.context.snapshot.id, t.context.id)
+  t.is(t.context.snapshot.id, '' + t.context.id)
 })
 
 test('id is not enumerable', t => {

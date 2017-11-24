@@ -1,8 +1,9 @@
 export class DocumentSnapshot {
-  constructor (firestore, key, document) {
+  constructor (firestore, key, document, exists) {
     this._firestore = firestore
     this._key = key
     this._document = document
+    this.exists = exists
   }
 
   data () {
@@ -16,15 +17,15 @@ export class DocumentSnapshot {
 
 const noop = _ => null
 
-export let id = 0
+export let _id = 0
 export class Key {
-  constructor () {
-    this.id = id++
+  constructor (v) {
+    this.v = '' + (v != null ? v : _id++)
   }
 
   get path () {
     return {
-      lastSegment: () => this.id
+      lastSegment: () => this.v
     }
   }
 }
@@ -35,24 +36,31 @@ class DocumentReference {
     this.id = id
     this.data = data
     this.index = index
+    this.exists = false
     this.cb = this.onError = noop
   }
 
   onSnapshot (cb, onError) {
     this.cb = cb
     this.onError = onError
+    // TODO timeout a cb
+    setTimeout(() => {
+      this.cb(new DocumentSnapshot(null, this.id, this.data, this.exists))
+    }, 0)
     return () => {
       this.cb = this.onError = noop
     }
   }
 
   async delete () {
+    this.exists = false
     return this.collection._remove(this.id)
   }
 
   async update (data) {
     Object.assign(this.data, data)
-    this.cb(new DocumentSnapshot(null, this.id, this.data))
+    this.exists = true
+    this.cb(new DocumentSnapshot(null, this.id, this.data, true))
     return this.collection._modify(this.id, this.data)
   }
 }
@@ -66,6 +74,17 @@ class CollectionReference {
   onSnapshot (cb, onError) {
     this.cb = cb
     this.onError = onError
+    setTimeout(() => {
+      // Object.keys(this.data).map((k, i) => console.log(k, 'at', i, this.data[k].data))
+      this.cb({
+        docChanges: Object.keys(this.data).map((id, newIndex) => ({
+          type: 'added',
+          doc: new DocumentSnapshot(null, new Key(id), this.data[id].data),
+          newIndex,
+          oldIndex: -1
+        }))
+      })
+    }, 0)
     return () => {
       this.cb = this.onError = noop
     }
@@ -73,7 +92,7 @@ class CollectionReference {
 
   async add (data) {
     const id = new Key()
-    this.data[id] = new DocumentReference({
+    this.data[id.v] = new DocumentReference({
       collection: this,
       id,
       data,
@@ -87,7 +106,7 @@ class CollectionReference {
         oldIndex: -1
       }]
     })
-    return this.data[id]
+    return this.data[id.v]
   }
 
   // used to check if it's a collection or document ref
@@ -95,7 +114,7 @@ class CollectionReference {
 
   doc (id) {
     id = id || new Key()
-    return (this.data[id] = this.data[id] || new DocumentReference({
+    return (this.data[id.v] = this.data[id.v] || new DocumentReference({
       collection: this,
       id,
       data: {},
@@ -104,8 +123,8 @@ class CollectionReference {
   }
 
   async _remove (id) {
-    const ref = this.data[id]
-    delete this.data[id]
+    const ref = this.data[id.v]
+    delete this.data[id.v]
     this.cb({
       docChanges: [{
         doc: new DocumentSnapshot(null, id, ref.data),
@@ -121,8 +140,8 @@ class CollectionReference {
       docChanges: [{
         type: 'modified',
         doc: new DocumentSnapshot(null, id, data),
-        oldIndex: this.data[id].index,
-        newIndex: this.data[id].index
+        oldIndex: this.data[id.v].index,
+        newIndex: this.data[id.v].index
       }]
     })
   }

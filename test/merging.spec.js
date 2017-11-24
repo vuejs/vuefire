@@ -2,7 +2,6 @@ import test from 'ava'
 import Vuefire from '../src'
 import {
   db,
-  tick,
   Vue
 } from './helpers'
 

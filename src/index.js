@@ -3,7 +3,8 @@ import { createSnapshot, extractRefs } from './utils'
 function bindCollection ({
   vm,
   key,
-  collection
+  collection,
+  resolve
 }) {
   // TODO wait to get all data
   const array = vm[key] = []
@@ -21,6 +22,7 @@ function bindCollection ({
     }
   }
 
+  let ready
   return collection.onSnapshot(({ docChanges }) => {
     // console.log('pending', metadata.hasPendingWrites)
     // docs.forEach(d => console.log('doc', d, '\n', 'data', d.data()))
@@ -28,6 +30,10 @@ function bindCollection ({
       // console.log(c)
       change[c.type](c)
     })
+    if (!ready) {
+      ready = true
+      resolve(array)
+    }
   }, err => {
     console.log('onSnapshot ERR', err)
   })
@@ -36,18 +42,24 @@ function bindCollection ({
 function bindDocument ({
   vm,
   key,
-  document
+  document,
+  resolve
 }) {
   // TODO warning check if key exists?
   // TODO create boundRefs object
   // const boundRefs = Object.create(null)
 
+  let ready
   return document.onSnapshot(doc => {
-    // TODO test doc.exist
-    // console.log('doc data', doc)
     // TODO extract refs
-    const [data] = extractRefs(createSnapshot(doc))
-    vm[key] = data
+    if (doc.exists) {
+      const [data] = extractRefs(createSnapshot(doc))
+      vm[key] = data
+    }
+    if (!ready) {
+      ready = true
+      resolve(vm[key])
+    }
     // TODO bind refs
     // const d = doc.data()
     // if (!boundRefs[d.path]) {
@@ -64,21 +76,25 @@ function bindDocument ({
 }
 
 function bind ({ vm, key, ref }) {
-  let unbind
-  if (ref.where) {
-    unbind = bindCollection({
-      vm,
-      key,
-      collection: ref
-    })
-  } else {
-    unbind = bindDocument({
-      vm,
-      key,
-      document: ref
-    })
-  }
-  vm._firestoreUnbinds[key] = unbind
+  return new Promise(resolve => {
+    let unbind
+    if (ref.where) {
+      unbind = bindCollection({
+        vm,
+        key,
+        collection: ref,
+        resolve
+      })
+    } else {
+      unbind = bindDocument({
+        vm,
+        key,
+        document: ref,
+        resolve
+      })
+    }
+    vm._firestoreUnbinds[key] = unbind
+  })
 }
 
 function install (Vue, options) {
@@ -107,12 +123,13 @@ function install (Vue, options) {
 
   // TODO test if $bind exist and warns
   Vue.prototype.$bind = function (key, ref) {
-    bind({
+    const promise = bind({
       vm: this,
       key,
       ref
     })
     this.$firestoreRefs[key] = ref
+    return promise
   }
 
   Vue.prototype.$unbind = function (key) {
