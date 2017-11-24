@@ -26,6 +26,8 @@
     -->
 
     <div id="app">
+      <button @click="toggleTodos">Toggle todos</button>
+      <br/>
       <input
         v-model.trim="newTodoText"
         @keyup.enter="addTodo"
@@ -55,7 +57,9 @@
         databaseURL: 'https://vue-fire-store.firebaseio.com'
       })
       const db = firebase.firestore()
-      var todos = db.collection('todos')
+      const todos = db.collection('todos')
+      const unFinishedTodos = todos.where('finished', '==', false)
+      const finishedTodos = todos.where('finished', '==', true)
       const config = db.collection('configs').doc('jORwjIykFo2NmkdzTkhU')
 
       new Vue({
@@ -65,10 +69,12 @@
           config: null,
           newTodoText: ''
         },
+
         firestore: {
-          todos: todos.where('finished', '==', false),
+          todos: unFinishedTodos,
           config
         },
+
         methods: {
           addTodo: function () {
             if (this.newTodoText) {
@@ -85,6 +91,15 @@
           },
           removeTodo: function (todo) {
             todos.doc(todo.id).delete()
+          },
+          toggleTodos () {
+            console.log(this.$firestoreRefs.todos === unFinishedTodos)
+            this.$bind(
+              'todos',
+              this.$firestoreRefs.todos === unFinishedTodos
+                ? finishedTodos
+                : unFinishedTodos
+            )
           }
         }
       })
