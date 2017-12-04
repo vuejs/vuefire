@@ -2,7 +2,6 @@ import Vuefire from '../src'
 import {
   db,
   tick,
-  delay,
   Vue
 } from './helpers'
 
