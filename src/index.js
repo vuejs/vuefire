@@ -74,6 +74,8 @@ function subscribeToDocument ({ ref, obj, key, depth }) {
   return ref.onSnapshot(doc => {
     if (doc.exists) {
       updateDataFromDocumentSnapshot({ snapshot: createSnapshot(doc), obj, key, subs, depth })
+    } else {
+      obj[key] = null
     }
   })
 }

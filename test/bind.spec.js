@@ -74,19 +74,3 @@ test('unbinds previously bound refs', async () => {
   expect(vm.$firestoreRefs.item).toBe(doc2)
   expect(vm.item).toEqual({ bar: 'bar' })
 })
-
-test('binds refs on documents', async () => {
-  // create an empty doc and update using the ref instead of plain data
-  const a = collection.doc()
-  a.update({ foo: 'foo' })
-  await document.update({ ref: a })
-  await vm.$bind('item', document)
-
-  // XXX dirty hack until $bind resolves when all refs are bound
-  // NOTE should add option for it waitForRefs: true (by default)
-  await delay(5)
-
-  expect(vm.item).toEqual({
-    ref: { foo: 'foo' }
-  })
-})
