@@ -38,6 +38,46 @@ function bindCollection ({
   }, reject)
 }
 
+function updateDataFromDocumentSnapshot ({ snapshot, obj, key, subs, depth = 0 }) {
+  // TODO extract refs
+  const [data, refs] = extractRefs(snapshot)
+  obj[key] = data
+  // TODO check if no ref is missing
+  Object.keys(refs).forEach(refKey => {
+    // check if already bound to the same ref -> skip
+    const sub = subs[refKey]
+    const ref = refs[refKey]
+    if (sub && sub.path !== ref.path) {
+      sub.unbind()
+    }
+    // maybe wrap the unbind function to call unbind on every child
+    subs[refKey] = {
+      unbind: subscribeToDocument({
+        ref,
+        obj: obj[key],
+        key: refKey,
+        depth: depth + 1
+      }),
+      path: ref.path
+    }
+    // unbind currently bound ref
+    // bind ref
+    // save unbind callback
+    // probably save key or something as well
+  })
+}
+
+function subscribeToDocument ({ ref, obj, key, depth }) {
+  // TODO max depth param, default to 1?
+  if (depth > 3) throw new Error('more than 5 nested refs')
+  const subs = Object.create(null)
+  return ref.onSnapshot(doc => {
+    if (doc.exists) {
+      updateDataFromDocumentSnapshot({ snapshot: createSnapshot(doc), obj, key, subs, depth })
+    }
+  })
+}
+
 function bindDocument ({
   vm,
   key,
@@ -50,12 +90,17 @@ function bindDocument ({
   // const boundRefs = Object.create(null)
 
   let ready
+  const subs = Object.create(null)
   return document.onSnapshot(doc => {
-    // TODO extract refs
     if (doc.exists) {
-      const [data] = extractRefs(createSnapshot(doc))
-      vm[key] = data
+      updateDataFromDocumentSnapshot({
+        snapshot: createSnapshot(doc),
+        obj: vm,
+        key,
+        subs
+      })
     }
+    // TODO should resolve be called when all refs are bound?
     if (!ready) {
       ready = true
       resolve(vm[key])

@@ -52,9 +52,17 @@ class DocumentReference {
     }
   }
 
+  get path () {
+    return `${this.collection.name}/${this.id.v}`
+  }
+
   async delete () {
     this.exists = false
     return this.collection._remove(this.id)
+  }
+
+  isEqual (ref) {
+    return this.id.v === ref.id.v
   }
 
   async update (data) {
@@ -66,8 +74,9 @@ class DocumentReference {
 }
 
 class CollectionReference {
-  constructor () {
+  constructor (name) {
     this.data = {}
+    this.name = name
     this.cb = this.onError = noop
   }
 
@@ -154,6 +163,6 @@ export const db = {
   collection (name) {
     // create a collection if no name provided
     name = name || `random__${this.n++}`
-    return (db[name] = db[name] || new CollectionReference())
+    return (db[name] = db[name] || new CollectionReference(name))
   }
 }

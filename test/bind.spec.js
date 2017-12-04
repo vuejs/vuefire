@@ -4,6 +4,7 @@ import Vuefire from '../src'
 import {
   db,
   tick,
+  delay,
   Vue
 } from './helpers'
 
@@ -78,4 +79,21 @@ test('unbinds previously bound refs', async t => {
   await document.update({ foo: 'baz' })
   t.is(vm.$firestoreRefs.item, doc2)
   t.deepEqual(vm.item, { bar: 'bar' })
+})
+
+test('binds refs on documents', async t => {
+  const { vm, document, collection } = t.context
+  // create an empty doc and update using the ref instead of plain data
+  const a = collection.doc()
+  a.update({ foo: 'foo' })
+  await document.update({ ref: a })
+  await vm.$bind('item', document)
+
+  // XXX dirty hack until $bind resolves when all refs are bound
+  // NOTE should add option for it waitForRefs: true (by default)
+  await delay(5)
+
+  t.deepEqual(vm.item, {
+    ref: { foo: 'foo' }
+  })
 })

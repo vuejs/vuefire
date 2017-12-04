@@ -9,7 +9,7 @@ export function extractRefs (doc) {
   return Object.keys(doc).reduce((tot, key) => {
     const ref = doc[key]
     if (typeof ref.isEqual === 'function') {
-      tot[0][key] = null
+      tot[0][key] = ref.path
       // TODO handle subpathes?
       tot[1][key] = ref
     } else {
