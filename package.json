@@ -57,7 +57,6 @@
     "mkdirp": "^0.5.1",
     "rollup": "^0.51.8",
     "rollup-plugin-buble": "^0.18.0",
-    "sinon": "^4.1.2",
     "uglify-js": "^3.1.10",
     "vue": "^2.5.9"
   },

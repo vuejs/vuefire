@@ -1,4 +1,3 @@
-import sinon from 'sinon'
 import Vuefire from '../src'
 import {
   db,
@@ -33,23 +32,25 @@ beforeEach(async () => {
 })
 
 test('manually unbinds a collection', async () => {
-  const spy = sinon.spy(vm._firestoreUnbinds, 'items')
+  const spy = jest.spyOn(vm._firestoreUnbinds, 'items')
   vm.$unbind('items')
-  expect(spy.callCount).toBe(1)
+  expect(spy).toHaveBeenCalled()
   expect(Object.keys(vm._firestoreUnbinds)).toEqual(['item'])
   expect(Object.keys(vm.$firestoreRefs)).toEqual(['item'])
   expect(vm.items).toEqual([])
   await collection.add({ text: 'foo' })
   expect(vm.items).toEqual([])
+  spy.mockRestore()
 })
 
 test('manually unbinds a document', async () => {
-  const spy = sinon.spy(vm._firestoreUnbinds, 'item')
+  const spy = jest.spyOn(vm._firestoreUnbinds, 'item')
   vm.$unbind('item')
-  expect(spy.callCount).toBe(1)
+  expect(spy).toHaveBeenCalled()
   expect(Object.keys(vm._firestoreUnbinds)).toEqual(['items'])
   expect(Object.keys(vm.$firestoreRefs)).toEqual(['items'])
   expect(vm.item).toEqual(null)
   await document.update({ foo: 'foo' })
   expect(vm.item).toEqual(null)
+  spy.mockRestore()
 })

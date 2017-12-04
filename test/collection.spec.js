@@ -1,4 +1,3 @@
-import sinon from 'sinon'
 import Vuefire from '../src'
 import {
   db,
@@ -57,11 +56,11 @@ test('add properties', async () => {
 test('unbinds when the instance is destroyed', async () => {
   expect(vm._firestoreUnbinds).toBeTruthy()
   expect(vm.items).toEqual([])
-  const spy = sinon.spy(vm._firestoreUnbinds, 'items')
+  const spy = jest.spyOn(vm._firestoreUnbinds, 'items')
   expect(() => {
     vm.$destroy()
   }).not.toThrow()
-  expect(spy.callCount).toBe(1)
+  expect(spy).toHaveBeenCalled()
   expect(vm._firestoreUnbinds).toBe(null)
   await expect(async () => {
     await collection.add({ text: 'foo' })
