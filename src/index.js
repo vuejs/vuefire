@@ -146,7 +146,7 @@ function bind ({ vm, key, ref }) {
 
 function install (Vue, options) {
   const strategies = Vue.config.optionMergeStrategies
-  strategies.firestore = strategies.methods
+  strategies.firestore = strategies.provide
 
   Vue.mixin({
     created () {
@@ -154,8 +154,11 @@ function install (Vue, options) {
       this._firestoreUnbinds = Object.create(null)
       this.$firestoreRefs = Object.create(null)
       if (!firestore) return
-      Object.keys(firestore).forEach(key => {
-        this.$bind(key, firestore[key])
+      const options = typeof firestore === 'function'
+        ? firestore.call(this, this)
+        : firestore
+      Object.keys(options).forEach(key => {
+        this.$bind(key, options[key])
       })
     },
 

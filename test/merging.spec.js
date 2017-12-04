@@ -6,7 +6,7 @@ import {
 
 Vue.use(Vuefire)
 
-let mWithObjA, mWithObjB
+let mWithObjA, mWithObjB, mWithFn
 beforeEach(async () => {
   mWithObjA = {
     firestore: {
@@ -19,6 +19,15 @@ beforeEach(async () => {
     firestore: {
       a: db.collection(3),
       c: db.collection(4)
+    }
+  }
+
+  mWithFn = {
+    firestore () {
+      return {
+        a: db.collection(5),
+        c: db.collection(6)
+      }
     }
   }
 })
@@ -35,4 +44,25 @@ test('should merge properties', () => {
   })
 })
 
-test('TODO: should merge two functions')
+test('supports function syntax', () => {
+  const vm = new Vue({
+    mixins: [mWithFn],
+    render: h => h('p', 'foo')
+  })
+  expect(vm.$firestoreRefs).toEqual({
+    a: db.collection(5),
+    c: db.collection(6)
+  })
+})
+
+test('should merge two functions', () => {
+  const vm = new Vue({
+    mixins: [mWithObjA, mWithObjB, mWithFn],
+    render: h => h('p', 'foo')
+  })
+  expect(vm.$firestoreRefs).toEqual({
+    a: db.collection(5),
+    b: db.collection(2),
+    c: db.collection(6)
+  })
+})
