@@ -256,7 +256,7 @@ function install (_Vue) {
   // use object-based merge strategy
   // TODO This makes impossible to merge functions
   var mergeStrats = Vue.config.optionMergeStrategies
-  mergeStrats.firebase = mergeStrats.methods
+  mergeStrats.firebase = mergeStrats.provide
 
   // extend instance methods
   Vue.prototype.$bindAsObject = function (key, source, cancelCallback, readyCallback) {
