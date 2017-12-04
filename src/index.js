@@ -153,10 +153,10 @@ function install (Vue, options) {
       const { firestore } = this.$options
       this._firestoreUnbinds = Object.create(null)
       this.$firestoreRefs = Object.create(null)
-      if (!firestore) return
       const options = typeof firestore === 'function'
-        ? firestore.call(this, this)
+        ? firestore.call(this)
         : firestore
+      if (!options) return
       Object.keys(options).forEach(key => {
         this.$bind(key, options[key])
       })

@@ -66,3 +66,13 @@ test('should merge two functions', () => {
     c: db.collection(6)
   })
 })
+
+test('ignores no return', () => {
+  const spy = Vue.config.errorHandler = jest.fn()
+  new Vue({
+    firestore: _ => {},
+    render: h => h('p', 'foo')
+  })
+  expect(spy).not.toHaveBeenCalled()
+  spy.mockRestore()
+})
