@@ -1,4 +1,3 @@
-import test from 'ava'
 import Vuefire from '../src'
 import {
   db,
@@ -8,10 +7,11 @@ import {
 
 Vue.use(Vuefire)
 
-test.beforeEach(async t => {
-  t.context.collection = db.collection()
-  t.context.document = t.context.collection.doc()
-  t.context.vm = new Vue({
+let collection, document, vm
+beforeEach(async () => {
+  collection = db.collection()
+  document = collection.doc()
+  vm = new Vue({
     render (h) {
       return h('ul', this.items.map(
         item => h('li', [item])
@@ -24,45 +24,42 @@ test.beforeEach(async t => {
       item: null
     }),
     firestore: {
-      items: t.context.collection,
-      item: t.context.document
+      items: collection,
+      item: document
     }
-  }).$mount()
+  })
   await tick()
 })
 
-test('does nothing with no firestore', t => {
+test('does nothing with no firestore', () => {
   const vm = new Vue({
     render: h => h('p', 'foo'),
     data: () => ({ items: null })
   })
-  t.deepEqual(vm.items, null)
+  expect(vm.items).toEqual(null)
 })
 
-test('setups _firestoreUnbinds', t => {
-  const vm = t.context.vm
-  t.truthy(vm._firestoreUnbinds)
-  t.deepEqual(Object.keys(vm._firestoreUnbinds).sort(), ['item', 'items'])
+test('setups _firestoreUnbinds', () => {
+  expect(vm._firestoreUnbinds).toBeTruthy()
+  expect(Object.keys(vm._firestoreUnbinds).sort()).toEqual(['item', 'items'])
 })
 
-test('setups _firestoreUnbinds with no firestore options', t => {
+test('setups _firestoreUnbinds with no firestore options', () => {
   const vm = new Vue({
     render: h => h('p', 'foo'),
     data: () => ({ items: null })
   })
-  t.truthy(vm._firestoreUnbinds)
-  t.deepEqual(Object.keys(vm._firestoreUnbinds), [])
+  expect(vm._firestoreUnbinds).toBeTruthy()
+  expect(Object.keys(vm._firestoreUnbinds)).toEqual([])
 })
 
-test('setups $firestoreRefs', t => {
-  const vm = t.context.vm
-  t.deepEqual(Object.keys(vm.$firestoreRefs).sort(), ['item', 'items'])
-  t.is(vm.$firestoreRefs.item, t.context.document)
-  t.is(vm.$firestoreRefs.items, t.context.collection)
+test('setups $firestoreRefs', () => {
+  expect(Object.keys(vm.$firestoreRefs).sort()).toEqual(['item', 'items'])
+  expect(vm.$firestoreRefs.item).toBe(document)
+  expect(vm.$firestoreRefs.items).toBe(collection)
 })
 
-test('clears $firestoreRefs on $destroy', t => {
-  const vm = t.context.vm
+test('clears $firestoreRefs on $destroy', () => {
   vm.$destroy()
-  t.deepEqual(vm.$firestoreRefs, null)
+  expect(vm.$firestoreRefs).toEqual(null)
 })

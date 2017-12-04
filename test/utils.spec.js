@@ -1,4 +1,3 @@
-import test from 'ava'
 import {
   createSnapshot
 } from '../src/utils'
@@ -8,26 +7,27 @@ import {
   DocumentSnapshot
 } from './helpers'
 
-test.beforeEach(t => {
-  t.context.id = _id
-  t.context.doc = new DocumentSnapshot(null, new Key(), {
+let id, doc, snapshot
+beforeEach(() => {
+  id = _id
+  doc = new DocumentSnapshot(null, new Key(), {
     n: 42,
     is: true,
     items: [{ text: 'foo' }]
   })
-  t.context.snapshot = createSnapshot(t.context.doc)
+  snapshot = createSnapshot(doc)
 })
 
-test('createSnapshot adds an id', t => {
-  t.is(t.context.snapshot.id, '' + t.context.id)
+test('createSnapshot adds an id', () => {
+  expect(snapshot.id).toBe('' + id)
 })
 
-test('id is not enumerable', t => {
-  t.false(Object.keys(t.context.snapshot).includes('id'))
+test('id is not enumerable', () => {
+  expect(Object.keys(snapshot).includes('id')).toBe(false)
 })
 
-test('contains all the data', t => {
-  t.deepEqual(t.context.snapshot, {
+test('contains all the data', () => {
+  expect(snapshot).toEqual({
     n: 42,
     is: true,
     items: [{ text: 'foo' }]

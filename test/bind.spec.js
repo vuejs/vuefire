@@ -1,5 +1,3 @@
-import test from 'ava'
-import sinon from 'sinon'
 import Vuefire from '../src'
 import {
   db,
@@ -10,10 +8,11 @@ import {
 
 Vue.use(Vuefire)
 
-test.beforeEach(async t => {
-  t.context.collection = db.collection()
-  t.context.document = db.collection().doc()
-  t.context.vm = new Vue({
+let collection, document, vm
+beforeEach(async () => {
+  collection = db.collection()
+  document = db.collection().doc()
+  vm = new Vue({
     render (h) {
       return h('ul', this.items && this.items.map(
         item => h('li', [item])
@@ -25,64 +24,58 @@ test.beforeEach(async t => {
       items: null,
       item: null
     })
-  }).$mount()
+  })
   await tick()
 })
 
-test('manually binds a collection', async t => {
-  const { vm, collection } = t.context
-  t.deepEqual(vm.items, null)
+test('manually binds a collection', async () => {
+  expect(vm.items).toEqual(null)
   await vm.$bind('items', collection)
-  t.deepEqual(vm.items, [])
+  expect(vm.items).toEqual([])
   await collection.add({ text: 'foo' })
-  t.deepEqual(vm.items, [{ text: 'foo' }])
+  expect(vm.items).toEqual([{ text: 'foo' }])
 })
 
-test('manually binds a document', async t => {
-  const { vm, document } = t.context
-  t.deepEqual(vm.item, null)
+test('manually binds a document', async () => {
+  expect(vm.item).toEqual(null)
   await vm.$bind('item', document)
-  t.deepEqual(vm.item, null)
+  expect(vm.item).toEqual(null)
   await document.update({ text: 'foo' })
-  t.deepEqual(vm.item, { text: 'foo' })
+  expect(vm.item).toEqual({ text: 'foo' })
 })
 
-test('returs a promise', t => {
-  const { vm, document, collection } = t.context
-  t.true(vm.$bind('items', collection) instanceof Promise)
-  t.true(vm.$bind('item', document) instanceof Promise)
+test('returs a promise', () => {
+  expect(vm.$bind('items', collection) instanceof Promise).toBe(true)
+  expect(vm.$bind('item', document) instanceof Promise).toBe(true)
 })
 
-test('rejects the promise when errors', async t => {
-  const { vm, document, collection } = t.context
+test('rejects the promise when errors', async () => {
   const fakeOnSnapshot = (_, fail) => {
     fail(new Error('nope'))
   }
-  sinon.stub(document, 'onSnapshot').callsFake(fakeOnSnapshot)
-  sinon.stub(collection, 'onSnapshot').callsFake(fakeOnSnapshot)
-  await t.throws(vm.$bind('items', collection))
-  await t.throws(vm.$bind('item', document))
-  document.onSnapshot.restore()
-  collection.onSnapshot.restore()
+  document.onSnapshot = jest.fn(fakeOnSnapshot)
+  collection.onSnapshot = jest.fn(fakeOnSnapshot)
+  await expect(vm.$bind('items', collection)).rejects.toThrow()
+  await expect(vm.$bind('item', document)).rejects.toThrow()
+  document.onSnapshot.mockRestore()
+  collection.onSnapshot.mockRestore()
 })
 
-test('unbinds previously bound refs', async t => {
-  const { vm, document } = t.context
+test('unbinds previously bound refs', async () => {
   await document.update({ foo: 'foo' })
   const doc2 = db.collection().doc()
   await doc2.update({ bar: 'bar' })
   await vm.$bind('item', document)
-  t.is(vm.$firestoreRefs.item, document)
-  t.deepEqual(vm.item, { foo: 'foo' })
+  expect(vm.$firestoreRefs.item).toBe(document)
+  expect(vm.item).toEqual({ foo: 'foo' })
   await vm.$bind('item', doc2)
-  t.deepEqual(vm.item, { bar: 'bar' })
+  expect(vm.item).toEqual({ bar: 'bar' })
   await document.update({ foo: 'baz' })
-  t.is(vm.$firestoreRefs.item, doc2)
-  t.deepEqual(vm.item, { bar: 'bar' })
+  expect(vm.$firestoreRefs.item).toBe(doc2)
+  expect(vm.item).toEqual({ bar: 'bar' })
 })
 
-test('binds refs on documents', async t => {
-  const { vm, document, collection } = t.context
+test('binds refs on documents', async () => {
   // create an empty doc and update using the ref instead of plain data
   const a = collection.doc()
   a.update({ foo: 'foo' })
@@ -93,7 +86,7 @@ test('binds refs on documents', async t => {
   // NOTE should add option for it waitForRefs: true (by default)
   await delay(5)
 
-  t.deepEqual(vm.item, {
+  expect(vm.item).toEqual({
     ref: { foo: 'foo' }
   })
 })

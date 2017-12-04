@@ -1,4 +1,3 @@
-import test from 'ava'
 import sinon from 'sinon'
 import Vuefire from '../src'
 import {
@@ -9,9 +8,10 @@ import {
 
 Vue.use(Vuefire)
 
-test.beforeEach(async t => {
-  t.context.collection = db.collection()
-  t.context.vm = new Vue({
+let collection, vm
+beforeEach(async () => {
+  collection = db.collection()
+  vm = new Vue({
     render (h) {
       return h('ul', this.items.map(
         item => h('li', [item])
@@ -19,53 +19,52 @@ test.beforeEach(async t => {
     },
     data: () => ({ items: null }),
     firestore: {
-      items: t.context.collection
+      items: collection
     }
-  }).$mount()
+  })
   await tick()
 })
 
-test('initialise the array', t => {
-  t.deepEqual(t.context.vm.items, [])
+test('initialise the array', () => {
+  expect(vm.items).toEqual([])
 })
 
-test('add elements', async t => {
-  await t.context.collection.add({ text: 'foo' })
-  t.deepEqual(t.context.vm.items, [{ text: 'foo' }])
-  await t.context.collection.add({ text: 'bar' })
-  t.deepEqual(t.context.vm.items, [{ text: 'foo' }, { text: 'bar' }])
+test('add elements', async () => {
+  await collection.add({ text: 'foo' })
+  expect(vm.items).toEqual([{ text: 'foo' }])
+  await collection.add({ text: 'bar' })
+  expect(vm.items).toEqual([{ text: 'foo' }, { text: 'bar' }])
 })
 
-test('delets items', async t => {
-  await t.context.collection.add({ text: 'foo' })
-  await t.context.collection.doc(t.context.vm.items[0].id).delete()
-  t.deepEqual(t.context.vm.items, [])
+test('delets items', async () => {
+  await collection.add({ text: 'foo' })
+  await collection.doc(vm.items[0].id).delete()
+  expect(vm.items).toEqual([])
 })
 
-test('update items', async t => {
-  const doc = await t.context.collection.add({ text: 'foo', more: true })
+test('update items', async () => {
+  const doc = await collection.add({ text: 'foo', more: true })
   await doc.update({ text: 'bar' })
-  t.deepEqual(t.context.vm.items[0], { text: 'bar', more: true })
+  expect(vm.items[0]).toEqual({ text: 'bar', more: true })
 })
 
-test('add properties', async t => {
-  const doc = await t.context.collection.add({ text: 'foo' })
+test('add properties', async () => {
+  const doc = await collection.add({ text: 'foo' })
   await doc.update({ other: 'bar' })
-  t.deepEqual(t.context.vm.items[0], { text: 'foo', other: 'bar' })
+  expect(vm.items[0]).toEqual({ text: 'foo', other: 'bar' })
 })
 
-test('unbinds when the instance is destroyed', async t => {
-  const vm = t.context.vm
-  t.truthy(vm._firestoreUnbinds)
-  t.deepEqual(t.context.vm.items, [])
+test('unbinds when the instance is destroyed', async () => {
+  expect(vm._firestoreUnbinds).toBeTruthy()
+  expect(vm.items).toEqual([])
   const spy = sinon.spy(vm._firestoreUnbinds, 'items')
-  t.notThrows(() => {
+  expect(() => {
     vm.$destroy()
-  })
-  t.is(spy.callCount, 1)
-  t.is(vm._firestoreUnbinds, null)
-  await t.notThrows(async () => {
-    await t.context.collection.add({ text: 'foo' })
-    t.deepEqual(t.context.vm.items, [])
-  })
+  }).not.toThrow()
+  expect(spy.callCount).toBe(1)
+  expect(vm._firestoreUnbinds).toBe(null)
+  await expect(async () => {
+    await collection.add({ text: 'foo' })
+    expect(vm.items).toEqual([])
+  }).not.toThrow()
 })

@@ -1,4 +1,3 @@
-import test from 'ava'
 import Vuefire from '../src'
 import {
   db,
@@ -8,10 +7,11 @@ import {
 
 Vue.use(Vuefire)
 
-test.beforeEach(async t => {
-  t.context.collection = db.collection()
-  t.context.document = t.context.collection.doc()
-  t.context.vm = new Vue({
+let collection, document, vm
+beforeEach(async () => {
+  collection = db.collection()
+  document = collection.doc()
+  vm = new Vue({
     render (h) {
       return h('ul', this.items.map(
         item => h('li', [item])
@@ -24,20 +24,20 @@ test.beforeEach(async t => {
       item: null
     }),
     firestore: {
-      items: t.context.collection,
-      item: t.context.document
+      items: collection,
+      item: document
     }
-  }).$mount()
+  })
   await tick()
 })
 
-test('binds a document', t => {
-  t.deepEqual(t.context.vm.item, null)
+test('binds a document', () => {
+  expect(vm.item).toEqual(null)
 })
 
-test('updates a document', async t => {
-  await t.context.document.update({ foo: 'foo' })
-  t.deepEqual(t.context.vm.item, { foo: 'foo' })
-  await t.context.document.update({ bar: 'bar' })
-  t.deepEqual(t.context.vm.item, { foo: 'foo', bar: 'bar' })
+test('updates a document', async () => {
+  await document.update({ foo: 'foo' })
+  expect(vm.item).toEqual({ foo: 'foo' })
+  await document.update({ bar: 'bar' })
+  expect(vm.item).toEqual({ foo: 'foo', bar: 'bar' })
 })

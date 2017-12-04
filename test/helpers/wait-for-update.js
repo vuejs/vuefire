@@ -1,5 +1,7 @@
 import Vue from 'vue'
 
+Vue.config.productionTip = false
+
 function tick () {
   return new Promise((resolve, reject) => {
     Vue.nextTick(resolve)

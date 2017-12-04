@@ -1,4 +1,3 @@
-import test from 'ava'
 import sinon from 'sinon'
 import Vuefire from '../src'
 import {
@@ -9,10 +8,11 @@ import {
 
 Vue.use(Vuefire)
 
-test.beforeEach(async t => {
-  t.context.collection = db.collection()
-  t.context.document = t.context.collection.doc()
-  t.context.vm = new Vue({
+let collection, document, vm
+beforeEach(async () => {
+  collection = db.collection()
+  document = collection.doc()
+  vm = new Vue({
     render (h) {
       return h('ul', this.items && this.items.map(
         item => h('li', [item])
@@ -25,33 +25,31 @@ test.beforeEach(async t => {
       item: null
     }),
     firestore: {
-      items: t.context.collection,
-      item: t.context.document
+      items: collection,
+      item: document
     }
-  }).$mount()
+  })
   await tick()
 })
 
-test('manually unbinds a collection', async t => {
-  const vm = t.context.vm
+test('manually unbinds a collection', async () => {
   const spy = sinon.spy(vm._firestoreUnbinds, 'items')
   vm.$unbind('items')
-  t.is(spy.callCount, 1)
-  t.deepEqual(Object.keys(vm._firestoreUnbinds), ['item'])
-  t.deepEqual(Object.keys(vm.$firestoreRefs), ['item'])
-  t.deepEqual(vm.items, [])
-  await t.context.collection.add({ text: 'foo' })
-  t.deepEqual(vm.items, [])
+  expect(spy.callCount).toBe(1)
+  expect(Object.keys(vm._firestoreUnbinds)).toEqual(['item'])
+  expect(Object.keys(vm.$firestoreRefs)).toEqual(['item'])
+  expect(vm.items).toEqual([])
+  await collection.add({ text: 'foo' })
+  expect(vm.items).toEqual([])
 })
 
-test('manually unbinds a document', async t => {
-  const vm = t.context.vm
+test('manually unbinds a document', async () => {
   const spy = sinon.spy(vm._firestoreUnbinds, 'item')
   vm.$unbind('item')
-  t.is(spy.callCount, 1)
-  t.deepEqual(Object.keys(vm._firestoreUnbinds), ['items'])
-  t.deepEqual(Object.keys(vm.$firestoreRefs), ['items'])
-  t.deepEqual(vm.item, null)
-  await t.context.document.update({ foo: 'foo' })
-  t.deepEqual(vm.item, null)
+  expect(spy.callCount).toBe(1)
+  expect(Object.keys(vm._firestoreUnbinds)).toEqual(['items'])
+  expect(Object.keys(vm.$firestoreRefs)).toEqual(['items'])
+  expect(vm.item).toEqual(null)
+  await document.update({ foo: 'foo' })
+  expect(vm.item).toEqual(null)
 })
