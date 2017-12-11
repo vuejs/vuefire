@@ -89,39 +89,3 @@ test('unbinds previously bound refs', async () => {
   expect(vm.$firestoreRefs.item).toBe(doc2)
   expect(vm.item).toEqual({ bar: 'bar' })
 })
-
-test('resolves the promise when refs are resolved in a document', async () => {
-  const a = db.collection().doc()
-  await a.update({ a: true })
-  await document.update({ ref: a })
-
-  await vm.$bind('item', document)
-  expect(vm.item).toEqual({ ref: { a: true }})
-})
-
-test('resolves the promise when nested refs are resolved in a document', async () => {
-  const a = db.collection().doc()
-  const b = db.collection().doc()
-  await a.update({ a: b })
-  await b.update({ b: true })
-  await document.update({ ref: a })
-
-  await vm.$bind('item', document)
-  expect(vm.item).toEqual({ ref: { a: { b: true }}})
-})
-
-test('resolves the promise when nested non-existant refs are resolved in a document', async () => {
-  const a = db.collection().doc()
-  const b = db.collection().doc()
-  await a.update({ a: b })
-  await document.update({ ref: a })
-
-  await vm.$bind('item', document)
-  expect(vm.item).toEqual({ ref: { a: null }})
-})
-
-test('resolves the promise when the document does not exist', async () => {
-  expect(vm.item).toEqual(null)
-  await vm.$bind('item', document)
-  expect(vm.item).toBe(null)
-})

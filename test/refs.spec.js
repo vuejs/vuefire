@@ -28,7 +28,8 @@ beforeEach(async () => {
       a: null,
       b: null,
       c: null,
-      d: null
+      d: null,
+      item: null
     }),
 
     firestore: {
@@ -122,4 +123,35 @@ test('unbinds previously bound document when overwriting a bound', async () => {
     ref: null
   })
   spy.mockRestore()
+})
+
+test('resolves the promise when refs are resolved in a document', async () => {
+  await a.update({ a: true })
+  await b.update({ ref: a })
+
+  await vm.$bind('item', b)
+  expect(vm.item).toEqual({ ref: { a: true }})
+})
+
+test('resolves the promise when nested refs are resolved in a document', async () => {
+  await a.update({ a: b })
+  await b.update({ b: true })
+  await d.update({ ref: a })
+
+  await vm.$bind('item', d)
+  expect(vm.item).toEqual({ ref: { a: { b: true }}})
+})
+
+test('resolves the promise when nested non-existant refs are resolved in a document', async () => {
+  await a.update({ a: b })
+  await d.update({ ref: a })
+
+  await vm.$bind('item', d)
+  expect(vm.item).toEqual({ ref: { a: null }})
+})
+
+test('resolves the promise when the document does not exist', async () => {
+  expect(vm.item).toEqual(null)
+  await vm.$bind('item', a)
+  expect(vm.item).toBe(null)
 })
