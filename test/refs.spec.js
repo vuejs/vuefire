@@ -85,7 +85,7 @@ test('is null if ref does not exist', async () => {
   })
 })
 
-test('unbinds previously bound document', async () => {
+test('unbinds previously bound document when overwriting a bound', async () => {
   const c = collection.doc()
 
   // Mock c onSnapshot to spy when the callback is called

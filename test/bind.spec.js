@@ -48,6 +48,22 @@ test('returs a promise', () => {
   expect(vm.$bind('item', document) instanceof Promise).toBe(true)
 })
 
+test('waits for the data to be set when binding a collection', async () => {
+  collection.add({ foo: 'foo' })
+  const promise = vm.$bind('items', collection)
+  expect(vm.items).toEqual([])
+  await promise
+  expect(vm.items).toEqual([{ foo: 'foo' }])
+})
+
+test('waits for the data to be set when binding a document', async () => {
+  document.update({ foo: 'foo' })
+  const promise = vm.$bind('item', document)
+  expect(vm.item).toEqual(null)
+  await promise
+  expect(vm.item).toEqual({ foo: 'foo' })
+})
+
 test('rejects the promise when errors', async () => {
   const fakeOnSnapshot = (_, fail) => {
     fail(new Error('nope'))
