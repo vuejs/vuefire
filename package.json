@@ -16,7 +16,7 @@
     "build": "node build/build.js",
     "pretest": "npm run lint",
     "test": "npm run unit",
-    "unit": "jest --coverage",
+    "unit": "jest",
     "dev": "npm run unit -- --watchAll",
     "prepublishOnly": "npm run build",
     "release": "release-it pre --preReleaseId=alpha --npm.tag=next --github.preRelease"
@@ -49,15 +49,15 @@
     "babel-register": "^6.26.0",
     "cross-env": "^5.1.1",
     "cz-conventional-changelog": "^2.1.0",
-    "eslint": "^4.11.0",
+    "eslint": "^4.13.0",
     "eslint-plugin-html": "^4.0.1",
-    "eslint-plugin-vue-libs": "^1.2.1",
-    "firebase": "^4.6.2",
+    "eslint-plugin-vue-libs": "^2.0.0",
+    "firebase": "^4.8.0",
     "jest": "^21.3.0-beta.11",
     "mkdirp": "^0.5.1",
-    "rollup": "^0.51.8",
+    "rollup": "^0.52.1",
     "rollup-plugin-buble": "^0.18.0",
-    "uglify-js": "^3.1.10",
+    "uglify-js": "^3.2.2",
     "vue": "^2.5.9"
   },
   "config": {
@@ -65,18 +65,10 @@
       "path": "./node_modules/cz-conventional-changelog"
     }
   },
-  "nyc": {
-    "sourceMap": false,
-    "instrument": true,
-    "reporter": [
-      "lcov",
-      "text"
-    ],
-    "require": [
-      "babel-register"
-    ],
-    "include": [
-      "src/**/*.js"
+  "jest": {
+    "collectCoverage": true,
+    "coveragePathIgnorePatterns": [
+      "<rootDir>/test/*.js"
     ]
   }
 }
