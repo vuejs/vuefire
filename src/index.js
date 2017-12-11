@@ -79,6 +79,7 @@ function subscribeToDocument ({ ref, obj, key, depth, resolve }) {
       updateDataFromDocumentSnapshot({ snapshot: createSnapshot(doc), obj, key, subs, depth, resolve })
     } else {
       obj[key] = null
+      resolve()
     }
   })
 }
