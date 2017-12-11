@@ -1,4 +1,4 @@
-import { createSnapshot, extractRefs } from './utils'
+import { createSnapshot, extractRefs, callOnceWithArg } from './utils'
 
 function bindCollection ({
   vm,
@@ -38,12 +38,14 @@ function bindCollection ({
   }, reject)
 }
 
-function updateDataFromDocumentSnapshot ({ snapshot, obj, key, subs, depth = 0 }) {
+function updateDataFromDocumentSnapshot ({ snapshot, obj, key, subs, depth = 0, resolve }) {
   // TODO extract refs
   const [data, refs] = extractRefs(snapshot)
   obj[key] = data
+  const refKeys = Object.keys(refs)
+  if (!refKeys.length) resolve()
   // TODO check if no ref is missing
-  Object.keys(refs).forEach(refKey => {
+  refKeys.forEach(refKey => {
     // check if already bound to the same ref -> skip
     const sub = subs[refKey]
     const ref = refs[refKey]
@@ -56,7 +58,8 @@ function updateDataFromDocumentSnapshot ({ snapshot, obj, key, subs, depth = 0 }
         ref,
         obj: obj[key],
         key: refKey,
-        depth: depth + 1
+        depth: depth + 1,
+        resolve
       }),
       path: ref.path
     }
@@ -67,13 +70,13 @@ function updateDataFromDocumentSnapshot ({ snapshot, obj, key, subs, depth = 0 }
   })
 }
 
-function subscribeToDocument ({ ref, obj, key, depth }) {
+function subscribeToDocument ({ ref, obj, key, depth, resolve }) {
   // TODO max depth param, default to 1?
   if (depth > 3) throw new Error('more than 5 nested refs')
   const subs = Object.create(null)
   return ref.onSnapshot(doc => {
     if (doc.exists) {
-      updateDataFromDocumentSnapshot({ snapshot: createSnapshot(doc), obj, key, subs, depth })
+      updateDataFromDocumentSnapshot({ snapshot: createSnapshot(doc), obj, key, subs, depth, resolve })
     } else {
       obj[key] = null
     }
@@ -88,33 +91,25 @@ function bindDocument ({
   reject
 }) {
   // TODO warning check if key exists?
-  // TODO create boundRefs object
   // const boundRefs = Object.create(null)
 
-  let ready
   const subs = Object.create(null)
+  // bind here the function so it can be resolve anywhere
+  // this is specially useful for refs
+  resolve = callOnceWithArg(resolve, () => vm[key])
   return document.onSnapshot(doc => {
     if (doc.exists) {
       updateDataFromDocumentSnapshot({
         snapshot: createSnapshot(doc),
         obj: vm,
         key,
-        subs
+        subs,
+        resolve
       })
+    } else {
+      resolve()
     }
-    // TODO should resolve be called when all refs are bound?
-    if (!ready) {
-      ready = true
-      resolve(vm[key])
-    }
-    // TODO bind refs
-    // const d = doc.data()
-    // if (!boundRefs[d.path]) {
-    //   console.log('bound ref', d.path)
-    //   boundRefs[d.path] = d.onSnapshot((doc) => {
-    //     console.log('ref snap', doc)
-    //   }, err => console.log('onSnapshot ref ERR', err))
-    // }
+    // TODO resolve when does not exist ?
   }, reject)
 
   // TODO return a custom unbind function that unbind all refs

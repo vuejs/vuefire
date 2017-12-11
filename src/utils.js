@@ -19,3 +19,13 @@ export function extractRefs (doc) {
     return tot
   }, [{}, {}])
 }
+
+export function callOnceWithArg (fn, argFn) {
+  let called
+  return () => {
+    if (!called) {
+      called = true
+      return fn(argFn())
+    }
+  }
+}
