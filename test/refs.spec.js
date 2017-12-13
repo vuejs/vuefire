@@ -212,3 +212,30 @@ test('unbinds nested refs when the document is unbound', async () => {
   cSpy.mockRestore()
   dSpy.mockRestore()
 })
+
+test('unbinds multiple refs when the document is unbound', async () => {
+  const c = collection.doc()
+  const d = collection.doc()
+  const aSpy = spyUnbind(a)
+  const cSpy = spyUnbind(c)
+  const dSpy = spyUnbind(d)
+
+  await a.update({ a: true })
+  await c.update({ c: true })
+  await d.update({ c, a })
+
+  await vm.$bind('d', d)
+  expect(vm.d).toEqual({
+    a: { a: true },
+    c: { c: true }
+  })
+  vm.$unbind('d')
+
+  expect(dSpy.mock.calls.length).toBe(1)
+  expect(cSpy.mock.calls.length).toBe(1)
+  expect(aSpy.mock.calls.length).toBe(1)
+
+  aSpy.mockRestore()
+  cSpy.mockRestore()
+  dSpy.mockRestore()
+})
