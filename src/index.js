@@ -75,7 +75,7 @@ function subscribeToDocument ({ ref, obj, key, depth, resolve }) {
   // TODO max depth param, default to 1?
   if (depth > 3) throw new Error('more than 5 nested refs')
   const subs = Object.create(null)
-  return ref.onSnapshot(doc => {
+  const unbind = ref.onSnapshot(doc => {
     if (doc.exists) {
       updateDataFromDocumentSnapshot({
         snapshot: createSnapshot(doc),
@@ -90,6 +90,14 @@ function subscribeToDocument ({ ref, obj, key, depth, resolve }) {
       resolve()
     }
   })
+
+  return () => {
+    unbind()
+    for (const subKey in subs) {
+      const sub = subs[subKey]
+      sub.unbind()
+    }
+  }
 }
 
 function bindDocument ({

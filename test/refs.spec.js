@@ -19,11 +19,7 @@ beforeEach(async () => {
   await d.update({ ref: c })
 
   vm = new Vue({
-    render (h) {
-      return h('ul', this.items && this.items.map(
-        item => h('li', [item])
-      ))
-    },
+    render: h => h(),
     data: () => ({
       a: null,
       b: null,
@@ -183,6 +179,36 @@ test('unbinds all refs when the document is unbound', async () => {
   expect(dSpy.mock.calls.length).toBe(1)
   expect(cSpy.mock.calls.length).toBe(1)
 
+  cSpy.mockRestore()
+  dSpy.mockRestore()
+})
+
+test('unbinds nested refs when the document is unbound', async () => {
+  const c = collection.doc()
+  const d = collection.doc()
+  const aSpy = spyUnbind(a)
+  const cSpy = spyUnbind(c)
+  const dSpy = spyUnbind(d)
+
+  await a.update({ a: true })
+  await c.update({ ref: a })
+  await d.update({ ref: c })
+
+  await vm.$bind('d', d)
+  expect(vm.d).toEqual({
+    ref: {
+      ref: {
+        a: true
+      }
+    }
+  })
+  vm.$unbind('d')
+
+  expect(dSpy.mock.calls.length).toBe(1)
+  expect(cSpy.mock.calls.length).toBe(1)
+  expect(aSpy.mock.calls.length).toBe(1)
+
+  aSpy.mockRestore()
   cSpy.mockRestore()
   dSpy.mockRestore()
 })
