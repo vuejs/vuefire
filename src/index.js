@@ -59,6 +59,7 @@ function updateDataFromDocumentSnapshot ({ snapshot, obj, key, subs, depth = 0, 
         obj: obj[key],
         key: refKey,
         depth: depth + 1,
+        // TODO parentSubs
         resolve
       }),
       path: ref.path
@@ -76,7 +77,14 @@ function subscribeToDocument ({ ref, obj, key, depth, resolve }) {
   const subs = Object.create(null)
   return ref.onSnapshot(doc => {
     if (doc.exists) {
-      updateDataFromDocumentSnapshot({ snapshot: createSnapshot(doc), obj, key, subs, depth, resolve })
+      updateDataFromDocumentSnapshot({
+        snapshot: createSnapshot(doc),
+        obj,
+        key,
+        subs,
+        depth,
+        resolve
+      })
     } else {
       obj[key] = null
       resolve()
@@ -98,7 +106,7 @@ function bindDocument ({
   // bind here the function so it can be resolve anywhere
   // this is specially useful for refs
   resolve = callOnceWithArg(resolve, () => vm[key])
-  return document.onSnapshot(doc => {
+  const unbind = document.onSnapshot(doc => {
     if (doc.exists) {
       updateDataFromDocumentSnapshot({
         snapshot: createSnapshot(doc),
@@ -110,10 +118,16 @@ function bindDocument ({
     } else {
       resolve()
     }
-    // TODO resolve when does not exist ?
   }, reject)
 
   // TODO return a custom unbind function that unbind all refs
+  return () => {
+    unbind()
+    for (const subKey in subs) {
+      const sub = subs[subKey]
+      sub.unbind()
+    }
+  }
 }
 
 function bind ({ vm, key, ref }) {

@@ -15,7 +15,7 @@ beforeEach(async () => {
   b = db.collection().doc()
   c = collection.doc()
   d = collection.doc()
-  await c.update({ foo: 'foo' })
+  await c.update({ c: true })
   await d.update({ ref: c })
 
   vm = new Vue({
@@ -63,15 +63,15 @@ test('binds refs on documents', async () => {
 test('update inner ref', async () => {
   expect(vm.d).toEqual({
     ref: {
-      foo: 'foo'
+      c: true
     }
   })
 
-  await c.update({ foo: 'bar' })
+  await c.update({ c: false })
 
   expect(vm.d).toEqual({
     ref: {
-      foo: 'bar'
+      c: false
     }
   })
 })
@@ -95,8 +95,7 @@ test('unbinds previously bound document when overwriting a bound', async () => {
   c.onSnapshot = jest.fn(fn => onSnapshot((...args) => {
     spy()
     fn(...args)
-  })
-  )
+  }))
   await c.update({ baz: 'baz' })
   await d.update({ ref: c })
   await delay(5)
@@ -154,4 +153,36 @@ test('resolves the promise when the document does not exist', async () => {
   expect(vm.item).toEqual(null)
   await vm.$bind('item', a)
   expect(vm.item).toBe(null)
+})
+
+function spyUnbind (ref) {
+  const spy = jest.fn()
+  const onSnapshot = ref.onSnapshot.bind(ref)
+  ref.onSnapshot = jest.fn(fn => {
+    const unbind = onSnapshot(fn)
+    return () => {
+      spy()
+      unbind()
+    }
+  })
+  return spy
+}
+
+test('unbinds all refs when the document is unbound', async () => {
+  const cSpy = spyUnbind(c)
+  const dSpy = spyUnbind(d)
+  // rebind to use the spies
+  await vm.$bind('d', d)
+  expect(vm.d).toEqual({
+    ref: {
+      c: true
+    }
+  })
+  vm.$unbind('d')
+
+  expect(dSpy.mock.calls.length).toBe(1)
+  expect(cSpy.mock.calls.length).toBe(1)
+
+  cSpy.mockRestore()
+  dSpy.mockRestore()
 })
