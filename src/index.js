@@ -111,7 +111,7 @@ function bindDocument ({
   // const boundRefs = Object.create(null)
 
   const subs = Object.create(null)
-  // bind here the function so it can be resolve anywhere
+  // bind here the function so it can be resolved anywhere
   // this is specially useful for refs
   resolve = callOnceWithArg(resolve, () => vm[key])
   const unbind = document.onSnapshot(doc => {

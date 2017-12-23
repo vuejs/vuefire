@@ -1,19 +1,30 @@
 import {
-  createSnapshot
+  createSnapshot,
+  extractRefs
 } from '../src/utils'
 import {
   Key,
+  db,
   _id,
+  DocumentReference,
   DocumentSnapshot
 } from './helpers'
 
-let id, doc, snapshot
+let id, doc, snapshot, collection, docRef
 beforeEach(() => {
+  collection = db.collection()
+  docRef = new DocumentReference({
+    collection,
+    id: new Key(),
+    data: {},
+    index: 0
+  })
   id = _id
   doc = new DocumentSnapshot(null, new Key(), {
     n: 42,
     is: true,
-    items: [{ text: 'foo' }]
+    items: [{ text: 'foo' }],
+    ref: docRef
   })
   snapshot = createSnapshot(doc)
 })
@@ -30,6 +41,29 @@ test('contains all the data', () => {
   expect(snapshot).toEqual({
     n: 42,
     is: true,
-    items: [{ text: 'foo' }]
+    items: [{ text: 'foo' }],
+    ref: docRef
+  })
+})
+
+test('extract refs from document', () => {
+  const [noRefsDoc, refs] = extractRefs(doc.data())
+  expect(noRefsDoc.ref).toEqual(docRef.path)
+  expect(refs).toEqual({
+    ref: docRef
+  })
+})
+
+test('extract object nested refs from document', () => {
+  const [noRefsDoc, refs] = extractRefs({
+    obj: {
+      ref: docRef
+    }
+  })
+  console.log(noRefsDoc)
+  expect(noRefsDoc.obj.ref).toEqual(docRef.path)
+  console.log(refs)
+  expect(refs).toEqual({
+    'obj.ref': docRef
   })
 })

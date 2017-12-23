@@ -30,7 +30,7 @@ export class Key {
   }
 }
 
-class DocumentReference {
+export class DocumentReference {
   constructor ({ collection, id, data, index }) {
     this.collection = collection
     this.id = id
