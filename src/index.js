@@ -1,4 +1,4 @@
-import { createSnapshot, extractRefs, callOnceWithArg } from './utils'
+import { createSnapshot, extractRefs, callOnceWithArg, deepGetSplit } from './utils'
 
 function bindCollection ({
   vm,
@@ -43,8 +43,10 @@ function updateDataFromDocumentSnapshot ({ snapshot, obj, key, subs, depth = 0, 
   const [data, refs] = extractRefs(snapshot)
   obj[key] = data
   const refKeys = Object.keys(refs)
-  if (!refKeys.length) resolve()
+  if (!refKeys.length) return resolve()
   // TODO check if no ref is missing
+  // TODO max depth param, default to 1?
+  if (++depth > 3) throw new Error('more than 5 nested refs')
   refKeys.forEach(refKey => {
     // check if already bound to the same ref -> skip
     const sub = subs[refKey]
@@ -53,12 +55,13 @@ function updateDataFromDocumentSnapshot ({ snapshot, obj, key, subs, depth = 0, 
       sub.unbind()
     }
     // maybe wrap the unbind function to call unbind on every child
+    const [innerObj, innerKey] = deepGetSplit(obj[key], refKey)
     subs[refKey] = {
       unbind: subscribeToDocument({
         ref,
-        obj: obj[key],
-        key: refKey,
-        depth: depth + 1,
+        obj: innerObj,
+        key: innerKey,
+        depth,
         // TODO parentSubs
         resolve
       }),
@@ -72,8 +75,6 @@ function updateDataFromDocumentSnapshot ({ snapshot, obj, key, subs, depth = 0, 
 }
 
 function subscribeToDocument ({ ref, obj, key, depth, resolve }) {
-  // TODO max depth param, default to 1?
-  if (depth > 3) throw new Error('more than 5 nested refs')
   const subs = Object.create(null)
   const unbind = ref.onSnapshot(doc => {
     if (doc.exists) {

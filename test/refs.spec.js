@@ -19,7 +19,6 @@ beforeEach(async () => {
   await d.update({ ref: c })
 
   vm = new Vue({
-    render: h => h(),
     data: () => ({
       a: null,
       b: null,
@@ -53,6 +52,50 @@ test('binds refs on documents', async () => {
 
   expect(vm.a).toEqual({
     ref: { foo: 'foo' }
+  })
+})
+
+test('binds refs nested in documents (objects)', async () => {
+  const item = collection.doc()
+  await item.update({
+    obj: {
+      ref: c
+    }
+  })
+  await vm.$bind('item', item)
+
+  // NOTE same as above
+  await delay(5)
+
+  expect(vm.item).toEqual({
+    obj: {
+      ref: { c: true }
+    }
+  })
+})
+
+test('binds refs deeply nested in documents (objects)', async () => {
+  const item = collection.doc()
+  await item.update({
+    obj: {
+      nested: {
+        ref: c
+      }
+    }
+  })
+  await vm.$bind('item', item)
+
+  // NOTE same as above
+  await delay(5)
+
+  expect(vm.item).toEqual({
+    obj: {
+      nested: {
+        ref: {
+          c: true
+        }
+      }
+    }
   })
 })
 

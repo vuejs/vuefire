@@ -60,10 +60,22 @@ test('extract object nested refs from document', () => {
       ref: docRef
     }
   })
-  console.log(noRefsDoc)
   expect(noRefsDoc.obj.ref).toEqual(docRef.path)
-  console.log(refs)
   expect(refs).toEqual({
     'obj.ref': docRef
+  })
+})
+
+test('extract deep object nested refs from document', () => {
+  const [noRefsDoc, refs] = extractRefs({
+    obj: {
+      nested: {
+        ref: docRef
+      }
+    }
+  })
+  expect(noRefsDoc.obj.nested.ref).toEqual(docRef.path)
+  expect(refs).toEqual({
+    'obj.nested.ref': docRef
   })
 })

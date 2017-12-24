@@ -18,12 +18,11 @@ export function extractRefs (doc, path = '', result = [{}, {}]) {
       // TODO handle subpathes?
       tot[1][path + key] = ref
     } else if (Array.isArray(ref)) {
-      // TODO hndle array
+      // TODO handle array
       tot[0][key] = ref
     } else if (isObject(ref)) {
-      console.log('isobject omg', key, ref)
       tot[0][key] = {}
-      extractRefs(ref, key + '.', [tot[0][key], tot[1]])
+      extractRefs(ref, path + key + '.', [tot[0][key], tot[1]])
     } else {
       tot[0][key] = ref
     }
@@ -39,4 +38,17 @@ export function callOnceWithArg (fn, argFn) {
       return fn(argFn())
     }
   }
+}
+
+export function deepGetSplit (obj, path) {
+  const keys = path.split('.')
+  // We want the containing obj and the last key
+  // key is the one we're going to bind to
+  const key = keys.pop()
+  return [
+    keys.reduce((res, key) => {
+      return res[key]
+    }, obj),
+    key
+  ]
 }
