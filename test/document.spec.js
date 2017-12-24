@@ -2,6 +2,7 @@ import Vuefire from '../src'
 import {
   db,
   tick,
+  Key,
   Vue
 } from './helpers'
 
@@ -40,4 +41,16 @@ test('updates a document', async () => {
   expect(vm.item).toEqual({ foo: 'foo' })
   await document.update({ bar: 'bar' })
   expect(vm.item).toEqual({ foo: 'foo', bar: 'bar' })
+})
+
+test('adds non-enumerable id', async () => {
+  document = collection.doc(new Key('some-id'))
+  await document.update({ foo: 'foo' })
+  await vm.$bind('item', document)
+  expect(Object.getOwnPropertyDescriptor(vm.item, 'id')).toEqual({
+    configurable: false,
+    enumerable: false,
+    writable: false,
+    value: 'some-id'
+  })
 })

@@ -10,6 +10,10 @@ function isObject (o) {
 }
 
 export function extractRefs (doc, path = '', result = [{}, {}]) {
+  const idDescriptor = Object.getOwnPropertyDescriptor(doc, 'id')
+  if (idDescriptor && !idDescriptor.enumerable) {
+    Object.defineProperty(result[0], 'id', idDescriptor)
+  }
   return Object.keys(doc).reduce((tot, key) => {
     const ref = doc[key]
     // if it's a ref
