@@ -39,7 +39,7 @@ function bindCollection ({
         subs[refKey] = {
           unbind: subscribeToDocument({
             ref,
-            obj: innerObj,
+            target: innerObj,
             key: innerKey,
             depth,
             // TODO parentSubs
@@ -79,10 +79,10 @@ function bindCollection ({
   }, reject)
 }
 
-function updateDataFromDocumentSnapshot ({ snapshot, obj, key, subs, depth = 0, resolve }) {
+function updateDataFromDocumentSnapshot ({ snapshot, target, key, subs, depth = 0, resolve }) {
   // TODO extract refs
   const [data, refs] = extractRefs(snapshot)
-  obj[key] = data
+  target[key] = data
   const refKeys = Object.keys(refs)
   if (!refKeys.length) return resolve()
   // TODO check if no ref is missing
@@ -96,11 +96,11 @@ function updateDataFromDocumentSnapshot ({ snapshot, obj, key, subs, depth = 0, 
       sub.unbind()
     }
     // maybe wrap the unbind function to call unbind on every child
-    const [innerObj, innerKey] = deepGetSplit(obj[key], refKey)
+    const [innerObj, innerKey] = deepGetSplit(target[key], refKey)
     subs[refKey] = {
       unbind: subscribeToDocument({
         ref,
-        obj: innerObj,
+        target: innerObj,
         key: innerKey,
         depth,
         // TODO parentSubs
@@ -115,20 +115,20 @@ function updateDataFromDocumentSnapshot ({ snapshot, obj, key, subs, depth = 0, 
   })
 }
 
-function subscribeToDocument ({ ref, obj, key, depth, resolve }) {
+function subscribeToDocument ({ ref, target, key, depth, resolve }) {
   const subs = Object.create(null)
   const unbind = ref.onSnapshot(doc => {
     if (doc.exists) {
       updateDataFromDocumentSnapshot({
         snapshot: createSnapshot(doc),
-        obj,
+        target,
         key,
         subs,
         depth,
         resolve
       })
     } else {
-      obj[key] = null
+      target[key] = null
       resolve()
     }
   })
@@ -160,7 +160,7 @@ function bindDocument ({
     if (doc.exists) {
       updateDataFromDocumentSnapshot({
         snapshot: createSnapshot(doc),
-        obj: vm,
+        target: vm,
         key,
         subs,
         resolve
