@@ -2,6 +2,7 @@ import Vuefire from '../src'
 import {
   db,
   tick,
+  Key,
   Vue
 } from './helpers'
 
@@ -66,4 +67,20 @@ test('unbinds when the instance is destroyed', async () => {
     await collection.add({ text: 'foo' })
     expect(vm.items).toEqual([])
   }).not.toThrow()
+})
+
+test('adds non-enumerable id', async () => {
+  const a = await collection.doc(new Key('u0'))
+  const b = await collection.doc(new Key('u1'))
+  await a.update({})
+  await b.update({})
+  expect(vm.items.length).toBe(2)
+  vm.items.forEach((item, i) => {
+    expect(Object.getOwnPropertyDescriptor(item, 'id')).toEqual({
+      configurable: false,
+      enumerable: false,
+      writable: false,
+      value: `u${i}`
+    })
+  })
 })
