@@ -111,7 +111,7 @@ class CollectionReference {
       docChanges: [{
         type: 'added',
         doc: new DocumentSnapshot(null, id, data),
-        newIndex: Object.keys(this.data).length,
+        newIndex: Object.keys(this.data).length - 1,
         oldIndex: -1
       }]
     })

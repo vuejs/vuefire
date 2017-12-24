@@ -9,17 +9,58 @@ function bindCollection ({
 }) {
   // TODO wait to get all data
   const array = vm[key] = []
+  const depth = 0
 
   const change = {
     added: ({ newIndex, doc }) => {
-      array.splice(newIndex, 0, createSnapshot(doc))
+      const subs = {}
+      const snapshot = createSnapshot(doc)
+      const [data, refs] = extractRefs(snapshot)
+      array.splice(newIndex, 0, data)
+      const refKeys = Object.keys(refs)
+      if (!refKeys.length) return // resolve()
+      // TODO check if no ref is missing
+      // TODO max depth param, default to 1?
+      // if (++depth > 3) throw new Error('more than 5 nested refs')
+      refKeys.forEach(refKey => {
+        // check if already bound to the same ref -> skip
+        const sub = subs[refKey]
+        const ref = refs[refKey]
+        if (sub && sub.path !== ref.path) {
+          sub.unbind()
+        }
+        // maybe wrap the unbind function to call unbind on every child
+        const [innerObj, innerKey] = deepGetSplit(array[newIndex], refKey)
+        if (!innerObj) {
+          console.log('=== ERROR ===')
+          console.log(data, refKey, newIndex, innerObj, innerKey)
+          console.log('===')
+        }
+        subs[refKey] = {
+          unbind: subscribeToDocument({
+            ref,
+            obj: innerObj,
+            key: innerKey,
+            depth,
+            // TODO parentSubs
+            resolve
+          }),
+          path: ref.path
+        }
+        // unbind currently bound ref
+        // bind ref
+        // save unbind callback
+        // probably save key or something as well
+      })
     },
     modified: ({ oldIndex, newIndex, doc }) => {
       array.splice(oldIndex, 1)
       array.splice(newIndex, 0, createSnapshot(doc))
+      // TODO replace listeners of nested refs
     },
     removed: ({ oldIndex }) => {
       array.splice(oldIndex, 1)
+      // TODO remove listeners of nested refs
     }
   }
 

@@ -43,6 +43,18 @@
         </li>
       </ul>
 
+      <h4>collection with refs</h4>
+
+      <ul>
+        <li v-for="moment in moments">{{ moment }}</li>
+      </ul>
+
+      <h5>Original data</h5>
+
+      <ul>
+        <li v-for="tweet in tweets">{{ tweet }}</li>
+      </ul>
+
       <p>config: </p>
       <pre>
         {{ config }}
@@ -66,12 +78,15 @@
         el: '#app',
         data: {
           todos: [],
+          tweets: [],
           config: null,
           newTodoText: ''
         },
 
         firestore: {
           todos: unFinishedTodos,
+          moments: db.collection('moments'),
+          tweets: db.collection('tweets'),
           config
         },
 
