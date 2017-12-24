@@ -12,11 +12,6 @@ let collection, vm
 beforeEach(async () => {
   collection = db.collection()
   vm = new Vue({
-    render (h) {
-      return h('ul', this.items.map(
-        item => h('li', [item])
-      ))
-    },
     data: () => ({ items: null }),
     firestore: {
       items: collection

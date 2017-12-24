@@ -12,11 +12,6 @@ beforeEach(async () => {
   collection = db.collection()
   document = collection.doc()
   vm = new Vue({
-    render (h) {
-      return h('ul', this.items && this.items.map(
-        item => h('li', [item])
-      ))
-    },
     // purposely set items as null
     // but it's a good practice to set it to an empty array
     data: () => ({

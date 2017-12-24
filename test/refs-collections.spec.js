@@ -8,15 +8,15 @@ import {
 
 Vue.use(Vuefire)
 
-let vm, collection, a, b, first, second
+let vm, collection, a, b
 beforeEach(async () => {
   a = db.collection().doc()
   b = db.collection().doc()
   await a.update({ isA: true })
   await b.update({ isB: true })
   collection = db.collection()
-  first = await collection.add({ ref: a })
-  second = await collection.add({ ref: b })
+  await collection.add({ ref: a })
+  await collection.add({ ref: b })
 
   vm = new Vue({
     data: () => ({
