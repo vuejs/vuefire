@@ -4,7 +4,6 @@ import {
   tick,
   delay,
   delayUpdate,
-  Key,
   spyUnbind,
   Vue
 } from './helpers'
