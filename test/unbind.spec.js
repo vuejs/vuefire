@@ -10,7 +10,7 @@ Vue.use(Vuefire)
 let collection, document, vm
 beforeEach(async () => {
   collection = db.collection()
-  document = collection.doc()
+  document = db.collection().doc()
   vm = new Vue({
     // purposely set items as null
     // but it's a good practice to set it to an empty array

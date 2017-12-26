@@ -4,20 +4,21 @@ import {
   tick,
   delay,
   delayUpdate,
+  Key,
   spyUnbind,
   Vue
 } from './helpers'
 
 Vue.use(Vuefire)
 
-let vm, collection, a, b
+let vm, collection, a, b, first
 beforeEach(async () => {
   a = db.collection().doc()
   b = db.collection().doc()
   await a.update({ isA: true })
   await b.update({ isB: true })
   collection = db.collection()
-  await collection.add({ ref: a })
+  first = await collection.add({ ref: a })
   await collection.add({ ref: b })
 
   vm = new Vue({
@@ -108,7 +109,19 @@ test('unbinds refs when items are removed', async () => {
   await vm.$bind('items', collection)
   expect(spyA).toHaveBeenCalledTimes(0)
 
-  await collection.doc(a.id).delete()
+  await collection.doc(new Key(vm.items[0].id)).delete()
+  expect(spyA).toHaveBeenCalledTimes(1)
+
+  spyA.mockRestore()
+})
+
+test('unbinds refs when items are modified', async () => {
+  const spyA = spyUnbind(a)
+  await vm.$bind('items', collection)
+  expect(spyA).toHaveBeenCalledTimes(0)
+
+  await first.set({ b })
+
   expect(spyA).toHaveBeenCalledTimes(1)
 
   spyA.mockRestore()

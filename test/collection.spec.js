@@ -33,7 +33,7 @@ test('add elements', async () => {
 
 test('delets items', async () => {
   await collection.add({ text: 'foo' })
-  await collection.doc(vm.items[0].id).delete()
+  await collection.doc(new Key(vm.items[0].id)).delete()
   expect(vm.items).toEqual([])
 })
 

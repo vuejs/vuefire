@@ -95,11 +95,21 @@ function bindCollection ({
       })
     },
     modified: ({ oldIndex, newIndex, doc }) => {
-      array.splice(oldIndex, 1)
-      array.splice(newIndex, 0, createSnapshot(doc))
-      // TODO replace listeners of nested refs
       const subs = arraySubs.splice(oldIndex, 1)[0]
       arraySubs.splice(newIndex, 0, subs)
+      array.splice(oldIndex, 1)
+      const snapshot = createSnapshot(doc)
+      array.splice(newIndex, 0, snapshot)
+      const [data, refs] = extractRefs(snapshot)
+      subscribeToRefs({
+        data,
+        refs,
+        subs,
+        target: array,
+        key: newIndex,
+        depth: 0,
+        resolve
+      })
     },
     removed: ({ oldIndex }) => {
       array.splice(oldIndex, 1)

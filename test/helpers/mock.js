@@ -69,14 +69,14 @@ export class DocumentReference {
     Object.assign(this.data, data)
     this.exists = true
     this.cb(new DocumentSnapshot(null, this.id, this.data, true))
-    return this.collection._modify(this.id, this.data)
+    return this.collection._modify(this.id, this.data, this)
   }
 
   async set (data) {
     this.data = { ...data }
     this.exists = true
     this.cb(new DocumentSnapshot(null, this.id, this.data, true))
-    return this.collection._modify(this.id, this.data)
+    return this.collection._modify(this.id, this.data, this)
   }
 }
 
@@ -130,12 +130,12 @@ class CollectionReference {
 
   doc (id) {
     id = id || new Key()
-    return (this.data[id.v] = this.data[id.v] || new DocumentReference({
+    return this.data[id.v] || new DocumentReference({
       collection: this,
       id,
       data: {},
       index: Object.keys(this.data).length
-    }))
+    })
   }
 
   async _remove (id) {
@@ -151,10 +151,16 @@ class CollectionReference {
     ref.data = null
   }
 
-  async _modify (id, data) {
+  async _modify (id, data, ref) {
+    let type = 'modified'
+    if (!this.data[id.v]) {
+      ref.index = Object.keys(this.data).length
+      this.data[id.v] = ref
+      type = 'added'
+    }
     this.cb({
       docChanges: [{
-        type: 'modified',
+        type,
         doc: new DocumentSnapshot(null, id, data),
         oldIndex: this.data[id.v].index,
         newIndex: this.data[id.v].index
