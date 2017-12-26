@@ -3,6 +3,9 @@ import {
   db,
   tick,
   delay,
+  spyUnbind,
+  spyOnSnapshot,
+  spyOnSnapshotCallback,
   Vue
 } from './helpers'
 
@@ -39,34 +42,6 @@ beforeEach(async () => {
   // wait for refs to be ready as well
   await delay(5)
 })
-
-function spyUnbind (ref) {
-  const spy = jest.fn()
-  const onSnapshot = ref.onSnapshot.bind(ref)
-  ref.onSnapshot = fn => {
-    const unbind = onSnapshot(fn)
-    return () => {
-      spy()
-      unbind()
-    }
-  }
-  return spy
-}
-
-function spyOnSnapshot (ref) {
-  const onSnapshot = ref.onSnapshot.bind(ref)
-  return (ref.onSnapshot = jest.fn((...args) => onSnapshot(...args)))
-}
-
-function spyOnSnapshotCallback (ref) {
-  const onSnapshot = ref.onSnapshot.bind(ref)
-  const spy = jest.fn()
-  ref.onSnapshot = fn => onSnapshot((...args) => {
-    spy()
-    fn(...args)
-  })
-  return spy
-}
 
 test('binds refs on documents', async () => {
   // create an empty doc and update using the ref instead of plain data

@@ -3,6 +3,7 @@ import {
   db,
   tick,
   delay,
+  delayUpdate,
   Vue
 } from './helpers'
 
@@ -25,15 +26,6 @@ beforeEach(async () => {
   })
   await tick()
 })
-
-// This makes sure some tests fail by delaying callbacks
-function delayUpdate (ref, time = 0) {
-  const onSnapshot = ref.onSnapshot.bind(ref)
-  ref.onSnapshot = fn => onSnapshot(async (...args) => {
-    await delay(time)
-    fn(...args)
-  })
-}
 
 test('binds refs on collections', async () => {
   await vm.$bind('items', collection)
