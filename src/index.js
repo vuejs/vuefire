@@ -65,7 +65,6 @@ function bindCollection ({
   // TODO wait to get all data
   const array = vm[key] = []
   const originalResolve = resolve
-  // resolve = callOnceWithArg(resolve, () => vm[key])
   let isResolved
 
   const change = {
@@ -115,8 +114,8 @@ function bindCollection ({
         if (id in validDocs) {
           if (++count >= expectedItems) {
             originalResolve(vm[key])
-            // noop
-            resolve = () => {}
+            // reset resolve to noop
+            resolve = _ => {}
           }
         }
       }
