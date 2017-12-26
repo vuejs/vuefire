@@ -31,7 +31,6 @@ function delayUpdate (ref, time = 0) {
   const onSnapshot = ref.onSnapshot.bind(ref)
   ref.onSnapshot = fn => onSnapshot(async (...args) => {
     await delay(time)
-    console.log('I waited for', time)
     fn(...args)
   })
 }

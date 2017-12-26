@@ -64,7 +64,9 @@ function bindCollection ({
 }) {
   // TODO wait to get all data
   const array = vm[key] = []
-  resolve = callOnceWithArg(resolve, () => vm[key])
+  const originalResolve = resolve
+  // resolve = callOnceWithArg(resolve, () => vm[key])
+  let isResolved
 
   const change = {
     added: ({ newIndex, doc }) => {
@@ -79,7 +81,7 @@ function bindCollection ({
         target: array,
         key: newIndex,
         depth: 0,
-        resolve
+        resolve: resolve.bind(null, doc)
       })
     },
     modified: ({ oldIndex, newIndex, doc }) => {
@@ -93,9 +95,32 @@ function bindCollection ({
     }
   }
 
+  // TODO return custom unbind function that unbinds nested refs
   return collection.onSnapshot(({ docChanges }) => {
     // console.log('pending', metadata.hasPendingWrites)
     // docs.forEach(d => console.log('doc', d, '\n', 'data', d.data()))
+    // NOTE this will only be triggered once and it will be with all the documents
+    // from the query appearing as added
+    // (https://firebase.google.com/docs/firestore/query-data/listen#view_changes_between_snapshots)
+    if (!isResolved && docChanges.length) {
+      // isResolved is only meant to make sure we do the check only once
+      isResolved = true
+      let count = 0
+      const expectedItems = docChanges.length
+      const validDocs = docChanges.reduce((dict, { doc }) => {
+        dict[doc.id] = false
+        return dict
+      }, Object.create(null))
+      resolve = ({ id }) => {
+        if (id in validDocs) {
+          if (++count >= expectedItems) {
+            originalResolve(vm[key])
+            // noop
+            resolve = () => {}
+          }
+        }
+      }
+    }
     docChanges.forEach(c => {
       // console.log(c)
       change[c.type](c)
