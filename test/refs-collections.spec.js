@@ -109,7 +109,7 @@ test('unbinds refs when items are removed', async () => {
   await vm.$bind('items', collection)
   expect(spyA).toHaveBeenCalledTimes(0)
 
-  await collection.doc(new Key(vm.items[0].id)).delete()
+  await collection.doc(vm.items[0].id).delete()
   expect(spyA).toHaveBeenCalledTimes(1)
 
   spyA.mockRestore()

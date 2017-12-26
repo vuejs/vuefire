@@ -33,7 +33,7 @@ test('add elements', async () => {
 
 test('delets items', async () => {
   await collection.add({ text: 'foo' })
-  await collection.doc(new Key(vm.items[0].id)).delete()
+  await collection.doc(vm.items[0].id).delete()
   expect(vm.items).toEqual([])
 })
 
@@ -65,8 +65,8 @@ test('unbinds when the instance is destroyed', async () => {
 })
 
 test('adds non-enumerable id', async () => {
-  const a = await collection.doc(new Key('u0'))
-  const b = await collection.doc(new Key('u1'))
+  const a = await collection.doc('u0')
+  const b = await collection.doc('u1')
   await a.update({})
   await b.update({})
   expect(vm.items.length).toBe(2)

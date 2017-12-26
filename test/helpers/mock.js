@@ -129,7 +129,7 @@ class CollectionReference {
   where () {}
 
   doc (id) {
-    id = id || new Key()
+    id = new Key(id)
     return this.data[id.v] || new DocumentReference({
       collection: this,
       id,
