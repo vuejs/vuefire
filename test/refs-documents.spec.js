@@ -35,8 +35,8 @@ beforeEach(async () => {
     }
   })
   await tick()
-  // XXX dirty hack until $bind resolves when all refs are bound
   // NOTE should add option for it waitForRefs: true (by default)
+  // wait for refs to be ready as well
   await delay(5)
 })
 
@@ -74,8 +74,7 @@ test('binds refs on documents', async () => {
   await c.update({ foo: 'foo' })
   await a.update({ ref: c })
 
-  // XXX dirty hack until $bind resolves when all refs are bound
-  // NOTE should add option for it waitForRefs: true (by default)
+  // NOTE(1) need to wait because we updated with a ref
   await delay(5)
 
   expect(vm.a).toEqual({
@@ -91,9 +90,6 @@ test('binds refs nested in documents (objects)', async () => {
     }
   })
   await vm.$bind('item', item)
-
-  // NOTE same as above
-  await delay(5)
 
   expect(vm.item).toEqual({
     obj: {
@@ -112,9 +108,6 @@ test('binds refs deeply nested in documents (objects)', async () => {
     }
   })
   await vm.$bind('item', item)
-
-  // NOTE same as above
-  await delay(5)
 
   expect(vm.item).toEqual({
     obj: {
@@ -146,6 +139,7 @@ test('update inner ref', async () => {
 test('is null if ref does not exist', async () => {
   await d.update({ ref: a })
 
+  // NOTE see #1
   await delay(5)
 
   expect(vm.d).toEqual({
@@ -160,10 +154,10 @@ test('unbinds previously bound document when overwriting a bound', async () => {
   const spy = spyOnSnapshotCallback(c)
   await c.update({ baz: 'baz' })
   await d.update({ ref: c })
+  // NOTE see #1
   await delay(5)
   expect(spy).toHaveBeenCalledTimes(1)
   await c.update({ baz: 'bar' })
-  await delay(5)
   // make sure things are updating correctly
   expect(vm.d).toEqual({
     ref: { baz: 'bar' }
@@ -171,13 +165,13 @@ test('unbinds previously bound document when overwriting a bound', async () => {
   // we call update twice to make sure our mock works
   expect(spy).toHaveBeenCalledTimes(2)
   await d.update({ ref: a })
+  // NOTE see #1
   await delay(5)
 
   expect(vm.d).toEqual({
     ref: null
   })
   await c.update({ foo: 'bar' })
-  await delay(5)
 
   expect(spy).toHaveBeenCalledTimes(2)
   expect(vm.d).toEqual({
@@ -192,6 +186,7 @@ test('does not rebind if it is the same ref', async () => {
   const spy = spyOnSnapshot(c)
   await c.update({ baz: 'baz' })
   await d.update({ ref: c })
+  // NOTE see #1
   await delay(5)
   expect(spy).toHaveBeenCalledTimes(1)
 
@@ -324,7 +319,7 @@ test('unbinds when a ref is replaced', async () => {
   })
 
   await d.update({ ref: a })
-  // wait for nested ref update
+  // NOTE see #1
   await delay(5)
   expect(vm.d).toEqual({
     ref: {

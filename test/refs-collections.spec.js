@@ -30,7 +30,6 @@ test('binds refs on collections', async () => {
   await vm.$bind('items', collection)
 
   // XXX dirty hack until $bind resolves when all refs are bound
-  // NOTE should add option for it waitForRefs: true (by default)
   await delay(5)
 
   expect(vm.items).toEqual([
@@ -45,6 +44,7 @@ test('binds refs when adding to collection', async () => {
   await c.update({ isC: true })
 
   await collection.add({ ref: c })
+  // NOTE wait for refs to update
   await delay(5)
 
   expect(vm.items).toEqual([

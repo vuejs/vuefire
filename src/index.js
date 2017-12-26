@@ -64,6 +64,7 @@ function bindCollection ({
 }) {
   // TODO wait to get all data
   const array = vm[key] = []
+  resolve = callOnceWithArg(resolve, () => vm[key])
 
   const change = {
     added: ({ newIndex, doc }) => {
@@ -92,7 +93,6 @@ function bindCollection ({
     }
   }
 
-  let ready
   return collection.onSnapshot(({ docChanges }) => {
     // console.log('pending', metadata.hasPendingWrites)
     // docs.forEach(d => console.log('doc', d, '\n', 'data', d.data()))
@@ -100,10 +100,9 @@ function bindCollection ({
       // console.log(c)
       change[c.type](c)
     })
-    if (!ready) {
-      ready = true
-      resolve(array)
-    }
+
+    // resolves when array is empty
+    if (!docChanges.length) resolve()
   }, reject)
 }
 
