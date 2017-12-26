@@ -26,15 +26,38 @@ beforeEach(async () => {
   await tick()
 })
 
+// This makes sure some tests fail by delaying callbacks
+function delayUpdate (ref, time = 0) {
+  const onSnapshot = ref.onSnapshot.bind(ref)
+  ref.onSnapshot = fn => onSnapshot(async (...args) => {
+    await delay(time)
+    console.log('I waited for', time)
+    fn(...args)
+  })
+}
+
 test('binds refs on collections', async () => {
   await vm.$bind('items', collection)
-
-  // XXX dirty hack until $bind resolves when all refs are bound
-  await delay(5)
 
   expect(vm.items).toEqual([
     { ref: { isA: true }},
     { ref: { isB: true }}
+  ])
+})
+
+test('waits for array to be fully populated', async () => {
+  const c = db.collection().doc()
+  await c.update({ isC: true })
+  await collection.add({ ref: c })
+  // force callback delay
+  delayUpdate(c)
+  const data = await vm.$bind('items', collection)
+
+  expect(data).toEqual(vm.items)
+  expect(vm.items).toEqual([
+    { ref: { isA: true }},
+    { ref: { isB: true }},
+    { ref: { isC: true }}
   ])
 })
 
