@@ -88,3 +88,18 @@ test('unbinds refs when the collection is unbound', async () => {
   spyA.mockRestore()
   spyB.mockRestore()
 })
+
+test('unbinds nested refs when the collection is unbound', async () => {
+  const items = db.collection()
+  const spyA = spyUnbind(a)
+  await items.add({ ref: { ref: a }})
+  await vm.$bind('items', items)
+
+  expect(spyA).toHaveBeenCalledTimes(0)
+
+  vm.$unbind('items')
+
+  expect(spyA).toHaveBeenCalledTimes(1)
+
+  spyA.mockRestore()
+})
