@@ -68,7 +68,8 @@
   "jest": {
     "collectCoverage": true,
     "coveragePathIgnorePatterns": [
-      "<rootDir>/test/*.js"
+      "<rootDir>/test/*.js",
+      "<rootDir>/test/*/*.js"
     ]
   }
 }
