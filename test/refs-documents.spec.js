@@ -40,6 +40,34 @@ beforeEach(async () => {
   await delay(5)
 })
 
+function spyUnbind (ref) {
+  const spy = jest.fn()
+  const onSnapshot = ref.onSnapshot.bind(ref)
+  ref.onSnapshot = fn => {
+    const unbind = onSnapshot(fn)
+    return () => {
+      spy()
+      unbind()
+    }
+  }
+  return spy
+}
+
+function spyOnSnapshot (ref) {
+  const onSnapshot = ref.onSnapshot.bind(ref)
+  return (ref.onSnapshot = jest.fn((...args) => onSnapshot(...args)))
+}
+
+function spyOnSnapshotCallback (ref) {
+  const onSnapshot = ref.onSnapshot.bind(ref)
+  const spy = jest.fn()
+  ref.onSnapshot = fn => onSnapshot((...args) => {
+    spy()
+    fn(...args)
+  })
+  return spy
+}
+
 test('binds refs on documents', async () => {
   // create an empty doc and update using the ref instead of plain data
   const c = collection.doc()
@@ -129,12 +157,7 @@ test('unbinds previously bound document when overwriting a bound', async () => {
   const c = collection.doc()
 
   // Mock c onSnapshot to spy when the callback is called
-  const spy = jest.fn()
-  const onSnapshot = c.onSnapshot.bind(c)
-  c.onSnapshot = jest.fn(fn => onSnapshot((...args) => {
-    spy()
-    fn(...args)
-  }))
+  const spy = spyOnSnapshotCallback(c)
   await c.update({ baz: 'baz' })
   await d.update({ ref: c })
   await delay(5)
@@ -160,6 +183,22 @@ test('unbinds previously bound document when overwriting a bound', async () => {
   expect(vm.d).toEqual({
     ref: null
   })
+  spy.mockRestore()
+})
+
+test('does not rebind if it is the same ref', async () => {
+  const c = collection.doc()
+
+  const spy = spyOnSnapshot(c)
+  await c.update({ baz: 'baz' })
+  await d.update({ ref: c })
+  await delay(5)
+  expect(spy).toHaveBeenCalledTimes(1)
+
+  await d.update({ ref: c })
+  await delay(5)
+
+  expect(spy).toHaveBeenCalledTimes(1)
   spy.mockRestore()
 })
 
@@ -193,19 +232,6 @@ test('resolves the promise when the document does not exist', async () => {
   await vm.$bind('item', a)
   expect(vm.item).toBe(null)
 })
-
-function spyUnbind (ref) {
-  const spy = jest.fn()
-  const onSnapshot = ref.onSnapshot.bind(ref)
-  ref.onSnapshot = jest.fn(fn => {
-    const unbind = onSnapshot(fn)
-    return () => {
-      spy()
-      unbind()
-    }
-  })
-  return spy
-}
 
 test('unbinds all refs when the document is unbound', async () => {
   const cSpy = spyUnbind(c)

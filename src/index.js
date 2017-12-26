@@ -1,5 +1,60 @@
 import { createSnapshot, extractRefs, callOnceWithArg, deepGetSplit } from './utils'
 
+// NOTE not convinced by the naming of subscribeToRefs and subscribeToDocument
+// first one is calling the other on every ref and subscribeToDocument may call
+// updateDataFromDocumentSnapshot which may call subscribeToRefs as well
+function subscribeToRefs ({
+  subs,
+  refs,
+  target,
+  key,
+  data,
+  depth,
+  resolve
+}) {
+  const refKeys = Object.keys(refs)
+  if (!refKeys.length) return resolve()
+  // TODO check if no ref is missing
+  // TODO max depth param, default to 1?
+  if (++depth > 3) throw new Error('more than 5 nested refs')
+  refKeys.forEach(refKey => {
+    // check if already bound to the same ref -> skip
+    // TODO reuse if already bound?
+    const sub = subs[refKey]
+    const ref = refs[refKey]
+
+    if (sub) {
+      if (sub.path !== ref.path) {
+        sub.unbind()
+      } else {
+        // skip it as it's already bound
+        // NOTE this is valid as long as target is the same
+        // which is not checked anywhere but should be ok
+        // because the subs object is created when needed
+        return
+      }
+    }
+
+    // maybe wrap the unbind function to call unbind on every child
+    const [innerObj, innerKey] = deepGetSplit(target[key], refKey)
+    if (!innerObj) {
+      console.log('=== ERROR ===')
+      console.log(data, refKey, key, innerObj, innerKey)
+      console.log('===')
+    }
+    subs[refKey] = {
+      unbind: subscribeToDocument({
+        ref,
+        target: innerObj,
+        key: innerKey,
+        depth,
+        resolve
+      }),
+      path: ref.path
+    }
+  })
+}
+
 function bindCollection ({
   vm,
   key,
@@ -9,7 +64,6 @@ function bindCollection ({
 }) {
   // TODO wait to get all data
   const array = vm[key] = []
-  const depth = 0
 
   const change = {
     added: ({ newIndex, doc }) => {
@@ -17,40 +71,14 @@ function bindCollection ({
       const snapshot = createSnapshot(doc)
       const [data, refs] = extractRefs(snapshot)
       array.splice(newIndex, 0, data)
-      const refKeys = Object.keys(refs)
-      if (!refKeys.length) return // resolve()
-      // TODO check if no ref is missing
-      // TODO max depth param, default to 1?
-      // if (++depth > 3) throw new Error('more than 5 nested refs')
-      refKeys.forEach(refKey => {
-        // check if already bound to the same ref -> skip
-        const sub = subs[refKey]
-        const ref = refs[refKey]
-        if (sub && sub.path !== ref.path) {
-          sub.unbind()
-        }
-        // maybe wrap the unbind function to call unbind on every child
-        const [innerObj, innerKey] = deepGetSplit(array[newIndex], refKey)
-        if (!innerObj) {
-          console.log('=== ERROR ===')
-          console.log(data, refKey, newIndex, innerObj, innerKey)
-          console.log('===')
-        }
-        subs[refKey] = {
-          unbind: subscribeToDocument({
-            ref,
-            target: innerObj,
-            key: innerKey,
-            depth,
-            // TODO parentSubs
-            resolve
-          }),
-          path: ref.path
-        }
-        // unbind currently bound ref
-        // bind ref
-        // save unbind callback
-        // probably save key or something as well
+      subscribeToRefs({
+        data,
+        refs,
+        subs,
+        target: array,
+        key: newIndex,
+        depth: 0,
+        resolve
       })
     },
     modified: ({ oldIndex, newIndex, doc }) => {
@@ -80,38 +108,16 @@ function bindCollection ({
 }
 
 function updateDataFromDocumentSnapshot ({ snapshot, target, key, subs, depth = 0, resolve }) {
-  // TODO extract refs
   const [data, refs] = extractRefs(snapshot)
   target[key] = data
-  const refKeys = Object.keys(refs)
-  if (!refKeys.length) return resolve()
-  // TODO check if no ref is missing
-  // TODO max depth param, default to 1?
-  if (++depth > 3) throw new Error('more than 5 nested refs')
-  refKeys.forEach(refKey => {
-    // check if already bound to the same ref -> skip
-    const sub = subs[refKey]
-    const ref = refs[refKey]
-    if (sub && sub.path !== ref.path) {
-      sub.unbind()
-    }
-    // maybe wrap the unbind function to call unbind on every child
-    const [innerObj, innerKey] = deepGetSplit(target[key], refKey)
-    subs[refKey] = {
-      unbind: subscribeToDocument({
-        ref,
-        target: innerObj,
-        key: innerKey,
-        depth,
-        // TODO parentSubs
-        resolve
-      }),
-      path: ref.path
-    }
-    // unbind currently bound ref
-    // bind ref
-    // save unbind callback
-    // probably save key or something as well
+  subscribeToRefs({
+    data,
+    subs,
+    refs,
+    target,
+    key,
+    depth,
+    resolve
   })
 }
 
