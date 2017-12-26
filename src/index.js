@@ -95,7 +95,10 @@ function bindCollection ({
     },
     removed: ({ oldIndex }) => {
       array.splice(oldIndex, 1)
-      // TODO remove listeners of nested refs
+      const subs = arraySubs.splice(oldIndex, 1)[0]
+      for (const subKey in subs) {
+        subs[subKey].unbind()
+      }
     }
   }
 

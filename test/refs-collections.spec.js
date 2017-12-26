@@ -98,7 +98,17 @@ test('unbinds nested refs when the collection is unbound', async () => {
   expect(spyA).toHaveBeenCalledTimes(0)
 
   vm.$unbind('items')
+  expect(spyA).toHaveBeenCalledTimes(1)
 
+  spyA.mockRestore()
+})
+
+test('unbinds refs when items are removed', async () => {
+  const spyA = spyUnbind(a)
+  await vm.$bind('items', collection)
+  expect(spyA).toHaveBeenCalledTimes(0)
+
+  await collection.doc(a.id).delete()
   expect(spyA).toHaveBeenCalledTimes(1)
 
   spyA.mockRestore()
