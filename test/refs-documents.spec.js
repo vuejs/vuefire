@@ -309,3 +309,49 @@ test('unbinds when a ref is replaced', async () => {
   cSpy.mockRestore()
   dSpy.mockRestore()
 })
+
+test('unbinds removed properties', async () => {
+  const a = db.collection().doc()
+  const b = db.collection().doc()
+  const unbindSpy = spyUnbind(a)
+  const callbackSpy = spyOnSnapshotCallback(a)
+  const onSnapshotSpy = spyOnSnapshot(a)
+
+  const item = db.collection().doc()
+  await a.update({ isA: true })
+  await b.update({ isB: true })
+  await item.update({ a })
+
+  expect(unbindSpy).toHaveBeenCalledTimes(0)
+  expect(callbackSpy).toHaveBeenCalledTimes(0)
+  expect(onSnapshotSpy).toHaveBeenCalledTimes(0)
+  await vm.$bind('item', item)
+  expect(vm.item).toEqual({
+    a: {
+      isA: true
+    }
+  })
+
+  expect(unbindSpy).toHaveBeenCalledTimes(0)
+  expect(callbackSpy).toHaveBeenCalledTimes(1)
+  expect(onSnapshotSpy).toHaveBeenCalledTimes(1)
+
+  await item.set({ b })
+  await a.update({ newA: true })
+  // NOTE see #1
+  await delay(5)
+
+  expect(vm.item).toEqual({
+    b: {
+      isB: true
+    }
+  })
+
+  expect(unbindSpy).toHaveBeenCalledTimes(1)
+  expect(callbackSpy).toHaveBeenCalledTimes(1)
+  expect(onSnapshotSpy).toHaveBeenCalledTimes(1)
+
+  unbindSpy.mockRestore()
+  callbackSpy.mockRestore()
+  onSnapshotSpy.mockRestore()
+})

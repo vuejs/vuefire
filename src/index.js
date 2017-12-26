@@ -13,6 +13,12 @@ function subscribeToRefs ({
   resolve
 }) {
   const refKeys = Object.keys(refs)
+  const missingKeys = Object.keys(subs).filter(refKey => refKeys.indexOf(refKey) < 0)
+  // unbind keys that are no longer there
+  missingKeys.forEach(refKey => {
+    subs[refKey].unbind()
+    delete subs[refKey]
+  })
   if (!refKeys.length) return resolve()
   // TODO check if no ref is missing
   // TODO max depth param, default to 1?
@@ -92,6 +98,8 @@ function bindCollection ({
       array.splice(oldIndex, 1)
       array.splice(newIndex, 0, createSnapshot(doc))
       // TODO replace listeners of nested refs
+      const subs = arraySubs.splice(oldIndex, 1)[0]
+      arraySubs.splice(newIndex, 0, subs)
     },
     removed: ({ oldIndex }) => {
       array.splice(oldIndex, 1)

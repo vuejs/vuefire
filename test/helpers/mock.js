@@ -71,6 +71,13 @@ export class DocumentReference {
     this.cb(new DocumentSnapshot(null, this.id, this.data, true))
     return this.collection._modify(this.id, this.data)
   }
+
+  async set (data) {
+    this.data = { ...data }
+    this.exists = true
+    this.cb(new DocumentSnapshot(null, this.id, this.data, true))
+    return this.collection._modify(this.id, this.data)
+  }
 }
 
 class CollectionReference {
