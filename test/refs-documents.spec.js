@@ -38,7 +38,6 @@ beforeEach(async () => {
     }
   })
   await tick()
-  // NOTE should add option for it waitForRefs: true (by default)
   // wait for refs to be ready as well
   await delay(5)
 })

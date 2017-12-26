@@ -4,6 +4,7 @@ import {
   tick,
   delay,
   delayUpdate,
+  spyUnbind,
   Vue
 } from './helpers'
 
@@ -66,4 +67,24 @@ test('binds refs when adding to collection', async () => {
     { ref: { isB: true }},
     { ref: { isC: true }}
   ])
+})
+
+test('unbinds refs when the collection is unbound', async () => {
+  const items = db.collection()
+  const spyA = spyUnbind(a)
+  const spyB = spyUnbind(b)
+  await items.add({ ref: a })
+  await items.add({ ref: b })
+  await vm.$bind('items', items)
+
+  expect(spyA).toHaveBeenCalledTimes(0)
+  expect(spyB).toHaveBeenCalledTimes(0)
+
+  vm.$unbind('items')
+
+  expect(spyA).toHaveBeenCalledTimes(1)
+  expect(spyB).toHaveBeenCalledTimes(1)
+
+  spyA.mockRestore()
+  spyB.mockRestore()
 })

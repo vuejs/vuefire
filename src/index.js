@@ -67,9 +67,14 @@ function bindCollection ({
   const originalResolve = resolve
   let isResolved
 
+  // contain ref subscriptions of objects
+  // arraySubs is a mirror of array
+  const arraySubs = []
+
   const change = {
     added: ({ newIndex, doc }) => {
-      const subs = {}
+      arraySubs.splice(newIndex, 0, Object.create(null))
+      const subs = arraySubs[newIndex]
       const snapshot = createSnapshot(doc)
       const [data, refs] = extractRefs(snapshot)
       array.splice(newIndex, 0, data)
@@ -94,8 +99,7 @@ function bindCollection ({
     }
   }
 
-  // TODO return custom unbind function that unbinds nested refs
-  return collection.onSnapshot(({ docChanges }) => {
+  const unbind = collection.onSnapshot(({ docChanges }) => {
     // console.log('pending', metadata.hasPendingWrites)
     // docs.forEach(d => console.log('doc', d, '\n', 'data', d.data()))
     // NOTE this will only be triggered once and it will be with all the documents
@@ -128,6 +132,15 @@ function bindCollection ({
     // resolves when array is empty
     if (!docChanges.length) resolve()
   }, reject)
+
+  return () => {
+    unbind()
+    arraySubs.forEach(subs => {
+      for (const subKey in subs) {
+        subs[subKey].unbind()
+      }
+    })
+  }
 }
 
 function updateDataFromDocumentSnapshot ({ snapshot, target, key, subs, depth = 0, resolve }) {
