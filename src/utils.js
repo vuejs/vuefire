@@ -23,7 +23,8 @@ export function extractRefs (doc, path = '', result = [{}, {}]) {
       tot[1][path + key] = ref
     } else if (Array.isArray(ref)) {
       // TODO handle array
-      tot[0][key] = ref
+      tot[0][key] = Array(ref.length).fill(null)
+      extractRefs(ref, path + key + '.', [tot[0][key], tot[1]])
     } else if (isObject(ref)) {
       tot[0][key] = {}
       extractRefs(ref, path + key + '.', [tot[0][key], tot[1]])

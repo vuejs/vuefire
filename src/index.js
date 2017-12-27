@@ -23,6 +23,7 @@ function subscribeToRefs ({
   // TODO check if no ref is missing
   // TODO max depth param, default to 1?
   if (++depth > 3) throw new Error('more than 5 nested refs')
+
   refKeys.forEach(refKey => {
     // check if already bound to the same ref -> skip
     // TODO reuse if already bound?

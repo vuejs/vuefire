@@ -79,3 +79,27 @@ test('extract deep object nested refs from document', () => {
     'obj.nested.ref': docRef
   })
 })
+
+test('extracts refs from array', async () => {
+  const docRef2 = new DocumentReference({
+    collection,
+    id: new Key(),
+    data: {},
+    index: 0
+  })
+  const [noRefsDoc, refs] = extractRefs({
+    arr: [
+      docRef,
+      docRef2,
+      docRef
+    ]
+  })
+  expect(noRefsDoc.arr[0]).toEqual(docRef.path)
+  expect(noRefsDoc.arr[1]).toEqual(docRef2.path)
+  expect(noRefsDoc.arr[2]).toEqual(docRef.path)
+  expect(refs).toEqual({
+    'arr.0': docRef,
+    'arr.1': docRef2,
+    'arr.2': docRef
+  })
+})

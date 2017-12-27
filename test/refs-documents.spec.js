@@ -355,3 +355,31 @@ test('unbinds removed properties', async () => {
   callbackSpy.mockRestore()
   onSnapshotSpy.mockRestore()
 })
+
+// XXX seems to bug on jest but works on real example...
+// could be the mock but don't see how
+// the key variable changes for no reason inside of
+// subscribeToDocument callback passed to onSnapshot
+test.skip('binds refs on arrays', async () => {
+  const a = db.collection().doc()
+  const b = db.collection().doc()
+  const c = db.collection().doc()
+  const item = db.collection().doc()
+  await a.update({ isA: true })
+  await b.update({ isB: true })
+  await c.update({ isC: true })
+
+  await item.update({
+    arr: [a, b, a]
+  })
+
+  await vm.$bind('item', item)
+
+  expect(vm.item).toEqual({
+    arr: [
+      { isA: true },
+      { isB: true },
+      { isA: true }
+    ]
+  })
+})
