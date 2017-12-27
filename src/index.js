@@ -30,17 +30,8 @@ function subscribeToRefs ({
     const sub = subs[refKey]
     const ref = refs[refKey]
 
-    if (sub) {
-      if (sub.path !== ref.path) {
-        sub.unbind()
-      } else {
-        // skip it as it's already bound
-        // NOTE this is valid as long as target is the same
-        // which is not checked anywhere but should be ok
-        // because the subs object is created when needed
-        return
-      }
-    }
+    // documents are fully replaced so it's necessary to bind things again
+    if (sub) sub.unbind()
 
     // maybe wrap the unbind function to call unbind on every child
     const [innerObj, innerKey] = deepGetSplit(target[key], refKey)

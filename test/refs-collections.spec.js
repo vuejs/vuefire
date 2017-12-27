@@ -125,3 +125,15 @@ test('unbinds refs when items are modified', async () => {
 
   spyA.mockRestore()
 })
+
+test('updates when modifying an item', async () => {
+  await vm.$bind('items', collection)
+
+  await first.update({ newThing: true })
+  await delay(5)
+
+  expect(vm.items).toEqual([
+    { ref: { isA: true }, newThing: true },
+    { ref: { isB: true }}
+  ])
+})
