@@ -2,7 +2,7 @@
 
 > SSR ready Firebase binding for [Vuex](https://github.com/vuejs/vuex)
 
-Supports only Vue 2, Vuex 2 and Firebase 2/3
+Supports only Vue 2, Vuex 2 and Firebase JavaScript SDK 2/3/4.
 If you need an older version check the `v1` branch: `npm i -D vuexfire@v1`
 
 ## Installation
