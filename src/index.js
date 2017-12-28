@@ -173,7 +173,10 @@ function updateDataFromDocumentSnapshot ({ snapshot, target, key, subs, depth = 
 
 function subscribeToDocument ({ ref, target, key, depth, resolve }) {
   const subs = Object.create(null)
+  // console.log('subDoc(1)', key)
+  // const lol = key
   const unbind = ref.onSnapshot(doc => {
+    // console.log('subDoc(2)', lol, key)
     if (doc.exists) {
       updateDataFromDocumentSnapshot({
         snapshot: createSnapshot(doc),
