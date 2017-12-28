@@ -47,7 +47,6 @@ beforeEach(async () => {
   await delay(5)
 })
 
-
 test('binds refs on documents', async () => {
   // create an empty doc and update using the ref instead of plain data
   await item.update({ ref: c })
@@ -363,8 +362,4 @@ test('properly updates a documen with refs', async () => {
     newThing: true,
     a: { isA: true }
   })
-})
-
-test('updates refs in arrays', async () => {
-  const item = db.collection().doc()
 })
