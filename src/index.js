@@ -31,6 +31,7 @@ function subscribeToRefs ({
     const ref = refs[refKey]
 
     // documents are fully replaced so it's necessary to bind things again
+    // TODO it would be nice to prevent unnecessary unbind
     if (sub) sub.unbind()
 
     // maybe wrap the unbind function to call unbind on every child
@@ -91,8 +92,8 @@ function bindCollection ({
       arraySubs.splice(newIndex, 0, subs)
       array.splice(oldIndex, 1)
       const snapshot = createSnapshot(doc)
-      array.splice(newIndex, 0, snapshot)
       const [data, refs] = extractRefs(snapshot)
+      array.splice(newIndex, 0, data)
       subscribeToRefs({
         data,
         refs,

@@ -386,5 +386,4 @@ test('properly updates a documen with refs', async () => {
     newThing: true,
     a: { isA: true }
   })
-
 })
