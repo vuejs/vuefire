@@ -363,3 +363,58 @@ test('properly updates a documen with refs', async () => {
     a: { isA: true }
   })
 })
+
+test('updates values in arrays', async () => {
+  await item.update({
+    arr: [a, b]
+  })
+
+  await vm.$bind('item', item)
+
+  expect(vm.item).toEqual({
+    arr: [{ isA: true }, null]
+  })
+
+  await b.update({ isB: true })
+
+  expect(vm.item).toEqual({
+    arr: [{ isA: true }, { isB: true }]
+  })
+
+  await item.update({
+    arr: [c]
+  })
+
+  // NOTE see (1)
+  await delay(5)
+
+  expect(vm.item).toEqual({
+    arr: [{ isC: true }]
+  })
+})
+
+test('correctly updates arrays', async () => {
+  await item.update({
+    arr: [a, b]
+  })
+
+  await vm.$bind('item', item)
+
+  const spy = jest.fn()
+  vm.$watch('item.arr', spy)
+
+  await b.update({ isB: true })
+
+  expect(spy).toHaveBeenCalledTimes(1)
+
+  await item.update({
+    arr: [c]
+  })
+
+  expect(spy).toHaveBeenCalledTimes(2)
+
+  // NOTE see (1)
+  await delay(5)
+
+  expect(spy).toHaveBeenCalledTimes(3)
+})
