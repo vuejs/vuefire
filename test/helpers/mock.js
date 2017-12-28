@@ -30,26 +30,45 @@ export class Key {
   }
 }
 
-export class DocumentReference {
+class callbacksAndErrors {
+  constructor () {
+    this._cbId = 0
+    this.cbs = {}
+    this.onErrors = {}
+  }
+
+  _addCallbacks (cb, onError) {
+    const id = this._cbId++
+    this.cbs[id] = cb
+    this.onErrors[id] = onError
+    return () => {
+      delete this.cbs[id]
+      delete this.onErrors[id]
+    }
+  }
+
+  _callCallbacks (data) {
+    Object.values(this.cbs).forEach(
+      cb => cb(data)
+    )
+  }
+}
+
+export class DocumentReference extends callbacksAndErrors {
   constructor ({ collection, id, data, index }) {
+    super()
     this.collection = collection
     this.id = id
     this.data = data
     this.index = index
     this.exists = false
-    this.cb = this.onError = noop
   }
 
   onSnapshot (cb, onError) {
-    this.cb = cb
-    this.onError = onError
-    // TODO timeout a cb
     setTimeout(() => {
-      this.cb(new DocumentSnapshot(null, this.id, this.data, this.exists))
+      cb(new DocumentSnapshot(null, this.id, this.data, this.exists))
     }, 0)
-    return () => {
-      this.cb = this.onError = noop
-    }
+    return this._addCallbacks(cb, onError)
   }
 
   get path () {
@@ -68,31 +87,29 @@ export class DocumentReference {
   async update (data) {
     Object.assign(this.data, data)
     this.exists = true
-    this.cb(new DocumentSnapshot(null, this.id, this.data, true))
+    this._callCallbacks(new DocumentSnapshot(null, this.id, this.data, true))
     return this.collection._modify(this.id, this.data, this)
   }
 
   async set (data) {
     this.data = { ...data }
     this.exists = true
-    this.cb(new DocumentSnapshot(null, this.id, this.data, true))
+    this._callCallbacks(new DocumentSnapshot(null, this.id, this.data, true))
     return this.collection._modify(this.id, this.data, this)
   }
 }
 
-class CollectionReference {
+class CollectionReference extends callbacksAndErrors {
   constructor (name) {
+    super()
     this.data = {}
     this.name = name
-    this.cb = this.onError = noop
   }
 
   onSnapshot (cb, onError) {
-    this.cb = cb
-    this.onError = onError
     setTimeout(() => {
       // Object.keys(this.data).map((k, i) => console.log(k, 'at', i, this.data[k].data))
-      this.cb({
+      cb({
         docChanges: Object.keys(this.data).map((id, newIndex) => ({
           type: 'added',
           doc: new DocumentSnapshot(null, new Key(id), this.data[id].data),
@@ -101,9 +118,7 @@ class CollectionReference {
         }))
       })
     }, 0)
-    return () => {
-      this.cb = this.onError = noop
-    }
+    return this._addCallbacks(cb, onError)
   }
 
   async add (data) {
@@ -114,7 +129,7 @@ class CollectionReference {
       data,
       index: Object.keys(this.data).length
     })
-    this.cb({
+    this._callCallbacks({
       docChanges: [{
         type: 'added',
         doc: new DocumentSnapshot(null, id, data),
@@ -141,7 +156,7 @@ class CollectionReference {
   async _remove (id) {
     const ref = this.data[id.v]
     delete this.data[id.v]
-    this.cb({
+    this._callCallbacks({
       docChanges: [{
         doc: new DocumentSnapshot(null, id, ref.data),
         type: 'removed'
@@ -158,7 +173,7 @@ class CollectionReference {
       this.data[id.v] = ref
       type = 'added'
     }
-    this.cb({
+    this._callCallbacks({
       docChanges: [{
         type,
         doc: new DocumentSnapshot(null, id, data),
