@@ -19,7 +19,7 @@ beforeEach(async () => {
   c = collection.doc()
   d = collection.doc()
   await a.update({ isA: true })
-  await c.update({ c: true })
+  await c.update({ isC: true })
   await d.update({ ref: c })
 
   vm = new Vue({
@@ -66,7 +66,7 @@ test('binds refs nested in documents (objects)', async () => {
 
   expect(vm.item).toEqual({
     obj: {
-      ref: { c: true }
+      ref: { isC: true }
     }
   })
 })
@@ -86,7 +86,7 @@ test('binds refs deeply nested in documents (objects)', async () => {
     obj: {
       nested: {
         ref: {
-          c: true
+          isC: true
         }
       }
     }
@@ -96,15 +96,15 @@ test('binds refs deeply nested in documents (objects)', async () => {
 test('update inner ref', async () => {
   expect(vm.d).toEqual({
     ref: {
-      c: true
+      isC: true
     }
   })
 
-  await c.update({ c: false })
+  await c.update({ isC: false })
 
   expect(vm.d).toEqual({
     ref: {
-      c: false
+      isC: false
     }
   })
 })
@@ -209,7 +209,7 @@ test('unbinds all refs when the document is unbound', async () => {
   await vm.$bind('d', d)
   expect(vm.d).toEqual({
     ref: {
-      c: true
+      isC: true
     }
   })
   vm.$unbind('d')
@@ -284,7 +284,7 @@ test('unbinds when a ref is replaced', async () => {
   await vm.$bind('d', d)
   expect(vm.d).toEqual({
     ref: {
-      c: true
+      isC: true
     }
   })
 
