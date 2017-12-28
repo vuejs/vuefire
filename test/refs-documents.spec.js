@@ -11,11 +11,17 @@ import {
 
 Vue.use(Vuefire)
 
-let vm, collection, a, b, c, d
+// a and c existing objects { isA: true }
+// item is an empty ready to use object
+// empty is an empty object that is left empty
+// d has a ref to c
+let vm, collection, a, c, d, empty, item, b
 beforeEach(async () => {
   collection = db.collection()
   a = db.collection().doc()
   b = db.collection().doc()
+  empty = db.collection().doc()
+  item = db.collection().doc()
   c = collection.doc()
   d = collection.doc()
   await a.update({ isA: true })
@@ -41,22 +47,18 @@ beforeEach(async () => {
   await delay(5)
 })
 
-// NOTE(1) need to wait because we updated with a ref
 
 test('binds refs on documents', async () => {
   // create an empty doc and update using the ref instead of plain data
-  const c = collection.doc()
-  await c.update({ isC: true })
-  await b.update({ ref: c })
-  await vm.$bind('b', b)
+  await item.update({ ref: c })
+  await vm.$bind('item', item)
 
-  expect(vm.b).toEqual({
+  expect(vm.item).toEqual({
     ref: { isC: true }
   })
 })
 
 test('binds refs nested in documents (objects)', async () => {
-  const item = collection.doc()
   await item.update({
     obj: {
       ref: c
@@ -72,7 +74,6 @@ test('binds refs nested in documents (objects)', async () => {
 })
 
 test('binds refs deeply nested in documents (objects)', async () => {
-  const item = collection.doc()
   await item.update({
     obj: {
       nested: {
@@ -110,9 +111,9 @@ test('update inner ref', async () => {
 })
 
 test('is null if ref does not exist', async () => {
-  await d.update({ ref: b })
+  await d.update({ ref: empty })
 
-  // NOTE see #1
+  // NOTE(1) need to wait because we updated with a ref
   await delay(5)
 
   expect(vm.d).toEqual({
@@ -121,16 +122,14 @@ test('is null if ref does not exist', async () => {
 })
 
 test('unbinds previously bound document when overwriting a bound', async () => {
-  const c = collection.doc()
-
   // Mock c onSnapshot to spy when the callback is called
-  const spy = spyOnSnapshotCallback(c)
-  await c.update({ baz: 'baz' })
-  await d.update({ ref: c })
+  const spy = spyOnSnapshotCallback(item)
+  await item.update({ baz: 'baz' })
+  await d.update({ ref: item })
   // NOTE see #1
   await delay(5)
   expect(spy).toHaveBeenCalledTimes(1)
-  await c.update({ baz: 'bar' })
+  await item.update({ baz: 'bar' })
   // make sure things are updating correctly
   expect(vm.d).toEqual({
     ref: { baz: 'bar' }
@@ -144,7 +143,7 @@ test('unbinds previously bound document when overwriting a bound', async () => {
   expect(vm.d).toEqual({
     ref: null
   })
-  await c.update({ foo: 'bar' })
+  await item.update({ foo: 'bar' })
 
   expect(spy).toHaveBeenCalledTimes(2)
   expect(vm.d).toEqual({
@@ -154,16 +153,14 @@ test('unbinds previously bound document when overwriting a bound', async () => {
 })
 
 test('does not rebind if it is the same ref', async () => {
-  const c = collection.doc()
-
-  const spy = spyOnSnapshot(c)
-  await c.update({ baz: 'baz' })
-  await d.update({ ref: c })
+  const spy = spyOnSnapshot(item)
+  await item.update({ baz: 'baz' })
+  await d.update({ ref: item })
   // NOTE see #1
   await delay(5)
   expect(spy).toHaveBeenCalledTimes(1)
 
-  await d.update({ ref: c })
+  await d.update({ ref: item })
   await delay(5)
 
   expect(spy).toHaveBeenCalledTimes(1)
@@ -171,25 +168,22 @@ test('does not rebind if it is the same ref', async () => {
 })
 
 test('resolves the promise when refs are resolved in a document', async () => {
-  await b.update({ ref: a })
+  await item.update({ ref: a })
 
-  await vm.$bind('item', b)
+  await vm.$bind('item', item)
   expect(vm.item).toEqual({ ref: { isA: true }})
 })
 
 test('resolves the promise when nested refs are resolved in a document', async () => {
-  const item = db.collection().doc()
-  await item.update({ ref: b })
-  await b.update({ isB: true })
+  await item.update({ ref: a })
   await d.update({ ref: item })
 
   await vm.$bind('item', d)
-  expect(vm.item).toEqual({ ref: { ref: { isB: true }}})
+  expect(vm.item).toEqual({ ref: { ref: { isA: true }}})
 })
 
 test('resolves the promise when nested non-existant refs are resolved in a document', async () => {
-  const item = db.collection().doc()
-  await item.update({ ref: b })
+  await item.update({ ref: empty })
   await d.update({ ref: item })
 
   await vm.$bind('item', d)
@@ -198,7 +192,7 @@ test('resolves the promise when nested non-existant refs are resolved in a docum
 
 test('resolves the promise when the document does not exist', async () => {
   expect(vm.item).toEqual(null)
-  await vm.$bind('item', b)
+  await vm.$bind('item', empty)
   expect(vm.item).toBe(null)
 })
 
@@ -214,36 +208,27 @@ test('unbinds all refs when the document is unbound', async () => {
   })
   vm.$unbind('d')
 
-  expect(dSpy.mock.calls.length).toBe(1)
-  expect(cSpy.mock.calls.length).toBe(1)
+  expect(dSpy).toHaveBeenCalledTimes(1)
+  expect(cSpy).toHaveBeenCalledTimes(1)
 
   cSpy.mockRestore()
   dSpy.mockRestore()
 })
 
 test('unbinds nested refs when the document is unbound', async () => {
-  const c = collection.doc()
-  const d = collection.doc()
   const aSpy = spyUnbind(a)
-  const cSpy = spyUnbind(c)
-  const dSpy = spyUnbind(d)
+  const cSpy = spyUnbind(b)
+  const dSpy = spyUnbind(item)
 
-  await c.update({ ref: a })
-  await d.update({ ref: c })
+  await b.update({ ref: a })
+  await item.update({ ref: b })
 
-  await vm.$bind('d', d)
-  expect(vm.d).toEqual({
-    ref: {
-      ref: {
-        isA: true
-      }
-    }
-  })
-  vm.$unbind('d')
+  await vm.$bind('item', item)
+  vm.$unbind('item')
 
-  expect(dSpy.mock.calls.length).toBe(1)
-  expect(cSpy.mock.calls.length).toBe(1)
-  expect(aSpy.mock.calls.length).toBe(1)
+  expect(dSpy).toHaveBeenCalledTimes(1)
+  expect(cSpy).toHaveBeenCalledTimes(1)
+  expect(aSpy).toHaveBeenCalledTimes(1)
 
   aSpy.mockRestore()
   cSpy.mockRestore()
@@ -251,25 +236,18 @@ test('unbinds nested refs when the document is unbound', async () => {
 })
 
 test('unbinds multiple refs when the document is unbound', async () => {
-  const c = collection.doc()
-  const d = collection.doc()
   const aSpy = spyUnbind(a)
   const cSpy = spyUnbind(c)
-  const dSpy = spyUnbind(d)
+  const dSpy = spyUnbind(item)
 
-  await c.update({ isC: true })
-  await d.update({ c, a })
+  await item.update({ c, a })
 
-  await vm.$bind('d', d)
-  expect(vm.d).toEqual({
-    a: { isA: true },
-    c: { isC: true }
-  })
-  vm.$unbind('d')
+  await vm.$bind('item', item)
+  vm.$unbind('item')
 
-  expect(dSpy.mock.calls.length).toBe(1)
-  expect(cSpy.mock.calls.length).toBe(1)
-  expect(aSpy.mock.calls.length).toBe(1)
+  expect(dSpy).toHaveBeenCalledTimes(1)
+  expect(cSpy).toHaveBeenCalledTimes(1)
+  expect(aSpy).toHaveBeenCalledTimes(1)
 
   aSpy.mockRestore()
   cSpy.mockRestore()
@@ -298,8 +276,8 @@ test('unbinds when a ref is replaced', async () => {
   })
 
   // expect(dSpy.mock.calls.length).toBe(1)
-  expect(cSpy.mock.calls.length).toBe(1)
-  expect(aSpy.mock.calls.length).toBe(0)
+  expect(cSpy).toHaveBeenCalledTimes(1)
+  expect(aSpy).toHaveBeenCalledTimes(0)
 
   aSpy.mockRestore()
   cSpy.mockRestore()
@@ -308,7 +286,6 @@ test('unbinds when a ref is replaced', async () => {
 
 test('unbinds removed properties', async () => {
   const a = db.collection().doc()
-  const b = db.collection().doc()
   const unbindSpy = spyUnbind(a)
   const callbackSpy = spyOnSnapshotCallback(a)
   const onSnapshotSpy = spyOnSnapshot(a)
@@ -322,11 +299,6 @@ test('unbinds removed properties', async () => {
   expect(callbackSpy).toHaveBeenCalledTimes(0)
   expect(onSnapshotSpy).toHaveBeenCalledTimes(0)
   await vm.$bind('item', item)
-  expect(vm.item).toEqual({
-    a: {
-      isA: true
-    }
-  })
 
   expect(unbindSpy).toHaveBeenCalledTimes(0)
   expect(callbackSpy).toHaveBeenCalledTimes(1)
@@ -336,12 +308,6 @@ test('unbinds removed properties', async () => {
   await a.update({ newA: true })
   // NOTE see #1
   await delay(5)
-
-  expect(vm.item).toEqual({
-    b: {
-      isB: true
-    }
-  })
 
   expect(unbindSpy).toHaveBeenCalledTimes(1)
   expect(callbackSpy).toHaveBeenCalledTimes(1)
@@ -381,9 +347,6 @@ test.skip('binds refs on arrays', async () => {
 })
 
 test('properly updates a documen with refs', async () => {
-  const item = db.collection().doc()
-  const a = db.collection().doc()
-  await a.update({ isA: true })
   await item.update({ a })
   await vm.$bind('item', item)
 
@@ -393,6 +356,7 @@ test('properly updates a documen with refs', async () => {
 
   await item.update({ newThing: true })
 
+  // NOTE see (1)
   await delay(5)
 
   expect(vm.item).toEqual({
