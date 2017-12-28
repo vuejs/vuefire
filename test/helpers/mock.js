@@ -15,8 +15,6 @@ export class DocumentSnapshot {
   }
 }
 
-const noop = _ => null
-
 export let _id = 0
 export class Key {
   constructor (v) {
