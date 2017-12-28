@@ -291,9 +291,9 @@ function install (Vue, options) {
     },
 
     beforeDestroy () {
-      Object.values(this._firestoreUnbinds).forEach(unbind => {
-        unbind()
-      })
+      for (const subKey in this._firestoreUnbinds) {
+        this._firestoreUnbinds[subKey]()
+      }
       this._firestoreUnbinds = null
       this.$firestoreRefs = null
     }
