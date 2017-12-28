@@ -162,9 +162,7 @@ function bindCollection ({
 
 function updateDataFromDocumentSnapshot ({ snapshot, target, path, subs, depth = 0, resolve }) {
   const [data, refs] = extractRefs(snapshot, walkGet(target, path))
-  // TODO use walkSet?
   walkSet(target, path, data)
-  // target[key] = data
   subscribeToRefs({
     data,
     subs,
@@ -192,9 +190,7 @@ function subscribeToDocument ({ ref, target, path, depth, resolve }) {
         resolve
       })
     } else {
-      // TODO use deep set
       walkSet(target, path, null)
-      // target[path] = null
       resolve()
     }
   })
