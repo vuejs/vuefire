@@ -1,8 +1,8 @@
 import { createSnapshot, extractRefs, callOnceWithArg, walkGet, walkSet } from './utils'
 
-function callUnbinds (subs) {
+function unsubscribeAll (subs) {
   for (const sub in subs) {
-    subs[sub].unbind()
+    subs[sub].unsub()
   }
 }
 
@@ -22,7 +22,7 @@ function subscribeToRefs ({
   const missingKeys = Object.keys(subs).filter(refKey => refKeys.indexOf(refKey) < 0)
   // unbind keys that are no longer there
   missingKeys.forEach(refKey => {
-    subs[refKey].unbind()
+    subs[refKey].unsub()
     delete subs[refKey]
   })
   if (!refKeys.length) return resolve()
@@ -37,7 +37,7 @@ function subscribeToRefs ({
     const ref = refs[refKey]
 
     if (sub) {
-      if (sub.path !== ref.path) sub.unbind()
+      if (sub.path !== ref.path) sub.unsub()
       // if has already be bound and as we always walk the objects, it will work
       else return
     }
@@ -50,7 +50,7 @@ function subscribeToRefs ({
     //   console.log('===')
     // }
     subs[refKey] = {
-      unbind: subscribeToDocument({
+      unsub: subscribeToDocument({
         ref,
         target,
         path: `${path}.${refKey}`,
@@ -115,7 +115,7 @@ function bindCollection ({
     },
     removed: ({ oldIndex }) => {
       array.splice(oldIndex, 1)
-      callUnbinds(arraySubs.splice(oldIndex, 1)[0])
+      unsubscribeAll(arraySubs.splice(oldIndex, 1)[0])
     }
   }
 
@@ -156,7 +156,7 @@ function bindCollection ({
 
   return () => {
     unbind()
-    arraySubs.forEach(callUnbinds)
+    arraySubs.forEach(unsubscribeAll)
   }
 }
 
@@ -201,7 +201,7 @@ function subscribeToDocument ({ ref, target, path, depth, resolve }) {
 
   return () => {
     unbind()
-    callUnbinds(subs)
+    unsubscribeAll(subs)
   }
 }
 
@@ -237,10 +237,7 @@ function bindDocument ({
   // TODO return a custom unbind function that unbind all refs
   return () => {
     unbind()
-    for (const subKey in subs) {
-      const sub = subs[subKey]
-      sub.unbind()
-    }
+    unsubscribeAll(subs)
   }
 }
 
