@@ -9,7 +9,9 @@ function isObject (o) {
   return o && typeof o === 'object'
 }
 
-export function extractRefs (doc, path = '', result = [{}, {}]) {
+export function extractRefs (doc, oldDoc, path = '', result = [{}, {}]) {
+  // must be set here because walkGet can return null or undefined
+  oldDoc = oldDoc || {}
   const idDescriptor = Object.getOwnPropertyDescriptor(doc, 'id')
   if (idDescriptor && !idDescriptor.enumerable) {
     Object.defineProperty(result[0], 'id', idDescriptor)
@@ -18,16 +20,16 @@ export function extractRefs (doc, path = '', result = [{}, {}]) {
     const ref = doc[key]
     // if it's a ref
     if (typeof ref.isEqual === 'function') {
-      tot[0][key] = ref.path
+      tot[0][key] = oldDoc[key] || ref.path
       // TODO handle subpathes?
       tot[1][path + key] = ref
     } else if (Array.isArray(ref)) {
       // TODO handle array
       tot[0][key] = Array(ref.length).fill(null)
-      extractRefs(ref, path + key + '.', [tot[0][key], tot[1]])
+      extractRefs(ref, oldDoc[key] || {}, path + key + '.', [tot[0][key], tot[1]])
     } else if (isObject(ref)) {
       tot[0][key] = {}
-      extractRefs(ref, path + key + '.', [tot[0][key], tot[1]])
+      extractRefs(ref, oldDoc[key] || {}, path + key + '.', [tot[0][key], tot[1]])
     } else {
       tot[0][key] = ref
     }
@@ -45,15 +47,14 @@ export function callOnceWithArg (fn, argFn) {
   }
 }
 
-export function deepGetSplit (obj, path) {
-  const keys = path.split('.')
-  // We want the containing obj and the last key
-  // key is the one we're going to bind to
+export function walkGet (obj, path) {
+  return path.split('.').reduce((target, key) => target[key], obj)
+}
+
+export function walkSet (obj, path, value) {
+  // path can be a number
+  const keys = ('' + path).split('.')
   const key = keys.pop()
-  return [
-    keys.reduce((res, key) => {
-      return res[key]
-    }, obj),
-    key
-  ]
+  const target = keys.reduce((target, key) => target[key], obj)
+  return (target[key] = value)
 }

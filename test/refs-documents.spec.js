@@ -154,6 +154,23 @@ test('unbinds previously bound document when overwriting a bound', async () => {
   spy.mockRestore()
 })
 
+test('does not rebind if it is the same ref', async () => {
+  const c = collection.doc()
+
+  const spy = spyOnSnapshot(c)
+  await c.update({ baz: 'baz' })
+  await d.update({ ref: c })
+  // NOTE see #1
+  await delay(5)
+  expect(spy).toHaveBeenCalledTimes(1)
+
+  await d.update({ ref: c })
+  await delay(5)
+
+  expect(spy).toHaveBeenCalledTimes(1)
+  spy.mockRestore()
+})
+
 test('resolves the promise when refs are resolved in a document', async () => {
   await a.update({ a: true })
   await b.update({ ref: a })

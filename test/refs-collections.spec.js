@@ -138,12 +138,10 @@ test('updates when modifying an item', async () => {
   ])
 })
 
-test('removes the DocumentReference when modifying an item', async () => {
+test('keeps old data of refs when modifying an item', async () => {
   await vm.$bind('items', collection)
   await first.update({ newThing: true })
 
-  expect(typeof vm.items[0].ref).toBe('string')
-  await delay(5)
   expect(vm.items[0]).toEqual({
     ref: { isA: true },
     newThing: true

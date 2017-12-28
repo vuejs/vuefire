@@ -1,4 +1,4 @@
-import { createSnapshot, extractRefs, callOnceWithArg, deepGetSplit } from './utils'
+import { createSnapshot, extractRefs, callOnceWithArg, walkGet, walkSet } from './utils'
 
 // NOTE not convinced by the naming of subscribeToRefs and subscribeToDocument
 // first one is calling the other on every ref and subscribeToDocument may call
@@ -7,7 +7,7 @@ function subscribeToRefs ({
   subs,
   refs,
   target,
-  key,
+  path,
   data,
   depth,
   resolve
@@ -30,22 +30,24 @@ function subscribeToRefs ({
     const sub = subs[refKey]
     const ref = refs[refKey]
 
-    // documents are fully replaced so it's necessary to bind things again
-    // TODO it would be nice to prevent unnecessary unbind
-    if (sub) sub.unbind()
+    if (sub) {
+      if (sub.path !== ref.path) sub.unbind()
+      // if has already be bound and as we always walk the objects, it will work
+      else return
+    }
 
     // maybe wrap the unbind function to call unbind on every child
-    const [innerObj, innerKey] = deepGetSplit(target[key], refKey)
-    if (!innerObj) {
-      console.log('=== ERROR ===')
-      console.log(data, refKey, key, innerObj, innerKey)
-      console.log('===')
-    }
+    // const [innerObj, innerKey] = deepGetSplit(target[key], refKey)
+    // if (!innerObj) {
+    //   console.log('=== ERROR ===')
+    //   console.log(data, refKey, key, innerObj, innerKey)
+    //   console.log('===')
+    // }
     subs[refKey] = {
       unbind: subscribeToDocument({
         ref,
-        target: innerObj,
-        key: innerKey,
+        target,
+        path: `${path}.${refKey}`,
         depth,
         resolve
       }),
@@ -62,6 +64,7 @@ function bindCollection ({
   reject
 }) {
   // TODO wait to get all data
+  // XXX support pathes? nested.obj.list
   const array = vm[key] = []
   const originalResolve = resolve
   let isResolved
@@ -82,7 +85,7 @@ function bindCollection ({
         refs,
         subs,
         target: array,
-        key: newIndex,
+        path: newIndex,
         depth: 0,
         resolve: resolve.bind(null, doc)
       })
@@ -90,16 +93,16 @@ function bindCollection ({
     modified: ({ oldIndex, newIndex, doc }) => {
       const subs = arraySubs.splice(oldIndex, 1)[0]
       arraySubs.splice(newIndex, 0, subs)
-      array.splice(oldIndex, 1)
+      const oldData = array.splice(oldIndex, 1)[0]
       const snapshot = createSnapshot(doc)
-      const [data, refs] = extractRefs(snapshot)
+      const [data, refs] = extractRefs(snapshot, oldData)
       array.splice(newIndex, 0, data)
       subscribeToRefs({
         data,
         refs,
         subs,
         target: array,
-        key: newIndex,
+        path: newIndex,
         depth: 0,
         resolve
       })
@@ -131,6 +134,7 @@ function bindCollection ({
       resolve = ({ id }) => {
         if (id in validDocs) {
           if (++count >= expectedItems) {
+            // TODO use array instead?
             originalResolve(vm[key])
             // reset resolve to noop
             resolve = _ => {}
@@ -157,21 +161,23 @@ function bindCollection ({
   }
 }
 
-function updateDataFromDocumentSnapshot ({ snapshot, target, key, subs, depth = 0, resolve }) {
-  const [data, refs] = extractRefs(snapshot)
-  target[key] = data
+function updateDataFromDocumentSnapshot ({ snapshot, target, path, subs, depth = 0, resolve }) {
+  const [data, refs] = extractRefs(snapshot, walkGet(target, path))
+  // TODO use walkSet?
+  walkSet(target, path, data)
+  // target[key] = data
   subscribeToRefs({
     data,
     subs,
     refs,
     target,
-    key,
+    path,
     depth,
     resolve
   })
 }
 
-function subscribeToDocument ({ ref, target, key, depth, resolve }) {
+function subscribeToDocument ({ ref, target, path, depth, resolve }) {
   const subs = Object.create(null)
   // console.log('subDoc(1)', key)
   // const lol = key
@@ -181,13 +187,15 @@ function subscribeToDocument ({ ref, target, key, depth, resolve }) {
       updateDataFromDocumentSnapshot({
         snapshot: createSnapshot(doc),
         target,
-        key,
+        path,
         subs,
         depth,
         resolve
       })
     } else {
-      target[key] = null
+      // TODO use deep set
+      walkSet(target, path, null)
+      // target[path] = null
       resolve()
     }
   })
@@ -214,13 +222,14 @@ function bindDocument ({
   const subs = Object.create(null)
   // bind here the function so it can be resolved anywhere
   // this is specially useful for refs
+  // TODO use walkGet?
   resolve = callOnceWithArg(resolve, () => vm[key])
   const unbind = document.onSnapshot(doc => {
     if (doc.exists) {
       updateDataFromDocumentSnapshot({
         snapshot: createSnapshot(doc),
         target: vm,
-        key,
+        path: key,
         subs,
         resolve
       })
