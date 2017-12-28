@@ -1,5 +1,11 @@
 import { createSnapshot, extractRefs, callOnceWithArg, walkGet, walkSet } from './utils'
 
+function callUnbinds (subs) {
+  for (const sub in subs) {
+    subs[sub].unbind()
+  }
+}
+
 // NOTE not convinced by the naming of subscribeToRefs and subscribeToDocument
 // first one is calling the other on every ref and subscribeToDocument may call
 // updateDataFromDocumentSnapshot which may call subscribeToRefs as well
@@ -109,10 +115,7 @@ function bindCollection ({
     },
     removed: ({ oldIndex }) => {
       array.splice(oldIndex, 1)
-      const subs = arraySubs.splice(oldIndex, 1)[0]
-      for (const subKey in subs) {
-        subs[subKey].unbind()
-      }
+      callUnbinds(arraySubs.splice(oldIndex, 1)[0])
     }
   }
 
@@ -153,11 +156,7 @@ function bindCollection ({
 
   return () => {
     unbind()
-    arraySubs.forEach(subs => {
-      for (const subKey in subs) {
-        subs[subKey].unbind()
-      }
-    })
+    arraySubs.forEach(callUnbinds)
   }
 }
 
@@ -202,10 +201,7 @@ function subscribeToDocument ({ ref, target, path, depth, resolve }) {
 
   return () => {
     unbind()
-    for (const subKey in subs) {
-      const sub = subs[subKey]
-      sub.unbind()
-    }
+    callUnbinds(subs)
   }
 }
 
