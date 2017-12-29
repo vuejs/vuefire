@@ -26,29 +26,20 @@ function subscribeToRefs ({
     delete subs[refKey]
   })
   if (!refKeys.length) return resolve()
-  // TODO check if no ref is missing
   // TODO max depth param, default to 1?
   if (++depth > 3) throw new Error('more than 5 nested refs')
 
   refKeys.forEach(refKey => {
-    // check if already bound to the same ref -> skip
-    // TODO reuse if already bound?
     const sub = subs[refKey]
     const ref = refs[refKey]
 
+    // unsubscribe if bound to a different ref
     if (sub) {
       if (sub.path !== ref.path) sub.unsub()
       // if has already be bound and as we always walk the objects, it will work
       else return
     }
 
-    // maybe wrap the unbind function to call unbind on every child
-    // const [innerObj, innerKey] = deepGetSplit(target[key], refKey)
-    // if (!innerObj) {
-    //   console.log('=== ERROR ===')
-    //   console.log(data, refKey, key, innerObj, innerKey)
-    //   console.log('===')
-    // }
     subs[refKey] = {
       unsub: subscribeToDocument({
         ref,
@@ -69,8 +60,7 @@ function bindCollection ({
   resolve,
   reject
 }) {
-  // TODO wait to get all data
-  // XXX support pathes? nested.obj.list
+  // TODO support pathes? nested.obj.list (walkSet)
   const array = vm[key] = []
   const originalResolve = resolve
   let isResolved
@@ -137,7 +127,6 @@ function bindCollection ({
       resolve = ({ id }) => {
         if (id in validDocs) {
           if (++count >= expectedItems) {
-            // TODO use array instead?
             originalResolve(vm[key])
             // reset resolve to noop
             resolve = _ => {}
@@ -227,7 +216,6 @@ function bindDocument ({
     }
   }, reject)
 
-  // TODO return a custom unbind function that unbind all refs
   return () => {
     unbind()
     unsubscribeAll(subs)
