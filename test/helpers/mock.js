@@ -1,7 +1,7 @@
 export class DocumentSnapshot {
   constructor (firestore, key, document, exists) {
     this._firestore = firestore
-    this._key = key
+    this._key = new Key(key)
     this._document = document
     this.exists = exists
   }
@@ -18,7 +18,11 @@ export class DocumentSnapshot {
 export let _id = 0
 export class Key {
   constructor (v) {
-    this.v = '' + (v != null ? v : _id++)
+    if (v instanceof Key) {
+      this.v = v.v
+    } else {
+      this.v = '' + (v != null ? v : _id++)
+    }
   }
 
   get path () {
@@ -56,13 +60,16 @@ export class DocumentReference extends callbacksAndErrors {
   constructor ({ collection, id, data, index }) {
     super()
     this.collection = collection
-    this.id = id
+    this.id = new Key(id)
     this.data = data
     this.index = index
     this.exists = false
   }
 
   onSnapshot (cb, onError) {
+    if (typeof this.id === 'string') {
+      debugger
+    }
     setTimeout(() => {
       cb(new DocumentSnapshot(null, this.id, this.data, this.exists))
     }, 0)

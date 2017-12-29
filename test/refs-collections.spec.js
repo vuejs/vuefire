@@ -147,3 +147,57 @@ test('keeps old data of refs when modifying an item', async () => {
     newThing: true
   })
 })
+
+test('respects provided maxRefDepth', async () => {
+  const a = db.collection().doc()
+  const b = db.collection().doc()
+  const c = db.collection().doc()
+  const d = db.collection().doc()
+  await a.set({ b })
+  await b.set({ c })
+  await d.set({ isD: true })
+  await c.set({ d })
+  const collection = db.collection()
+  await collection.add({ a })
+
+  await vm.$bind('items', collection, { maxRefDepth: 1 })
+  expect(vm.items).toEqual([{
+    a: {
+      b: b.path
+    }
+  }])
+
+  await vm.$bind('items', collection, { maxRefDepth: 3 })
+  expect(vm.items).toEqual([{
+    a: {
+      b: {
+        c: {
+          d: d.path
+        }
+      }
+    }
+  }])
+})
+
+test('does not fail with cyclic refs', async () => {
+  const item = db.collection().doc()
+  await item.set({ item })
+  const collection = db.collection()
+  await collection.add({ item })
+  await vm.$bind('items', collection, { maxRefDepth: 5 })
+
+  expect(vm.items).toEqual([{
+    // it's easy to see we stop at 5 and we have 5 brackets
+    item: {
+      item: {
+        item: {
+          item: {
+            item: {
+              item: item.path
+            }
+          }
+        }
+      }
+    }
+  }])
+})
