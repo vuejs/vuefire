@@ -17,7 +17,7 @@ function subscribeToRefs ({
   data,
   depth,
   resolve
-}) {
+}, options) {
   const refKeys = Object.keys(refs)
   const missingKeys = Object.keys(subs).filter(refKey => refKeys.indexOf(refKey) < 0)
   // unbind keys that are no longer there
@@ -25,9 +25,7 @@ function subscribeToRefs ({
     subs[refKey].unsub()
     delete subs[refKey]
   })
-  if (!refKeys.length) return resolve(path)
-  // TODO max depth param, default to 1?
-  if (++depth > 3) throw new Error('more than 5 nested refs')
+  if (!refKeys.length || ++depth > options.maxRefDepth) return resolve(path)
 
   let resolvedCount = 0
   const totalToResolve = refKeys.length
@@ -59,7 +57,7 @@ function subscribeToRefs ({
         path: docPath,
         depth,
         resolve: deepResolve.bind(null, docPath)
-      }),
+      }, options),
       path: ref.path
     }
   })
@@ -71,7 +69,7 @@ function bindCollection ({
   collection,
   resolve,
   reject
-}) {
+}, options) {
   // TODO support pathes? nested.obj.list (walkSet)
   const array = vm[key] = []
   const originalResolve = resolve
@@ -96,7 +94,7 @@ function bindCollection ({
         path: newIndex,
         depth: 0,
         resolve: resolve.bind(null, doc)
-      })
+      }, options)
     },
     modified: ({ oldIndex, newIndex, doc }) => {
       const subs = arraySubs.splice(oldIndex, 1)[0]
@@ -113,7 +111,7 @@ function bindCollection ({
         path: newIndex,
         depth: 0,
         resolve
-      })
+      }, options)
     },
     removed: ({ oldIndex }) => {
       array.splice(oldIndex, 1)
@@ -147,7 +145,6 @@ function bindCollection ({
       }
     }
     docChanges.forEach(c => {
-      // console.log(c)
       change[c.type](c)
     })
 
@@ -161,7 +158,7 @@ function bindCollection ({
   }
 }
 
-function updateDataFromDocumentSnapshot ({ snapshot, target, path, subs, depth = 0, resolve }) {
+function updateDataFromDocumentSnapshot ({ snapshot, target, path, subs, depth = 0, resolve }, options) {
   const [data, refs] = extractRefs(snapshot, walkGet(target, path))
   walkSet(target, path, data)
   subscribeToRefs({
@@ -172,10 +169,10 @@ function updateDataFromDocumentSnapshot ({ snapshot, target, path, subs, depth =
     path,
     depth,
     resolve
-  })
+  }, options)
 }
 
-function subscribeToDocument ({ ref, target, path, depth, resolve }) {
+function subscribeToDocument ({ ref, target, path, depth, resolve }, options) {
   const subs = Object.create(null)
   const unbind = ref.onSnapshot(doc => {
     if (doc.exists) {
@@ -186,7 +183,7 @@ function subscribeToDocument ({ ref, target, path, depth, resolve }) {
         subs,
         depth,
         resolve
-      })
+      }, options)
     } else {
       walkSet(target, path, null)
       resolve(path)
@@ -205,7 +202,7 @@ function bindDocument ({
   document,
   resolve,
   reject
-}) {
+}, options) {
   // TODO warning check if key exists?
   // const boundRefs = Object.create(null)
 
@@ -222,7 +219,7 @@ function bindDocument ({
         path: key,
         subs,
         resolve
-      })
+      }, options)
     } else {
       resolve()
     }
@@ -234,7 +231,7 @@ function bindDocument ({
   }
 }
 
-function bind ({ vm, key, ref }) {
+function bind ({ vm, key, ref }, options = { maxRefDepth: 2 }) {
   return new Promise((resolve, reject) => {
     let unbind
     if (ref.where) {
@@ -244,7 +241,7 @@ function bind ({ vm, key, ref }) {
         collection: ref,
         resolve,
         reject
-      })
+      }, options)
     } else {
       unbind = bindDocument({
         vm,
@@ -252,7 +249,7 @@ function bind ({ vm, key, ref }) {
         document: ref,
         resolve,
         reject
-      })
+      }, options)
     }
     vm._firestoreUnbinds[key] = unbind
   })
@@ -286,7 +283,7 @@ function install (Vue, options) {
   })
 
   // TODO test if $bind exist and warns
-  Vue.prototype.$bind = function (key, ref) {
+  Vue.prototype.$bind = function (key, ref, options) {
     if (this._firestoreUnbinds[key]) {
       this.$unbind(key)
     }
@@ -294,7 +291,7 @@ function install (Vue, options) {
       vm: this,
       key,
       ref
-    })
+    }, options)
     this.$firestoreRefs[key] = ref
     return promise
   }

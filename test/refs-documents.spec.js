@@ -409,3 +409,49 @@ test('correctly updates arrays', async () => {
 
   expect(spy).toHaveBeenCalledTimes(3)
 })
+
+test('respects provided maxRefDepth', async () => {
+  await item.update({ a })
+  await a.set({ b })
+  await b.set({ c })
+  await d.set({ isD: true })
+  await c.set({ d })
+
+  await vm.$bind('item', item, { maxRefDepth: 1 })
+  expect(vm.item).toEqual({
+    a: {
+      b: b.path
+    }
+  })
+
+  await vm.$bind('item', item, { maxRefDepth: 3 })
+  expect(vm.item).toEqual({
+    a: {
+      b: {
+        c: {
+          d: d.path
+        }
+      }
+    }
+  })
+})
+
+test('does not fail with cyclic refs', async () => {
+  await item.set({ item })
+  await vm.$bind('item', item, { maxRefDepth: 5 })
+
+  expect(vm.item).toEqual({
+    // it's easy to see we stop at 5 and we have 5 brackets
+    item: {
+      item: {
+        item: {
+          item: {
+            item: {
+              item: item.path
+            }
+          }
+        }
+      }
+    }
+  })
+})
