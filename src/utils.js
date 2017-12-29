@@ -26,10 +26,10 @@ export function extractRefs (doc, oldDoc, path = '', result = [{}, {}]) {
     } else if (Array.isArray(ref)) {
       // TODO handle array
       tot[0][key] = Array(ref.length).fill(null)
-      extractRefs(ref, oldDoc[key] || {}, path + key + '.', [tot[0][key], tot[1]])
+      extractRefs(ref, oldDoc[key], path + key + '.', [tot[0][key], tot[1]])
     } else if (isObject(ref)) {
       tot[0][key] = {}
-      extractRefs(ref, oldDoc[key] || {}, path + key + '.', [tot[0][key], tot[1]])
+      extractRefs(ref, oldDoc[key], path + key + '.', [tot[0][key], tot[1]])
     } else {
       tot[0][key] = ref
     }
