@@ -100,6 +100,26 @@ test('waits for all refs in document', async () => {
   })
 })
 
+test('waits for all refs in document with interrupting by new ref', async () => {
+  const a = db.collection().doc()
+  const b = db.collection().doc()
+  const c = db.collection().doc()
+  delayUpdate(b)
+  await document.update({ a, b })
+
+  const promise = vm.$bind('item', document)
+
+  document.update({ c })
+
+  await promise
+
+  expect(vm.item).toEqual({
+    a: null,
+    b: null,
+    c: null
+  })
+})
+
 test('waits for all refs in collection', async () => {
   const a = db.collection().doc()
   const b = db.collection().doc()
