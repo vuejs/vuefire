@@ -2,6 +2,7 @@ import Vuefire from '../src'
 import {
   db,
   tick,
+  delayUpdate,
   Vue
 } from './helpers'
 
@@ -83,4 +84,107 @@ test('unbinds previously bound refs', async () => {
   await document.update({ foo: 'baz' })
   expect(vm.$firestoreRefs.item).toBe(doc2)
   expect(vm.item).toEqual({ bar: 'bar' })
+})
+
+test('waits for all refs in document', async () => {
+  const a = db.collection().doc()
+  const b = db.collection().doc()
+  delayUpdate(b)
+  await document.update({ a, b })
+
+  await vm.$bind('item', document)
+
+  expect(vm.item).toEqual({
+    a: null,
+    b: null
+  })
+})
+
+test('waits for all refs in collection', async () => {
+  const a = db.collection().doc()
+  const b = db.collection().doc()
+  delayUpdate(b)
+  await collection.add({ a })
+  await collection.add({ b })
+
+  await vm.$bind('items', collection)
+
+  expect(vm.items).toEqual([
+    { a: null },
+    { b: null }
+  ])
+})
+
+test('waits for nested refs in document', async () => {
+  const a = db.collection().doc()
+  const b = db.collection().doc()
+  const c = db.collection().doc()
+  await b.update({ c })
+  delayUpdate(b)
+  delayUpdate(c, 5)
+  await document.update({ a, b })
+
+  await vm.$bind('item', document)
+
+  expect(vm.item).toEqual({
+    a: null,
+    b: { c: null }
+  })
+})
+
+test('waits for nested refs with data in document', async () => {
+  const a = db.collection().doc()
+  const b = db.collection().doc()
+  const c = db.collection().doc()
+  await a.update({ isA: true })
+  await c.update({ isC: true })
+  await b.update({ c })
+  delayUpdate(b)
+  delayUpdate(c, 5)
+  await document.update({ a, b })
+
+  await vm.$bind('item', document)
+
+  expect(vm.item).toEqual({
+    a: { isA: true },
+    b: { c: { isC: true }}
+  })
+})
+
+test('waits for nested refs in collections', async () => {
+  const a = db.collection().doc()
+  const b = db.collection().doc()
+  const c = db.collection().doc()
+  await b.update({ c })
+  delayUpdate(b)
+  delayUpdate(c, 5)
+  await collection.add({ a })
+  await collection.add({ b })
+
+  await vm.$bind('items', collection)
+
+  expect(vm.items).toEqual([
+    { a: null },
+    { b: { c: null }}
+  ])
+})
+
+test('waits for nested refs with data in collections', async () => {
+  const a = db.collection().doc()
+  const b = db.collection().doc()
+  const c = db.collection().doc()
+  await a.update({ isA: true })
+  await c.update({ isC: true })
+  await b.update({ c })
+  delayUpdate(b)
+  delayUpdate(c, 5)
+  await collection.add({ a })
+  await collection.add({ b })
+
+  await vm.$bind('items', collection)
+
+  expect(vm.items).toEqual([
+    { a: { isA: true }},
+    { b: { c: { isC: true }}}
+  ])
 })

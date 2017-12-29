@@ -25,13 +25,25 @@ function subscribeToRefs ({
     subs[refKey].unsub()
     delete subs[refKey]
   })
-  if (!refKeys.length) return resolve()
+  if (!refKeys.length) return resolve(path)
   // TODO max depth param, default to 1?
   if (++depth > 3) throw new Error('more than 5 nested refs')
+
+  let resolvedCount = 0
+  const totalToResolve = refKeys.length
+  const validResolves = Object.create(null)
+  function deepResolve (key) {
+    if (key in validResolves) {
+      if (++resolvedCount >= totalToResolve) resolve(path)
+    }
+  }
 
   refKeys.forEach(refKey => {
     const sub = subs[refKey]
     const ref = refs[refKey]
+    const docPath = `${path}.${refKey}`
+
+    validResolves[docPath] = true
 
     // unsubscribe if bound to a different ref
     if (sub) {
@@ -44,9 +56,9 @@ function subscribeToRefs ({
       unsub: subscribeToDocument({
         ref,
         target,
-        path: `${path}.${refKey}`,
+        path: docPath,
         depth,
-        resolve
+        resolve: deepResolve.bind(null, docPath)
       }),
       path: ref.path
     }
@@ -177,7 +189,7 @@ function subscribeToDocument ({ ref, target, path, depth, resolve }) {
       })
     } else {
       walkSet(target, path, null)
-      resolve()
+      resolve(path)
     }
   })
 
