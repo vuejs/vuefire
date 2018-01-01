@@ -12,7 +12,7 @@
     "README.md"
   ],
   "scripts": {
-    "lint": "eslint --ext=js,html src test examples",
+    "lint": "eslint --color --ext=js,html src test examples",
     "build": "node build/build.js",
     "pretest": "npm run lint",
     "test": "npm run unit",
@@ -30,7 +30,9 @@
     "plugin",
     "mixin",
     "firebase",
+    "cloud",
     "database",
+    "google",
     "firestore",
     "realtime"
   ],
