@@ -255,7 +255,7 @@ function bind ({ vm, key, ref }, options = { maxRefDepth: 2 }) {
   })
 }
 
-function install (Vue, options) {
+function install (Vue) {
   const strategies = Vue.config.optionMergeStrategies
   strategies.firestore = strategies.provide
 
@@ -264,12 +264,12 @@ function install (Vue, options) {
       const { firestore } = this.$options
       this._firestoreUnbinds = Object.create(null)
       this.$firestoreRefs = Object.create(null)
-      const options = typeof firestore === 'function'
+      const refs = typeof firestore === 'function'
         ? firestore.call(this)
         : firestore
-      if (!options) return
-      Object.keys(options).forEach(key => {
-        this.$bind(key, options[key])
+      if (!refs) return
+      Object.keys(refs).forEach(key => {
+        this.$bind(key, refs[key])
       })
     },
 
