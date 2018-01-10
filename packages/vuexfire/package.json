@@ -23,6 +23,7 @@
     "prebuild": "rimraf dist",
     "prepublishOnly": "npm run build",
     "build": "rollit",
+    "release": "release-it pre --preReleaseId=alpha --npm.tag=next --github.preRelease",
     "watch": "npm-watch"
   },
   "watch": {
