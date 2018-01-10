@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>VueFire Todo App Demo</title>
+    <script src="https://www.gstatic.com/firebasejs/4.6.0/firebase.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.6.0/firebase-firestore.js"></script>
+    <script src="https://unpkg.com/vue"></script>
+    <script src="https://unpkg.com/vuex"></script>
+    <script src="dist/vuexfire.js"></script>
+  </head>
+  <body>
+
+    <!--
+    Before running this example, make sure to:
+
+    1. npm install
+    2. npm run build
+
+    Then you can open this file in your browser.
+    If you just prefer to see this example with
+    the latest published version of VueFire, you
+    play with the code in this fiddle:
+
+    https://jsfiddle.net/posva/wtyop5jy/
+    -->
+
+    <div id="app">
+      <button @click="toggleTodos">Toggle todos</button>
+      <br/>
+      <input
+        v-model.trim="newTodoText"
+        @keyup.enter="addTodo"
+        placeholder="Add new todo"
+      >
+      <ul>
+        <li v-for="todo in todos">
+          <input
+            :value="todo.text"
+            @input="updateTodoText(todo, $event.target.value)"
+          >
+          <button @click="removeTodo(todo)">X</button>
+        </li>
+      </ul>
+
+      <h4>collection with refs</h4>
+
+      <ul>
+        <li v-for="moment in moments">{{ moment }}</li>
+      </ul>
+
+      <h5>Original data</h5>
+
+      <ul>
+        <li v-for="tweet in tweets">{{ tweet }}</li>
+      </ul>
+
+      <p>config: </p>
+      <pre>
+        {{ config }}
+      </pre>
+    </div>
+
+    <script>
+      /* global Vue, firebase, Vuefire */
+      /* Vue.use(Vuexfire.default)*/
+      firebase.initializeApp({
+        projectId: 'vue-fire-store',
+        databaseURL: 'https://vue-fire-store.firebaseio.com'
+      })
+      const db = firebase.firestore()
+      const todos = db.collection('todos')
+      const unFinishedTodos = todos.where('finished', '==', false)
+      const finishedTodos = todos.where('finished', '==', true)
+      let currentTodos = finishedTodos
+      const config = db.collection('configs').doc('jORwjIykFo2NmkdzTkhU')
+
+      Vue.use(Vuex)
+
+      const { Store, mapState } = Vuex
+      const { firebaseAction, firebaseMutations } = Vuexfire
+
+      const store = new Vuex.Store({
+        strict: true,
+        state: {
+          todos: [],
+          tweets: [],
+          moments: [],
+          config: null
+        },
+
+        mutations: firebaseMutations,
+
+        actions: {
+          bindRef: firebaseAction(({ bindFirebaseRef }, { name, ref }) => {
+            bindFirebaseRef(name, ref)
+          }),
+
+          init: firebaseAction(({ bindFirebaseRef }) => {
+            bindFirebaseRef('config', config)
+            bindFirebaseRef('todos', currentTodos)
+            bindFirebaseRef('tweets', db.collection('tweets'))
+            bindFirebaseRef('moments', db.collection('moments'))
+          })
+        }
+      })
+
+      new Vue({
+        el: '#app',
+        store,
+        data: {
+          newTodoText: ''
+        },
+
+        computed: mapState(['todos', 'tweets', 'moments', 'config']),
+
+        methods: {
+          addTodo: function () {
+            if (this.newTodoText) {
+              todos.add({
+                finished: false,
+                text: this.newTodoText,
+                created: firebase.firestore.FieldValue.serverTimestamp()
+              })
+              this.newTodoText = ''
+            }
+          },
+          updateTodoText: function (todo, newText) {
+            todos.doc(todo.id).update({ text: newText })
+          },
+          removeTodo: function (todo) {
+            todos.doc(todo.id).delete()
+          },
+          toggleTodos () {
+            currentTodos = currentTodos === unFinishedTodos
+              ? finishedTodos
+              : unFinishedTodos
+            this.$store.dispatch(
+              'bindRef', {
+              name: 'todos',
+              ref: currentTodos
+              }
+            )
+          }
+        },
+
+        created () {
+          this.$store.dispatch('init')
+        }
+      })
+    </script>
+  </body>
+</html>
