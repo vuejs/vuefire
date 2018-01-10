@@ -3,7 +3,8 @@
   <head>
     <meta charset="utf-8">
     <title>VuexFire Todo App Demo</title>
-    <script src="https://www.gstatic.com/firebasejs/3.7.5/firebase.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.6.2/firebase.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.6.2/firebase-firestore.js"></script>
     <script src="https://unpkg.com/vue/dist/vue.js"></script>
     <script src="https://unpkg.com/vuex/dist/vuex.js"></script>
     <script src="../../dist/vuexfire.js"></script>
@@ -17,9 +18,9 @@
 
     <div id="app">
       <ul>
-        <li v-for="item in items" :key="item['.key']">
+        <li v-for="item in items" :key="item.id">
           {{ item.text }}
-          <button @click="removeTodo(item['.key'])">X</button>
+          <button @click="removeTodo(item.id)">X</button>
         </li>
       </ul>
       <form @submit.prevent="addTodo">
@@ -35,26 +36,26 @@
 
     <script>
     /* global Vue, Vuex, firebase, VuexFire */
-    var config = {
-      databaseURL: 'https://vuexfire.firebaseio.com',
-    }
-    var firebaseApp = firebase.initializeApp(config)
-    var db = firebaseApp.database()
-    var itemsRef = db.ref('test')
-    var todosRef = db.ref('test_2')
+    firebase.initializeApp({
+      projectId: 'vue-fire-store',
+      databaseURL: 'https://vue-fire-store.firebaseio.com'
+    })
+    var db = firebase.firestore()
+    var itemsRef = db.collection('vuexfireItems1')
+    var todosRef = db.collection('vuexfireItems2')
 
     var store = new Vuex.Store({
       // VuexFire will check the type of the property to bind as an array or as
       // an object
       strict: true,
       state: { items: [] },
-      mutations: VuexFire.firebaseMutations,
+      mutations: Vuexfire.firebaseMutations,
       getters: {
         items: state => state.items,
       },
       actions: {
-        setItemsRef: VuexFire.firebaseAction(({ bindFirebaseRef }, ref) => {
-          bindFirebaseRef('items', ref, { wait: true })
+        setItemsRef: Vuexfire.firebaseAction(({ bindFirebaseRef }, ref) => {
+          bindFirebaseRef('items', ref)
         }),
       },
     })
@@ -68,12 +69,12 @@
       },
 
       methods: {
-        removeTodo (key) {
-          this.source.child(key).remove()
+        removeTodo (id) {
+          this.source.doc(id).delete()
         },
         addTodo () {
           if (this.newTodo.trim()) {
-            this.source.push({
+            this.source.add({
               text: this.newTodo,
             })
             this.newTodo = ''
