@@ -1,9 +1,9 @@
 {
   "name": "vuexfire",
   "version": "3.0.0-alpha.0",
-  "description": "Opinionated firebase binding for vuex",
-  "main": "dist/vuexfire.common.js",
-  "module": "dist/vuexfire.esm.js",
+  "description": "Firestore binding for Vuex",
+  "main": "dist/vuexfire.cjs.js",
+  "module": "dist/vuexfire.es.js",
   "unpkg": "dist/vuexfire.js",
   "browser": "dist/vuexfire.js",
   "files": [
@@ -21,8 +21,8 @@
     "test:coverage": "nyc yon run test:unit",
     "dev:test": "yon run test:unit -- --watch",
     "prebuild": "rimraf dist",
-    "build": "node build/build.js",
-    "preversion": "yon run build",
+    "prepublishOnly": "npm run build",
+    "build": "rollit",
     "watch": "npm-watch"
   },
   "watch": {

@@ -1,5 +1,8 @@
 {
-  "buildCommand": "npm run build",
+  "src": {
+    "tagName": "v%s",
+    "commitMessage": "🔖 %s",
+  },
   "github": {
     "release": true,
     "releaseName": "🚀 Release %s",
@@ -7,10 +10,6 @@
   },
   "npm": {
     "publish": true
-  },
-  "src": {
-    "commitMessage": "🔖 %s",
-    "tagName": "v%s"
   },
   "changelogCommand": "git log --pretty=format:'* %s (%h)' [REV_RANGE]"
 }
