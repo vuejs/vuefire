@@ -192,8 +192,9 @@ To delete or update an item you can use the `.key` property of a given object. B
    // create a copy of the item
    item = {...item}
    // remove the .key attribute
+   const key = item['.key']
    delete item['.key']
-   this.$firebaseRefs.items.child(item['.key']).set(item)
+   this.$firebaseRefs.items.child(key).set(item)
  } 
 ```
 
