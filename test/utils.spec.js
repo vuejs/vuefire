@@ -54,6 +54,17 @@ test('extract refs from document', () => {
   })
 })
 
+test('leave Date objects alone when extracting refs', () => {
+  const d = new Date()
+  const [doc, refs] = extractRefs({
+    foo: 1,
+    bar: d
+  })
+  expect(doc.foo).toEqual(1)
+  expect(doc.bar).toEqual(d)
+  expect(refs).toEqual({})
+})
+
 test('extract object nested refs from document', () => {
   const [noRefsDoc, refs] = extractRefs({
     obj: {
