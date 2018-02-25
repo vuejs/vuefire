@@ -46,7 +46,10 @@
   "peerDependencies": {
     "firebase": ">= 4.0.0"
   },
-  "author": "Eduardo San Martin Morote <posva13@gmail.com>",
+  "author": {
+    "name": "Eduardo San Martin Morote",
+    "email": "posva13@gmail.com"
+  },
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/posva/vuexfire/issues"
