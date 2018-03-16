@@ -46,10 +46,24 @@ function isObject (val) {
  */
 function createRecord (snapshot) {
   var value = snapshot.val()
-  var res = isObject(value)
-    ? value
-    : { '.value': value }
-  res['.key'] = _getKey(snapshot)
+  var res
+  if (isObject(value)) {
+    res = value
+  } else {
+    res = {}
+    Object.defineProperty(res, '.value', {
+      enumerable: false,
+      configurable: true,
+      writable: true,
+      value: value
+    })
+  }
+  Object.defineProperty(res, '.key', {
+    enumerable: false,
+    configurable: true,
+    writable: true,
+    value: _getKey(snapshot)
+  })
   return res
 }
 
