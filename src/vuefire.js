@@ -52,16 +52,10 @@ function createRecord (snapshot) {
   } else {
     res = {}
     Object.defineProperty(res, '.value', {
-      enumerable: false,
-      configurable: true,
-      writable: true,
       value: value
     })
   }
   Object.defineProperty(res, '.key', {
-    enumerable: false,
-    configurable: true,
-    writable: true,
     value: _getKey(snapshot)
   })
   return res
