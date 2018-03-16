@@ -26,7 +26,7 @@
   ``` js
   var Vue = require('vue')
   var VueFire = require('vuefire')
-  var Firebase = require('firebase')
+  var firebase = require('firebase')
 
   // explicit installation required in module environments
   Vue.use(VueFire)
@@ -35,7 +35,7 @@
 ## Usage
 
 ``` js
-var firebaseApp = Firebase.initializeApp({ ... })
+var firebaseApp = firebase.initializeApp({ ... })
 var db = firebaseApp.database()
 
 var vm = new Vue({
