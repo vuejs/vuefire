@@ -10,13 +10,13 @@ If you need an older version check the `v1` branch: `npm i -D vuexfire@v1`
 1. Using a CDN:
 
 ``` html
-<script src="https://unpkg.com/vuexfire"></script>
+<script src="https://unpkg.com/vuexfire@next"></script>
 ```
 
 2. In module environments, e.g CommonJS:
 
 ``` bash
-npm install vue firebase vuexfire --save
+npm install vue firebase vuexfire@next --save
 ```
 
 ## Usage
@@ -74,7 +74,7 @@ const Component = {
   template: '<div>{{ todos }}</div>',
   computed: Vuex.mapState(['todos']),
   created () {
-    this.$store.dispatch('setTodosRef', db.ref('todos'))
+    this.$store.dispatch('setTodosRef', db.collection('todos'))
   }
 }
 ```
@@ -89,10 +89,10 @@ support any of these browsers:
 - Android < 5.0
 
 You'll have to include a polyfill. You can
-use [Benvie/WeakMap](https://github.com/Benvie/WeakMap)
+use [Benvie/WeakMap](https://github.com/Benvie/WeakMap).
 
 You can find more information about `WeakMap`
-support [here](http://kangax.github.io/compat-table/es6/#test-WeakMap)
+support [here](http://kangax.github.io/compat-table/es6/#test-WeakMap).
 
 ## How does it work?
 
@@ -104,7 +104,7 @@ it works with modules too :+1:
 
 ## Examples
 
-You can check out the examples by opening the html files in your browser, or check [this online Demo](https://jsfiddle.net/posva/6w3ks04x/)
+You can check out a complete example in the `/examples` directory.
 
 ## API
 
@@ -113,31 +113,36 @@ You can check out the examples by opening the html files in your browser, or che
 This object contains VuexFire internal mutations. They are all prefixed by
 `vuexfire/`. This object must be added in the root Store mutations object.
 
-### bindFirebaseRef(key, ref[, options])
+### bindFirebaseRef(key, ref)
 
 _Only available inside of an enhanced action_
 
 Binds a firebase reference to a property in the state. If there was already
 another reference bound to the same property, it unbinds it first.
 
-#### options:
-
 ```js
-{
-  cancelCallback: Function, // Cancel callback passed to Firebase when listening for events
-  readyCallback: Function, // Callback called once the data has been loaded. Useful for SSR
-  errorCallback: Function, // Callback called when there is an error loading the data. Useful for SSR
-  wait: Boolean, // (Arrays only) Should Vuexfire wait for the whole array to be populated. Defaults to true
-}
+bindFirebaseRef('todos', ref)
 ```
 
-`wait` can be set to true every time. It's useful to do pagination and SSR.
+Returns a promise which will resolve when the data is ready, or throw an error if something goes wrong:
+
+```js
+bindFirebaseRef('todos', ref).then(() => {
+  commit('setTodosLoaded', true)
+}).catch((err) => {
+  console.log(err)
+})
+```
 
 ### unbindFirebaseRef(key)
 
 _Only available inside of an enhanced action_
 
 Unbinds a bound firebase reference to a given property in the state.
+
+```js
+unbindFirebaseRef('todos')
+```
 
 ## License
 
