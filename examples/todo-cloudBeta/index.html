@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>To Do Cloud</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+
+		<link rel='stylesheet' href='css/main.css'>
+		<link rel='stylesheet' href='css/normalize.min.css'>
+		<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+
+<!-- Firebase -->
+ <script src="https://www.gstatic.com/firebasejs/4.12.0/firebase.js"></script>
+ <!-- VueFire -->
+ <script src="https://cdn.jsdelivr.net/vuefire/1.0.0/vuefire.min.js"></script>
+
+    </head>
+    <body>
+        <!-- Add your site or application content here -->
+     <div id="app">
+	   
+<input
+        v-model.trim="newTodoText"
+        @keyup.enter="addTodo"
+        placeholder="Add new todo"
+      >
+      <ul>
+        <li v-for="todo in todos">
+          <input
+            :value="todo.text"
+            @input="updateTodoText(todo, $event.target.value)"
+          >
+          <button @click="removeTodo(todo)">X</button>
+        </li>
+</ul>
+
+     </div>
+
+
+        <script src='js/main.js'></script>
+
+      
+    </body>
+</html>
