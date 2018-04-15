@@ -45,6 +45,7 @@
     "eslint-plugin-promise": "^3.4.0",
     "eslint-plugin-standard": "^2.0.1",
     "firebase": "^4.0.0",
+    "firebase-mock": "^2.2.2",
     "istanbul-instrumenter-loader": "^1.2.0",
     "karma": "^1.4.0",
     "karma-chrome-launcher": "^2.2.0",
