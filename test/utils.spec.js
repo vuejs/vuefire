@@ -1,14 +1,5 @@
-import {
-  createSnapshot,
-  extractRefs
-} from '../src/utils'
-import {
-  Key,
-  db,
-  _id,
-  DocumentReference,
-  DocumentSnapshot
-} from './helpers'
+import { createSnapshot, extractRefs } from '../src/utils'
+import { Key, db, _id, DocumentReference, GeoPoint, DocumentSnapshot } from './helpers'
 
 let id, doc, snapshot, collection, docRef
 beforeEach(() => {
@@ -60,8 +51,19 @@ test('leave Date objects alone when extracting refs', () => {
     foo: 1,
     bar: d
   })
-  expect(doc.foo).toEqual(1)
-  expect(doc.bar).toEqual(d)
+  expect(doc.foo).toBe(1)
+  expect(doc.bar).toBe(d)
+  expect(refs).toEqual({})
+})
+
+test('leave GeoPoint objects alone when extracting refs', () => {
+  const d = new GeoPoint(2, 48)
+  const [doc, refs] = extractRefs({
+    foo: 1,
+    bar: d
+  })
+  expect(doc.foo).toBe(1)
+  expect(doc.bar).toBe(d)
   expect(refs).toEqual({})
 })
 
@@ -99,11 +101,7 @@ test('extracts refs from array', async () => {
     index: 0
   })
   const [noRefsDoc, refs] = extractRefs({
-    arr: [
-      docRef,
-      docRef2,
-      docRef
-    ]
+    arr: [docRef, docRef2, docRef]
   })
   expect(noRefsDoc.arr[0]).toEqual(docRef.path)
   expect(noRefsDoc.arr[1]).toEqual(docRef2.path)

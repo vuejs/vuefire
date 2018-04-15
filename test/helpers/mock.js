@@ -1,3 +1,16 @@
+export class GeoPoint {
+  constructor (lat, long) {
+    this._lat = lat
+    this._long = long
+  }
+
+  get latitude () {
+    return this._lat
+  }
+  get longitude () {
+    return this._long
+  }
+}
 export class DocumentSnapshot {
   constructor (firestore, key, document, exists) {
     this._firestore = firestore
