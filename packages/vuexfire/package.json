@@ -5,7 +5,7 @@
   "main": "dist/vuexfire.cjs.js",
   "module": "dist/vuexfire.es.js",
   "unpkg": "dist/vuexfire.js",
-  "browser": "dist/vuexfire.js",
+  "browser": "dist/vuexfire.es.js",
   "files": [
     "src",
     "dist",
