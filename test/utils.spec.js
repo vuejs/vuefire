@@ -39,7 +39,7 @@ test('contains all the data', () => {
 
 test('extract refs from document', () => {
   const [noRefsDoc, refs] = extractRefs(doc.data())
-  expect(noRefsDoc.ref).toEqual(docRef.path)
+  expect(noRefsDoc.ref).toBe(docRef.path)
   expect(refs).toEqual({
     ref: docRef
   })
@@ -73,7 +73,7 @@ test('extract object nested refs from document', () => {
       ref: docRef
     }
   })
-  expect(noRefsDoc.obj.ref).toEqual(docRef.path)
+  expect(noRefsDoc.obj.ref).toBe(docRef.path)
   expect(refs).toEqual({
     'obj.ref': docRef
   })
@@ -87,7 +87,7 @@ test('extract deep object nested refs from document', () => {
       }
     }
   })
-  expect(noRefsDoc.obj.nested.ref).toEqual(docRef.path)
+  expect(noRefsDoc.obj.nested.ref).toBe(docRef.path)
   expect(refs).toEqual({
     'obj.nested.ref': docRef
   })
@@ -103,9 +103,9 @@ test('extracts refs from array', async () => {
   const [noRefsDoc, refs] = extractRefs({
     arr: [docRef, docRef2, docRef]
   })
-  expect(noRefsDoc.arr[0]).toEqual(docRef.path)
-  expect(noRefsDoc.arr[1]).toEqual(docRef2.path)
-  expect(noRefsDoc.arr[2]).toEqual(docRef.path)
+  expect(noRefsDoc.arr[0]).toBe(docRef.path)
+  expect(noRefsDoc.arr[1]).toBe(docRef2.path)
+  expect(noRefsDoc.arr[2]).toBe(docRef.path)
   expect(refs).toEqual({
     'arr.0': docRef,
     'arr.1': docRef2,
