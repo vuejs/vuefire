@@ -25,7 +25,7 @@ const banner =
 
 const bundleOptions = {
   banner,
-  exports: 'named',
+  exports: 'auto',
   format: 'umd',
   name: moduleName,
 }
