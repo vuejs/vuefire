@@ -26,20 +26,22 @@ export function spyOnSnapshot (ref) {
 export function spyOnSnapshotCallback (ref) {
   const onSnapshot = ref.onSnapshot.bind(ref)
   const spy = jest.fn()
-  ref.onSnapshot = fn => onSnapshot((...args) => {
-    spy()
-    fn(...args)
-  })
+  ref.onSnapshot = fn =>
+    onSnapshot((...args) => {
+      spy()
+      fn(...args)
+    })
   return spy
 }
 
 // This makes sure some tests fail by delaying callbacks
 export function delayUpdate (ref, time = 0) {
   const onSnapshot = ref.onSnapshot.bind(ref)
-  ref.onSnapshot = fn => onSnapshot(async (...args) => {
-    await delay(time)
-    fn(...args)
-  })
+  ref.onSnapshot = fn =>
+    onSnapshot(async (...args) => {
+      await delay(time)
+      fn(...args)
+    })
 }
 
 export function tick () {
