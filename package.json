@@ -5,7 +5,7 @@
   "main": "dist/vuefire.common.js",
   "module": "dist/vuefire.esm.js",
   "unpkg": "dist/vuefire.js",
-  "browser": "dist/vuefire.js",
+  "browser": "dist/vuefire.esm.js",
   "files": [
     "dist/**",
     "LICENSE",
@@ -36,7 +36,9 @@
     "firestore",
     "realtime"
   ],
-  "author": "Eduardo San Martin Morote",
+  "author": {
+    "name": "Eduardo San Martin Morote"
+  },
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/vuejs/vuefire/issues"
@@ -56,8 +58,8 @@
     "firebase": "^4.8.1",
     "jest": "^22.0.4",
     "mkdirp": "^0.5.1",
-    "rollup": "^0.53.2",
-    "rollup-plugin-buble": "^0.18.0",
+    "rollup": "^0.56.4",
+    "rollup-plugin-buble": "^0.19.2",
     "uglify-js": "^3.3.4",
     "vue": "^2.5.13"
   },

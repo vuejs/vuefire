@@ -5,7 +5,7 @@ const packageData = require('../package.json')
 const mkdirp = require('mkdirp')
 const { version, author, name } = packageData
 // remove the email at the end
-const authorName = author.replace(/\s+<.*/, '')
+const authorName = author.name
 const moduleName = 'Vuefire'
 
 // Make sure dist dir exists
