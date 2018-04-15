@@ -32,3 +32,7 @@ jobs:
 
       # run tests!
       - run: npm test
+
+      - run:
+          name: Send code coverage
+          command: './node_modules/.bin/codecov'
