@@ -79,6 +79,22 @@ test('extract object nested refs from document', () => {
   })
 })
 
+test('works with null', () => {
+  const [noRefsDoc, refs] = extractRefs({
+    a: null,
+    nested: {
+      a: null
+    }
+  })
+  expect(noRefsDoc).toEqual({
+    a: null,
+    nested: {
+      a: null
+    }
+  })
+  expect(refs).toEqual({})
+})
+
 test('extract deep object nested refs from document', () => {
   const [noRefsDoc, refs] = extractRefs({
     obj: {
