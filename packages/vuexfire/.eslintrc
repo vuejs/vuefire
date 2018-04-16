@@ -1,9 +1,7 @@
 {
   "extends": [
     "posva",
-    "plugin:ava/recommended"
   ],
-    "plugins": ["ava"],
     "env": {
       "amd": true
     },

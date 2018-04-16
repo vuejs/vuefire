@@ -25,6 +25,7 @@ export function extractRefs (doc, oldDoc, path = '', result = [{}, {}]) {
       extractRefs(ref, oldDoc[key], path + key + '.', [tot[0][key], tot[1]])
     } else if (
       ref instanceof Date ||
+      ref == null ||
       (ref.longitude && ref.latitude) // GeoPoint
     ) {
       tot[0][key] = ref
