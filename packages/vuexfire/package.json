@@ -14,7 +14,7 @@
   ],
   "scripts": {
     "lint": "eslint --color --ext=js,html src test examples build",
-    "test": "npm run lint && npm run test:coverage && npm run build",
+    "test": "npm run lint && npm run build",
     "coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
     "dev": "npm-watch",
     "test:unit": "ava",
