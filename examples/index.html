@@ -4,8 +4,8 @@
 <head>
   <meta charset="utf-8">
   <title>VueFire Todo App Demo</title>
-  <script src="https://www.gstatic.com/firebasejs/4.6.0/firebase.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/4.6.0/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/4.13.0/firebase.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/4.13.0/firebase-firestore.js"></script>
   <script src="https://unpkg.com/vue"></script>
   <script src="../dist/vuefire.js"></script>
 </head>
@@ -64,6 +64,7 @@
       databaseURL: 'https://vue-fire-store.firebaseio.com'
     })
     const db = firebase.firestore()
+    db.settings({ timestampsInSnapshots: true })
     const todos = db.collection('todos')
     const unFinishedTodos = todos.where('finished', '==', false)
     const finishedTodos = todos.where('finished', '==', true)

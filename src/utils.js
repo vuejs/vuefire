@@ -9,6 +9,14 @@ function isObject (o) {
   return o && typeof o === 'object'
 }
 
+function isTimestamp (o) {
+  return o.toDate
+}
+
+function isRef (o) {
+  return o && o.onSnapshot
+}
+
 export function extractRefs (doc, oldDoc, path = '', result = [{}, {}]) {
   // must be set here because walkGet can return null or undefined
   oldDoc = oldDoc || {}
@@ -19,7 +27,7 @@ export function extractRefs (doc, oldDoc, path = '', result = [{}, {}]) {
   return Object.keys(doc).reduce((tot, key) => {
     const ref = doc[key]
     // if it's a ref
-    if (ref && typeof ref.isEqual === 'function') {
+    if (isRef(ref)) {
       tot[0][key] = oldDoc[key] || ref.path
       // TODO handle subpathes?
       tot[1][path + key] = ref
@@ -28,8 +36,10 @@ export function extractRefs (doc, oldDoc, path = '', result = [{}, {}]) {
       tot[0][key] = Array(ref.length).fill(null)
       extractRefs(ref, oldDoc[key], path + key + '.', [tot[0][key], tot[1]])
     } else if (
-      ref instanceof Date ||
       ref == null ||
+      // Firestore < 4.13
+      ref instanceof Date ||
+      isTimestamp(ref) ||
       (ref.longitude && ref.latitude) // GeoPoint
     ) {
       tot[0][key] = ref

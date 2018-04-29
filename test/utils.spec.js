@@ -1,5 +1,5 @@
 import { createSnapshot, extractRefs } from '../src/utils'
-import { Key, db, _id, DocumentReference, GeoPoint, DocumentSnapshot } from './helpers'
+import { Key, db, _id, DocumentReference, GeoPoint, DocumentSnapshot, Timestamp } from './helpers'
 
 let id, doc, snapshot, collection, docRef
 beforeEach(() => {
@@ -47,6 +47,17 @@ test('extract refs from document', () => {
 
 test('leave Date objects alone when extracting refs', () => {
   const d = new Date()
+  const [doc, refs] = extractRefs({
+    foo: 1,
+    bar: d
+  })
+  expect(doc.foo).toBe(1)
+  expect(doc.bar).toBe(d)
+  expect(refs).toEqual({})
+})
+
+test('leave Timestamps objects alone when extracting refs', () => {
+  const d = new Timestamp(10, 10)
   const [doc, refs] = extractRefs({
     foo: 1,
     bar: d

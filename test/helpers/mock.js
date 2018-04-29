@@ -11,6 +11,22 @@ export class GeoPoint {
     return this._long
   }
 }
+
+export class Timestamp {
+  constructor (seconds, nanoseconds) {
+    this.seconds = seconds
+    this.nanoseconds = nanoseconds
+  }
+
+  toDate () {
+    return new Date(this.toMillis())
+  }
+
+  toMillis () {
+    return this.seconds * 1000 + this.nanoseconds / 1e6
+  }
+}
+
 export class DocumentSnapshot {
   constructor (firestore, key, document, exists) {
     this._firestore = firestore
@@ -63,9 +79,7 @@ class callbacksAndErrors {
   }
 
   _callCallbacks (data) {
-    Object.values(this.cbs).forEach(
-      cb => cb(data)
-    )
+    Object.values(this.cbs).forEach(cb => cb(data))
   }
 }
 
@@ -148,12 +162,14 @@ class CollectionReference extends callbacksAndErrors {
       index: Object.keys(this.data).length
     })
     this._callCallbacks({
-      docChanges: [{
-        type: 'added',
-        doc: new DocumentSnapshot(null, id, data),
-        newIndex: Object.keys(this.data).length - 1,
-        oldIndex: -1
-      }]
+      docChanges: [
+        {
+          type: 'added',
+          doc: new DocumentSnapshot(null, id, data),
+          newIndex: Object.keys(this.data).length - 1,
+          oldIndex: -1
+        }
+      ]
     })
     return this.data[id.v]
   }
@@ -163,22 +179,27 @@ class CollectionReference extends callbacksAndErrors {
 
   doc (id) {
     id = new Key(id)
-    return this.data[id.v] || new DocumentReference({
-      collection: this,
-      id,
-      data: {},
-      index: Object.keys(this.data).length
-    })
+    return (
+      this.data[id.v] ||
+      new DocumentReference({
+        collection: this,
+        id,
+        data: {},
+        index: Object.keys(this.data).length
+      })
+    )
   }
 
   async _remove (id) {
     const ref = this.data[id.v]
     delete this.data[id.v]
     this._callCallbacks({
-      docChanges: [{
-        doc: new DocumentSnapshot(null, id, ref.data),
-        type: 'removed'
-      }]
+      docChanges: [
+        {
+          doc: new DocumentSnapshot(null, id, ref.data),
+          type: 'removed'
+        }
+      ]
     })
     ref.collection = null
     ref.data = null
@@ -192,12 +213,14 @@ class CollectionReference extends callbacksAndErrors {
       type = 'added'
     }
     this._callCallbacks({
-      docChanges: [{
-        type,
-        doc: new DocumentSnapshot(null, id, data),
-        oldIndex: this.data[id.v].index,
-        newIndex: this.data[id.v].index
-      }]
+      docChanges: [
+        {
+          type,
+          doc: new DocumentSnapshot(null, id, data),
+          oldIndex: this.data[id.v].index,
+          newIndex: this.data[id.v].index
+        }
+      ]
     })
   }
 }
