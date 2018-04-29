@@ -56,12 +56,12 @@
   },
   "homepage": "https://github.com/posva/vuexfire#readme",
   "devDependencies": {
-    "babel-preset-env": "^1.6.0",
-    "codecov": "^3.0.0",
-    "eslint": "^4.6.0",
-    "eslint-config-posva": "^1.3.0",
+    "babel-preset-env": "^1.6.1",
+    "codecov": "^3.0.1",
+    "eslint": "^4.19.1",
+    "eslint-config-posva": "^1.3.3",
     "rimraf": "^2.6.2",
-    "vue": "^2.4.2",
-    "vuex": "^3.0.0"
+    "vue": "^2.5.16",
+    "vuex": "^3.0.1"
   }
 }
