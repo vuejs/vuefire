@@ -1,17 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>VueFire Todo App Demo</title>
-    <script src="https://www.gstatic.com/firebasejs/4.6.0/firebase.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/4.6.0/firebase-firestore.js"></script>
-    <script src="https://unpkg.com/vue"></script>
-    <script src="https://unpkg.com/vuex"></script>
-    <script src="dist/vuexfire.js"></script>
-  </head>
-  <body>
 
-    <!--
+<head>
+  <meta charset="utf-8">
+  <title>VueFire Todo App Demo</title>
+  <script src="https://www.gstatic.com/firebasejs/4.13.0/firebase.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/4.13.0/firebase-firestore.js"></script>
+  <script src="https://unpkg.com/vue"></script>
+  <script src="https://unpkg.com/vuex"></script>
+  <script src="../dist/vuexfire.js"></script>
+</head>
+
+<body>
+
+  <!--
     Before running this example, make sure to:
 
     1. npm install
@@ -25,129 +27,124 @@
     https://jsfiddle.net/posva/wtyop5jy/
     -->
 
-    <div id="app">
-      <button @click="toggleTodos">Toggle todos</button>
-      <br/>
-      <input
-        v-model.trim="newTodoText"
-        @keyup.enter="addTodo"
-        placeholder="Add new todo"
-      >
-      <ul>
-        <li v-for="todo in todos">
-          <input
-            :value="todo.text"
-            @input="updateTodoText(todo, $event.target.value)"
-          >
-          <button @click="removeTodo(todo)">X</button>
-        </li>
-      </ul>
+  <div id="app">
+    <button @click="toggleTodos">Toggle todos</button>
+    <br/>
+    <input v-model.trim="newTodoText" @keyup.enter="addTodo" placeholder="Add new todo">
+    <ul>
+      <li v-for="todo in todos">
+        <input :value="todo.text" @input="updateTodoText(todo, $event.target.value)">
+        <button @click="removeTodo(todo)">X</button>
+      </li>
+    </ul>
 
-      <h4>collection with refs</h4>
+    <h4>collection with refs</h4>
 
-      <ul>
-        <li v-for="moment in moments">{{ moment }}</li>
-      </ul>
+    <ul>
+      <li v-for="moment in moments">{{ moment }}</li>
+    </ul>
 
-      <h5>Original data</h5>
+    <h5>Original data</h5>
 
-      <ul>
-        <li v-for="tweet in tweets">{{ tweet }}</li>
-      </ul>
+    <ul>
+      <li v-for="tweet in tweets">{{ tweet }}</li>
+    </ul>
 
-      <p>config: </p>
-      <pre>
+    <p>config: </p>
+    <pre>
         {{ config }}
       </pre>
-    </div>
+  </div>
 
-    <script>
-      /* global Vue, firebase, Vuefire */
-      /* Vue.use(Vuexfire.default)*/
-      firebase.initializeApp({
-        projectId: 'vue-fire-store',
-        databaseURL: 'https://vue-fire-store.firebaseio.com'
-      })
-      const db = firebase.firestore()
-      const todos = db.collection('todos')
-      const unFinishedTodos = todos.where('finished', '==', false)
-      const finishedTodos = todos.where('finished', '==', true)
-      let currentTodos = finishedTodos
-      const config = db.collection('configs').doc('jORwjIykFo2NmkdzTkhU')
+  <script>
+    /* global Vue, firebase, Vuefire */
+    /* Vue.use(Vuexfire.default)*/
+    firebase.initializeApp({
+      projectId: 'vue-fire-store',
+      databaseURL: 'https://vue-fire-store.firebaseio.com'
+    })
+    const db = firebase.firestore()
+    db.settings({ timestampsInSnapshots: true })
+    const todos = db.collection('todos')
+    const unFinishedTodos = todos.where('finished', '==', false)
+    const finishedTodos = todos.where('finished', '==', true)
+    let currentTodos = finishedTodos
+    const config = db.collection('configs').doc('jORwjIykFo2NmkdzTkhU')
 
-      Vue.use(Vuex)
+    Vue.use(Vuex)
 
-      const { Store, mapState } = Vuex
-      const { firebaseAction, firebaseMutations } = Vuexfire
+    const { Store, mapState } = Vuex
+    const { firebaseAction, firebaseMutations } = Vuexfire
 
-      const store = new Vuex.Store({
-        strict: true,
-        state: {
-          todos: [],
-          tweets: [],
-          moments: [],
-          config: null
-        },
+    const store = new Vuex.Store({
+      strict: true,
+      state: {
+        todos: [],
+        tweets: [],
+        moments: [],
+        config: null
+      },
 
-        mutations: firebaseMutations,
+      mutations: firebaseMutations,
 
-        actions: {
-          bindRef: firebaseAction(({ bindFirebaseRef }, { name, ref }) => {
-            bindFirebaseRef(name, ref)
-          }),
+      actions: {
+        bindRef: firebaseAction(({ bindFirebaseRef }, { name, ref }) => {
+          bindFirebaseRef(name, ref)
+        }),
 
-          init: firebaseAction(({ bindFirebaseRef }) => {
-            bindFirebaseRef('config', config)
-            bindFirebaseRef('todos', currentTodos)
-            bindFirebaseRef('tweets', db.collection('tweets'))
-            bindFirebaseRef('moments', db.collection('moments'))
-          })
-        }
-      })
+        init: firebaseAction(({ bindFirebaseRef }) => {
+          bindFirebaseRef('config', config)
+          bindFirebaseRef('todos', currentTodos)
+          bindFirebaseRef('tweets', db.collection('tweets'))
+          bindFirebaseRef('moments', db.collection('moments'))
+        })
+      }
+    })
 
-      new Vue({
-        el: '#app',
-        store,
-        data: {
-          newTodoText: ''
-        },
+    new Vue({
+      el: '#app',
+      store,
+      data: {
+        newTodoText: ''
+      },
 
-        computed: mapState(['todos', 'tweets', 'moments', 'config']),
+      computed: mapState(['todos', 'tweets', 'moments', 'config']),
 
-        methods: {
-          addTodo: function () {
-            if (this.newTodoText) {
-              todos.add({
-                finished: false,
-                text: this.newTodoText,
-                created: firebase.firestore.FieldValue.serverTimestamp()
-              })
-              this.newTodoText = ''
-            }
-          },
-          updateTodoText: function (todo, newText) {
-            todos.doc(todo.id).update({ text: newText })
-          },
-          removeTodo: function (todo) {
-            todos.doc(todo.id).delete()
-          },
-          toggleTodos () {
-            currentTodos = currentTodos === unFinishedTodos
-              ? finishedTodos
-              : unFinishedTodos
-            this.$store.dispatch(
-              'bindRef', {
-              name: 'todos',
-              ref: currentTodos
-              }
-            )
+      methods: {
+        addTodo: function () {
+          if (this.newTodoText) {
+            todos.add({
+              finished: false,
+              text: this.newTodoText,
+              created: firebase.firestore.FieldValue.serverTimestamp()
+            })
+            this.newTodoText = ''
           }
         },
-
-        created () {
-          this.$store.dispatch('init')
+        updateTodoText: function (todo, newText) {
+          todos.doc(todo.id).update({ text: newText })
+        },
+        removeTodo: function (todo) {
+          todos.doc(todo.id).delete()
+        },
+        toggleTodos() {
+          currentTodos = currentTodos === unFinishedTodos
+            ? finishedTodos
+            : unFinishedTodos
+          this.$store.dispatch(
+            'bindRef', {
+              name: 'todos',
+              ref: currentTodos
+            }
+          )
         }
-      })
-    </script>
-  </body>
+      },
+
+      created() {
+        this.$store.dispatch('init')
+      }
+    })
+  </script>
+</body>
+
 </html>

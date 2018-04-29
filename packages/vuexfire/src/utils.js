@@ -6,6 +6,8 @@ export function createSnapshot (doc) {
 }
 
 const isObject = o => o && typeof o === 'object'
+const isTimestamp = o => o.toDate
+const isRef = o => o && o.onSnapshot
 
 export function extractRefs (doc, oldDoc, path = '', result = [{}, {}]) {
   // must be set here because walkGet can return null or undefined
@@ -17,15 +19,17 @@ export function extractRefs (doc, oldDoc, path = '', result = [{}, {}]) {
   return Object.keys(doc).reduce((tot, key) => {
     const ref = doc[key]
     // if it's a ref
-    if (ref && typeof ref.isEqual === 'function') {
+    if (isRef(ref)) {
       tot[0][key] = oldDoc[key] || ref.path
       tot[1][path + key] = ref
     } else if (Array.isArray(ref)) {
       tot[0][key] = Array(ref.length).fill(null)
       extractRefs(ref, oldDoc[key], path + key + '.', [tot[0][key], tot[1]])
     } else if (
-      ref instanceof Date ||
       ref == null ||
+      // Firestore < 4.13
+      ref instanceof Date ||
+      isTimestamp(ref) ||
       (ref.longitude && ref.latitude) // GeoPoint
     ) {
       tot[0][key] = ref

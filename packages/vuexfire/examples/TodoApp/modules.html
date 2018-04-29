@@ -1,36 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>VuexFire Todo App Demo</title>
-    <script src="https://www.gstatic.com/firebasejs/4.6.2/firebase.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/4.6.2/firebase-firestore.js"></script>
-    <script src="https://unpkg.com/vue/dist/vue.js"></script>
-    <script src="https://unpkg.com/vuex/dist/vuex.js"></script>
-    <script src="../../dist/vuexfire.js"></script>
-  </head>
-  <body>
 
-    <div id="app">
-      <ul>
-        <li v-for="item in items" :key="item.id">
-          {{ item.text }}
-          <button @click="removeTodo(item.id)">X</button>
-        </li>
-      </ul>
-      <form @submit.prevent="addTodo">
-        <input v-model="newTodo">
-        <button>Add #{{ items.length }}</button>
-      </form>
-    </div>
+<head>
+  <meta charset="utf-8">
+  <title>VuexFire Todo App Demo</title>
+  <script src="https://www.gstatic.com/firebasejs/4.13.0/firebase.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/4.13.0/firebase-firestore.js"></script>
+  <script src="https://unpkg.com/vue/dist/vue.js"></script>
+  <script src="https://unpkg.com/vuex/dist/vuex.js"></script>
+  <script src="../../dist/vuexfire.js"></script>
+</head>
 
-    <script>
+<body>
+
+  <div id="app">
+    <ul>
+      <li v-for="item in items" :key="item.id">
+        {{ item.text }}
+        <button @click="removeTodo(item.id)">X</button>
+      </li>
+    </ul>
+    <form @submit.prevent="addTodo">
+      <input v-model="newTodo">
+      <button>Add #{{ items.length }}</button>
+    </form>
+  </div>
+
+  <script>
     /* global Vue, Vuex, firebase, VuexFire */
     firebase.initializeApp({
       projectId: 'vue-fire-store',
       databaseURL: 'https://vue-fire-store.firebaseio.com'
     })
+
     var db = firebase.firestore()
+    db.settings({ timestampsInSnapshots: true })
     var itemsRef = db.collection('vuexfireItems1')
 
     var todos = {
@@ -54,7 +58,7 @@
     window.vm = new Vue({
       el: '#app',
       store: store,
-      computed: Vuex.mapGetters([ 'items' ]),
+      computed: Vuex.mapGetters(['items']),
       data: {
         newTodo: '',
       },
@@ -73,10 +77,11 @@
         },
       },
 
-      created () {
+      created() {
         this.$store.dispatch('setItemsRef', itemsRef)
       },
     })
-    </script>
-  </body>
+  </script>
+</body>
+
 </html>

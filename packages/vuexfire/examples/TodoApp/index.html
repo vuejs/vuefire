@@ -1,46 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>VuexFire Todo App Demo</title>
-    <script src="https://www.gstatic.com/firebasejs/4.6.2/firebase.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/4.6.2/firebase-firestore.js"></script>
-    <script src="https://unpkg.com/vue/dist/vue.js"></script>
-    <script src="https://unpkg.com/vuex/dist/vuex.js"></script>
-    <script src="../../dist/vuexfire.js"></script>
-  </head>
-  <body>
 
-    <!--
+<head>
+  <meta charset="utf-8">
+  <title>VuexFire Todo App Demo</title>
+  <script src="https://www.gstatic.com/firebasejs/4.13.0/firebase.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/4.13.0/firebase-firestore.js"></script>
+  <script src="https://unpkg.com/vue/dist/vue.js"></script>
+  <script src="https://unpkg.com/vuex/dist/vuex.js"></script>
+  <script src="../../dist/vuexfire.js"></script>
+</head>
+
+<body>
+
+  <!--
       To see a live example, head to
       https://jsfiddle.net/posva/6w3ks04x/
     -->
 
-    <div id="app">
-      <ul>
-        <li v-for="item in items" :key="item.id">
-          {{ item.text }}
-          <button @click="removeTodo(item.id)">X</button>
-        </li>
-      </ul>
-      <form @submit.prevent="addTodo">
-        <input v-model="newTodo">
-        <button>Add #{{ items.length }}</button>
-      </form>
+  <div id="app">
+    <ul>
+      <li v-for="item in items" :key="item.id">
+        {{ item.text }}
+        <button @click="removeTodo(item.id)">X</button>
+      </li>
+    </ul>
+    <form @submit.prevent="addTodo">
+      <input v-model="newTodo">
+      <button>Add #{{ items.length }}</button>
+    </form>
 
-      <br/>
-      <br/>
+    <br/>
+    <br/>
 
-      <button @click="toggleSource">Toggle Source</button>
-    </div>
+    <button @click="toggleSource">Toggle Source</button>
+  </div>
 
-    <script>
+  <script>
     /* global Vue, Vuex, firebase, VuexFire */
     firebase.initializeApp({
       projectId: 'vue-fire-store',
       databaseURL: 'https://vue-fire-store.firebaseio.com'
     })
+
     var db = firebase.firestore()
+    db.settings({ timestampsInSnapshots: true })
     var itemsRef = db.collection('vuexfireItems1')
     var todosRef = db.collection('vuexfireItems2')
 
@@ -63,16 +67,16 @@
     window.vm = new Vue({
       el: '#app',
       store: store,
-      computed: Vuex.mapGetters([ 'items' ]),
+      computed: Vuex.mapGetters(['items']),
       data: {
         newTodo: '',
       },
 
       methods: {
-        removeTodo (id) {
+        removeTodo(id) {
           this.source.doc(id).delete()
         },
-        addTodo () {
+        addTodo() {
           if (this.newTodo.trim()) {
             this.source.add({
               text: this.newTodo,
@@ -80,7 +84,7 @@
             this.newTodo = ''
           }
         },
-        toggleSource () {
+        toggleSource() {
           this.source = this.source === itemsRef
             ? todosRef
             : itemsRef
@@ -88,11 +92,12 @@
         },
       },
 
-      created () {
+      created() {
         this.source = itemsRef
         this.$store.dispatch('setItemsRef', this.source)
       },
     })
-    </script>
-  </body>
+  </script>
+</body>
+
 </html>
