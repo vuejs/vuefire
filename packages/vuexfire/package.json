@@ -1,6 +1,6 @@
 {
   "name": "vuexfire",
-  "version": "3.0.0-alpha.3",
+  "version": "3.0.0-alpha.4",
   "description": "Firestore binding for Vuex",
   "main": "dist/vuexfire.cjs.js",
   "module": "dist/vuexfire.es.js",
