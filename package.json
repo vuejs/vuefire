@@ -45,7 +45,7 @@
   },
   "homepage": "https://github.com/vuejs/vuefire#readme",
   "peerDependencies": {
-    "firebase": ">=4.0.0"
+    "firebase": "^5.0.0"
   },
   "devDependencies": {
     "babel-plugin-istanbul": "^4.1.6",
