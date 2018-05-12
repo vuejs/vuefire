@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "lib": ["es2015"],
+    "lib": ["dom", "es2015"],
     "module": "commonjs",
     "strict": true,
     "noEmit": true,
@@ -10,6 +10,6 @@
       "vuefire": ["../index.d.ts"]
     }
   },
-  "files": ["../index.d.ts", "../vue.d.ts"],
+  "files": ["index.ts", "../index.d.ts", "../vue.d.ts"],
   "compileOnSave": false
 }

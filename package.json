@@ -6,9 +6,11 @@
   "module": "dist/vuefire.esm.js",
   "unpkg": "dist/vuefire.js",
   "browser": "dist/vuefire.esm.js",
-  "types": "./types/index.d.ts",
+  "types": "types/index.d.ts",
   "files": [
-    "dist/**",
+    "dist/*.js",
+    "src",
+    "types/*.d.ts",
     "LICENSE",
     "README.md"
   ],

@@ -1,4 +1,7 @@
 import * as firebase from 'firebase'
 import { PluginFunction } from 'vue'
+import './vue'
 
-export declare const install: PluginFunction<never>
+declare const Vuefire: PluginFunction<never>
+
+export default Vuefire
