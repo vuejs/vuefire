@@ -49,18 +49,18 @@
   },
   "devDependencies": {
     "babel-plugin-istanbul": "^4.1.6",
-    "babel-preset-env": "^1.6.1",
+    "babel-preset-env": "^1.7.0",
     "babel-register": "^6.26.0",
     "cz-conventional-changelog": "^2.1.0",
     "eslint": "^4.19.1",
     "eslint-plugin-html": "^4.0.3",
-    "eslint-plugin-vue-libs": "^2.1.0",
-    "firebase": "^4.12.1",
+    "eslint-plugin-vue-libs": "^3.0.0",
+    "firebase": "^5.0.2",
     "jest": "^22.4.3",
     "mkdirp": "^0.5.1",
-    "rollup": "^0.57.1",
+    "rollup": "^0.58.2",
     "rollup-plugin-buble": "^0.19.2",
-    "uglify-js": "^3.3.21",
+    "uglify-js": "^3.3.24",
     "vue": "^2.5.16"
   },
   "config": {
