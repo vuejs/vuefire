@@ -142,7 +142,7 @@ class CollectionReference extends callbacksAndErrors {
     setTimeout(() => {
       // Object.keys(this.data).map((k, i) => console.log(k, 'at', i, this.data[k].data))
       cb({
-        docChanges: Object.keys(this.data).map((id, newIndex) => ({
+        docChanges: () => Object.keys(this.data).map((id, newIndex) => ({
           type: 'added',
           doc: new DocumentSnapshot(null, new Key(id), this.data[id].data),
           newIndex,
@@ -162,7 +162,7 @@ class CollectionReference extends callbacksAndErrors {
       index: Object.keys(this.data).length
     })
     this._callCallbacks({
-      docChanges: [
+      docChanges: () => [
         {
           type: 'added',
           doc: new DocumentSnapshot(null, id, data),
@@ -194,7 +194,7 @@ class CollectionReference extends callbacksAndErrors {
     const ref = this.data[id.v]
     delete this.data[id.v]
     this._callCallbacks({
-      docChanges: [
+      docChanges: () => [
         {
           doc: new DocumentSnapshot(null, id, ref.data),
           type: 'removed'
@@ -213,7 +213,7 @@ class CollectionReference extends callbacksAndErrors {
       type = 'added'
     }
     this._callCallbacks({
-      docChanges: [
+      docChanges: () => [
         {
           type,
           doc: new DocumentSnapshot(null, id, data),
