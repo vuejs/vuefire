@@ -125,7 +125,7 @@ function bindCollection ({
     // NOTE this will only be triggered once and it will be with all the documents
     // from the query appearing as added
     // (https://firebase.google.com/docs/firestore/query-data/listen#view_changes_between_snapshots)
-    const docChanges = ref.docChanges()
+    const docChanges = typeof ref.docChanges === 'function' ? ref.docChanges() : ref.docChanges
 
     if (!isResolved && docChanges.length) {
       // isResolved is only meant to make sure we do the check only once
