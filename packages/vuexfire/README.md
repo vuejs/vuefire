@@ -62,8 +62,8 @@ import { firebaseAction } from 'vuexfire'
 const setTodosRef = firebaseAction(({ bindFirebaseRef, unbindFirebaseRef }, { ref }) => {
   // this will unbind any previously bound ref to 'todos'
   bindFirebaseRef('todos', ref)
-  // you can unbind it easily too
-  unbindFirebaseRef('todos')
+  // you can unbind any ref easily
+  unbindFirebaseRef('user')
 })
 ```
 
