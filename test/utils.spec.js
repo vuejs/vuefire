@@ -1,4 +1,4 @@
-import { createSnapshot, extractRefs } from '../src/utils'
+import { createSnapshot, extractRefs, walkSet } from '../src/utils'
 import { Key, db, _id, DocumentReference, GeoPoint, DocumentSnapshot, Timestamp } from './helpers'
 
 let id, doc, snapshot, collection, docRef
@@ -138,4 +138,12 @@ test('extracts refs from array', async () => {
     'arr.1': docRef2,
     'arr.2': docRef
   })
+})
+
+test('supports numbers as keys in objects', () => {
+  const obj = {
+    '0': 'foo'
+  }
+  expect(() => walkSet(obj, '0', 'bar')).not.toThrow()
+  expect(obj['0']).toBe('bar')
 })
