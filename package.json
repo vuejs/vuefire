@@ -1,5 +1,6 @@
 {
   "name": "vuefire",
+  "private": true,
   "version": "2.0.0-alpha.11",
   "description": "Firestore bindings for Vue.js",
   "main": "dist/vuefire.common.js",
