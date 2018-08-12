@@ -51,7 +51,7 @@ Always declare the initial properties like `todos` and `currentTodo:` in your `d
 
 ## References Normalization
 
-In Could Firestore you can reference other documents inside of documents (TODO add link). By default VueFire will automatically bind up to one nested references. TODO make sure this is the right choice.
+In Cloud Firestore you can reference other documents inside of documents (TODO add link). By default VueFire will automatically bind up to one nested references. TODO make sure this is the right choice.
 
 ## Contributing
 
