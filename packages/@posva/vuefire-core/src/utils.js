@@ -1,23 +1,23 @@
-export function createSnapshot (doc) {
+export function createSnapshot(doc) {
   // defaults everything to false, so no need to set
   return Object.defineProperty(doc.data(), 'id', {
-    value: doc.id
+    value: doc.id,
   })
 }
 
-function isObject (o) {
+function isObject(o) {
   return o && typeof o === 'object'
 }
 
-function isTimestamp (o) {
+function isTimestamp(o) {
   return o.toDate
 }
 
-function isRef (o) {
+function isRef(o) {
   return o && o.onSnapshot
 }
 
-export function extractRefs (doc, oldDoc, path = '', result = [{}, {}]) {
+export function extractRefs(doc, oldDoc, path = '', result = [{}, {}]) {
   // must be set here because walkGet can return null or undefined
   oldDoc = oldDoc || {}
   const idDescriptor = Object.getOwnPropertyDescriptor(doc, 'id')
@@ -53,7 +53,7 @@ export function extractRefs (doc, oldDoc, path = '', result = [{}, {}]) {
   }, result)
 }
 
-export function callOnceWithArg (fn, argFn) {
+export function callOnceWithArg(fn, argFn) {
   let called
   return () => {
     if (!called) {
@@ -63,17 +63,16 @@ export function callOnceWithArg (fn, argFn) {
   }
 }
 
-export function walkGet (obj, path) {
+export function walkGet(obj, path) {
   return path.split('.').reduce((target, key) => target[key], obj)
 }
 
-export function walkSet (obj, path, value) {
+export function walkSet(obj, path, value) {
   // path can be a number
   const keys = ('' + path).split('.')
   const key = keys.pop()
   const target = keys.reduce((target, key) => target[key], obj)
   // global isFinite is different from Number.isFinite
   // it converts values to numbers
-  if (isFinite(key)) target.splice(key, 1, value)
-  else target[key] = value
+  return isFinite(key) ? target.splice(key, 1, value) : (target[key] = value)
 }

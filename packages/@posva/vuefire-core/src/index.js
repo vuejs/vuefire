@@ -59,7 +59,7 @@ function subscribeToRefs({ subs, refs, target, path, data, depth, ops, resolve }
   })
 }
 
-function bindCollection({ vm, key, collection, ops, resolve, reject }, options) {
+export function bindCollection({ vm, key, collection, ops, resolve, reject }, options) {
   // TODO support pathes? nested.obj.list (walkSet)
   // NOTE use ops object
   const array = ops.set(vm, key, [])
@@ -97,11 +97,13 @@ function bindCollection({ vm, key, collection, ops, resolve, reject }, options) 
     modified: ({ oldIndex, newIndex, doc }) => {
       const subs = arraySubs.splice(oldIndex, 1)[0]
       arraySubs.splice(newIndex, 0, subs)
-      const oldData = array.splice(oldIndex, 1)[0]
+      // NOTE use ops
+      const oldData = ops.remove(array, oldIndex)[0]
+      // const oldData = array.splice(oldIndex, 1)[0]
       const snapshot = createSnapshot(doc)
       const [data, refs] = extractRefs(snapshot, oldData)
       // NOTE use ops
-      ops.modify(array, newIndex, data)
+      ops.add(array, newIndex, data)
       // array.splice(newIndex, 0, data)
       subscribeToRefs(
         {
@@ -219,7 +221,7 @@ function subscribeToDocument({ ref, target, path, depth, resolve, ops }, options
   }
 }
 
-function bindDocument({ vm, key, document, resolve, reject, ops }, options) {
+export function bindDocument({ vm, key, document, resolve, reject, ops }, options) {
   // TODO warning check if key exists?
   // const boundRefs = Object.create(null)
 
@@ -252,85 +254,4 @@ function bindDocument({ vm, key, document, resolve, reject, ops }, options) {
   }
 }
 
-function bind({ vm, key, ref, ops }, options = { maxRefDepth: 2 }) {
-  return new Promise((resolve, reject) => {
-    let unbind
-    if (ref.where) {
-      unbind = bindCollection(
-        {
-          vm,
-          key,
-          ops,
-          collection: ref,
-          resolve,
-          reject,
-        },
-        options
-      )
-    } else {
-      unbind = bindDocument(
-        {
-          vm,
-          key,
-          ops,
-          document: ref,
-          resolve,
-          reject,
-        },
-        options
-      )
-    }
-    vm._firestoreUnbinds[key] = unbind
-  })
-}
-
-function install(Vue) {
-  const strategies = Vue.config.optionMergeStrategies
-  strategies.firestore = strategies.provide
-
-  Vue.mixin({
-    created() {
-      const { firestore } = this.$options
-      this._firestoreUnbinds = Object.create(null)
-      this.$firestoreRefs = Object.create(null)
-      const refs = typeof firestore === 'function' ? firestore.call(this) : firestore
-      if (!refs) return
-      Object.keys(refs).forEach(key => {
-        this.$bind(key, refs[key])
-      })
-    },
-
-    beforeDestroy() {
-      for (const subKey in this._firestoreUnbinds) {
-        this._firestoreUnbinds[subKey]()
-      }
-      this._firestoreUnbinds = null
-      this.$firestoreRefs = null
-    },
-  })
-
-  // TODO test if $bind exist and warns
-  Vue.prototype.$bind = function(key, ref, options) {
-    if (this._firestoreUnbinds[key]) {
-      this.$unbind(key)
-    }
-    const promise = bind(
-      {
-        vm: this,
-        key,
-        ref,
-      },
-      options
-    )
-    this.$firestoreRefs[key] = ref
-    return promise
-  }
-
-  Vue.prototype.$unbind = function(key) {
-    this._firestoreUnbinds[key]()
-    delete this._firestoreUnbinds[key]
-    delete this.$firestoreRefs[key]
-  }
-}
-
-export default install
+export { walkSet }
