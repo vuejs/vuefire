@@ -25,5 +25,8 @@
   },
   "bugs": {
     "url": "https://github.com/vuejs/vuefire/issues"
+  },
+  "devDependencies": {
+    "typescript": "^3.0.1"
   }
 }

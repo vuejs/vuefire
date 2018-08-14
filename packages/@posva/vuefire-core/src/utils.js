@@ -72,7 +72,5 @@ export function walkSet(obj, path, value) {
   const keys = ('' + path).split('.')
   const key = keys.pop()
   const target = keys.reduce((target, key) => target[key], obj)
-  // global isFinite is different from Number.isFinite
-  // it converts values to numbers
-  return isFinite(key) ? target.splice(key, 1, value) : (target[key] = value)
+  return target.splice ? target.splice(key, 1, value) : (target[key] = value)
 }
