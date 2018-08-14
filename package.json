@@ -6,6 +6,6 @@
     "packages/@posva/*"
   ],
   "devDependencies": {
-    "lerna": "^2.11.0"
+    "lerna": "^3.0.4"
   }
 }
