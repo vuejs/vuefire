@@ -56,6 +56,8 @@
   },
   "homepage": "https://github.com/posva/vuexfire#readme",
   "devDependencies": {
+    "@posva/vuefire-core": "^1.0.0",
+    "@posva/vuefire-test-helpers": "^1.0.0",
     "babel-preset-env": "^1.6.1",
     "codecov": "^3.0.1",
     "eslint": "^4.19.1",
