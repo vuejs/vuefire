@@ -1,9 +1,5 @@
 import Vuefire from '../src'
-import {
-  db,
-  tick,
-  Vue
-} from './helpers'
+import { db, tick, Vue } from '@posva/vuefire-test-helpers'
 
 Vue.use(Vuefire)
 
