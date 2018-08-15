@@ -1,0 +1,29 @@
+{
+  "name": "@posva/vuefire-test-helpers",
+  "version": "1.0.0",
+  "description": "test helpers related to vue + firebase used by vuefire and vuexfire",
+  "author": "Eduardo San Martin Morote <posva13@gmail.com>",
+  "homepage": "https://github.com/vuejs/vuefire#readme",
+  "license": "MIT",
+  "main": "src/index.js",
+  "directories": {
+    "lib": "src",
+    "test": "test"
+  },
+  "files": [
+    "src"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vuejs/vuefire.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "bugs": {
+    "url": "https://github.com/vuejs/vuefire/issues"
+  }
+}
