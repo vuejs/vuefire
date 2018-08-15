@@ -221,6 +221,16 @@ function subscribeToDocument({ ref, target, path, depth, resolve, ops }, options
   }
 }
 
+/* TODO do not use an object
+ *
+ * @param {*} vm
+ * @param {string} key
+ * @param {firebase.firestore.DocumentReference} document
+ * @param {*} resolve
+ * @param {*} reject
+ * @param {OperationsType<any>} ops
+ * @param {*} options
+ */
 export function bindDocument({ vm, key, document, resolve, reject, ops }, options) {
   // TODO warning check if key exists?
   // const boundRefs = Object.create(null)

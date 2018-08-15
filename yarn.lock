@@ -2901,7 +2901,7 @@ find-up@^3.0.0:
   dependencies:
     locate-path "^3.0.0"
 
-firebase@^5.2.0:
+firebase@^5.2.0, firebase@^5.3.1:
   version "5.3.1"
   resolved "https://registry.yarnpkg.com/firebase/-/firebase-5.3.1.tgz#99df1a9b101d12cd765ef010bb015fdb0b76850b"
   dependencies:

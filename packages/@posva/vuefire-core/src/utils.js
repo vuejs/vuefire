@@ -1,3 +1,11 @@
+/**
+ * @typedef {firebase.firestore.DocumentReference | firebase.firestore.CollectionReference} Reference
+ */
+/**
+ *
+ * @param {firebase.firestore.DocumentSnapshot} doc
+ * @return {DocumentData}
+ */
 export function createSnapshot(doc) {
   // defaults everything to false, so no need to set
   return Object.defineProperty(doc.data(), 'id', {
@@ -5,19 +13,43 @@ export function createSnapshot(doc) {
   })
 }
 
+/**
+ *
+ * @param {any} o
+ * @returns {boolean}
+ */
 function isObject(o) {
   return o && typeof o === 'object'
 }
 
+/**
+ *
+ * @param {any} o
+ * should be o is Date https://github.com/Microsoft/TypeScript/issues/26297
+ * @returns {boolean}
+ */
 function isTimestamp(o) {
   return o.toDate
 }
 
+/**
+ *
+ * @param {*} o
+ * @returns {boolean}
+ */
 function isRef(o) {
   return o && o.onSnapshot
 }
 
-export function extractRefs(doc, oldDoc, path = '', result = [{}, {}]) {
+/**
+ *
+ * @param {firebase.firestore.DocumentData} doc
+ * @param {firebase.firestore.DocumentData} [oldDoc]
+ * @param {string} [path]
+ * @param {[firebase.firestore.DocumentData, Record<string, Reference>]} result
+ * @returns {[firebase.firestore.DocumentData, Record<string, Reference>]}
+ */
+export function extractRefs(doc, oldDoc = {}, path = '', result = [{}, {}]) {
   // must be set here because walkGet can return null or undefined
   oldDoc = oldDoc || {}
   const idDescriptor = Object.getOwnPropertyDescriptor(doc, 'id')
@@ -53,7 +85,15 @@ export function extractRefs(doc, oldDoc, path = '', result = [{}, {}]) {
   }, result)
 }
 
+/**
+ * @template T any
+ * @template K any
+ * @param {(arg: T) => K} fn
+ * @param {() => T} argFn
+ * @returns {() => K | undefined}
+ */
 export function callOnceWithArg(fn, argFn) {
+  /** @type {boolean | undefined} */
   let called
   return () => {
     if (!called) {
@@ -63,10 +103,23 @@ export function callOnceWithArg(fn, argFn) {
   }
 }
 
+/**
+ *
+ * @param {Record<string, any>} obj
+ * @param {string} path
+ * @returns {any}
+ */
 export function walkGet(obj, path) {
   return path.split('.').reduce((target, key) => target[key], obj)
 }
 
+/**
+ *
+ * @param {Record<string, any>} obj
+ * @param {string} path
+ * @param {any} value
+ * @returns
+ */
 export function walkSet(obj, path, value) {
   // path can be a number
   const keys = ('' + path).split('.')
