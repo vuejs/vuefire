@@ -80,4 +80,13 @@ describe('documents', () => {
     ).rejects.toThrow()
     document.onSnapshot.mockRestore()
   })
+
+  it('resolves when the document is set', async () => {
+    await document.update({ foo: 'foo' })
+    const promise = new Promise((resolve, reject) => {
+      bindDocument({ vm, document, key: 'item', resolve, reject, ops })
+    })
+    await promise
+    expect(vm.item).toEqual({ foo: 'foo' })
+  })
 })

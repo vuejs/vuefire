@@ -115,4 +115,14 @@ describe('collections', () => {
     ).rejects.toThrow()
     collection.onSnapshot.mockRestore()
   })
+
+  it('resolves when the collection is populated', async () => {
+    await collection.add({ foo: 'foo' })
+    await collection.add({ foo: 'foo' })
+    const promise = new Promise((resolve, reject) => {
+      bindCollection({ vm, collection, key: 'items', resolve, reject, ops })
+    })
+    await promise
+    expect(vm.items).toEqual([{ foo: 'foo' }, { foo: 'foo' }])
+  })
 })

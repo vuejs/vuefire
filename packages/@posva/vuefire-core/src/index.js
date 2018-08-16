@@ -59,7 +59,10 @@ function subscribeToRefs({ subs, refs, target, path, data, depth, ops, resolve }
   })
 }
 
-export function bindCollection({ vm, key, collection, ops, resolve, reject }, options) {
+export function bindCollection(
+  { vm, key, collection, ops, resolve, reject },
+  options = { maxRefDepth: 2 }
+) {
   // TODO support pathes? nested.obj.list (walkSet)
   // NOTE use ops object
   const array = ops.set(vm, key, [])
@@ -170,7 +173,7 @@ export function bindCollection({ vm, key, collection, ops, resolve, reject }, op
 
 function updateDataFromDocumentSnapshot(
   { snapshot, target, path, subs, ops, depth = 0, resolve },
-  options
+  options = { maxRefDepth: 2 }
 ) {
   const [data, refs] = extractRefs(snapshot, walkGet(target, path))
   // NOTE use ops
