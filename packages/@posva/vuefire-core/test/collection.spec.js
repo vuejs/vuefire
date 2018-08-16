@@ -1,5 +1,5 @@
 import { bindCollection, walkSet } from '../src'
-import { db, createOps } from '@posva/vuefire-test-helpers'
+import { db, createOps, spyUnbind } from '@posva/vuefire-test-helpers'
 
 describe('collections', () => {
   let collection, vm, resolve, reject, ops
@@ -79,5 +79,26 @@ describe('collections', () => {
         value: `u${i}`,
       })
     })
+  })
+
+  it('manually unbinds a collection', async () => {
+    collection = db.collection()
+    await collection.add({ text: 'foo' })
+    const unbindSpy = spyUnbind(collection)
+    let unbind
+    await new Promise((resolve, reject) => {
+      unbind = bindCollection({ vm, collection, key: 'items', resolve, reject, ops })
+    })
+
+    expect(unbindSpy).not.toHaveBeenCalled()
+    expect(vm.items).toEqual([{ text: 'foo' }])
+    unbind()
+    expect(unbindSpy).toHaveBeenCalled()
+
+    // reset data manually
+    await collection.add({ text: 'bar' })
+    // still old version
+    expect(vm.items).toEqual([{ text: 'foo' }])
+    unbindSpy.mockRestore()
   })
 })
