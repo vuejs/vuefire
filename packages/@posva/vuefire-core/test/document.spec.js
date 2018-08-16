@@ -66,4 +66,18 @@ describe('documents', () => {
     expect(vm.item).toEqual(null)
     unbindSpy.mockRestore()
   })
+
+  it('rejects when errors', async () => {
+    const fakeOnSnapshot = (_, fail) => {
+      fail(new Error('nope'))
+    }
+    document = collection.doc()
+    document.onSnapshot = jest.fn(fakeOnSnapshot)
+    await expect(
+      new Promise((resolve, reject) => {
+        bindDocument({ vm, document, key: 'item', resolve, reject, ops })
+      })
+    ).rejects.toThrow()
+    document.onSnapshot.mockRestore()
+  })
 })

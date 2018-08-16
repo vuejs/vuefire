@@ -101,4 +101,18 @@ describe('collections', () => {
     expect(vm.items).toEqual([{ text: 'foo' }])
     unbindSpy.mockRestore()
   })
+
+  it('rejects when errors', async () => {
+    const fakeOnSnapshot = (_, fail) => {
+      fail(new Error('nope'))
+    }
+    collection = db.collection()
+    collection.onSnapshot = jest.fn(fakeOnSnapshot)
+    await expect(
+      new Promise((resolve, reject) => {
+        bindCollection({ vm, collection, key: 'items', resolve, reject, ops })
+      })
+    ).rejects.toThrow()
+    collection.onSnapshot.mockRestore()
+  })
 })
