@@ -1,10 +1,5 @@
 import Vuefire from '../src'
-import {
-  db,
-  tick,
-  delayUpdate,
-  Vue
-} from './helpers'
+import { db, tick, delayUpdate, Vue } from './helpers'
 
 Vue.use(Vuefire)
 
@@ -42,34 +37,6 @@ test('manually binds a document', async () => {
 test('returs a promise', () => {
   expect(vm.$bind('items', collection) instanceof Promise).toBe(true)
   expect(vm.$bind('item', document) instanceof Promise).toBe(true)
-})
-
-test('waits for the data to be set when binding a collection', async () => {
-  collection.add({ foo: 'foo' })
-  const promise = vm.$bind('items', collection)
-  expect(vm.items).toEqual([])
-  await promise
-  expect(vm.items).toEqual([{ foo: 'foo' }])
-})
-
-test('waits for the data to be set when binding a document', async () => {
-  document.update({ foo: 'foo' })
-  const promise = vm.$bind('item', document)
-  expect(vm.item).toEqual(null)
-  await promise
-  expect(vm.item).toEqual({ foo: 'foo' })
-})
-
-test('rejects the promise when errors', async () => {
-  const fakeOnSnapshot = (_, fail) => {
-    fail(new Error('nope'))
-  }
-  document.onSnapshot = jest.fn(fakeOnSnapshot)
-  collection.onSnapshot = jest.fn(fakeOnSnapshot)
-  await expect(vm.$bind('items', collection)).rejects.toThrow()
-  await expect(vm.$bind('item', document)).rejects.toThrow()
-  document.onSnapshot.mockRestore()
-  collection.onSnapshot.mockRestore()
 })
 
 test('unbinds previously bound refs', async () => {
@@ -129,10 +96,7 @@ test('waits for all refs in collection', async () => {
 
   await vm.$bind('items', collection)
 
-  expect(vm.items).toEqual([
-    { a: null },
-    { b: null }
-  ])
+  expect(vm.items).toEqual([{ a: null }, { b: null }])
 })
 
 test('waits for nested refs in document', async () => {
@@ -183,10 +147,7 @@ test('waits for nested refs in collections', async () => {
 
   await vm.$bind('items', collection)
 
-  expect(vm.items).toEqual([
-    { a: null },
-    { b: { c: null }}
-  ])
+  expect(vm.items).toEqual([{ a: null }, { b: { c: null }}])
 })
 
 test('waits for nested refs with data in collections', async () => {
@@ -203,8 +164,5 @@ test('waits for nested refs with data in collections', async () => {
 
   await vm.$bind('items', collection)
 
-  expect(vm.items).toEqual([
-    { a: { isA: true }},
-    { b: { c: { isC: true }}}
-  ])
+  expect(vm.items).toEqual([{ a: { isA: true }}, { b: { c: { isC: true }}}])
 })
