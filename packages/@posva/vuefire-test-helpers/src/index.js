@@ -6,16 +6,16 @@ export { Vue }
 export * from './mock'
 
 export function spyUnbind(ref) {
-  const spy = jest.fn()
+  const unbindSpy = jest.fn()
   const onSnapshot = ref.onSnapshot.bind(ref)
   ref.onSnapshot = fn => {
     const unbind = onSnapshot(fn)
     return () => {
-      spy()
+      unbindSpy()
       unbind()
     }
   }
-  return spy
+  return unbindSpy
 }
 
 export function spyOnSnapshot(ref) {
@@ -53,3 +53,9 @@ export function tick() {
 export function delay(time) {
   return new Promise(resolve => setTimeout(resolve, time))
 }
+
+export const createOps = walkSet => ({
+  add: jest.fn((array, index, data) => array.splice(index, 0, data)),
+  set: jest.fn(walkSet),
+  remove: jest.fn((array, index) => array.splice(index, 1)),
+})

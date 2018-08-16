@@ -1,16 +1,12 @@
 import { bindDocument, walkSet } from '../src'
-import { db, tick, Vue } from '@posva/vuefire-test-helpers'
+import { db, spyUnbind, createOps } from '@posva/vuefire-test-helpers'
 
 describe('documents', () => {
   let collection, document, vm, resolve, reject, ops
   beforeEach(async () => {
-    ops = {
-      add: jest.fn(),
-      set: jest.fn(walkSet),
-      remove: jest.fn(),
-    }
     collection = db.collection()
     document = collection.doc()
+    ops = createOps(walkSet)
     vm = {}
     await new Promise((res, rej) => {
       resolve = jest.fn(res)
@@ -48,5 +44,26 @@ describe('documents', () => {
       writable: false,
       value: 'some-id',
     })
+  })
+
+  it('manually unbinds a document', async () => {
+    document = collection.doc()
+    await document.update({ foo: 'foo' })
+    const unbindSpy = spyUnbind(document)
+    let unbind
+    await new Promise((resolve, reject) => {
+      unbind = bindDocument({ vm, document, key: 'item', resolve, reject, ops })
+    })
+
+    expect(unbindSpy).not.toHaveBeenCalled()
+    expect(vm.item).toEqual({ foo: 'foo' })
+    unbind()
+    expect(unbindSpy).toHaveBeenCalled()
+
+    // reset data manually
+    vm.item = null
+    await document.update({ foo: 'foo' })
+    expect(vm.item).toEqual(null)
+    unbindSpy.mockRestore()
   })
 })
