@@ -30,6 +30,7 @@
   },
   "devDependencies": {
     "@posva/vuefire-test-helpers": "^1.0.0",
+    "@types/jest": "^23.3.1",
     "firebase": "^5.3.1",
     "jest": "^23.5.0",
     "typescript": "^3.0.1"
