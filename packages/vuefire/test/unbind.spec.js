@@ -1,9 +1,5 @@
 import Vuefire from '../src'
-import {
-  db,
-  tick,
-  Vue
-} from './helpers'
+import { db, tick, Vue } from './helpers'
 
 Vue.use(Vuefire)
 
@@ -26,7 +22,7 @@ beforeEach(async () => {
   await tick()
 })
 
-test('manually unbinds a collection', async () => {
+test.skip('manually unbinds a collection', async () => {
   const spy = jest.spyOn(vm._firestoreUnbinds, 'items')
   vm.$unbind('items')
   expect(spy).toHaveBeenCalled()
@@ -38,7 +34,7 @@ test('manually unbinds a collection', async () => {
   spy.mockRestore()
 })
 
-test('manually unbinds a document', async () => {
+test.skip('manually unbinds a document', async () => {
   const spy = jest.spyOn(vm._firestoreUnbinds, 'item')
   vm.$unbind('item')
   expect(spy).toHaveBeenCalled()

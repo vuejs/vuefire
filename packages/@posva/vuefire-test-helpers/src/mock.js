@@ -193,12 +193,15 @@ class CollectionReference extends CallbacksAndErrors {
 
   async _remove(id) {
     const ref = this.data[id.v]
+    // not super reliant to emit a valid oldIndex
+    const oldIndex = Object.keys(this.data).indexOf(id.v)
     delete this.data[id.v]
     this._callCallbacks({
       docChanges: () => [
         {
           doc: new DocumentSnapshot(null, id, ref.data),
           type: 'removed',
+          oldIndex,
         },
       ],
     })
