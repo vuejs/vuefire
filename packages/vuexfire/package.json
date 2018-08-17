@@ -20,9 +20,8 @@
     "test:unit": "ava",
     "test:coverage": "nyc npm run test:unit",
     "dev:test": "npm run test:unit -- --watch",
-    "prepublishOnly": "npm run build",
-    "build": "node --eval 'require(\"@posva/vuefire-bundler\")(\"Vuexfire\")'",
-    "release": "release-it pre --preReleaseId=alpha --npm.tag=next --github.preRelease"
+    "postversion": "npm run build",
+    "build": "node --eval 'require(\"@posva/vuefire-bundler\")(\"Vuexfire\")'"
   },
   "repository": {
     "type": "git",
