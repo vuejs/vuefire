@@ -5,7 +5,7 @@ const uglify = require('uglify-js')
 const mkdirp = require('mkdirp')
 const { logError, write } = require('./utils')
 
-const { pwd } = require('shelljs')
+const { pwd, rm } = require('shelljs')
 const { join } = require('path')
 
 const cwd = pwd().toString()
@@ -16,6 +16,7 @@ const authorName = author.name
 
 // Make sure dist dir exists
 const distFolder = join(cwd, 'dist')
+rm('-rf', distFolder)
 mkdirp(distFolder)
 
 const bundleOptions = {
