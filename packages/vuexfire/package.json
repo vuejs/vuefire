@@ -2,15 +2,15 @@
   "name": "vuexfire",
   "version": "3.0.0-alpha.5",
   "description": "Firestore binding for Vuex",
-  "main": "dist/vuexfire.cjs.js",
-  "module": "dist/vuexfire.es.js",
+  "main": "dist/vuexfire.common.js",
+  "module": "dist/vuexfire.esm.js",
   "unpkg": "dist/vuexfire.js",
   "browser": "dist/vuexfire.es.js",
+  "sideEffects": false,
   "files": [
     "src",
     "dist",
-    "LICENSE",
-    "README.md"
+    "LICENSE"
   ],
   "scripts": {
     "lint": "eslint --color --ext=js,html src test examples build",
