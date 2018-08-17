@@ -12,6 +12,9 @@
   "files": [
     "src"
   ],
+  "scripts": {
+    "lint": "eslint --fix src"
+  },
   "publishConfig": {
     "access": "public"
   },
@@ -27,9 +30,11 @@
     "rollup": "^0.64.1",
     "rollup-plugin-buble": "^0.19.2",
     "rollup-plugin-node-resolve": "^3.3.0",
-    "shelljs": "^0.8.2"
+    "shelljs": "^0.8.2",
+    "uglify-js": "^3.4.7"
   },
   "devDependencies": {
-    "eslint": "^5.3.0"
+    "eslint": "^5.3.0",
+    "eslint-plugin-vue-libs": "^3.0.0"
   }
 }
