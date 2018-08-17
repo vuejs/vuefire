@@ -23,6 +23,7 @@
     "prebuild": "rimraf dist",
     "prepublishOnly": "npm run build",
     "build": "rollit",
+    "bundle": "node --eval 'require(\"@posva/vuefire-bundler\")(\"Vuexfire\")'",
     "release": "release-it pre --preReleaseId=alpha --npm.tag=next --github.preRelease"
   },
   "repository": {
@@ -56,6 +57,7 @@
   },
   "homepage": "https://github.com/posva/vuexfire#readme",
   "devDependencies": {
+    "@posva/vuefire-bundler": "^1.0.0",
     "@posva/vuefire-core": "^1.0.0",
     "@posva/vuefire-test-helpers": "^1.0.0",
     "babel-preset-env": "^1.6.1",
