@@ -1,4 +1,6 @@
 {
   "extends": ["plugin:vue-libs/recommended"],
-  "plugins": ["jest"]
+  "env": {
+    "jest": true
+  }
 }
