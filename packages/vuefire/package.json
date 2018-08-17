@@ -59,11 +59,6 @@
     "jest": "^23.5.0",
     "typescript": "^3.0.1"
   },
-  "config": {
-    "commitizen": {
-      "path": "./node_modules/cz-conventional-changelog"
-    }
-  },
   "jest": {
     "collectCoverage": true,
     "collectCoverageFrom": [
