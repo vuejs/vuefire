@@ -9,7 +9,7 @@
   "types": "types/index.d.ts",
   "sideEffects": false,
   "files": [
-    "dist/*.js",
+    "dist",
     "src",
     "types/*.d.ts",
     "LICENSE"
