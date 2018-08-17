@@ -1,6 +1,6 @@
 {
   "name": "vuexfire",
-  "version": "3.0.0-alpha.6",
+  "version": "3.0.0-alpha.7",
   "description": "Firestore binding for Vuex",
   "main": "dist/vuexfire.cjs.js",
   "module": "dist/vuexfire.es.js",
@@ -54,8 +54,8 @@
   },
   "homepage": "https://github.com/vuejs/vuefire#readme",
   "devDependencies": {
-    "@posva/vuefire-bundler": "^1.1.0",
-    "@posva/vuefire-test-helpers": "^1.0.1",
+    "@posva/vuefire-bundler": "^1.1.1",
+    "@posva/vuefire-test-helpers": "^1.0.2",
     "babel-preset-env": "^1.7.0",
     "codecov": "^3.0.1",
     "eslint": "^5.3.0",
@@ -63,6 +63,7 @@
     "vuex": "^3.0.1"
   },
   "dependencies": {
-    "@posva/vuefire-core": "^1.0.1"
-  }
+    "@posva/vuefire-core": "^1.0.2"
+  },
+  "gitHead": "e3e2df3624572cec86ed861f2472df4d143f2265"
 }

@@ -1,6 +1,6 @@
 {
   "name": "@posva/vuefire-bundler",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "wrapper around rollup to bundle vuefire and vuexfire",
   "author": "Eduardo San Martin Morote <posva13@gmail.com>",
   "homepage": "https://github.com/vuejs/vuefire#readme",
@@ -36,5 +36,6 @@
   "devDependencies": {
     "eslint": "^5.3.0",
     "eslint-plugin-vue-libs": "^3.0.0"
-  }
+  },
+  "gitHead": "e3e2df3624572cec86ed861f2472df4d143f2265"
 }
