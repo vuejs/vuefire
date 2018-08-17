@@ -1,0 +1,35 @@
+{
+  "name": "@posva/vuefire-bundler",
+  "version": "1.0.0",
+  "description": "wrapper around rollup to bundle vuefire and vuexfire",
+  "author": "Eduardo San Martin Morote <posva13@gmail.com>",
+  "homepage": "https://github.com/vuejs/vuefire#readme",
+  "license": "MIT",
+  "main": "src/index.js",
+  "directories": {
+    "lib": "src"
+  },
+  "files": [
+    "src"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vuejs/vuefire.git"
+  },
+  "bugs": {
+    "url": "https://github.com/vuejs/vuefire/issues"
+  },
+  "dependencies": {
+    "mkdirp": "^0.5.1",
+    "rollup": "^0.64.1",
+    "rollup-plugin-buble": "^0.19.2",
+    "rollup-plugin-node-resolve": "^3.3.0",
+    "shelljs": "^0.8.2"
+  },
+  "devDependencies": {
+    "eslint": "^5.3.0"
+  }
+}
