@@ -13,5 +13,9 @@
   "devDependencies": {
     "cz-conventional-changelog": "^2.1.0",
     "lerna": "^3.0.4"
+  },
+  "scripts": {
+    "prerelease": "lerna version -m 'chore(release): publish'",
+    "release": "lerna publish from-git --npm-tag next"
   }
 }

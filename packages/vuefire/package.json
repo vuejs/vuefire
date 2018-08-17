@@ -22,8 +22,7 @@
     "types": "tsc -p ./types/test/tsconfig.json",
     "unit": "jest",
     "dev": "npm run unit -- --watchAll",
-    "postversion": "npm run build",
-    "release": "release-it pre --preReleaseId=alpha --npm.tag=next --github.preRelease"
+    "postversion": "npm run build"
   },
   "repository": {
     "type": "git",
