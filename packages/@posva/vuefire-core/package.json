@@ -21,8 +21,10 @@
     "url": "git+https://github.com/vuejs/vuefire.git"
   },
   "scripts": {
-    "test": "echo \"Error: run tests from root\" && exit 1",
+    "pretest": "npm run lint",
+    "test": "npm run unit",
     "unit": "jest",
+    "lint": "eslint --fix --ext=js,html src test",
     "dev": "npm run unit -- --watchAll"
   },
   "bugs": {
@@ -31,6 +33,9 @@
   "devDependencies": {
     "@posva/vuefire-test-helpers": "^1.0.0",
     "@types/jest": "^23.3.1",
+    "eslint": "^5.3.0",
+    "eslint-plugin-jest": "^21.21.0",
+    "eslint-plugin-vue-libs": "^3.0.0",
     "firebase": "^5.3.1",
     "jest": "^23.5.0",
     "typescript": "^3.0.1"
