@@ -2,8 +2,8 @@
   "name": "vuexfire",
   "version": "3.0.0-alpha.5",
   "description": "Firestore binding for Vuex",
-  "main": "dist/vuexfire.common.js",
-  "module": "dist/vuexfire.esm.js",
+  "main": "dist/vuexfire.cjs.js",
+  "module": "dist/vuexfire.es.js",
   "unpkg": "dist/vuexfire.js",
   "browser": "dist/vuexfire.es.js",
   "sideEffects": false,
@@ -13,7 +13,7 @@
     "LICENSE"
   ],
   "scripts": {
-    "lint": "eslint --color --ext=js,html src test examples build",
+    "lint": "eslint --color --ext=js,html src test examples",
     "test": "npm run lint && npm run build",
     "coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
     "dev": "npm-watch",
@@ -22,8 +22,7 @@
     "dev:test": "npm run test:unit -- --watch",
     "prebuild": "rimraf dist",
     "prepublishOnly": "npm run build",
-    "build": "rollit",
-    "bundle": "node --eval 'require(\"@posva/vuefire-bundler\")(\"Vuexfire\")'",
+    "build": "node --eval 'require(\"@posva/vuefire-bundler\")(\"Vuexfire\")'",
     "release": "release-it pre --preReleaseId=alpha --npm.tag=next --github.preRelease"
   },
   "repository": {
