@@ -5,3 +5,4 @@ coverage
 dist
 lerna-debug.log
 yarn-error.log
+packages/*/*.tgz
