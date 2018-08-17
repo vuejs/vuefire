@@ -33,7 +33,7 @@ jobs:
     <<: *defaults
     steps:
       - attach_workspace:
-          at: ~/project/vuefire
+          at: ~/project/vuefire/vuefire
       - run: pwd
       - run: ls
       - run: cd packages/@posva/vuefire-core
