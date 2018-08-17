@@ -27,7 +27,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/posva/vuexfire.git"
+    "url": "git+https://github.com/vuejs/vuefire.git"
   },
   "keywords": [
     "vuex",
@@ -47,14 +47,13 @@
     "firebase": ">= 4.0.0"
   },
   "author": {
-    "name": "Eduardo San Martin Morote",
-    "email": "posva13@gmail.com"
+    "name": "Eduardo San Martin Morote"
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/posva/vuexfire/issues"
+    "url": "https://github.com/vuejs/vuefire/issues"
   },
-  "homepage": "https://github.com/posva/vuexfire#readme",
+  "homepage": "https://github.com/vuejs/vuefire#readme",
   "devDependencies": {
     "@posva/vuefire-bundler": "^1.0.0",
     "@posva/vuefire-core": "^1.0.0",
