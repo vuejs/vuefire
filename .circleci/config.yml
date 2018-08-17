@@ -34,7 +34,10 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/project/vuefire
+      - run: pwd
+      - run: ls
       - run: cd packages/@posva/vuefire-core
+      - run: pwd
       - run: npm test
 
   vuefire:
@@ -53,6 +56,6 @@ workflows:
       - vuefire-core:
           requires:
             - install
-      - vuefire:
-          requires:
-            - install
+      # - vuefire:
+      #     requires:
+      #       - install
