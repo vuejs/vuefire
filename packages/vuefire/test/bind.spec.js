@@ -1,5 +1,5 @@
 import Vuefire from '../src'
-import { db, tick, delayUpdate, Vue } from './helpers'
+import { db, tick, delayUpdate, Vue } from '@posva/vuefire-test-helpers'
 
 Vue.use(Vuefire)
 

@@ -1,8 +1,5 @@
 import Vuefire from '../src'
-import {
-  db,
-  Vue
-} from './helpers'
+import { db, Vue } from '@posva/vuefire-test-helpers'
 
 Vue.use(Vuefire)
 
@@ -65,7 +62,7 @@ test('should merge two functions', () => {
 })
 
 test('ignores no return', () => {
-  const spy = Vue.config.errorHandler = jest.fn()
+  const spy = (Vue.config.errorHandler = jest.fn())
   new Vue({
     firestore: _ => {}
   })
