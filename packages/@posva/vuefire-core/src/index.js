@@ -1,6 +1,6 @@
 import { createSnapshot, extractRefs, callOnceWithArg, walkGet, walkSet } from './utils'
 
-function unsubscribeAll(subs) {
+function unsubscribeAll (subs) {
   for (const sub in subs) {
     subs[sub].unsub()
   }
@@ -9,7 +9,7 @@ function unsubscribeAll(subs) {
 // NOTE not convinced by the naming of subscribeToRefs and subscribeToDocument
 // first one is calling the other on every ref and subscribeToDocument may call
 // updateDataFromDocumentSnapshot which may call subscribeToRefs as well
-function subscribeToRefs({ subs, refs, target, path, data, depth, ops, resolve }, options) {
+function subscribeToRefs ({ subs, refs, target, path, data, depth, ops, resolve }, options) {
   const refKeys = Object.keys(refs)
   const missingKeys = Object.keys(subs).filter(refKey => refKeys.indexOf(refKey) < 0)
   // unbind keys that are no longer there
@@ -22,7 +22,7 @@ function subscribeToRefs({ subs, refs, target, path, data, depth, ops, resolve }
   let resolvedCount = 0
   const totalToResolve = refKeys.length
   const validResolves = Object.create(null)
-  function deepResolve(key) {
+  function deepResolve (key) {
     if (key in validResolves) {
       if (++resolvedCount >= totalToResolve) resolve(path)
     }
@@ -50,16 +50,16 @@ function subscribeToRefs({ subs, refs, target, path, data, depth, ops, resolve }
           path: docPath,
           depth,
           ops,
-          resolve: deepResolve.bind(null, docPath),
+          resolve: deepResolve.bind(null, docPath)
         },
         options
       ),
-      path: ref.path,
+      path: ref.path
     }
   })
 }
 
-export function bindCollection(
+export function bindCollection (
   { vm, key, collection, ops, resolve, reject },
   options = { maxRefDepth: 2 }
 ) {
@@ -92,7 +92,7 @@ export function bindCollection(
           path: newIndex,
           depth: 0,
           ops,
-          resolve: resolve.bind(null, doc),
+          resolve: resolve.bind(null, doc)
         },
         options
       )
@@ -117,7 +117,7 @@ export function bindCollection(
           target: array,
           path: newIndex,
           depth: 0,
-          resolve,
+          resolve
         },
         options
       )
@@ -127,7 +127,7 @@ export function bindCollection(
       ops.remove(array, oldIndex)
       // array.splice(oldIndex, 1)
       unsubscribeAll(arraySubs.splice(oldIndex, 1)[0])
-    },
+    }
   }
 
   const unbind = collection.onSnapshot(ref => {
@@ -171,7 +171,7 @@ export function bindCollection(
   }
 }
 
-function updateDataFromDocumentSnapshot(
+function updateDataFromDocumentSnapshot (
   { snapshot, target, path, subs, ops, depth = 0, resolve },
   options = { maxRefDepth: 2 }
 ) {
@@ -188,13 +188,13 @@ function updateDataFromDocumentSnapshot(
       path,
       ops,
       depth,
-      resolve,
+      resolve
     },
     options
   )
 }
 
-function subscribeToDocument({ ref, target, path, depth, resolve, ops }, options) {
+function subscribeToDocument ({ ref, target, path, depth, resolve, ops }, options) {
   const subs = Object.create(null)
   const unbind = ref.onSnapshot(doc => {
     if (doc.exists) {
@@ -206,7 +206,7 @@ function subscribeToDocument({ ref, target, path, depth, resolve, ops }, options
           ops,
           subs,
           depth,
-          resolve,
+          resolve
         },
         options
       )
@@ -234,7 +234,7 @@ function subscribeToDocument({ ref, target, path, depth, resolve, ops }, options
  * @param {OperationsType<any>} ops
  * @param {*} options
  */
-export function bindDocument({ vm, key, document, resolve, reject, ops }, options) {
+export function bindDocument ({ vm, key, document, resolve, reject, ops }, options) {
   // TODO warning check if key exists?
   // const boundRefs = Object.create(null)
 
@@ -252,7 +252,7 @@ export function bindDocument({ vm, key, document, resolve, reject, ops }, option
           path: key,
           subs,
           ops,
-          resolve,
+          resolve
         },
         options
       )

@@ -6,10 +6,10 @@
  * @param {firebase.firestore.DocumentSnapshot} doc
  * @return {DocumentData}
  */
-export function createSnapshot(doc) {
+export function createSnapshot (doc) {
   // defaults everything to false, so no need to set
   return Object.defineProperty(doc.data(), 'id', {
-    value: doc.id,
+    value: doc.id
   })
 }
 
@@ -18,7 +18,7 @@ export function createSnapshot(doc) {
  * @param {any} o
  * @returns {boolean}
  */
-function isObject(o) {
+function isObject (o) {
   return o && typeof o === 'object'
 }
 
@@ -28,7 +28,7 @@ function isObject(o) {
  * should be o is Date https://github.com/Microsoft/TypeScript/issues/26297
  * @returns {boolean}
  */
-function isTimestamp(o) {
+function isTimestamp (o) {
   return o.toDate
 }
 
@@ -37,7 +37,7 @@ function isTimestamp(o) {
  * @param {*} o
  * @returns {boolean}
  */
-function isRef(o) {
+function isRef (o) {
   return o && o.onSnapshot
 }
 
@@ -49,7 +49,7 @@ function isRef(o) {
  * @param {[firebase.firestore.DocumentData, Record<string, Reference>]} result
  * @returns {[firebase.firestore.DocumentData, Record<string, Reference>]}
  */
-export function extractRefs(doc, oldDoc = {}, path = '', result = [{}, {}]) {
+export function extractRefs (doc, oldDoc = {}, path = '', result = [{}, {}]) {
   // must be set here because walkGet can return null or undefined
   oldDoc = oldDoc || {}
   const idDescriptor = Object.getOwnPropertyDescriptor(doc, 'id')
@@ -92,7 +92,7 @@ export function extractRefs(doc, oldDoc = {}, path = '', result = [{}, {}]) {
  * @param {() => T} argFn
  * @returns {() => K | undefined}
  */
-export function callOnceWithArg(fn, argFn) {
+export function callOnceWithArg (fn, argFn) {
   /** @type {boolean | undefined} */
   let called
   return () => {
@@ -109,7 +109,7 @@ export function callOnceWithArg(fn, argFn) {
  * @param {string} path
  * @returns {any}
  */
-export function walkGet(obj, path) {
+export function walkGet (obj, path) {
   return path.split('.').reduce((target, key) => target[key], obj)
 }
 
@@ -120,7 +120,7 @@ export function walkGet(obj, path) {
  * @param {any} value
  * @returns
  */
-export function walkSet(obj, path, value) {
+export function walkSet (obj, path, value) {
   // path can be a number
   const keys = ('' + path).split('.')
   const key = keys.pop()

@@ -42,7 +42,7 @@ describe('documents', () => {
       configurable: false,
       enumerable: false,
       writable: false,
-      value: 'some-id',
+      value: 'some-id'
     })
   })
 

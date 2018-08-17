@@ -76,7 +76,7 @@ describe('collections', () => {
         configurable: false,
         enumerable: false,
         writable: false,
-        value: `u${i}`,
+        value: `u${i}`
       })
     })
   })

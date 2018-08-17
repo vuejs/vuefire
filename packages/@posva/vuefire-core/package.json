@@ -24,7 +24,7 @@
     "pretest": "npm run lint",
     "test": "npm run unit",
     "unit": "jest",
-    "lint": "eslint --fix --ext=js,html src test",
+    "lint": "eslint --fix src test",
     "dev": "npm run unit -- --watchAll"
   },
   "bugs": {
