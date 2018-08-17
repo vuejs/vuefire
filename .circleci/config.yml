@@ -41,8 +41,7 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/project/vuefire
-      - run: cd packages/vuefire
-      - run: npm test
+      - run: cd vuefire/packages/vuefire && npm test
 
 workflows:
   version: 2
@@ -52,6 +51,6 @@ workflows:
       - vuefire-core:
           requires:
             - install
-      # - vuefire:
-      #     requires:
-      #       - install
+      - vuefire:
+          requires:
+            - install
