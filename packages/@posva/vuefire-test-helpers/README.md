@@ -1,11 +1,7 @@
 # `@posva/vuefire-test-helpers`
 
-> TODO: description
+> helpers used for tests in packages of vuefire repo
 
-## Usage
+## License
 
-```
-const vuefireTestHelpers = require('@posva/vuefire-test-helpers');
-
-// TODO: DEMONSTRATE API
-```
+[MIT](http://opensource.org/licenses/MIT)
