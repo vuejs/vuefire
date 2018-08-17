@@ -2,6 +2,8 @@
 
 > Vue.js 1 & 2 binding for Firebase 2 & >=3
 
+**If you are looking for the version supporting Cloud Firestore, check [the firestore branch](https://github.com/vuejs/vuefire/tree/firestore)**
+
 ## Installation
 
 1. If included as global `<script>`: will install automatically if global `Vue` is present.
