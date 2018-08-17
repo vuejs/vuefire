@@ -1,6 +1,6 @@
 {
   "name": "vuefire",
-  "version": "2.0.0-alpha.11",
+  "version": "2.0.0-alpha.12",
   "description": "Firestore bindings for Vue.js",
   "main": "dist/vuefire.common.js",
   "module": "dist/vuefire.esm.js",
@@ -52,8 +52,8 @@
     "firebase": ">=4.0.0"
   },
   "devDependencies": {
-    "@posva/vuefire-bundler": "^1.0.0",
-    "@posva/vuefire-test-helpers": "^1.0.0",
+    "@posva/vuefire-bundler": "^1.1.0",
+    "@posva/vuefire-test-helpers": "^1.0.1",
     "babel-preset-env": "^1.7.0",
     "eslint": "^5.3.0",
     "eslint-plugin-vue-libs": "^3.0.0",
@@ -67,6 +67,6 @@
     ]
   },
   "dependencies": {
-    "@posva/vuefire-core": "^1.0.0"
+    "@posva/vuefire-core": "^1.0.1"
   }
 }
