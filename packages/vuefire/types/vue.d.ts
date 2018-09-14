@@ -27,7 +27,7 @@ declare module 'vue/types/vue' {
 
 type VueFirestoreObject = Record<
   string,
-  firestore.DocumentReference | firestore.CollectionReference
+  firestore.DocumentReference | firestore.CollectionReference | firestore.Query
 >
 
 type FirestoreOption<V> = VueFirestoreObject | ((this: V) => VueFirestoreObject)
