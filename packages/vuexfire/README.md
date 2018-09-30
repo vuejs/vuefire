@@ -89,7 +89,7 @@ support any of these browsers:
 - Android < 5.0
 
 You'll have to include a polyfill. You can
-use [Benvie/WeakMap](https://github.com/Benvie/WeakMap).
+use [atlassian/WeakMap](https://github.com/atlassian/WeakMap).
 
 You can find more information about `WeakMap`
 support [here](http://kangax.github.io/compat-table/es6/#test-WeakMap).
