@@ -4,6 +4,12 @@
 
 **If you are looking for the version supporting Cloud Firestore, check [the lerna branch](https://github.com/vuejs/vuefire/tree/lerna/packages/vuefire)**
 
+## Introduction
+
+Firebase is a mobile and web application development platform that provides developers with a plethora of tools and services to help them develop high-quality apps. Firebase is one of the most painless ways to set up a simple hosted real-time database. 
+
+VueFire makes life even easier by providing direct mapping and updates to Firebase objects through Vue's reactivity system. With only a few lines of code, you can render your Firebase data in your Vue application.
+
 ## Installation
 
 1. If included as global `<script>`: will install automatically if global `Vue` is present.
