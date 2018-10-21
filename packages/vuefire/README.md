@@ -1,4 +1,4 @@
-# Vuefire [![Build Status](https://badgen.net/circleci/github/vuejs/vuefire)](https://circleci.com/gh/vuejs/vuefire) [![npm package](https://badgen.net/npm/v/vuefire/next)](https://www.npmjs.com/package/vuefire) [![coverage](https://badgen.net/codecov/c/github/vuejs/vuefire/lerna)](https://codecov.io/github/vuejs/vuefire)
+# Vuefire [![Build Status](https://badgen.net/circleci/github/vuejs/vuefire)](https://circleci.com/gh/vuejs/vuefire) [![npm package](https://badgen.net/npm/v/vuefire/next)](https://www.npmjs.com/package/vuefire) [![coverage](https://badgen.net/codecov/c/github/vuejs/vuefire)](https://codecov.io/github/vuejs/vuefire)
 
 > Vue.js bindings for Cloud Firestore
 
