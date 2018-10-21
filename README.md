@@ -1,4 +1,4 @@
-# Vuefire / Vuexfire
+# Vuefire / Vuexfire [![Build Status](https://badgen.net/circleci/github/vuejs/vuefire)](https://circleci.com/gh/vuejs/vuefire)
 
 > Synchronize your data with a Firebase RTDB or Cloudstore
 
