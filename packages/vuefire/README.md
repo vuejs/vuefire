@@ -1,4 +1,4 @@
-# Vuefire [![Build Status](https://img.shields.io/circleci/project/vuejs/vuefire/firestore.svg)](https://circleci.com/gh/vuejs/vuefire) [![npm package](https://img.shields.io/npm/v/vuefire/next.svg)](https://www.npmjs.com/package/vuefire) [![coverage](https://img.shields.io/codecov/c/github/vuejs/vuefire.svg)](https://codecov.io/github/vuejs/vuefire)
+# Vuefire [![Build Status](https://badgen.net/circleci/github/vuejs/vuefire)](https://circleci.com/gh/vuejs/vuefire) [![npm package](https://badgen.net/npm/v/vuefire/next)](https://www.npmjs.com/package/vuefire) [![coverage](codecov/c/github/vuejs/vuefire/lerna)](https://codecov.io/github/vuejs/vuefire)
 
 > Vue.js bindings for Cloud Firestore
 
@@ -24,7 +24,7 @@ Vue.use(VueFire)
 // initialize your firebase app
 firebase.initializeApp({
   projectId: 'YOUR OWN ID',
-  databaseURL: 'YOUR OWN URL'
+  databaseURL: 'YOUR OWN URL',
 })
 
 // save a reference to the firestore database
@@ -34,18 +34,19 @@ const db = firebase.firestore()
 new Vue({
   data: {
     todos: [],
-    currentTodo: null
+    currentTodo: null,
   },
   firestore: {
     todos: db.collection('todos'),
-    currentTodo: db.collection('todos').doc('1')
-  }
+    currentTodo: db.collection('todos').doc('1'),
+  },
 })
 ```
 
 Always declare the initial properties like `todos` and `currentTodo:` in your `data`.
 
 **Tips**:
+
 - Use an empty array `[]` as the initial value for a property that holds a collection to make `v-for` always work.
 - Use `null` for documents so you can wrap content with a simple `v-if` (ref vue guide)
 
@@ -65,4 +66,3 @@ $ npm test
 ## License
 
 [MIT](http://opensource.org/licenses/MIT)
-
