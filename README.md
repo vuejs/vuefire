@@ -8,7 +8,7 @@
 
 Firebase is a mobile and web application development platform that provides developers with a plethora of tools and services to help them develop high-quality apps. Firebase is one of the most painless ways to set up a simple hosted real-time database. 
 
-VueFire makes life even easier by providing direct mapping and updates to Firebase objects through Vue's reactivity system. With only a few lines of code, you can render your Firebase data in your Vue application.
+VueFire makes life even easier by providing direct mapping and updates to Firebase objects through Vue's reactivity system. With only a few lines of code, you can render your Firebase data in your Vue application with VueFire.
 
 ## Installation
 
