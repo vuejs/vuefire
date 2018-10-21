@@ -2,7 +2,7 @@
 
 > Vue.js 1 & 2 binding for Firebase 2 & >=3
 
-**If you are looking for the version supporting Cloud Firestore, check [the firestore branch](https://github.com/vuejs/vuefire/tree/firestore)**
+**If you are looking for the version supporting Cloud Firestore, check [the lerna branch](https://github.com/vuejs/vuefire/tree/lerna/packages/vuefire)**
 
 ## Installation
 
