@@ -1,8 +1,16 @@
 # Vuefire / Vuexfire [![Build Status](https://badgen.net/circleci/github/vuejs/vuefire)](https://circleci.com/gh/vuejs/vuefire)
 
-> Synchronize your data with a Firebase RTDB or Cloudstore
+> Synchronize your data and Firebase Cloud Store database in real-time
 
-This repository contains the code for `vuefire` and `vuexfire` packages:
+## Introduction
+
+Firebase provides two solutions to handle real-time databases: Realtime Database and Cloud Store (which is also a realtime database).
+In order to keep all clients data in-sync with its cloud database, their [js SDK](https://firebase.google.com/docs/firestore/quickstart) provides the tools to do so. However, it quickly becomes bothersome to _bind_ multiple documents or collections to your application, keep them synchronized as well as handling [references](https://firebase.google.com/docs/firestore/manage-data/data-types) to other documents or collections, which can contain references themselves and must also be kept up to date.
+The goal of vuefire and vuexfire is to make this as simple as a function call that returns a promise so it is also easy to setup SSR and allows you to focus on developing your application.
+
+<!-- TODO compare code samples -->
+
+Note: _This repository contains the code for `vuefire` and `vuexfire` packages:_
 
 ## Packages
 
