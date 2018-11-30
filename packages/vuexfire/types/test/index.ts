@@ -19,13 +19,16 @@ new Vuex.Store({
   actions: {
     init: firebaseAction(({ bindFirebaseRef, unbindFirebaseRef, commit }, payload: Payload) => {
       // this will unbind any previously bound ref to 'todos'
-      bindFirebaseRef('todos', payload.todos).then(() => {
+      bindFirebaseRef('todos', payload.todos).then(todos => {
+        todos.length
         commit('setTodosLoaded', true)
       }).catch((err) => {
         console.log(err)
       })
 
-      bindFirebaseRef('user', payload.user)
+      bindFirebaseRef('user', payload.user).then(doc => {
+        doc.something
+      })
 
       // you can unbind any ref easily
       unbindFirebaseRef('user')
