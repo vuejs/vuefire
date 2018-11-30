@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "lib": [
+      "dom",
+      "es2015"
+    ],
+    "module": "commonjs",
+    "strict": true,
+    "noEmit": true,
+    "baseUrl": ".",
+    "paths": {
+      "vuefire": [
+        "../index.d.ts"
+      ]
+    }
+  },
+  "files": [
+    "index.ts",
+    "../index.d.ts"
+  ],
+  "compileOnSave": false
+}
