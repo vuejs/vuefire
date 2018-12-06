@@ -5,7 +5,7 @@ import { MockFirebase } from 'firebase-mock'
 
 import {
   firebaseMutations,
-  firebaseAction,
+  firebaseAction
 } from '../src'
 
 const root = new MockFirebase()
@@ -17,7 +17,7 @@ test.before(t => {
 test.beforeEach(t => {
   t.context.store = new Vuex.Store({
     state: {
-      items: [],
+      items: []
     },
     actions: {
       bindItemsRef: firebaseAction(({ bindFirebaseRef }, { ref, wait }) => {
@@ -28,9 +28,9 @@ test.beforeEach(t => {
       }),
       unbindItemsRef: firebaseAction(({ unbindFirebaseRef }) => {
         unbindFirebaseRef('items')
-      }),
+      })
     },
-    mutations: firebaseMutations,
+    mutations: firebaseMutations
   })
 
   // Create a fresh ref for the test
@@ -44,14 +44,14 @@ test('binds an array of objects', t => {
   t.context.ref.set({
     first: { index: 0 },
     second: { index: 1 },
-    third: { index: 2 },
+    third: { index: 2 }
   })
   t.context.ref.flush()
 
   t.deepEqual(t.context.store.state.items, [
     { '.key': 'first', index: 0 },
     { '.key': 'second', index: 1 },
-    { '.key': 'third', index: 2 },
+    { '.key': 'third', index: 2 }
   ])
   t.context.ref.child('first').child('index').set(3)
   t.context.ref.flush()
@@ -66,7 +66,7 @@ test('binds an array of primitives', t => {
   t.deepEqual(t.context.store.state.items, [
     { '.key': '0', '.value': 0 },
     { '.key': '1', '.value': 1 },
-    { '.key': '2', '.value': 2 },
+    { '.key': '2', '.value': 2 }
   ])
 })
 
@@ -75,14 +75,14 @@ test('binds a mixed array', t => {
   t.context.ref.set({
     0: 'first',
     1: 'second',
-    third: { index: 2 },
+    third: { index: 2 }
   })
   t.context.ref.flush()
 
   t.deepEqual(t.context.store.state.items, [
     { '.key': '0', '.value': 'first' },
     { '.key': '1', '.value': 'second' },
-    { '.key': 'third', index: 2 },
+    { '.key': 'third', index: 2 }
   ])
 })
 
@@ -98,7 +98,7 @@ test('add records to the array', t => {
   t.context.ref.set({
     first: { index: 0 },
     second: { index: 1 },
-    third: { index: 2 },
+    third: { index: 2 }
   })
   t.context.ref.flush()
   t.context.ref.child('fourth').set({ index: 3 })
@@ -110,19 +110,19 @@ test('add records to the array', t => {
     { '.key': 'first', index: 0 },
     { '.key': 'second', index: 1 },
     { '.key': 'third', index: 2 },
-    { '.key': 'fourth', index: 3 },
+    { '.key': 'fourth', index: 3 }
   ])
 })
 
 test('removes records from array with wait; false', t => {
   t.context.store.dispatch('bindItemsRef', {
     ref: t.context.ref,
-    wait: false,
+    wait: false
   })
   t.context.ref.set({
     first: { index: 0 },
     second: { index: 1 },
-    third: { index: 2 },
+    third: { index: 2 }
   })
   t.context.ref.flush()
   t.context.ref.child('second').remove()
@@ -132,7 +132,7 @@ test('removes records from array with wait; false', t => {
   const sorted = [...t.context.store.state.items].sort((a, b) => a.index - b.index)
   t.deepEqual(sorted, [
     { '.key': 'first', index: 0 },
-    { '.key': 'third', index: 2 },
+    { '.key': 'third', index: 2 }
   ])
 })
 
@@ -141,7 +141,7 @@ test('removes records from array', t => {
   t.context.ref.set({
     first: { index: 0 },
     second: { index: 1 },
-    third: { index: 2 },
+    third: { index: 2 }
   })
   t.context.ref.flush()
   t.context.ref.child('second').remove()
@@ -151,7 +151,7 @@ test('removes records from array', t => {
   const sorted = [...t.context.store.state.items].sort((a, b) => a.index - b.index)
   t.deepEqual(sorted, [
     { '.key': 'first', index: 0 },
-    { '.key': 'third', index: 2 },
+    { '.key': 'third', index: 2 }
   ])
 })
 
@@ -169,12 +169,12 @@ test('unbinds an array reference', t => {
 
   foo.child('foo').set('foo')
   t.context.ref.flush()
-  t.deepEqual(t.context.store.state.items, [{'.key': 'foo', '.value': 'foo'}])
+  t.deepEqual(t.context.store.state.items, [{ '.key': 'foo', '.value': 'foo' }])
 
   t.context.store.dispatch('unbindItemsRef')
   foo.child('foo').set('foo 2')
   t.context.ref.flush()
-  t.deepEqual(t.context.store.state.items, [{'.key': 'foo', '.value': 'foo'}])
+  t.deepEqual(t.context.store.state.items, [{ '.key': 'foo', '.value': 'foo' }])
 })
 
 test('unbinds old array reference when binding a new one', t => {
@@ -184,44 +184,44 @@ test('unbinds old array reference when binding a new one', t => {
 
   foo.child('foo').set('foo')
   t.context.ref.flush()
-  t.deepEqual(t.context.store.state.items, [{'.key': 'foo', '.value': 'foo'}])
+  t.deepEqual(t.context.store.state.items, [{ '.key': 'foo', '.value': 'foo' }])
 
   t.context.store.dispatch('setItemsRef', bar)
   bar.child('bar').set('bar')
   t.context.ref.flush()
-  t.deepEqual(t.context.store.state.items, [{'.key': 'bar', '.value': 'bar'}])
+  t.deepEqual(t.context.store.state.items, [{ '.key': 'bar', '.value': 'bar' }])
 
   foo.child('foo').set('foo 2')
   t.context.ref.flush()
-  t.deepEqual(t.context.store.state.items, [{'.key': 'bar', '.value': 'bar'}])
+  t.deepEqual(t.context.store.state.items, [{ '.key': 'bar', '.value': 'bar' }])
 })
 
 test('works with wait: true', t => {
   const ref = t.context.ref.child('wait')
   t.context.store.dispatch('bindItemsRef', {
     ref,
-    wait: true,
+    wait: true
   })
   ref.child('foo').set('foo')
   ref.flush()
 
-  t.deepEqual(t.context.store.state.items, [{'.key': 'foo', '.value': 'foo'}])
+  t.deepEqual(t.context.store.state.items, [{ '.key': 'foo', '.value': 'foo' }])
 
   ref.child('bar').set('bar')
   ref.flush()
   t.deepEqual(t.context.store.state.items, [
-    {'.key': 'bar', '.value': 'bar'},
-    {'.key': 'foo', '.value': 'foo'},
+    { '.key': 'bar', '.value': 'bar' },
+    { '.key': 'foo', '.value': 'foo' }
   ])
 
   ref.child('bar').set('bar 2')
   ref.flush()
   t.deepEqual(t.context.store.state.items, [
-    {'.key': 'bar', '.value': 'bar 2'},
-    {'.key': 'foo', '.value': 'foo'},
+    { '.key': 'bar', '.value': 'bar 2' },
+    { '.key': 'foo', '.value': 'foo' }
   ])
 
   ref.child('bar').remove()
   ref.flush()
-  t.deepEqual(t.context.store.state.items, [{'.key': 'foo', '.value': 'foo'}])
+  t.deepEqual(t.context.store.state.items, [{ '.key': 'foo', '.value': 'foo' }])
 })

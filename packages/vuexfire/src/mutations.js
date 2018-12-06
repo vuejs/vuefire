@@ -14,5 +14,5 @@ export default {
 
   [VUEXFIRE_ARRAY_REMOVE] (state, { oldIndex, target }) {
     return target.splice(oldIndex, 1)[0]
-  },
+  }
 }

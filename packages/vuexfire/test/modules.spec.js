@@ -5,7 +5,7 @@ import { MockFirebase } from 'firebase-mock'
 
 import {
   firebaseMutations,
-  firebaseAction,
+  firebaseAction
 } from '../src'
 
 const root = new MockFirebase()
@@ -20,7 +20,7 @@ const itemsActions = {
   }),
   unbindItemsRef: firebaseAction(({ unbindFirebaseRef }) => {
     unbindFirebaseRef('items')
-  }),
+  })
 }
 
 test.beforeEach(t => {
@@ -30,12 +30,12 @@ test.beforeEach(t => {
       named: {
         namespaced: true,
         state: { items: [] },
-        actions: itemsActions,
+        actions: itemsActions
       },
       todos: {
         state: {
           items: [],
-          options: null,
+          options: null
         },
         actions: Object.assign({
           setOptionsRef: firebaseAction(({ bindFirebaseRef }, ref) => {
@@ -43,10 +43,10 @@ test.beforeEach(t => {
           }),
           unbindOptionsRef: firebaseAction(({ unbindFirebaseRef }) => {
             unbindFirebaseRef('options')
-          }),
-        }, itemsActions),
-      },
-    },
+          })
+        }, itemsActions)
+      }
+    }
   })
 
   // Create a fresh ref for the test
@@ -60,14 +60,14 @@ test('binds an array to a module', t => {
   t.context.ref.set({
     first: { index: 0 },
     second: { index: 1 },
-    third: { index: 2 },
+    third: { index: 2 }
   })
   t.context.ref.flush()
 
   t.deepEqual(t.context.store.state.todos.items, [
     { '.key': 'first', index: 0 },
     { '.key': 'second', index: 1 },
-    { '.key': 'third', index: 2 },
+    { '.key': 'third', index: 2 }
   ])
   t.context.ref.child('first').child('index').set(3)
   t.context.ref.flush()
@@ -79,14 +79,14 @@ test('works on namespaced modules', t => {
   t.context.ref.set({
     first: { index: 0 },
     second: { index: 1 },
-    third: { index: 2 },
+    third: { index: 2 }
   })
   t.context.ref.flush()
 
   t.deepEqual(t.context.store.state.named.items, [
     { '.key': 'first', index: 0 },
     { '.key': 'second', index: 1 },
-    { '.key': 'third', index: 2 },
+    { '.key': 'third', index: 2 }
   ])
   t.context.ref.child('first').child('index').set(3)
   t.context.ref.flush()

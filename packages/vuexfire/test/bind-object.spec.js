@@ -5,7 +5,7 @@ import { MockFirebase } from 'firebase-mock'
 
 import {
   firebaseMutations,
-  firebaseAction,
+  firebaseAction
 } from '../src'
 
 const root = new MockFirebase()
@@ -18,7 +18,7 @@ test.beforeEach(t => {
   t.context.store = new Vuex.Store({
     state: {
       options: null,
-      primitive: null,
+      primitive: null
     },
     actions: {
       setPrimitiveRef: firebaseAction(({ bindFirebaseRef }, ref) => {
@@ -29,9 +29,9 @@ test.beforeEach(t => {
       }),
       unbindOptionsRef: firebaseAction(({ unbindFirebaseRef }) => {
         unbindFirebaseRef('options')
-      }),
+      })
     },
-    mutations: firebaseMutations,
+    mutations: firebaseMutations
   })
 
   // Create a fresh ref for the test
@@ -44,7 +44,7 @@ test('binds to an object', t => {
   const options = {
     foo: 1,
     bar: 2,
-    '.key': t.context.ref.key,
+    '.key': t.context.ref.key
   }
   t.context.store.dispatch('setOptionsRef', t.context.ref)
   t.context.ref.set(options)
@@ -94,8 +94,8 @@ test('binds multiple references at the same time', t => {
   bar.set('bar')
   t.context.ref.flush()
 
-  t.deepEqual(t.context.store.state.options, {'.key': 'foo', '.value': 'foo'})
-  t.deepEqual(t.context.store.state.primitive, {'.key': 'bar', '.value': 'bar'})
+  t.deepEqual(t.context.store.state.options, { '.key': 'foo', '.value': 'foo' })
+  t.deepEqual(t.context.store.state.primitive, { '.key': 'bar', '.value': 'bar' })
 })
 
 test('unbinds old reference when binding a new one', t => {
@@ -105,16 +105,16 @@ test('unbinds old reference when binding a new one', t => {
 
   foo.set('foo')
   t.context.ref.flush()
-  t.deepEqual(t.context.store.state.options, {'.key': 'foo', '.value': 'foo'})
+  t.deepEqual(t.context.store.state.options, { '.key': 'foo', '.value': 'foo' })
 
   t.context.store.dispatch('setOptionsRef', bar)
   bar.set('bar')
   t.context.ref.flush()
-  t.deepEqual(t.context.store.state.options, {'.key': 'bar', '.value': 'bar'})
+  t.deepEqual(t.context.store.state.options, { '.key': 'bar', '.value': 'bar' })
 
   foo.set('foo 2')
   t.context.ref.flush()
-  t.deepEqual(t.context.store.state.options, {'.key': 'bar', '.value': 'bar'})
+  t.deepEqual(t.context.store.state.options, { '.key': 'bar', '.value': 'bar' })
 })
 
 test('unbinds a reference', t => {
@@ -123,10 +123,10 @@ test('unbinds a reference', t => {
 
   foo.set('foo')
   t.context.ref.flush()
-  t.deepEqual(t.context.store.state.options, {'.key': 'foo', '.value': 'foo'})
+  t.deepEqual(t.context.store.state.options, { '.key': 'foo', '.value': 'foo' })
 
   t.context.store.dispatch('unbindOptionsRef')
   foo.set('foo 2')
   t.context.ref.flush()
-  t.deepEqual(t.context.store.state.options, {'.key': 'foo', '.value': 'foo'})
+  t.deepEqual(t.context.store.state.options, { '.key': 'foo', '.value': 'foo' })
 })

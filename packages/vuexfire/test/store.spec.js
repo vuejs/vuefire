@@ -4,7 +4,7 @@ import Vuex from 'vuex'
 
 import {
   firebaseMutations,
-  firebaseAction,
+  firebaseAction
 } from '../src'
 
 test.before(t => {
@@ -14,12 +14,12 @@ test.before(t => {
 test.beforeEach(t => {
   t.context.store = new Vuex.Store({
     state: {
-      options: null,
+      options: null
     },
     actions: {
-      give: firebaseAction(() => true),
+      give: firebaseAction(() => true)
     },
-    mutations: firebaseMutations,
+    mutations: firebaseMutations
   })
 })
 

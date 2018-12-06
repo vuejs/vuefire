@@ -38,7 +38,7 @@ function bind ({ state, commit, key, ref, ops }, options = { maxRefDepth: 2 }) {
           collection: ref,
           ops,
           resolve,
-          reject,
+          reject
         },
         options
       )
@@ -49,7 +49,7 @@ function bind ({ state, commit, key, ref, ops }, options = { maxRefDepth: 2 }) {
           document: ref,
           ops,
           resolve,
-          reject,
+          reject
         },
         options
       )
@@ -57,7 +57,7 @@ function bind ({ state, commit, key, ref, ops }, options = { maxRefDepth: 2 }) {
 }
 
 function unbind ({ commit, key }) {
-  let sub = subscriptions.get(commit)
+  const sub = subscriptions.get(commit)
   if (!sub) return
   // TODO dev check before
   sub[key]()
@@ -75,7 +75,7 @@ export function firebaseAction (action) {
           {
             path,
             target,
-            data,
+            data
           },
           commitOptions
         )
@@ -87,7 +87,7 @@ export function firebaseAction (action) {
         const data = target[oldIndex]
         commit(VUEXFIRE_ARRAY_REMOVE, { target, oldIndex }, commitOptions)
         return data
-      },
+      }
     }
 
     context.bindFirebaseRef = (key, ref, options = {}) =>
