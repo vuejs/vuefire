@@ -11,6 +11,7 @@
   "files": [
     "src",
     "dist",
+    "types/*.d.ts",
     "LICENSE"
   ],
   "scripts": {
