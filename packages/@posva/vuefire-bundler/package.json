@@ -1,6 +1,6 @@
 {
   "name": "@posva/vuefire-bundler",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "wrapper around rollup to bundle vuefire and vuexfire",
   "author": "Eduardo San Martin Morote <posva13@gmail.com>",
   "homepage": "https://github.com/vuejs/vuefire#readme",
