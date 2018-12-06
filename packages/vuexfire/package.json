@@ -6,6 +6,7 @@
   "module": "dist/vuexfire.esm.js",
   "unpkg": "dist/vuexfire.js",
   "browser": "dist/vuexfire.esm.js",
+  "types": "types/index.d.ts",
   "sideEffects": false,
   "files": [
     "src",
@@ -14,12 +15,13 @@
   ],
   "scripts": {
     "lint": "eslint --color --ext=js,html src test examples",
-    "test": "npm run lint && npm run build",
+    "test": "npm run lint && npm run build && npm run types",
     "coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
     "dev": "npm-watch",
     "test:unit": "ava",
     "test:coverage": "nyc npm run test:unit",
     "dev:test": "npm run test:unit -- --watch",
+    "types": "tsc -p ./types/test/tsconfig.json",
     "postversion": "npm run build",
     "build": "node --eval 'require(\"@posva/vuefire-bundler\")(\"Vuexfire\")'"
   },
@@ -59,6 +61,7 @@
     "codecov": "^3.0.1",
     "eslint": "^5.3.0",
     "eslint-plugin-vue-libs": "^3.0.0",
+    "typescript": "^3.2.1",
     "vuex": "^3.0.1"
   },
   "dependencies": {
