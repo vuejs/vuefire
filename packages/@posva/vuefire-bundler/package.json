@@ -27,14 +27,14 @@
   },
   "dependencies": {
     "mkdirp": "^0.5.1",
-    "rollup": "^0.64.1",
-    "rollup-plugin-buble": "^0.19.2",
-    "rollup-plugin-node-resolve": "^3.3.0",
-    "shelljs": "^0.8.2",
-    "uglify-js": "^3.4.7"
+    "rollup": "^0.67.4",
+    "rollup-plugin-buble": "^0.19.4",
+    "rollup-plugin-node-resolve": "^3.4.0",
+    "shelljs": "^0.8.3",
+    "uglify-js": "^3.4.9"
   },
   "devDependencies": {
-    "eslint": "^5.3.0",
+    "eslint": "^5.9.0",
     "eslint-plugin-vue-libs": "^3.0.0"
   },
   "gitHead": "e3e2df3624572cec86ed861f2472df4d143f2265"
