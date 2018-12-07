@@ -4,7 +4,7 @@ import { firestore } from 'firebase'
 export declare const firebaseMutations: MutationTree<any>
 
 interface FirebaseActionContext<S, R> extends ActionContext<S, R> {
-  bindFirebaseRef(key: string, ref: firestore.CollectionReference): Promise<firestore.DocumentData[]>
+  bindFirebaseRef(key: string, ref: firestore.Query): Promise<firestore.DocumentData[]>
   bindFirebaseRef(key: string, ref: firestore.DocumentReference): Promise<firestore.DocumentData>
   unbindFirebaseRef(key: string): void
 }

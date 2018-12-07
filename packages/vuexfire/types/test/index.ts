@@ -4,11 +4,13 @@ import { firestore } from 'firebase'
 
 interface Payload {
   todos: firestore.CollectionReference
+  sortedTodos: firestore.Query
   user: firestore.DocumentReference
 }
 
 new Vuex.Store({
   state: {
+    sortedTodos: [], // Will be bound as an array
     todos: [], // Will be bound as an array
     user: null // Will be bound as an object
   },
@@ -22,6 +24,12 @@ new Vuex.Store({
       bindFirebaseRef('todos', payload.todos).then(todos => {
         todos.length
         commit('setTodosLoaded', true)
+      }).catch((err) => {
+        console.log(err)
+      })
+      bindFirebaseRef('sortedTodos', payload.sortedTodos).then(todos => {
+        todos.length
+        commit('setSortedTodosLoaded', true)
       }).catch((err) => {
         console.log(err)
       })
@@ -40,6 +48,7 @@ new Vuex.Store({
 
       const payload: Payload = {
         todos: db.collection('todos'),
+        sortedTodos: db.collection('todos').orderBy('createdAt'),
         user: db.doc('user')
       }
 
