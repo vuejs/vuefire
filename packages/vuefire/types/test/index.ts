@@ -6,18 +6,24 @@ const db = firebase.firestore()
 
 Vue.use(Vuefire)
 
+const todos = db.collection('todos')
+const todosSorted = db.collection('todos').orderBy('created')
+const doc = db.collection('todos').doc('2')
+
 const app = new Vue({
   firestore: {
-    todos: db.collection('todos'),
-    doc: db.collection('todos').doc('2')
+    todos,
+    todosSorted,
+    doc
   }
 })
 
 new Vue({
-  firestore() {
+  firestore () {
     return {
-      todos: db.collection('todos'),
-      doc: db.collection('todos').doc('2')
+      todos,
+      todosSorted,
+      doc
     }
   }
 })
@@ -32,16 +38,21 @@ app.$bind('collection', db.collection('todos')).then(todos => {
   todos.length
 })
 
+app.$bind('todos', todosSorted).then(todos => {
+  todos.length
+})
+
 app.$unbind('document')
 app.$unbind('collection')
 
 Vue.component('firestore-component', {
   firestore: {
-    todos: db.collection('todos'),
-    doc: db.collection('todos').doc('2')
+    todos,
+    todosSorted,
+    doc
   },
   methods: {
-    doSomething() {
+    doSomething () {
       // TODO not sure if making this work is possible
       // this.todos.map(todo => todo.id)
     }
