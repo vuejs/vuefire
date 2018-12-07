@@ -43,6 +43,13 @@ jobs:
           at: ~/project/vuefire
       - run: cd vuefire/packages/vuefire && npm test
 
+  vuexfire:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/project/vuefire
+      - run: cd vuefire/packages/vuexfire && npm test
+
 workflows:
   version: 2
   install-and-parallel-test:
@@ -52,5 +59,8 @@ workflows:
           requires:
             - install
       - vuefire:
+          requires:
+            - install
+      - vuexfire:
           requires:
             - install
