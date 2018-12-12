@@ -86,7 +86,7 @@ export function firebaseAction (action) {
       remove: (target, oldIndex) => {
         const data = target[oldIndex]
         commit(VUEXFIRE_ARRAY_REMOVE, { target, oldIndex }, commitOptions)
-        return data
+        return [data]
       }
     }
 
