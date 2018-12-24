@@ -5,7 +5,7 @@
 version: 2
 
 defaults: &defaults
-  working_directory: ~/project/vuefire
+  working_directory: ~/project
   docker:
     - image: circleci/node:10
 
@@ -27,28 +27,35 @@ jobs:
       - persist_to_workspace:
           root: ~/project
           paths:
-            - vuefire
+            - ./
 
   vuefire-core:
     <<: *defaults
     steps:
       - attach_workspace:
-          at: ~/project/vuefire
-      - run: cd vuefire/packages/@posva/vuefire-core && npm test
+          at: ~/project
+      - run: cd packages/@posva/vuefire-core && yarn test
 
   vuefire:
     <<: *defaults
     steps:
       - attach_workspace:
-          at: ~/project/vuefire
-      - run: cd vuefire/packages/vuefire && npm test
+          at: ~/project
+      - run: cd packages/vuefire && yarn test
 
   vuexfire:
     <<: *defaults
     steps:
       - attach_workspace:
-          at: ~/project/vuefire
-      - run: cd vuefire/packages/vuexfire && npm test
+          at: ~/project
+      - run: cd packages/vuexfire && yarn test
+
+  coverage:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/project
+      - run: yarn codecov
 
 workflows:
   version: 2
@@ -64,3 +71,8 @@ workflows:
       - vuexfire:
           requires:
             - install
+      - coverage:
+          requires:
+            - vuefire-core
+            - vuefire
+            - vuexfire

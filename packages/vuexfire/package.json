@@ -17,7 +17,7 @@
   "scripts": {
     "lint": "eslint --color --ext=js,html src test examples",
     "pretest": "npm run lint",
-    "test": "npm run build && npm run types",
+    "test": "npm run build && npm run types && npm run test:unit",
     "test:unit": "jest",
     "dev": "npm run test:unit -- --watchAll",
     "types": "tsc -p ./types/test/tsconfig.json",
