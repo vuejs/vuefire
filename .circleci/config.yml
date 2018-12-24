@@ -7,7 +7,7 @@ version: 2
 defaults: &defaults
   working_directory: ~/project/vuefire
   docker:
-    - image: circleci/node:8
+    - image: circleci/node:10
 
 jobs:
   install:
