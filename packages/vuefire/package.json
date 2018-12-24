@@ -16,12 +16,12 @@
   ],
   "scripts": {
     "lint": "eslint --color --ext=js,html src test examples",
-    "build": "node --eval 'require(\"@posva/vuefire-bundler\")(\"Vuefire\")'",
     "pretest": "npm run lint",
     "test": "npm run unit && npm run types",
     "types": "tsc -p ./types/test/tsconfig.json",
     "unit": "jest",
     "dev": "npm run unit -- --watchAll",
+    "build": "node --eval 'require(\"@posva/vuefire-bundler\")(\"Vuefire\")'",
     "postversion": "npm run build"
   },
   "repository": {

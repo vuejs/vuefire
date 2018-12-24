@@ -21,8 +21,8 @@
     "test:unit": "jest",
     "dev": "npm run test:unit -- --watchAll",
     "types": "tsc -p ./types/test/tsconfig.json",
-    "postversion": "npm run build",
-    "build": "node --eval 'require(\"@posva/vuefire-bundler\")(\"Vuexfire\")'"
+    "build": "node --eval 'require(\"@posva/vuefire-bundler\")(\"Vuexfire\")'",
+    "postversion": "npm run build"
   },
   "repository": {
     "type": "git",
