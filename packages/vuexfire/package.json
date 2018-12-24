@@ -18,11 +18,8 @@
     "lint": "eslint --color --ext=js,html src test examples",
     "pretest": "npm run lint",
     "test": "npm run build && npm run types",
-    "coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
-    "dev": "npm-watch",
-    "test:unit": "ava",
-    "test:coverage": "nyc npm run test:unit",
-    "dev:test": "npm run test:unit -- --watch",
+    "test:unit": "jest",
+    "dev": "npm run test:unit -- --watchAll",
     "types": "tsc -p ./types/test/tsconfig.json",
     "postversion": "npm run build",
     "build": "node --eval 'require(\"@posva/vuefire-bundler\")(\"Vuexfire\")'"

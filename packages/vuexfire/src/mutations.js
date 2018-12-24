@@ -1,4 +1,8 @@
-import { VUEXFIRE_SET_VALUE, VUEXFIRE_ARRAY_ADD, VUEXFIRE_ARRAY_REMOVE } from './types'
+import {
+  VUEXFIRE_SET_VALUE,
+  VUEXFIRE_ARRAY_ADD,
+  VUEXFIRE_ARRAY_REMOVE
+} from './types'
 
 import { walkSet } from '@posva/vuefire-core'
 
