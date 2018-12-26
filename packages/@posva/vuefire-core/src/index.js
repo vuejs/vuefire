@@ -1,4 +1,10 @@
-import { createSnapshot, extractRefs, callOnceWithArg, walkGet, walkSet } from './utils'
+import {
+  createSnapshot,
+  extractRefs,
+  callOnceWithArg,
+  walkGet,
+  walkSet
+} from './utils'
 
 function unsubscribeAll (subs) {
   for (const sub in subs) {
@@ -9,9 +15,14 @@ function unsubscribeAll (subs) {
 // NOTE not convinced by the naming of subscribeToRefs and subscribeToDocument
 // first one is calling the other on every ref and subscribeToDocument may call
 // updateDataFromDocumentSnapshot which may call subscribeToRefs as well
-function subscribeToRefs ({ subs, refs, target, path, data, depth, ops, resolve }, options) {
+function subscribeToRefs (
+  { subs, refs, target, path, depth, ops, resolve },
+  options
+) {
   const refKeys = Object.keys(refs)
-  const missingKeys = Object.keys(subs).filter(refKey => refKeys.indexOf(refKey) < 0)
+  const missingKeys = Object.keys(subs).filter(
+    refKey => refKeys.indexOf(refKey) < 0
+  )
   // unbind keys that are no longer there
   missingKeys.forEach(refKey => {
     subs[refKey].unsub()
@@ -85,7 +96,6 @@ export function bindCollection (
       // array.splice(newIndex, 0, data)
       subscribeToRefs(
         {
-          data,
           refs,
           subs,
           target: array,
@@ -136,7 +146,8 @@ export function bindCollection (
     // NOTE this will only be triggered once and it will be with all the documents
     // from the query appearing as added
     // (https://firebase.google.com/docs/firestore/query-data/listen#view_changes_between_snapshots)
-    const docChanges = typeof ref.docChanges === 'function' ? ref.docChanges() : ref.docChanges
+    const docChanges =
+      typeof ref.docChanges === 'function' ? ref.docChanges() : ref.docChanges
 
     if (!isResolved && docChanges.length) {
       // isResolved is only meant to make sure we do the check only once
@@ -194,7 +205,10 @@ function updateDataFromDocumentSnapshot (
   )
 }
 
-function subscribeToDocument ({ ref, target, path, depth, resolve, ops }, options) {
+function subscribeToDocument (
+  { ref, target, path, depth, resolve, ops },
+  options
+) {
   const subs = Object.create(null)
   const unbind = ref.onSnapshot(doc => {
     if (doc.exists) {
@@ -234,7 +248,10 @@ function subscribeToDocument ({ ref, target, path, depth, resolve, ops }, option
  * @param {OperationsType<any>} ops
  * @param {*} options
  */
-export function bindDocument ({ vm, key, document, resolve, reject, ops }, options) {
+export function bindDocument (
+  { vm, key, document, resolve, reject, ops },
+  options
+) {
   // TODO warning check if key exists?
   // const boundRefs = Object.create(null)
 
