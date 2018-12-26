@@ -10,7 +10,7 @@ function createSnapshotFromPrimitive (value, key) {
 }
 
 describe('RTDB collection', () => {
-  let document, vm, resolve, reject, ops
+  let document, vm, resolve, reject, ops, unbind
   beforeEach(async () => {
     document = new MockFirebase().child('data')
     ops = createOps(walkSet)
@@ -18,7 +18,14 @@ describe('RTDB collection', () => {
     await new Promise((res, rej) => {
       resolve = jest.fn(res)
       reject = jest.fn(rej)
-      rtdbBindAsObject({ vm, key: 'item', document, resolve, reject, ops })
+      unbind = rtdbBindAsObject({
+        vm,
+        key: 'item',
+        document,
+        resolve,
+        reject,
+        ops
+      })
       document.flush()
     })
   })
@@ -84,5 +91,37 @@ describe('RTDB collection', () => {
     document.flush()
     await promise
     expect(vm.a.b.c).toEqual({ foo: 'foo' })
+  })
+
+  it('correctly unbinds', () => {
+    expect(vm.item).toEqual({})
+    unbind()
+    document.set({ foo: 'foo' })
+    document.flush()
+    expect(vm.item).toEqual({})
+  })
+
+  it('leaves data intact on unbind', async () => {
+    document.set({ foo: 'foo' })
+    document.flush()
+    unbind()
+    expect(vm.item).toEqual({ foo: 'foo' })
+    const other = new MockFirebase().child('other')
+    other.set({ bar: 'bar' })
+    other.flush()
+    const promise = new Promise((resolve, reject) => {
+      rtdbBindAsObject({
+        vm,
+        document: other,
+        key: 'item',
+        resolve,
+        reject,
+        ops
+      })
+    })
+    expect(vm.item).toEqual({ foo: 'foo' })
+    other.flush()
+    await promise
+    expect(vm.item).toEqual({ bar: 'bar' })
   })
 })

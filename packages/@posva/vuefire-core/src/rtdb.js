@@ -1,7 +1,7 @@
 import { createRecordFromRTDBSnapshot } from './utils'
 
 export function rtdbBindAsObject ({ vm, key, document, resolve, reject, ops }) {
-  document.on(
+  const listener = document.on(
     'value',
     snapshot => {
       ops.set(vm, key, createRecordFromRTDBSnapshot(snapshot))
@@ -9,4 +9,8 @@ export function rtdbBindAsObject ({ vm, key, document, resolve, reject, ops }) {
     reject
   )
   document.once('value', resolve)
+
+  return () => {
+    document.off('value', listener)
+  }
 }
