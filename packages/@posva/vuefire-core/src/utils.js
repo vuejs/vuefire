@@ -127,3 +127,43 @@ export function walkSet (obj, path, value) {
   const target = keys.reduce((target, key) => target[key], obj)
   return target.splice ? target.splice(key, 1, value) : (target[key] = value)
 }
+
+// Following utirs are for RTDB
+
+/**
+ * Returns the original reference of a Firebase reference or query across SDK versions.
+ *
+ * @param {firebase.database.Reference|firebase.database.Query} refOrQuery
+ * @return {firebase.database.Reference}
+ */
+export function getRef (refOrQuery) {
+  // check if it is a query
+  if (typeof refOrQuery.ref === 'object') {
+    refOrQuery = refOrQuery.ref
+  }
+
+  return refOrQuery
+}
+
+/**
+ * Convert firebase RTDB snapshot into a bindable data record.
+ *
+ * @param {firebase.database.DataSnapshot} snapshot
+ * @return {object}
+ */
+export function createRecordFromRTDBSnapshot (snapshot) {
+  const value = snapshot.val()
+  let res
+  if (isObject(value)) {
+    res = value
+  } else {
+    res = {}
+    Object.defineProperty(res, '.value', {
+      value
+    })
+  }
+  Object.defineProperty(res, '.key', {
+    value: snapshot.key
+  })
+  return res
+}

@@ -24,6 +24,7 @@
     "url": "https://github.com/vuejs/vuefire/issues"
   },
   "dependencies": {
+    "firebase-mock": "^2.2.10",
     "vue": "^2.5.17"
   },
   "gitHead": "e3e2df3624572cec86ed861f2472df4d143f2265"

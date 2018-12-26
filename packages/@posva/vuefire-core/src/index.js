@@ -6,6 +6,8 @@ import {
   walkSet
 } from './utils'
 
+export * from './rtdb'
+
 function unsubscribeAll (subs) {
   for (const sub in subs) {
     subs[sub].unsub()
