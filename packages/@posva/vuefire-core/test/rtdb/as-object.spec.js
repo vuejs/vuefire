@@ -1,5 +1,5 @@
 import { rtdbBindAsObject, walkSet } from '../../src'
-import { spyUnbind, createOps } from '@posva/vuefire-test-helpers'
+import { createOps } from '@posva/vuefire-test-helpers'
 import { MockFirebase } from '@posva/vuefire-test-helpers'
 
 function createSnapshotFromPrimitive (value, key) {
@@ -9,7 +9,7 @@ function createSnapshotFromPrimitive (value, key) {
   return data
 }
 
-describe('RTDB collection', () => {
+describe('RTDB document', () => {
   let document, vm, resolve, reject, ops, unbind
   beforeEach(async () => {
     document = new MockFirebase().child('data')

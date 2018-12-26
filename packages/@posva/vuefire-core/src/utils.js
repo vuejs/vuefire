@@ -167,3 +167,18 @@ export function createRecordFromRTDBSnapshot (snapshot) {
   })
   return res
 }
+
+/**
+ * Find the index for an object with given key.
+ *
+ * @param {array} array
+ * @param {string} key
+ * @return {number}
+ */
+export function indexForKey (array, key) {
+  for (let i = 0; i < array.length; i++) {
+    if (array[i]['.key'] === key) return i
+  }
+
+  return -1
+}
