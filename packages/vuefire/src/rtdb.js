@@ -71,6 +71,9 @@ function ensureRefs (vm) {
 }
 
 export function rtdbPlugin (Vue) {
+  const strategies = Vue.config.optionMergeStrategies
+  strategies.firebase = strategies.provide
+
   Vue.mixin({
     created () {
       let bindings = this.$options.firebase

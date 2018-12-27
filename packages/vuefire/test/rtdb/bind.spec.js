@@ -28,6 +28,11 @@ describe('RTDB: manual bind', () => {
     expect(vm.items).toEqual([{ text: 'foo' }])
   })
 
+  it('returs a promise', () => {
+    expect(vm.$rtdbBind('items', source) instanceof Promise).toBe(true)
+    expect(vm.$rtdbBind('item', source) instanceof Promise).toBe(true)
+  })
+
   it('manually binds as an object', async () => {
     expect(vm.item).toEqual(null)
     const promise = vm.$rtdbBind('item', source)
@@ -51,5 +56,15 @@ describe('RTDB: manual bind', () => {
 
     source.set({ name: 'new foo' })
     expect(vm.item).toEqual({ name: 'bar' })
+  })
+
+  it('manually unbinds a ref', async () => {
+    source.autoFlush()
+    source.set({ name: 'foo' })
+    await vm.$rtdbBind('item', source)
+    expect(vm.item).toEqual({ name: 'foo' })
+    vm.$rtdbUnbind('item')
+    source.set({ name: 'bar' })
+    expect(vm.item).toEqual({ name: 'foo' })
   })
 })
