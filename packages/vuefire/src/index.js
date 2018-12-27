@@ -1,4 +1,5 @@
 import { bindCollection, bindDocument, walkSet } from '@posva/vuefire-core'
+export * from './rtdb'
 
 const ops = {
   set: (target, key, value) => walkSet(target, key, value),
@@ -47,7 +48,8 @@ function install (Vue) {
       const { firestore } = this.$options
       this._firestoreUnbinds = Object.create(null)
       this.$firestoreRefs = Object.create(null)
-      const refs = typeof firestore === 'function' ? firestore.call(this) : firestore
+      const refs =
+        typeof firestore === 'function' ? firestore.call(this) : firestore
       if (!refs) return
       Object.keys(refs).forEach(key => {
         this.$bind(key, refs[key])

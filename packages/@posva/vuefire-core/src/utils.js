@@ -128,22 +128,7 @@ export function walkSet (obj, path, value) {
   return target.splice ? target.splice(key, 1, value) : (target[key] = value)
 }
 
-// Following utirs are for RTDB
-
-/**
- * Returns the original reference of a Firebase reference or query across SDK versions.
- *
- * @param {firebase.database.Reference|firebase.database.Query} refOrQuery
- * @return {firebase.database.Reference}
- */
-export function getRef (refOrQuery) {
-  // check if it is a query
-  if (typeof refOrQuery.ref === 'object') {
-    refOrQuery = refOrQuery.ref
-  }
-
-  return refOrQuery
-}
+// Following utils are for RTDB
 
 /**
  * Convert firebase RTDB snapshot into a bindable data record.
