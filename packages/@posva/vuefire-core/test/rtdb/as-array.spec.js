@@ -83,17 +83,31 @@ describe('RTDB collection', () => {
     ])
   })
 
-  it.skip('reorder elements', async () => {
+  it('reorder elements', async () => {
     collection.push({ value: 3 })
     collection.push({ value: 1 })
     collection.push({ value: 2 })
+    collection.flush()
+
+    const originalOn = collection.on
+    let childChangedCb = jest.fn()
+    const mock = jest
+      .spyOn(collection, 'on')
+      .mockImplementation((name, ...args) => {
+        if (name === 'child_moved') {
+          childChangedCb = args[0]
+          return
+        }
+        originalOn.call(collection, name, ...args)
+      })
+
     await new Promise((res, rej) => {
       resolve = jest.fn(res)
       reject = jest.fn(rej)
       rtdbBindAsArray({
         vm,
         key: 'items',
-        collection: collection.orderByChild('value'),
+        collection,
         resolve,
         reject,
         ops
@@ -101,7 +115,28 @@ describe('RTDB collection', () => {
       collection.flush()
     })
 
+    expect(vm.items).toEqual([{ value: 3 }, { value: 1 }, { value: 2 }])
+
+    childChangedCb(
+      {
+        key: vm.items[0]['.key']
+      },
+      vm.items[2]['.key']
+    )
+
     expect(vm.items).toEqual([{ value: 1 }, { value: 2 }, { value: 3 }])
+
+    // move to beginning
+    childChangedCb(
+      {
+        key: vm.items[1]['.key']
+      },
+      null
+    )
+
+    expect(vm.items).toEqual([{ value: 2 }, { value: 1 }, { value: 3 }])
+
+    mock.mockClear()
   })
 
   it('updates an item', () => {
