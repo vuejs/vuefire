@@ -2,13 +2,6 @@ import { rtdbBindAsArray, walkSet } from '../../src'
 import { createOps } from '@posva/vuefire-test-helpers'
 import { MockFirebase } from '@posva/vuefire-test-helpers'
 
-function createSnapshotFromPrimitive (value, key) {
-  const data = {}
-  Object.defineProperty(data, '.value', { value })
-  Object.defineProperty(data, '.key', { value: key })
-  return data
-}
-
 describe('RTDB collection', () => {
   let collection, vm, resolve, reject, unbind
   const ops = createOps(walkSet)
