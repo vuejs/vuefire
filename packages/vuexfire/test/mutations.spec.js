@@ -1,4 +1,4 @@
-import { firebaseMutations } from '../src'
+import { vuefireMutations } from '../src'
 import {
   VUEXFIRE_SET_VALUE,
   VUEXFIRE_ARRAY_ADD,
@@ -9,7 +9,7 @@ import {
 describe('mutations', () => {
   it('sets a value', () => {
     const state = { foo: null }
-    firebaseMutations[VUEXFIRE_SET_VALUE](state, {
+    vuefireMutations[VUEXFIRE_SET_VALUE](state, {
       path: 'foo',
       target: state,
       data: 'foo'
@@ -19,7 +19,7 @@ describe('mutations', () => {
 
   it('sets a value with a path', () => {
     const state = { foo: { a: { b: null }}}
-    firebaseMutations[VUEXFIRE_SET_VALUE](state, {
+    vuefireMutations[VUEXFIRE_SET_VALUE](state, {
       path: 'foo.a.b',
       target: state,
       data: 'foo'
@@ -29,14 +29,14 @@ describe('mutations', () => {
 
   it('adds to arrays', () => {
     const state = { items: [] }
-    firebaseMutations[VUEXFIRE_ARRAY_ADD](state, {
+    vuefireMutations[VUEXFIRE_ARRAY_ADD](state, {
       target: state.items,
       newIndex: 0,
       data: 'foo'
     })
     expect(state.items).toEqual(['foo'])
 
-    firebaseMutations[VUEXFIRE_ARRAY_ADD](state, {
+    vuefireMutations[VUEXFIRE_ARRAY_ADD](state, {
       target: state.items,
       newIndex: 0,
       data: 'bar'
@@ -46,13 +46,13 @@ describe('mutations', () => {
 
   it('removes from arrays', () => {
     const state = { items: ['foo', 'bar'] }
-    firebaseMutations[VUEXFIRE_ARRAY_REMOVE](state, {
+    vuefireMutations[VUEXFIRE_ARRAY_REMOVE](state, {
       target: state.items,
       oldIndex: 0
     })
     expect(state.items).toEqual(['bar'])
 
-    firebaseMutations[VUEXFIRE_ARRAY_REMOVE](state, {
+    vuefireMutations[VUEXFIRE_ARRAY_REMOVE](state, {
       target: state.items,
       oldIndex: 0
     })

@@ -1,5 +1,5 @@
 import Vuex from 'vuex'
-import { firebaseMutations, firebaseAction } from '../'
+import { vuefireMutations, firestoreAction } from '../'
 import { firestore } from 'firebase'
 
 interface Payload {
@@ -16,31 +16,37 @@ new Vuex.Store({
   },
   mutations: {
     // your mutations
-    ...firebaseMutations
+    ...vuefireMutations
   },
   actions: {
-    init: firebaseAction(({ bindFirebaseRef, unbindFirebaseRef, commit }, payload: Payload) => {
-      // this will unbind any previously bound ref to 'todos'
-      bindFirebaseRef('todos', payload.todos).then(todos => {
-        todos.length
-        commit('setTodosLoaded', true)
-      }).catch((err) => {
-        console.log(err)
-      })
-      bindFirebaseRef('sortedTodos', payload.sortedTodos).then(todos => {
-        todos.length
-        commit('setSortedTodosLoaded', true)
-      }).catch((err) => {
-        console.log(err)
-      })
+    init: firestoreAction(
+      ({ bindFirebaseRef, unbindFirebaseRef, commit }, payload: Payload) => {
+        // this will unbind any previously bound ref to 'todos'
+        bindFirebaseRef('todos', payload.todos)
+          .then(todos => {
+            todos.length
+            commit('setTodosLoaded', true)
+          })
+          .catch(err => {
+            console.log(err)
+          })
+        bindFirebaseRef('sortedTodos', payload.sortedTodos)
+          .then(todos => {
+            todos.length
+            commit('setSortedTodosLoaded', true)
+          })
+          .catch(err => {
+            console.log(err)
+          })
 
-      bindFirebaseRef('user', payload.user).then(doc => {
-        doc.something
-      })
+        bindFirebaseRef('user', payload.user).then(doc => {
+          doc.something
+        })
 
-      // you can unbind any ref easily
-      unbindFirebaseRef('user')
-    })
+        // you can unbind any ref easily
+        unbindFirebaseRef('user')
+      }
+    )
   },
   plugins: [
     store => {

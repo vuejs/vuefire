@@ -1,13 +1,17 @@
 import mutations from './mutations'
-import { VUEXFIRE_SET_VALUE, VUEXFIRE_ARRAY_ADD, VUEXFIRE_ARRAY_REMOVE } from './types'
+import {
+  VUEXFIRE_SET_VALUE,
+  VUEXFIRE_ARRAY_ADD,
+  VUEXFIRE_ARRAY_REMOVE
+} from './types'
 
 import { bindCollection, bindDocument } from '@posva/vuefire-core'
-export const firebaseMutations = {}
+export const vuefireMutations = {}
 const commitOptions = { root: true }
 
 Object.keys(mutations).forEach(type => {
   // the { commit, state, type, ...payload } syntax is not supported by buble...
-  firebaseMutations[type] = (_, context) => {
+  vuefireMutations[type] = (_, context) => {
     mutations[type](context.state, context)
   }
 })
@@ -64,7 +68,7 @@ function unbind ({ commit, key }) {
   delete sub[key]
 }
 
-export function firebaseAction (action) {
+export function firestoreAction (action) {
   return function firebaseEnhancedActionFn (context, payload) {
     // get the local state and commit. These may be bound to a module
     const { state, commit } = context
