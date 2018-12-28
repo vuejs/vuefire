@@ -1,24 +1,34 @@
 import Vue from 'vue'
 import * as firebase from 'firebase'
-import Vuefire from '../index'
+import { firestorePlugin, rtdbPlugin } from '../index'
 
 const db = firebase.firestore()
+const rtdb = firebase.database()
 
-Vue.use(Vuefire)
+Vue.use(firestorePlugin)
+Vue.use(rtdbPlugin)
 
 const todos = db.collection('todos')
 const todosSorted = db.collection('todos').orderBy('created')
 const doc = db.collection('todos').doc('2')
+
+const source = rtdb.ref('todos')
 
 const app = new Vue({
   firestore: {
     todos,
     todosSorted,
     doc
+  },
+  firebase: {
+    source
   }
 })
 
 new Vue({
+  firebase () {
+    return { source }
+  },
   firestore () {
     return {
       todos,
@@ -29,9 +39,14 @@ new Vue({
 })
 
 app.$firestoreRefs.todos.id
+app.$firebaseRefs.todos.key
 
 app.$bind('document', db.collection('todos').doc('1')).then(doc => {
   doc.something
+})
+
+app.$rtdbBind('document', source).then(doc => {
+  doc.val()
 })
 
 app.$bind('collection', db.collection('todos')).then(todos => {
@@ -44,6 +59,7 @@ app.$bind('todos', todosSorted).then(todos => {
 
 app.$unbind('document')
 app.$unbind('collection')
+app.$rtdbUnbind('collection')
 
 Vue.component('firestore-component', {
   firestore: {

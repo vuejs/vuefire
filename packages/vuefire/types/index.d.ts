@@ -2,6 +2,5 @@ import * as firebase from 'firebase'
 import { PluginFunction } from 'vue'
 import './vue'
 
-declare const Vuefire: PluginFunction<never>
-
-export default Vuefire
+export declare const firestorePlugin: PluginFunction<never>
+export declare const rtdbPlugin: PluginFunction<never>
