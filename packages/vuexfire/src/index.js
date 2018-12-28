@@ -5,6 +5,8 @@ import {
   VUEXFIRE_ARRAY_REMOVE
 } from './types'
 
+export * from './rtdb'
+
 import { bindCollection, bindDocument } from '@posva/vuefire-core'
 export const vuefireMutations = {}
 const commitOptions = { root: true }
