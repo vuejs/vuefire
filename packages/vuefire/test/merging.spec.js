@@ -33,6 +33,8 @@ test('should merge properties', () => {
   const vm = new Vue({
     mixins: [mWithObjA, mWithObjB]
   })
+  expect(vm.$firestoreRefs.a).toBe(mWithObjB.firestore.a)
+  expect(vm.$firestoreRefs.b).toBe(mWithObjA.firestore.b)
   expect(vm.$firestoreRefs).toEqual({
     a: db.collection(3),
     b: db.collection(2),
