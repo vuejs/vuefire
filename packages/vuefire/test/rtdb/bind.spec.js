@@ -28,6 +28,16 @@ describe('RTDB: manual bind', () => {
     expect(vm.items).toEqual([{ text: 'foo' }])
   })
 
+  it('removes children in arrays', async () => {
+    source.autoFlush()
+    source.push({ name: 'one' })
+    source.push({ name: 'two' })
+
+    await vm.$rtdbBind('items', source)
+    source.child(vm.items[1]['.key']).remove()
+    expect(vm.items).toEqual([{ name: 'one' }])
+  })
+
   it('returs a promise', () => {
     expect(vm.$rtdbBind('items', source) instanceof Promise).toBe(true)
     expect(vm.$rtdbBind('item', source) instanceof Promise).toBe(true)

@@ -34,6 +34,15 @@ test('manually binds a document', async () => {
   expect(vm.item).toEqual({ text: 'foo' })
 })
 
+test('removes items', async () => {
+  collection.add({ name: 'one' })
+  collection.add({ name: 'two' })
+
+  await vm.$bind('items', collection)
+  await collection.doc(vm.items[1].id).delete()
+  expect(vm.items).toEqual([{ name: 'one' }])
+})
+
 test('returs a promise', () => {
   expect(vm.$bind('items', collection) instanceof Promise).toBe(true)
   expect(vm.$bind('item', document) instanceof Promise).toBe(true)
