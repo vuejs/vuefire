@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>VueFire Todo App Demo</title>
+    <script src="https://www.gstatic.com/firebasejs/4.11.0/firebase.js"></script>
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <script src="../dist/vuefire.js"></script>
+  </head>
+  <body>
+    <!--
+    Before running this example, make sure to:
+
+    1. cd path/to/vuefire
+    2. npm install
+    3. npm run build
+
+    Then you can open this file in your browser.
+    If you just prefer to see this example with
+    the latest published version of VueFire, you
+    play with the code in this fiddle:
+
+    https://jsfiddle.net/posva/wtyop5jy/
+    -->
+
+    <div id="app">
+      <input
+        v-model.trim="newTodoText"
+        @keyup.enter="addTodo"
+        placeholder="Add new todo"
+      />
+      <ul>
+        <li v-for="todo in todos">
+          <input
+            :value="todo.text"
+            @input="updateTodoText(todo, $event.target.value)"
+          />
+          <button @click="removeTodo(todo)">X</button>
+        </li>
+      </ul>
+    </div>
+
+    <script>
+      /* global Vue, firebase */
+      Vue.use(Vuefire.rtdbPlugin)
+      var db = firebase
+        .initializeApp({
+          databaseURL: 'https://vuefiredemo.firebaseio.com',
+        })
+        .database()
+      var todosRef = db.ref('todos')
+
+      new Vue({
+        el: '#app',
+        data: {
+          newTodoText: '',
+          todos: [],
+        },
+        firebase: {
+          todos: todosRef.limitToLast(25),
+        },
+        methods: {
+          addTodo: function() {
+            if (this.newTodoText) {
+              todosRef.push({
+                text: this.newTodoText,
+              })
+              this.newTodoText = ''
+            }
+          },
+          updateTodoText: function(todo, newText) {
+            todosRef
+              .child(todo['.key'])
+              .child('text')
+              .set(newText)
+          },
+          removeTodo: function(todo) {
+            todosRef.child(todo['.key']).remove()
+          },
+        },
+      })
+    </script>
+  </body>
+</html>
