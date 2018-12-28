@@ -76,11 +76,11 @@ export function rtdbPlugin (Vue) {
 
   Vue.mixin({
     created () {
+      ensureRefs(this)
       let bindings = this.$options.firebase
       if (typeof bindings === 'function') bindings = bindings.call(this)
       if (!bindings) return
 
-      ensureRefs(this)
       for (const key in bindings) {
         this.$rtdbBind(key, bindings[key])
       }
@@ -88,11 +88,16 @@ export function rtdbPlugin (Vue) {
 
     beforeDestroy () {
       // TODO: clear listeners
+      for (const key in this._firebaseUnbinds) {
+        this._firebaseUnbinds[key]()
+      }
+      this._firebaseSources = null
+      this._firebaseUnbinds = null
+      this.$firebaseRefs = null
     }
   })
 
   Vue.prototype.$rtdbBind = function rtdbBind (key, source) {
-    ensureRefs(this)
     if (this._firebaseUnbinds[key]) {
       this.$rtdbUnbind(key)
     }
