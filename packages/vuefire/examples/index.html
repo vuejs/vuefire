@@ -26,10 +26,17 @@
 
     <div id="app">
       <button @click="toggleTodos">Toggle todos</button> <br />
-      <input v-model.trim="newTodoText" @keyup.enter="addTodo" placeholder="Add new todo" />
+      <input
+        v-model.trim="newTodoText"
+        @keyup.enter="addTodo"
+        placeholder="Add new todo"
+      />
       <ul>
         <li v-for="todo in todos">
-          <input :value="todo.text" @input="updateTodoText(todo, $event.target.value)" />
+          <input
+            :value="todo.text"
+            @input="updateTodoText(todo, $event.target.value)"
+          />
           <button @click="removeTodo(todo)">X</button>
         </li>
       </ul>
@@ -54,7 +61,7 @@
 
     <script>
       /* global Vue, firebase, Vuefire */
-      Vue.use(Vuefire)
+      Vue.use(Vuefire.firestorePlugin)
       firebase.initializeApp({
         projectId: 'vue-fire-store',
         databaseURL: 'https://vue-fire-store.firebaseio.com',
@@ -104,7 +111,9 @@
             console.log(this.$firestoreRefs.todos === unFinishedTodos)
             this.$bind(
               'todos',
-              this.$firestoreRefs.todos === unFinishedTodos ? finishedTodos : unFinishedTodos
+              this.$firestoreRefs.todos === unFinishedTodos
+                ? finishedTodos
+                : unFinishedTodos
             )
           },
         },

@@ -39,7 +39,7 @@ function bind ({ vm, key, ref, ops }, options = { maxRefDepth: 2 }) {
   })
 }
 
-function install (Vue) {
+export function firestorePlugin (Vue) {
   const strategies = Vue.config.optionMergeStrategies
   strategies.firestore = strategies.provide
 
@@ -89,5 +89,3 @@ function install (Vue) {
     delete this.$firestoreRefs[key]
   }
 }
-
-export default install

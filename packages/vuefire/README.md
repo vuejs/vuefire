@@ -40,7 +40,9 @@ Vuefire adds a new `firestore` option to any component. Like `data`, it can be a
 Make sure to create any property added to `firestore` in `data` as well, like `todos` and `currentTodo` in the following example:
 
 ```js
-Vue.use(VueFire)
+import { firestorePlugin } from 'vuefire'
+
+Vue.use(firestorePlugin)
 
 new Vue({
   data: {

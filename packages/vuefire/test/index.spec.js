@@ -1,7 +1,7 @@
-import Vuefire from '../src'
+import { firestorePlugin } from '../src'
 import { db, tick, Vue } from '@posva/vuefire-test-helpers'
 
-Vue.use(Vuefire)
+Vue.use(firestorePlugin)
 
 describe('Firestore: firestore option', () => {
   let collection, document, vm
