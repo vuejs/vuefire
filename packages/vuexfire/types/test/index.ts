@@ -20,9 +20,9 @@ new Vuex.Store({
   },
   actions: {
     init: firestoreAction(
-      ({ bindFirebaseRef, unbindFirebaseRef, commit }, payload: Payload) => {
+      ({ bindFirestoreRef, unbindFirestoreRef, commit }, payload: Payload) => {
         // this will unbind any previously bound ref to 'todos'
-        bindFirebaseRef('todos', payload.todos)
+        bindFirestoreRef('todos', payload.todos)
           .then(todos => {
             todos.length
             commit('setTodosLoaded', true)
@@ -30,7 +30,7 @@ new Vuex.Store({
           .catch(err => {
             console.log(err)
           })
-        bindFirebaseRef('sortedTodos', payload.sortedTodos)
+        bindFirestoreRef('sortedTodos', payload.sortedTodos)
           .then(todos => {
             todos.length
             commit('setSortedTodosLoaded', true)
@@ -39,12 +39,12 @@ new Vuex.Store({
             console.log(err)
           })
 
-        bindFirebaseRef('user', payload.user).then(doc => {
+        bindFirestoreRef('user', payload.user).then(doc => {
           doc.something
         })
 
         // you can unbind any ref easily
-        unbindFirebaseRef('user')
+        unbindFirestoreRef('user')
       }
     )
   },

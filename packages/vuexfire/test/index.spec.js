@@ -4,7 +4,7 @@ import { db, tick, Vue, delayUpdate } from '@posva/vuefire-test-helpers'
 
 Vue.use(Vuex)
 
-describe('firebaseAction', () => {
+describe('firestoreAction', () => {
   const store = new Vuex.Store({
     mutations: vuefireMutations,
     actions: {
@@ -13,12 +13,12 @@ describe('firebaseAction', () => {
   })
 
   const setItems = collection =>
-    store.dispatch('action', ({ bindFirebaseRef }) =>
-      bindFirebaseRef('items', collection)
+    store.dispatch('action', ({ bindFirestoreRef }) =>
+      bindFirestoreRef('items', collection)
     )
   const setItem = document =>
-    store.dispatch('action', ({ bindFirebaseRef }) =>
-      bindFirebaseRef('item', document)
+    store.dispatch('action', ({ bindFirestoreRef }) =>
+      bindFirestoreRef('item', document)
     )
 
   let collection, document
@@ -126,8 +126,8 @@ describe('firebaseAction', () => {
   it('can unbind a reference', async () => {
     await setItems(collection)
     await collection.add({ text: 'foo' })
-    await store.dispatch('action', ({ unbindFirebaseRef }) =>
-      unbindFirebaseRef('items')
+    await store.dispatch('action', ({ unbindFirestoreRef }) =>
+      unbindFirestoreRef('items')
     )
 
     expect(store.state.items).toEqual([{ text: 'foo' }])

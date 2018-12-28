@@ -4,15 +4,15 @@ import { firestore } from 'firebase'
 export declare const vuefireMutations: MutationTree<any>
 
 interface FirestoreActionContext<S, R> extends ActionContext<S, R> {
-  bindFirebaseRef(
+  bindFirestoreRef(
     key: string,
     ref: firestore.Query
   ): Promise<firestore.DocumentData[]>
-  bindFirebaseRef(
+  bindFirestoreRef(
     key: string,
     ref: firestore.DocumentReference
   ): Promise<firestore.DocumentData>
-  unbindFirebaseRef(key: string): void
+  unbindFirestoreRef(key: string): void
 }
 
 export declare function firestoreAction<S, R>(
