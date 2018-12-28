@@ -11,11 +11,13 @@
     }
   },
   "devDependencies": {
+    "conventional-changelog-cli": "^2.0.11",
     "cz-conventional-changelog": "^2.1.0",
     "lerna": "^3.8.0"
   },
   "scripts": {
     "prerelease": "lerna version -m 'chore(release): publish'",
-    "release": "lerna publish from-git --npm-tag next"
+    "release": "lerna publish from-git --npm-tag next",
+    "changelog": "conventional-changelog -p angular -r 2 -i CHANGELOG.md -s"
   }
 }
