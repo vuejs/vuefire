@@ -1,4 +1,7 @@
-# Vuefire / Vuexfire [![Build Status](https://badgen.net/circleci/github/vuejs/vuefire)](https://circleci.com/gh/vuejs/vuefire) [![coverage](https://badgen.net/codecov/c/github/vuejs/vuefire)](https://codecov.io/github/vuejs/vuefire)
+<p align="center"><img width="100" src="logo-vuefire.svg" alt="Vuefire Logo"></p>
+<h2 align="center">Vuefire / Vuexfire</h2>
+
+[![Build Status](https://badgen.net/circleci/github/vuejs/vuefire)](https://circleci.com/gh/vuejs/vuefire) [![coverage](https://badgen.net/codecov/c/github/vuejs/vuefire)](https://codecov.io/github/vuejs/vuefire)
 
 > Synchronize your data and Firebase Cloud Store database in real-time
 
