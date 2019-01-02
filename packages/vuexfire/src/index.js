@@ -1,3 +1,4 @@
+// @ts-check
 import mutations from './common/mutations'
 import {
   VUEXFIRE_SET_VALUE,
@@ -21,7 +22,7 @@ Object.keys(mutations).forEach(type => {
 // Firebase binding
 const subscriptions = new WeakMap()
 
-function bind ({ state, commit, key, ref, ops }, options = { maxRefDepth: 2 }) {
+function bind ({ state, commit, key, ref, ops }, options) {
   // TODO check ref is valid
   // TODO check defined in state
   let sub = subscriptions.get(commit)
@@ -96,7 +97,7 @@ export function firestoreAction (action) {
       }
     }
 
-    context.bindFirestoreRef = (key, ref, options = {}) =>
+    context.bindFirestoreRef = (key, ref, options = { maxRefDepth: 2 }) =>
       bind({ state, commit, key, ref, ops }, options)
     context.unbindFirestoreRef = key => unbind({ commit, key })
     return action(context, payload)
