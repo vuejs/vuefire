@@ -1,9 +1,9 @@
-import mutations from './mutations'
+import mutations from './common/mutations'
 import {
   VUEXFIRE_SET_VALUE,
   VUEXFIRE_ARRAY_ADD,
   VUEXFIRE_ARRAY_REMOVE
-} from './types'
+} from './common/types'
 
 export * from './rtdb'
 
@@ -64,14 +64,14 @@ function bind ({ state, commit, key, ref, ops }, options = { maxRefDepth: 2 }) {
 
 function unbind ({ commit, key }) {
   const sub = subscriptions.get(commit)
-  if (!sub) return
+  if (!sub || !sub[key]) return
   // TODO dev check before
   sub[key]()
   delete sub[key]
 }
 
 export function firestoreAction (action) {
-  return function firebaseEnhancedActionFn (context, payload) {
+  return function firestoreEnhancedActionFn (context, payload) {
     // get the local state and commit. These may be bound to a module
     const { state, commit } = context
     const ops = {

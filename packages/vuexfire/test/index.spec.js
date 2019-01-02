@@ -9,6 +9,15 @@ describe('firestoreAction', () => {
     mutations: vuefireMutations,
     actions: {
       action: firestoreAction((context, fn) => fn(context))
+    },
+
+    modules: {
+      module: {
+        namespaced: true,
+        actions: {
+          action: firestoreAction((context, fn) => fn(context))
+        }
+      }
     }
   })
 
@@ -25,7 +34,10 @@ describe('firestoreAction', () => {
   beforeEach(async () => {
     store.replaceState({
       items: null,
-      item: null
+      item: null,
+      module: {
+        items: null
+      }
     })
     collection = db.collection()
     document = db.collection().doc()
@@ -135,5 +147,22 @@ describe('firestoreAction', () => {
     expect(store.state.items).toEqual([{ text: 'foo' }])
     await setItems(collection)
     expect(store.state.items).toEqual([{ text: 'foo' }, { text: 'foo' }])
+  })
+
+  it('does not throw there is nothing to unbind', async () => {
+    await setItems(collection)
+    await store.dispatch('action', ({ unbindFirestoreRef }) =>
+      expect(() => {
+        unbindFirestoreRef('items')
+        unbindFirestoreRef('items')
+      }).not.toThrow()
+    )
+
+    await store.dispatch('module/action', ({ unbindFirestoreRef }) =>
+      expect(() => {
+        unbindFirestoreRef('items')
+        unbindFirestoreRef('items')
+      }).not.toThrow()
+    )
   })
 })

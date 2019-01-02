@@ -3,7 +3,7 @@ import {
   VUEXFIRE_SET_VALUE,
   VUEXFIRE_ARRAY_ADD,
   VUEXFIRE_ARRAY_REMOVE
-} from '../src/types'
+} from '../src/common/types'
 // import { db, tick, Vue } from '@posva/vuefire-test-helpers'
 
 describe('mutations', () => {

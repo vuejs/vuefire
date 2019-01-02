@@ -55,17 +55,17 @@ const store = new Vuex.Store({
 
 In order to use VuexFire, you have to enhance actions. This action enhancer
 takes the actual action and enhances it with two additional parameters in the
-context, `bindFirebaseRef` and `unbindFirebaseRef`:
+context, `bindFirestoreRef` and `unbindFirestoreRef`:
 
 ```js
-import { firebaseAction } from 'vuexfire'
+import { firestoreAction } from 'vuexfire'
 
-const setTodosRef = firebaseAction(
-  ({ bindFirebaseRef, unbindFirebaseRef }, { ref }) => {
+const setTodosRef = firestoreAction(
+  ({ bindFirestoreRef, unbindFirestoreRef }, { ref }) => {
     // this will unbind any previously bound ref to 'todos'
-    bindFirebaseRef('todos', ref)
+    bindFirestoreRef('todos', ref)
     // you can unbind any ref easily
-    unbindFirebaseRef('user')
+    unbindFirestoreRef('user')
   }
 )
 ```
@@ -102,7 +102,7 @@ support [here](http://kangax.github.io/compat-table/es6/#test-WeakMap).
 VuexFire uses multiple global mutations prefixed by `vuexfire/` to call the
 actual mutations to modify objects and arrays. It listens for updates to your
 firebase database and commits mutations to sync your state. Thanks to the action
-enhancer `firebaseAction`, it gets access to the local `state` and `commit` so
+enhancer `firestoreAction`, it gets access to the local `state` and `commit` so
 it works with modules too :+1:
 
 ## Examples
@@ -116,7 +116,7 @@ You can check out a complete example in the `/examples` directory.
 This object contains VuexFire internal mutations. They are all prefixed by
 `vuexfire/`. This object must be added in the root Store mutations object.
 
-### bindFirebaseRef(key, ref)
+### bindFirestoreRef(key, ref)
 
 _Only available inside of an enhanced action_
 
@@ -124,13 +124,13 @@ Binds a firebase reference to a property in the state. If there was already
 another reference bound to the same property, it unbinds it first.
 
 ```js
-bindFirebaseRef('todos', ref)
+bindFirestoreRef('todos', ref)
 ```
 
 Returns a promise which will resolve when the data is ready, or throw an error if something goes wrong:
 
 ```js
-bindFirebaseRef('todos', ref)
+bindFirestoreRef('todos', ref)
   .then(() => {
     commit('setTodosLoaded', true)
   })
@@ -139,14 +139,14 @@ bindFirebaseRef('todos', ref)
   })
 ```
 
-### unbindFirebaseRef(key)
+### unbindFirestoreRef(key)
 
 _Only available inside of an enhanced action_
 
 Unbinds a bound firebase reference to a given property in the state.
 
 ```js
-unbindFirebaseRef('todos')
+unbindFirestoreRef('todos')
 ```
 
 ## License

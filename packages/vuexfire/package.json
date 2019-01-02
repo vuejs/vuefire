@@ -70,7 +70,7 @@
   "jest": {
     "collectCoverage": true,
     "collectCoverageFrom": [
-      "<rootDir>/src/*.js"
+      "<rootDir>/src/**/*.js"
     ]
   },
   "gitHead": "e3e2df3624572cec86ed861f2472df4d143f2265"
