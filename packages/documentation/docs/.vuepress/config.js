@@ -1,6 +1,8 @@
 const path = require('path')
 
 module.exports = {
+  title: 'Vuefire',
+  description: 'Realtime bindings between Vue/Vuex and Firebase',
   head: [
     ['link', { rel: 'icon', href: `/logo.png` }],
     // ['link', { rel: 'manifest', href: '/manifest.json' }],
