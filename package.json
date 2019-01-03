@@ -3,6 +3,7 @@
   "workspaces": [
     "packages/vuefire",
     "packages/vuexfire",
+    "packages/documentation",
     "packages/@posva/*"
   ],
   "config": {
@@ -13,15 +14,12 @@
   "devDependencies": {
     "conventional-changelog-cli": "^2.0.11",
     "cz-conventional-changelog": "^2.1.0",
-    "lerna": "^3.8.0",
-    "vuepress": "^1.0.0-alpha.30"
+    "lerna": "^3.8.0"
   },
   "scripts": {
     "prerelease": "lerna version -m 'chore(release): publish'",
     "release": "lerna publish from-git --npm-tag next",
     "changelog": "conventional-changelog -p angular -r 2 -i CHANGELOG.md -s",
-    "docs:dev": "vuepress dev docs",
-    "docs:build": "vuepress build docs",
     "test": "lerna run test"
   }
 }
