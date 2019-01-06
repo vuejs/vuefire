@@ -20,7 +20,52 @@ module.exports = {
   themeConfig: {
     repo: 'vuejs/vuefire',
     editLinks: true,
-    docsDir: 'docs'
+    docsDir: 'docs',
+    // sidebarDepth: 2,
+    // sidebar: 'auto',
+    sidebar: {
+      '/vuefire/': [
+        {
+          title: 'Vuefire',
+          collapsable: false,
+          children: [
+            '',
+            'getting-started',
+            'declarative-binding',
+            'programmatic-binding',
+            'firestore-references',
+            'querying',
+            'writing-data'
+          ]
+        }
+      ],
+      '/cookbook/': [
+        {
+          title: 'Cookbook',
+          collapsable: false,
+          children: ['', 'prototyping']
+        }
+      ]
+    },
+    // displayAllHeaders: true,
+    nav: [
+      {
+        text: 'Vuefire',
+        link: '/vuefire/'
+      },
+      {
+        text: 'Vuexfire',
+        link: '/vuexfire/'
+      },
+      {
+        text: 'API',
+        link: '/api/'
+      },
+      {
+        text: 'Cookbook',
+        link: '/cookbook/'
+      }
+    ]
     // #697 Provided by the official algolia team.
     // algolia: {
     //   apiKey: '3a539aab83105f01761a137c61004d85',

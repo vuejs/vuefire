@@ -2,8 +2,8 @@
 home: true
 heroImage: /logo.svg
 actionText: Get Started →
-actionLink: /guide/
-footer: MIT Licensed | Copyright © 2019-present Eduardo San Martin Morote
+actionLink: /vuefire/
+footer: MIT Licensed | Copyright © 2016-present Eduardo San Martin Morote
 ---
 
 <div class="features">

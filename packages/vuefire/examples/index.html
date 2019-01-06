@@ -62,11 +62,12 @@
     <script>
       /* global Vue, firebase, Vuefire */
       Vue.use(Vuefire.firestorePlugin)
-      firebase.initializeApp({
-        projectId: 'vue-fire-store',
-        databaseURL: 'https://vue-fire-store.firebaseio.com',
-      })
-      const db = firebase.firestore()
+      const db = firebase
+        .initializeApp({
+          projectId: 'vue-fire-store',
+          databaseURL: 'https://vue-fire-store.firebaseio.com',
+        })
+        .firestore()
       db.settings({ timestampsInSnapshots: true })
       const todos = db.collection('todos')
       const unFinishedTodos = todos.where('finished', '==', false)
