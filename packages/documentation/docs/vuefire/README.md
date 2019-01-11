@@ -8,6 +8,7 @@ While Firebase SDK does provide an API to keep your local data in sync with any 
 
 _Code for RTDB_:
 
+<FirebaseExample>
 ```js
 // get RTDB the database instance
 const db = firebase
@@ -85,14 +86,8 @@ new Vue({
   },
 })
 ```
-
-:::warning
-We are omitting the unsubscribe parte because it requires to save the return of every listener created to later on call `this.todosRef.off` with _every single_ one of them.
-:::
-
-_Code for Cloud Firestore:_
-
 ```js
+// get Firestore database instance
 const db = firebase.initializeApp({ projectId: 'MY PROJECT ID' }).firestore()
 db.settings({ timestampsInSnapshots: true })
 
@@ -124,17 +119,17 @@ new Vue({
   },
 })
 ```
+</FirebaseExample>
 
 :::warning
-The code above is not taking into account [Firestore references](https://firebase.google.com/docs/firestore/data-model#references) which **considerably** increases the complexity of binding and [is handled transparently](firestore-references.md) by Vuefire
+- In the **RTDB** example, we are omitting the unsubscribe part because it requires to save the return of every listener created to later on call `this.todosRef.off` with _every single_ one of them.
+- In the **Firestore** example, the code above is not taking into account [Firestore references](https://firebase.google.com/docs/firestore/data-model#references) which **considerably** increases the complexity of binding and [is handled transparently](firestore-references.md) by Vuefire
 ::::
 
 Now let's look at the equivalent code with vuefire:
 
-RTDB
-
+<FirebaseExample>
 ```js
-// get RTDB the database instance
 const db = firebase
   .initializeApp({ databaseURL: 'https://MY-DATABASE.firebaseio.com' })
   .database()
@@ -149,10 +144,7 @@ new Vue({
 })
 ```
 
-Firestore
-
 ```js
-// get RTDB the database instance
 const db = firebase.initializeApp({ projectId: 'MY PROJECT ID' }).firestore()
 db.settings({ timestampsInSnapshots: true })
 
@@ -165,5 +157,6 @@ new Vue({
   },
 })
 ```
+</FirebaseExample>
 
 And that's it! You can use `todos` anywhere, it will be reactive and always in sync with your remote database. Let's dive deeper and learn about all the features added by Vuefire: [Getting started](getting-started.md)
