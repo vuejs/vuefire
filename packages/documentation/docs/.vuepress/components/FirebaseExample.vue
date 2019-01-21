@@ -69,6 +69,12 @@ $lightGray = #ddd;
     justify-content: flex-end;
     height: 2.5rem;
 
+    @media (max-width: 419px) {
+      & {
+        margin: 0 -1.5rem -0.85rem;
+      }
+    }
+
     & > button {
       display: flex;
       align-items: center;
