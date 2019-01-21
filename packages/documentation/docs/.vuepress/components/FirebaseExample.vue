@@ -82,9 +82,14 @@ $lightGray = #ddd;
       padding: 0 0.7rem;
       border: solid 1px $codeBgColor;
       border-bottom: none;
+      background-color: lighten($codeBgColor, 10%);
 
       &:not(:first-child) {
         border-left: none;
+      }
+
+      &:not(:last-child) {
+        border-right: none;
       }
 
       &:first-child {
@@ -98,12 +103,12 @@ $lightGray = #ddd;
       & > svg {
         width: 32px;
         height: 32px;
-        fill: lighten($codeBgColor, 20%);
+        fill: darken($bgColor, 10%);
       }
 
       &:not([disabled]):hover {
         cursor: pointer;
-        background-color: lighten($codeBgColor, 10%);
+        background-color: lighten($codeBgColor, 30%);
 
         & svg {
           fill: $bgColor;
