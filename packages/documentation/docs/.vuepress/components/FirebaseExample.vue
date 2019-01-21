@@ -1,12 +1,13 @@
 <template>
   <div class="tab-container" :id="id">
-    <nav>
+    <nav ref="nav">
       <button
         :id="id + '_rtdb'"
         :class="!selectedTab && 'is-selected'"
         title="Realtime Database example"
         @focus="selectOnFocus(0, $event)"
-        @click="selectedTab = 0"
+        @click="select(0)"
+        :disabled="disable === '0'"
       >
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">
           <path
@@ -20,7 +21,8 @@
         :class="selectedTab && 'is-selected'"
         title="Cloudstore example"
         @focus="selectOnFocus(1, $event)"
-        @click="selectedTab = 1"
+        @click="select(1)"
+        :disabled="disable === '1'"
       >
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">
           <path
@@ -44,19 +46,31 @@
 <script>
 import "focus-visible";
 
+const sharedState = {
+  selectedTab: 0
+}
+
 export default {
-  props: ['id'],
+  props: ['id', 'disable'],
   data() {
-    return {
-      selectedTab: 0
-    };
+    return sharedState
   },
 
   methods: {
     selectOnFocus(i, event) {
       if (!event.relatedTarget || event.relatedTarget.tagName !== 'A') return
       this.selectedTab = i
-    }
+      // NOTE: only works on Chrome. using $nextTick doesn't change anything
+      window.scrollBy(0, -70)
+    },
+
+    // select a tab and keep the scroll position
+    async select(i) {
+      this.selectedTab = i
+      const offset = this.$refs.nav.offsetTop - window.scrollY
+      await this.$nextTick()
+      window.scrollTo(0, this.$refs.nav.offsetTop - offset)
+    },
   },
 
   components: {
@@ -93,6 +107,7 @@ $lightGray = #ddd;
       height: 100%;
       // padding: 4.6rem 0.7rem 0;
       padding: 0 0.7rem;
+      margin: 0;
       border: solid 1px $codeBgColor;
       border-bottom: none;
       background-color: lighten($codeBgColor, 10%);
