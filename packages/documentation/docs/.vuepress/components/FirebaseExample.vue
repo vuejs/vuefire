@@ -1,9 +1,11 @@
 <template>
-  <div class="tab-container">
+  <div class="tab-container" :id="id">
     <nav>
       <button
+        :id="id + '_rtdb'"
         :class="!selectedTab && 'is-selected'"
         title="Realtime Database example"
+        @focus="selectOnFocus(0, $event)"
         @click="selectedTab = 0"
       >
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">
@@ -14,8 +16,10 @@
         </svg>
       </button>
       <button
+        :id="id + '_firestore'"
         :class="selectedTab && 'is-selected'"
         title="Cloudstore example"
+        @focus="selectOnFocus(1, $event)"
         @click="selectedTab = 1"
       >
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">
@@ -41,10 +45,18 @@
 import "focus-visible";
 
 export default {
+  props: ['id'],
   data() {
     return {
       selectedTab: 0
     };
+  },
+
+  methods: {
+    selectOnFocus(i, event) {
+      if (!event.relatedTarget || event.relatedTarget.tagName !== 'A') return
+      this.selectedTab = i
+    }
   },
 
   components: {
@@ -79,6 +91,7 @@ $lightGray = #ddd;
       display: flex;
       align-items: center;
       height: 100%;
+      // padding: 4.6rem 0.7rem 0;
       padding: 0 0.7rem;
       border: solid 1px $codeBgColor;
       border-bottom: none;
@@ -103,6 +116,7 @@ $lightGray = #ddd;
       & > svg {
         width: 32px;
         height: 32px;
+        // margin-top: -3.5rem;
         fill: darken($bgColor, 10%);
       }
 
