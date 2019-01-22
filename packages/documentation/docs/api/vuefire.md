@@ -6,7 +6,7 @@ For all code samples, we will consider a `db` variable is imported as follows:
 
 ```js
 // Get a RTDB instance
-const db = firebase.initializeApp({ databaseURL: 'YOUR OWN URL' }).database()
+const db = firebase.initializeApp({ databaseURL: 'MY PROJECT URL' }).database()
 ```
 
 ```js
@@ -19,7 +19,7 @@ db.settings({ timestampsInSnapshots: true })
 
 ## firestorePlugin
 
-Vue plugin to add support for the [`firestore` option](#firestore-option) as well
+Vue plugin to add support for the [`firestore` option](#firestore-option) as well [`$bind`](#bind), [`$unbind`](#unbind) and [`$firestoreRefs`](#firestorerefs)
 
 ```js
 import Vue from 'vue'
@@ -49,7 +49,7 @@ new Vue({
   },
   firestore: {
     todos: db.collection('todos'),
-    finishedTodos: todos.where('finished', '==', false),
+    finishedTodos: todos.where('finished', '==', true),
     currentTodo: db.collection('todos').doc('1'),
   },
 })
@@ -67,8 +67,6 @@ You can also provide a function that returns an object and access local variable
 ```js
 new Vue({
   data: {
-    todos: [],
-    finishedTodos: [],
     currentTodo: null,
   },
   firestore() {
@@ -121,7 +119,7 @@ export default {
 This method is only available after [installing `firestorePlugin`](#firestoreplugin)
 :::
 
-Unsubscribe from updates for a given key as well as any nested [reference](#TODO) that is being listened to.
+Unsubscribe from updates for a given key as well as any nested [reference](#TODO) that is being listened to. Also removes the Reference from [`$firestoreRefs`](#firestorerefs)
 
 `this.$unbind(key: string): void`
 
@@ -140,3 +138,129 @@ this.$firestoreRefs.documents === documents
 ```
 
 <!-- TODO should extract the ref when using a query -->
+
+---
+
+## rtdbPlugin
+
+Vue plugin to add support for the [`firebase` option](#firebase-option) as well as [`$rtdbBind`](#rtdbbind), [`$rtdbUnbind`](#rtdbunbind) and [`$firebaseRefs`](#firebaserefs).
+
+```js
+import Vue from 'vue'
+import { rtdbPlugin } from 'vuefire'
+
+Vue.use(rtdbPlugin, options)
+```
+
+### options
+
+TODO: add options
+
+## `firebase` option
+
+:::miniwarn
+This option is only available after [installing `rtdbPlugin`](#rtdbplugin)
+:::
+
+Provide an object of properties to be bound to a Firebase Reference or Query. Those properties **must be declared** in `data` as well:
+
+```js
+new Vue({
+  data: {
+    todos: [],
+    finishedTodos: [],
+    currentTodo: null,
+  },
+  firestore: {
+    todos: db.ref('todos'),
+    finishedTodos: todos.orderByChild('finished').equalTo(true),
+    currentTodo: db.ref('todos/1'),
+  },
+})
+```
+
+:::warning
+
+- Use an empty array `[]` as the initial value for a property that must be bound as an Array
+- Use `null` if you want vuefire to bind References as objects
+
+:::
+
+You can also provide a function that returns an object and access local variables:
+
+```js
+new Vue({
+  data: {
+    currentTodo: null,
+  },
+  firestore() {
+    return {
+      currentTodo: db.ref('todos/' + this.selectedDocument),
+    }
+  },
+})
+```
+
+:::tip
+Keep in mind `currentTodo` won't be kept in sync with `selectedDocument`. You will have to use [\$rtdbBind](#rtdbbind) with `watch` property or, if you are using the router, a guard like `beforeRouteUpdate`.
+:::
+
+## \$rtdbBind
+
+:::miniwarn
+This method is only available after [installing `rtdbPlugin`](#rtdbplugin)
+:::
+
+`$rtdbBind` allows you to programatically bind a Reference or query to an **existing property** (created in `data`). It is called for you when you use the [`firebase` option](#firebase-option):
+
+`this.$rtdbBind(key: string, reference: Referenc | Query, options?): Promise<Object | Array>`
+
+Depending on the type of the property, the Reference or Query will be bound as an array or as an object.
+
+```js
+const documents = db.ref('documents')
+
+export default {
+  props: ['documentId'],
+  data: () => ({ currentDocument: null }),
+  firebase() {
+    return {
+      currentDocument: documents.child(this.documentId),
+    }
+  },
+  watch: {
+    documentId(id) {
+      // $rtdbBind automatically unbinds the previously bound property
+      // `currentDocument` will be bound as an object because it's value
+      // is not an array
+      this.$rtdbBind('currentDocument', documents.child(id))
+    },
+  },
+}
+```
+
+`$rtdbBind` returns a Promise that is resolved once the data has been retrieved and synced into the state.
+
+## \$rtdbUnbind
+
+:::miniwarn
+This method is only available after [installing `rtdbPlugin`](#rtdbplugin)
+:::
+
+Unsubscribe from updates for a given key. Removes the given Reference from [`$firebaseRefs`](#firebaserefs)
+
+`this.$rtdbUnbind(key: string): void`
+
+## \$firebaseRefs
+
+:::miniwarn
+This property is only available after [installing `rtdbPlugin`](#rtdbplugin)
+:::
+
+Dictionary containing References to currently bound References and Queries
+
+```js
+const documents = db.ref('documents')
+this.$rtdbBind('documents', documents)
+this.$firebaseRefs.documents === documents
+```
