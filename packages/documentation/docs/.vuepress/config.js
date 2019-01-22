@@ -1,4 +1,5 @@
 const path = require('path')
+const container = require('markdown-it-container')
 
 module.exports = {
   title: 'Vuefire',
@@ -45,6 +46,13 @@ module.exports = {
           collapsable: false,
           children: ['', 'prototyping']
         }
+      ],
+      '/api/': [
+        {
+          collapsable: false,
+          title: 'API Reference',
+          children: ['vuefire', 'vuexfire']
+        }
       ]
     },
     // displayAllHeaders: true,
@@ -79,5 +87,28 @@ module.exports = {
     //   updatePopup: true
     // },
     // '@vuepress/notification': true,
+  },
+
+  markdown: {
+    extendMarkdown: md => {
+      md.use(container, 'miniwarn', {
+        render(tokens, idx) {
+          const token = tokens[idx]
+          // 8 === 'miniwarn'.length
+          const info = token.info
+            .trim()
+            .slice(8)
+            .trim()
+
+          if (token.nesting === 1) {
+            // opening tag
+            return '<blockquote class="warning">' + info
+          } else {
+            // closing tag
+            return '</blockquote>\n'
+          }
+        }
+      })
+    }
   }
 }

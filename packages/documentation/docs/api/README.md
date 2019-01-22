@@ -1,4 +1,4 @@
 # API Reference
 
-- [`vuefire` package API Reference](./vuefire.md)
-- [`vuexfire` package API Reference](./vuexfire.md)
+- [Vuefire package API Reference](./vuefire.md)
+- [Vuexfire package API Reference](./vuexfire.md)

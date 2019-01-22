@@ -1,1 +1,1 @@
-# `vuexfire` API Reference
+# Vuexfire API Reference
