@@ -87,9 +87,10 @@ Keep in mind `currentTodo` won't be kept in sync with `selectedDocument`. You wi
 This method is only available after [installing `firestorePlugin`](#firestoreplugin)
 :::
 
-`$bind` allows you to programatically bind a collection, document or query to an **existing property** (created in `data`). It's what is called for you when using the [`firestore` option](#firestore-option):
+Programatically binds a collection, document or query to an **existing property** (created in `data`). It's what is called for you when using the [`firestore` option](#firestore-option):
 
-`this.$bind(key: string, reference: Query | Document, options?): Promise<Object | Array>`
+- `this.$bind(key: string, reference: Query, options?): Promise<Object[]>`
+- `this.$bind(key: string, reference: Document, options?): Promise<Object>`
 
 ```js
 const documents = db.collection('documents')
@@ -111,7 +112,13 @@ export default {
 }
 ```
 
-`$bind` returns a Promise that is resolved once the data has been _completely_ fetched and synced into the state. This means, it will wait for any [references](#TODO) inside **any** of the documents bound. By default it stops at a level 2 nesting
+`$bind` returns a Promise that is resolved once the data has been _completely_ fetched and synced into the state. This means, it will wait for any [references](#TODO) inside **any** of the documents bound. By default it stops [at a level 2 nesting](#options-2)
+
+#### `options`
+
+Object that can contain the following properties:
+
+- `maxRefDepth`: How many levels of nested references should be automatically bound. Defaults to 2, meaning that References inside of References inside of documents bound with `bindFirestoreRef` will automatically be bound too.
 
 ## \$unbind
 
@@ -247,7 +254,7 @@ export default {
 This method is only available after [installing `rtdbPlugin`](#rtdbplugin)
 :::
 
-Unsubscribe from updates for a given key. Removes the given Reference from [`$firebaseRefs`](#firebaserefs)
+Unsubscribes from updates for a given key and removes the given Reference from [`$firebaseRefs`](#firebaserefs)
 
 `this.$rtdbUnbind(key: string): void`
 
