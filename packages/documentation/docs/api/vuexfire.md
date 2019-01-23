@@ -55,6 +55,8 @@ export const setTodosRef = firestoreAction(
 
 Binds a collection, Query or Document to a property previously declared in the state, relatively to the module we are on. It unbinds any previouly bound reference with the same `key`.
 
+Returns a Promise that is resolved once the data has been _completely_ fetched and synced into the state. This means, it will wait for any [references](#TODO) inside **any** of the documents bound. By default it stops [at a level 2 nesting](#options)
+
 #### `options`
 
 Can contain the following properties:
@@ -64,5 +66,36 @@ Can contain the following properties:
 ### unbindFirestoreRef
 
 `unbindFirestoreRef(key: string): void`
+
+Unsubscribes from updates for a given key. Leaves the state as-is.
+
+## firebaseAction
+
+Wraps an action to inject [`bindFirebaseRef`](#bindfirebaseref) as well as [`unbindFirebaseRef`](#unbindfirebaseref)
+
+```js
+// store/actions.js
+import { firebaseAction } from 'vuexfire'
+
+export const setDocument = firebaseAction(
+  ({ bindFirebaseRef, unbindFirebaseRef }, documentId) => {
+    bindFirebaseRef('documents', db.ref('documents').child(documentId))
+    unbindFirebaseRef('documents')
+  }
+)
+```
+
+### bindFirebaseRef
+
+- `bindFirebaseRef(key: string, ref: Query): Promise<Object[]>`
+- `bindFirebaseRef(key: string, ref: Document): Promise<Object>`
+
+Binds a collection, Query or Document to a property previously declared in the state, relatively to the module we are on. It unbinds any previouly bound reference with the same `key`. If the current value in the state is an Array, it binds the data as an array, otherwise it binds it as an object.
+
+Returns a promise that is resolved once the data is fetched and the state is in sync.
+
+### unbindFirebaseRef
+
+`unbindFirebaseRef(key: string): void`
 
 Unsubscribes from updates for a given key. Leaves the state as-is.
