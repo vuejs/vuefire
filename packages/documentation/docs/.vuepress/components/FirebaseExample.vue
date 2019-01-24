@@ -161,8 +161,10 @@ $lightGray = #ddd;
   }
 
   .tab-content {
-    & >>> div[class^='language-'] {
-      border-radius: 6px 0 6px 6px;
+    @media (min-width: 420px) {
+      & >>> div[class^='language-'] {
+        border-radius: 6px 0 6px 6px;
+      }
     }
 
     & >>> pre[class^=language] {
