@@ -57,6 +57,60 @@ It's necessary to declare properties with their initial values in `data`. **For 
 
 ## Programmatic binding
 
+Declarative binding is simple and easy to write, however, you will probably need to change the reference to the database while the application is running. Changing the active document you are displaying, displaying a different user profile, etc. This can be achieved through the `$rtdbBind`/`$bind` methods added by `rtdbPlugin`/`firestorePlugin` in any Vue component.
+
+<FirebaseExample>
+
+```js
+// UserProfile.vue
+const users = db.ref('users')
+
+export default {
+  props: ['id'],
+  data() {
+    return {
+      user: null,
+    }
+  },
+
+  watch: {
+    id: {
+      // call it upon creatin too
+      immediate: true,
+      handler(id) {
+        this.$rtdbBind('user', users.child(id))
+      },
+    },
+  },
+}
+```
+
+```js
+// UserProfile.vue
+const users = db.collection('users')
+
+export default {
+  props: ['id'],
+  data() {
+    return {
+      user: null,
+    }
+  },
+
+  watch: {
+    id: {
+      // call it upon creatin too
+      immediate: true,
+      handler(id) {
+        this.$bind('user', users.doc(id))
+      },
+    },
+  },
+}
+```
+
+</FirebaseExample>
+
 ## Using the data bound by Vuefire
 
 <!-- TODO: talk about ids -->
