@@ -75,7 +75,7 @@ export default {
 
   watch: {
     id: {
-      // call it upon creatin too
+      // call it upon creation too
       immediate: true,
       handler(id) {
         this.$rtdbBind('user', users.child(id))
@@ -99,7 +99,7 @@ export default {
 
   watch: {
     id: {
-      // call it upon creatin too
+      // call it upon creation too
       immediate: true,
       handler(id) {
         this.$bind('user', users.doc(id))
@@ -111,6 +111,168 @@ export default {
 
 </FirebaseExample>
 
+With the approach above, `user` will always be bound to the user defined by the prop `id`
+
+:::tip
+No need to call [`$rtdbUnbind`/`$unbind`](#unbinding-unsubscribing-to-changes) as `$rtdbBind`/`$bind` will automatically unbind any existant binding on the provided key. Upon component removal, all bindings are removed as well.
+:::
+
+If you need to wait for a binding to be ready before doing something, you can _await_ for the returned Promised:
+
+<FirebaseExample>
+
+```js
+this.$rtdbBind('user', users.child(this.id)).then(user => {
+  // user will be an object if this.user was set to anything but an array
+  // this.user === user
+})
+
+this.$rtdbBind(
+  'documents',
+  documents.orderByChild('creator').equalTo(this.id)
+).then(documents => {
+  // documents will be an array if this.documents was initially set to an array
+  // this.documents === documents
+})
+```
+
+```js
+this.$bind('user', users.doc(this.id)).then(user => {
+  // user will be an object if this.user was set to anything but an array
+  // this.user === user
+})
+
+this.$bind('documents', documents.where('creator', '==', this.id)).then(
+  documents => {
+    // documents will be an array if this.documents was initially set to an array
+    // this.documents === documents
+  }
+)
+```
+
+</FirebaseExample>
+
 ## Using the data bound by Vuefire
 
-<!-- TODO: talk about ids -->
+### `.key` / `id`
+
+Any document bonud by Vuefire will retain it's _id_ in the database as a non-enumerable, read-only property. This make it easier to [write changes](./writing-data.md) and allows you to copy the data only.
+
+<FirebaseExample>
+
+```js
+this.user['.key'] // -KguCoSMemQZw3JD6EPh
+// the id is non enumerable
+Object.keys(this.user).includes('.key') // false
+
+// it originally comes from the `key` attribute
+db.ref('users/ada').key // 'ada'
+// More at https://firebase.google.com/docs/reference/js/firebase.database.DataSnapshot#key
+// https://firebase.google.com/docs/reference/js/firebase.database.Reference#key
+```
+
+```js
+this.user.id // jORwjIykFn1NmkdzTkhU
+// the id is non enumerable
+Object.keys(this.user).includes('id') // false
+
+// it originally comes from the `id` attribute
+db.collection('users').doc('ada').id // 'ada'
+// More at https://firebase.google.com/docs/reference/js/firebase.database.DataSnapshot#key
+// https://firebase.google.com/docs/reference/js/firebase.database.Reference#key
+```
+
+</FirebaseExample>
+
+### Geopoints (Firestore only)
+
+In Firestore you can store [Geopoints](https://firebase.google.com/docs/reference/js/firebase.firestore.GeoPoint). They are retrieved as-is by Vuefire, meaning that you can directly use methods like `isEqual` and access its properties `latitude` and `longitude`.
+
+<FirebaseExample disable="0">
+
+```js
+// Geopoints do not exist in RTDB
+```
+
+```js
+// TODO: make sure about the import
+import { GeoPoint } from 'firebase/firestore'
+
+// add Paris to the list of cities and wait for the operation
+// to be finished
+await db.collection('cities').app({
+  name: 'Paris',
+  location: new GeoPoint(48.8588377, 2.2770206),
+})
+
+// we consider `cities` to be bound to current component
+// we retrieve Paris that was just added
+const paris = this.cities[this.cities.length - 1]
+paris.location.latitude // 48.8588377
+paris.location.longitude // 2.2770206
+```
+
+</FirebaseExample>
+
+Read more about [writing Geopoints to the database](./writing-data.md#geopoints) in the [writing data](./writing-data.md) section.
+
+### Timestamps (Firestore only)
+
+In Firestore you can store [Timestamps](https://firebase.google.com/docs/reference/js/firebase.firestore.Timestamp). They are stored as-is by Vuefire, meaning that you can directly use methods like `isEqual`, `toDate` and access its properties `seconds` and `nanoseconds`.
+
+<FirebaseExample disable="0">
+
+```js
+// Timestamps do not exist in RTDB
+```
+
+```js
+// TODO: make sure about the import
+import { Timestamp } from 'firebase/firestore'
+
+// Add "La prise de la Bastille" to a list of events
+// and wait for th operation to be finished
+await db.collection('events').app({
+  name: 'Prise de la Bastille',
+  date: Timestamp.fromDate(new Date('1789-07-14')),
+})
+
+// we consider `events` to be bound to current component
+// we retrieve the event we just added
+const prise = this.events[this.events.length - 1]
+prise.date.seconds // -5694969600
+prise.date.nanoseconds // 0
+prise.toDate() // Tue Jul 14 1789
+```
+
+</FirebaseExample>
+
+Read more about [writing Timestamps to the database](./writing-data.md#timestamps) in the [writing data](./writing-data.md) section.
+
+## Unbinding / Unsubscribing to changes
+
+While Vuefire will automatically unbind any reference bound in a component whenever needed, you may still want to do it on your own to stop displaying updates on a document or collection.
+
+<FirebaseExample>
+
+```js
+// unsubscribe from database updates
+this.$rtdbUnbind('user')
+this.$rtdbUnbind('documents')
+```
+
+```js
+// unsubscribe from database updates
+this.$unbind('user')
+this.$unbind('documents')
+```
+
+</FirebaseExample>
+
+Vuefire will **leave the data as-is**, if you want to reset it back to something is up to you do so:
+
+```js
+// after calling `$rtdbUnbind` or `$unbind` on 'user' and 'documents'
+this.user = null
+this.documents = []
+```
