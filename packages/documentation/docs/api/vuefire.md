@@ -178,7 +178,7 @@ new Vue({
     finishedTodos: [],
     currentTodo: null,
   },
-  firestore: {
+  firebase: {
     todos: db.ref('todos'),
     finishedTodos: todos.orderByChild('finished').equalTo(true),
     currentTodo: db.ref('todos/1'),
@@ -200,7 +200,7 @@ new Vue({
   data: {
     currentTodo: null,
   },
-  firestore() {
+  firebase() {
     return {
       currentTodo: db.ref('todos/' + this.selectedDocument),
     }
