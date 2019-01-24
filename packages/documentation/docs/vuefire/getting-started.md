@@ -13,5 +13,56 @@ npm install vuefire@next firebase
 ```
 
 :::warning
-Make sure you are installing the `next` tag, otherwise, you will be installing v1 of Vuefire which does not support Cloud Firestore
-:::
+
+- Make sure you are installing the `next` tag, otherwise, you will be installing v1 of Vuefire which does not support Cloud Firestore.
+- Vuefire requires Firebase JS SDK >= 4.
+  :::
+
+## Plugin
+
+Vuefire must be installed as a Vue plugin. Make sure to install the right one:
+
+- Install `firestorePlugin` if you need to use _Cloud Firestore_ (often abreviated _Firestore_)
+- Install `rtdbPlugin` if you need to use the original _RTDB_ (Real Time Database)
+- If you need to use both, check [Using RTDB and Firestore together](../cookbook/rtdb-and-firestore.md)
+
+<FirebaseExample>
+
+```js
+import Vue from 'vue'
+import { rtdbPlugin } from 'vuefire'
+
+Vue.use(rtdbPlugin)
+```
+
+```js
+import Vue from 'vue'
+import { firestorePlugin } from 'vuefire'
+
+Vue.use(firestorePlugin)
+```
+
+</FirebaseExample>
+
+You also need to get a database instance from firebase. This can be put into a `db.js` file in your project to easily import it anywhere:
+
+<FirebaseExample>
+
+```js
+// Get a RTDB instance
+export const db = firebase
+  .initializeApp({ databaseURL: 'MY PROJECT URL' })
+  .database()
+```
+
+```js
+// Get a Firestore instance
+export const db = firebase
+  .initializeApp({ projectId: 'MY PROJECT ID' })
+  .firestore()
+db.settings({ timestampsInSnapshots: true })
+```
+
+</FirebaseExample>
+
+Now we are ready to bind our first reference and see it update live!
