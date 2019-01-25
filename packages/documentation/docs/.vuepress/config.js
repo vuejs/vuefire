@@ -33,7 +33,6 @@ module.exports = {
             '',
             'getting-started',
             'binding-subscriptions',
-            'firestore-references',
             'querying',
             'writing-data',
           ],

@@ -188,6 +188,8 @@ db.collection('users').doc('ada').id // 'ada'
 
 In Firestore you can store [Geopoints](https://firebase.google.com/docs/reference/js/firebase.firestore.GeoPoint). They are retrieved as-is by Vuefire, meaning that you can directly use methods like `isEqual` and access its properties `latitude` and `longitude`.
 
+> Refer to [Plugin installation](./getting-started.md#plugin) to retrieve the `Geopoint` class
+
 <FirebaseExample disable="0">
 
 ```js
@@ -195,8 +197,7 @@ In Firestore you can store [Geopoints](https://firebase.google.com/docs/referenc
 ```
 
 ```js
-// TODO: make sure about the import
-import { GeoPoint } from 'firebase/firestore'
+import { GeoPoint } from './db'
 
 // add Paris to the list of cities and wait for the operation
 // to be finished
@@ -220,6 +221,8 @@ Read more about [writing Geopoints to the database](./writing-data.md#geopoints)
 
 In Firestore you can store [Timestamps](https://firebase.google.com/docs/reference/js/firebase.firestore.Timestamp). They are stored as-is by Vuefire, meaning that you can directly use methods like `isEqual`, `toDate` and access its properties `seconds` and `nanoseconds`.
 
+> Refer to [Plugin installation](./getting-started.md#plugin) to retrieve the `Timestamp` class
+
 <FirebaseExample disable="0">
 
 ```js
@@ -227,8 +230,7 @@ In Firestore you can store [Timestamps](https://firebase.google.com/docs/referen
 ```
 
 ```js
-// TODO: make sure about the import
-import { Timestamp } from 'firebase/firestore'
+import { Timestamp } from './db'
 
 // Add "La prise de la Bastille" to a list of events
 // and wait for th operation to be finished
@@ -248,6 +250,72 @@ prise.toDate() // Tue Jul 14 1789
 </FirebaseExample>
 
 Read more about [writing Timestamps to the database](./writing-data.md#timestamps) in the [writing data](./writing-data.md) section.
+
+### References (Firestore only)
+
+In Firestore you can store [References](https://firebase.google.com/docs/reference/js/firebase.firestore.DocumentReference) to other Documents in Documents. Vuefire automatically bind References found in Collections and documents. This also works for nested references (References found in bound References). By default, Vuefire will stop at that level (2 level nesting).
+
+Given some _users_ with _documents_ that are being viewed by other _users_. This could be **users/1**:
+
+```js
+{
+  name: 'Jessica',
+  documents: [
+    db.collection('documents').doc('gift-list'),
+  ],
+}
+```
+
+`documents` is an array of References. Let's look at the document identified by `gift-list`:
+
+```js
+{
+  content: '...',
+  sharedWith: [
+    db.collection('users').doc('2'),
+    db.collection('users').doc('3'),
+  ]
+}
+```
+
+`sharedWith` is also an array of References, but those references are users. Users also contain references to documents, therefore, if we automatically bind every nested reference, we could end up with an infinite-memory-consumming binding. By default, if we bind `users/1` with Vuefire, this is what we end up having:
+
+```js
+{
+  name: 'Jessica',
+  documents: [
+    {
+      content: '...',
+      sharedWith: [
+        {
+          name: 'Alex',
+          documents: [
+            'documents/alex-todo-list',
+          ]
+        },
+        {
+          name: 'Robin',
+          documents: [
+            'documents/robin-todo-list',
+            'documents/robin-book',
+          ],
+        },
+      ],
+    },
+  ],
+}
+```
+
+`documents.sharedWith.documents` end up as arrays of strings. Those arrays can be passed to `db.doc('documents/robin-book')` to get the actual reference to the document. By being a string instead of a Reference, it is possibe to display a bound document with Vuefire as plain text.
+
+It is possible to customize this behaviour by providing a [`maxRefDepth` option](../api/vuefire.md#options-2) when invoking `$bind`:
+
+```js
+// override the default value of 2 for maxRefDepth
+this.$bind('user', db.collection('users').doc('1'), { maxRefDepth: 1 })
+```
+
+Read more about [writing References to the database](./writing-data.md#references) in the [writing data](./writing-data.md) section.
 
 ## Unbinding / Unsubscribing to changes
 
