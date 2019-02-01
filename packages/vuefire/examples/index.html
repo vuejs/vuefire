@@ -62,7 +62,7 @@
     <script>
       /* global Vue, firebase, Vuefire */
       Vue.use(Vuefire.firestorePlugin)
-      const db = firebase
+      var db = firebase
         .initializeApp({
           projectId: 'vue-fire-store',
           databaseURL: 'https://vue-fire-store.firebaseio.com',
@@ -74,12 +74,13 @@
       const finishedTodos = todos.where('finished', '==', true)
       const config = db.collection('configs').doc('jORwjIykFo2NmkdzTkhU')
 
-      new Vue({
+      var vm = new Vue({
         el: '#app',
         data: {
           todos: [],
           tweets: [],
           moments: [],
+          nested: [],
           config: null,
           newTodoText: '',
         },
@@ -87,6 +88,7 @@
         firestore: {
           todos: unFinishedTodos,
           moments: db.collection('moments'),
+          nested: db.collection('nested'),
           tweets: db.collection('tweets'),
           config,
         },
