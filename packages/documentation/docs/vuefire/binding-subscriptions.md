@@ -114,16 +114,17 @@ export default {
 With the approach above, `user` will always be bound to the user defined by the prop `id`
 
 :::tip
-No need to call [`$rtdbUnbind`/`$unbind`](#unbinding-unsubscribing-to-changes) as `$rtdbBind`/`$bind` will automatically unbind any existant binding on the provided key. Upon component removal, all bindings are removed as well.
+No need to call [`$rtdbUnbind`/`$unbind`](#unbinding-unsubscribing-to-changes) as `$rtdbBind`/`$bind` will automatically unbind any existant binding on the provided key. Upon component removal, all bindings are removed as well so no need to use `$rtdbUnbind`/`$unbind` in `destroyed` hooks.
 :::
 
-If you need to wait for a binding to be ready before doing something, you can _await_ for the returned Promised:
+If you need to wait for a binding to be ready before doing something, you can _await_ for the returned Promise:
 
 <FirebaseExample>
 
 ```js
 this.$rtdbBind('user', users.child(this.id)).then(user => {
   // user will be an object if this.user was set to anything but an array
+  // and it will point to the same property declared in data:
   // this.user === user
 })
 
@@ -132,19 +133,20 @@ this.$rtdbBind(
   documents.orderByChild('creator').equalTo(this.id)
 ).then(documents => {
   // documents will be an array if this.documents was initially set to an array
+  // and it will point to the same property declared in data:
   // this.documents === documents
 })
 ```
 
 ```js
 this.$bind('user', users.doc(this.id)).then(user => {
-  // user will be an object if this.user was set to anything but an array
+  // user will point to the same property declared in data:
   // this.user === user
 })
 
 this.$bind('documents', documents.where('creator', '==', this.id)).then(
   documents => {
-    // documents will be an array if this.documents was initially set to an array
+    // documents will point to the same property declared in data:
     // this.documents === documents
   }
 )
@@ -156,7 +158,7 @@ this.$bind('documents', documents.where('creator', '==', this.id)).then(
 
 ### `.key` / `id`
 
-Any document bonud by Vuefire will retain it's _id_ in the database as a non-enumerable, read-only property. This make it easier to [write changes](./writing-data.md) and allows you to copy the data only.
+Any document bound by Vuefire will retain it's _id_ in the database as a non-enumerable, read-only property. This makes it easier to [write changes](./writing-data.md#setting-a-document) and allows you to copy the data only using the [spread operator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax#Spread_in_object_literals) or [`Object.assign`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign).
 
 <FirebaseExample>
 
@@ -201,7 +203,7 @@ import { GeoPoint } from './db'
 
 // add Paris to the list of cities and wait for the operation
 // to be finished
-await db.collection('cities').app({
+await db.collection('cities').add({
   name: 'Paris',
   location: new GeoPoint(48.8588377, 2.2770206),
 })
@@ -306,7 +308,7 @@ Given some _users_ with _documents_ that are being viewed by other _users_. This
 }
 ```
 
-`documents.sharedWith.documents` end up as arrays of strings. Those arrays can be passed to `db.doc('documents/robin-book')` to get the actual reference to the document. By being a string instead of a Reference, it is possibe to display a bound document with Vuefire as plain text.
+`documents.sharedWith.documents` end up as arrays of strings. Those strings can be passed to `db.doc()` as in `db.doc('documents/robin-book')` to get the actual reference to the document. By being a string instead of a Reference, it is possibe to display a bound document with Vuefire as plain text.
 
 It is possible to customize this behaviour by providing a [`maxRefDepth` option](../api/vuefire.md#options-2) when invoking `$bind`:
 
@@ -319,7 +321,7 @@ Read more about [writing References to the database](./writing-data.md#reference
 
 ## Unbinding / Unsubscribing to changes
 
-While Vuefire will automatically unbind any reference bound in a component whenever needed, you may still want to do it on your own to stop displaying updates on a document or collection.
+While Vuefire will automatically unbind any reference bound in a component whenever needed, you may still want to do it on your own to stop displaying updates on a document or collection or because the user logged out and they do not have read-access to a resource anymore.
 
 <FirebaseExample>
 

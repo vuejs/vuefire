@@ -12,7 +12,6 @@ const db = firebase.initializeApp({ databaseURL: 'MY PROJECT URL' }).database()
 ```js
 // Get a Firestore instance
 const db = firebase.initializeApp({ projectId: 'MY PROJECT ID' }).firestore()
-db.settings({ timestampsInSnapshots: true })
 ```
 
 </FirebaseExample>

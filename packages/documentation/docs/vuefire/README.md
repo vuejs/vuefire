@@ -4,9 +4,7 @@ Vuefire is a small and pragmatic solution to create realtime bindings between a 
 
 ## Why
 
-While Firebase SDK does provide an API to keep your local data in sync with any changes happening in the remote database, it is more tedious than you can imagine, and it involves many edge cases. Here is the code you need to write to keep your local state in sync with Firebase _without using Vuefire_. Let's take the example of binding a collection as an array, both with the RTDB and with Cloud Firestore:
-
-_Code for RTDB_:
+While Firebase SDK does provide an API to keep your local data in sync with any changes happening in the remote database, it is more tedious than you can imagine, and it involves many edge cases. Here is the code you need to write to keep your local state in sync with Firebase **without using Vuefire**. Let's take the example of binding a collection as an array, both with the RTDB and with Cloud Firestore:
 
 <FirebaseExample id="original">
 
@@ -91,7 +89,6 @@ new Vue({
 ```js
 // get Firestore database instance
 const db = firebase.initializeApp({ projectId: 'MY PROJECT ID' }).firestore()
-db.settings({ timestampsInSnapshots: true })
 
 new Vue({
   // setup the reactive todos property
@@ -126,7 +123,7 @@ new Vue({
 
 :::warning
 
-- In the **RTDB** example, we are omitting the unsubscribe part because it requires to save the return of every listener created to later on call `this.todosRef.off` with _every single_ one of them.
+- In the [**RTDB** example](#original_rtdb), we are omitting the unsubscribe part because it requires to save the return of every listener created to later on call `this.todosRef.off` with _every single_ one of them.
 - In the [**Firestore** example](#original_firestore), the code above is not taking into account [Firestore references](https://firebase.google.com/docs/firestore/data-model#references) which **considerably** increases the complexity of binding and [is handled transparently](firestore-references.md) by Vuefire
   :::
 
@@ -151,7 +148,6 @@ new Vue({
 
 ```js
 const db = firebase.initializeApp({ projectId: 'MY PROJECT ID' }).firestore()
-db.settings({ timestampsInSnapshots: true })
 
 new Vue({
   // setup the reactive todos property
