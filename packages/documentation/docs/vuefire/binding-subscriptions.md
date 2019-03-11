@@ -158,7 +158,7 @@ this.$bind('documents', documents.where('creator', '==', this.id)).then(
 
 ### `.key` / `id`
 
-Any document bound by Vuefire will retain it's _id_ in the database as a non-enumerable, read-only property. This makes it easier to [write changes](./writing-data.md#setting-a-document) and allows you to copy the data only using the [spread operator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax#Spread_in_object_literals) or [`Object.assign`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign).
+Any document bound by Vuefire will retain it's _id_ in the database as a non-enumerable, read-only property. This makes it easier to [write changes](./writing-data.md#updates-to-collection-and-documents) and allows you to copy the data only using the [spread operator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax#Spread_in_object_literals) or [`Object.assign`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign).
 
 <FirebaseExample>
 
@@ -217,7 +217,7 @@ paris.location.longitude // 2.2770206
 
 </FirebaseExample>
 
-Read more about [writing Geopoints to the database](./writing-data.md#geopoints) in the [writing data](./writing-data.md) section.
+<!-- Read more about [writing Geopoints to the database](./writing-data.md#geopoints) in the [writing data](./writing-data.md) section. -->
 
 ### Timestamps (Firestore only)
 
@@ -236,7 +236,7 @@ import { Timestamp } from './db'
 
 // Add "La prise de la Bastille" to a list of events
 // and wait for th operation to be finished
-await db.collection('events').app({
+await db.collection('events').add({
   name: 'Prise de la Bastille',
   date: Timestamp.fromDate(new Date('1789-07-14')),
 })
