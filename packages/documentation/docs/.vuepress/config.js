@@ -38,6 +38,19 @@ module.exports = {
           ],
         },
       ],
+      '/vuexfire/': [
+        {
+          title: 'Vuexfire',
+          collapsable: false,
+          children: [
+            '',
+            'getting-started',
+            'binding-subscriptions',
+            'querying',
+            'writing-data',
+          ],
+        },
+      ],
       '/cookbook/': [
         {
           title: 'Cookbook',
