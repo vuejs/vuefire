@@ -66,7 +66,7 @@ new Vue({
     // this is useful when ordering items
     this.todosRef.on(
       'child_moved',
-      (snapshot, prevKey) => {
+      (snapshot, previousKey) => {
         // retrieve the item being moved
         const record = this.todos.splice(
           findIndexByKey(this.todos, snapshot.key),
@@ -74,7 +74,7 @@ new Vue({
         )[0]
         // add it to the place it should be
         this.todos.splice(
-          findIndexByKey(this.todos, prevKey) + 1,
+          findIndexByKey(this.todos, previousKey) + 1,
           0,
           // we could also use snapshot.val()
           record
@@ -125,7 +125,8 @@ new Vue({
 
 - In the [**RTDB** example](#original_rtdb), we are omitting the unsubscribe part because it requires to save the return of every listener created to later on call `this.todosRef.off` with _every single_ one of them.
 - In the [**Firestore** example](#original_firestore), the code above is not taking into account [Firestore references](https://firebase.google.com/docs/firestore/data-model#references) which **considerably** increases the complexity of binding and [is handled transparently](binding-subscriptions.md#references-firestore-only) by Vuefire
-  :::
+
+:::
 
 Now let's look at the equivalent code with vuefire:
 
@@ -161,4 +162,4 @@ new Vue({
 
 </FirebaseExample>
 
-And that's it! You can use `todos` anywhere, it will be reactive and always in sync with your remote database. Let's dive deeper and learn about all the features added by Vuefire: [Getting started](getting-started.md)
+And that's it! You can use `todos` anywhere, it will be always in sync with your remote database. Let's dive deeper and learn about all the features added by Vuefire: [Getting started](getting-started.md)

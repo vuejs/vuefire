@@ -16,7 +16,8 @@ npm install vuefire@next firebase
 
 - Make sure you are installing the `next` tag, otherwise, you will be installing v1 of Vuefire which does not support Cloud Firestore.
 - Vuefire requires Firebase JS SDK >= 4.
-  :::
+
+:::
 
 ## Plugin
 
