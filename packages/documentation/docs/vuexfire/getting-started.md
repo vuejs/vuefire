@@ -37,6 +37,8 @@ const store = new Vuex.Store({
 
 This will some mutations needed to keep your store state in sync with the remote database.
 
+## Easy access to Firebase database
+
 You also need to get a database instance from firebase. This can be put into a `db.js` file in your project to conveniently import it anywhere:
 
 <FirebaseExample>

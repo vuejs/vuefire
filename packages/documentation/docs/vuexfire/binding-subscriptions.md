@@ -6,7 +6,7 @@ Once a Reference is bound, Vuexfire will keep the local version in sync with the
 
 ## Binding in actions
 
-The right place to bind references is in actions. Because of this, Vuexfire provides an action wrapper that injects into the _context_ (first parameter of actions) two new functions: `bindFirestoreRef`/`bindFirebaseRef` and `unbindFirestoreRef`/`unbindFirebaseRef`. That way you can bind a reference as well as unbind existing bindings directly in actions:
+**The right place to bind references is in actions**. This will also simplify your testing strategy if you choose to mock the store with something like [vuex-mock-store](https://github.com/posva/vuex-mock-store) and also keep writes in actions, you won't have to worry about mocking Firebase databse at all in most scenarios. Because of this, Vuexfire provides an action wrapper that injects into the _context_ (first parameter of actions) two new functions: `bindFirestoreRef`/`bindFirebaseRef` and `unbindFirestoreRef`/`unbindFirebaseRef`. That way you can bind a reference as well as unbind existing bindings directly in actions:
 
 <FirebaseExample>
 
@@ -25,6 +25,7 @@ export default new Vuex.Store({
 
   actions: {
     bindTodos: firebaseAction(({ bindFirebaseRef }) => {
+      // return the promise returned by `bindFirebaseRef`
       return bindFirebaseRef('todos', db.ref('documents'))
     })
   }
@@ -46,6 +47,7 @@ export default new Vuex.Store({
 
   actions: {
     bindTodos: firestoreAction(({ bindFirestoreRef }) => {
+      // return the promise returned by `bindFirestoreRef`
       return bindFirestoreRef('todos', db.collection('documents'))
     })
   }
@@ -55,120 +57,69 @@ export default new Vuex.Store({
 </FirebaseExample>
 
 :::warning
-It's necessary to declare properties with their initial values in `data`. **For the RTDB, using an _Array_ as the initial value will bind the Reference as an array, otherwise it is bound as an object**. For Firestore, collections and queries and bound as arrays while documents are bound as objects.
+
+It's necessary to declare properties with their initial values in `state`. **For the RTDB, using an _Array_ as the initial value will bind the Reference as an array, otherwise it is bound as an object**. For Firestore, collections and queries and bound as arrays while documents are bound as objects.
+
 :::
-
-## Programmatic binding
-
-Declarative binding is simple and easy to write, however, you will probably need to change the reference to the database while the application is running. Changing the active document you are displaying, displaying a different user profile, etc. This can be achieved through the `$rtdbBind`/`$bind` methods added by `rtdbPlugin`/`firestorePlugin` in any Vue component.
-
-<FirebaseExample>
-
-```js
-// UserProfile.vue
-const users = db.ref('users')
-
-export default {
-  props: ['id'],
-  data() {
-    return {
-      user: null,
-    }
-  },
-
-  watch: {
-    id: {
-      // call it upon creation too
-      immediate: true,
-      handler(id) {
-        this.$rtdbBind('user', users.child(id))
-      },
-    },
-  },
-}
-```
-
-```js
-// UserProfile.vue
-const users = db.collection('users')
-
-export default {
-  props: ['id'],
-  data() {
-    return {
-      user: null,
-    }
-  },
-
-  watch: {
-    id: {
-      // call it upon creation too
-      immediate: true,
-      handler(id) {
-        this.$bind('user', users.doc(id))
-      },
-    },
-  },
-}
-```
-
-</FirebaseExample>
-
-With the approach above, `user` will always be bound to the user defined by the prop `id`
 
 :::tip
-No need to call [`$rtdbUnbind`/`$unbind`](#unbinding-unsubscribing-to-changes) as `$rtdbBind`/`$bind` will automatically unbind any existant binding on the provided key. Upon component removal, all bindings are removed as well so no need to use `$rtdbUnbind`/`$unbind` in `destroyed` hooks.
+
+Always return or `await` the promise returned by `bindFirestoreRef`/`bindFirebaseRef` since it let you know when your state is filled with data coming from the database. This is indeed useful [when dealing with SSR](../cookbook/ssr.md)
+
 :::
 
-If you need to wait for a binding to be ready before doing something, you can _await_ for the returned Promise:
+## Unbinding
+
+To stop the state to be in sync, you can manually do so with `unbindFirestoreRef`/`unbindFirebaseRef`:
 
 <FirebaseExample>
 
 ```js
-this.$rtdbBind('user', users.child(this.id)).then(user => {
-  // user will be an object if this.user was set to anything but an array
-  // and it will point to the same property declared in data:
-  // this.user === user
-})
+// store.js
+export default new Vuex.Store({
+  // other store options are omitted for simplicity reasons
 
-this.$rtdbBind(
-  'documents',
-  documents.orderByChild('creator').equalTo(this.id)
-).then(documents => {
-  // documents will be an array if this.documents was initially set to an array
-  // and it will point to the same property declared in data:
-  // this.documents === documents
-})
+  actions: {
+    unbindTodos: firebaseAction(({ unbindFirebaseRef }) => {
+      unbindFirebaseRef('todos')
+    })
+  }
+}
 ```
 
 ```js
-this.$bind('user', users.doc(this.id)).then(user => {
-  // user will point to the same property declared in data:
-  // this.user === user
-})
+// store.js
+export default new Vuex.Store({
+  // other store options are omitted for simplicity reasons
 
-this.$bind('documents', documents.where('creator', '==', this.id)).then(
-  documents => {
-    // documents will point to the same property declared in data:
-    // this.documents === documents
+  actions: {
+    unbindTodos: firestoreAction(({ unbindFirestoreRef }) => {
+      unbindFirestoreRef('todos')
+    })
   }
-)
+}
 ```
 
+When unbinding, there is no need to wait for a promise, all listeners are teared down and the data remains intact, that means **it will keep the last value**. If you want to change that, you can `commit` a mutation to change the value
+
 </FirebaseExample>
+
+## Binding over existing bindings
+
+When calling `bindFirestoreRef`/`bindFirebaseRef` to bind a collection or document over an existing binding, **it isn't necessary to call `unbindFirestoreRef`/`unbindFirebaseRef`**, it's automatically done for you
 
 ## Using the data bound by Vuexfire
 
 ### `.key` / `id`
 
-Any document bound by Vuexfire will retain it's _id_ in the database as a non-enumerable, read-only property. This makes it easier to [write changes](./writing-data.md#updates-to-collection-and-documents) and allows you to copy the data only using the [spread operator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax#Spread_in_object_literals) or [`Object.assign`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign).
+Any document bound by Vuexfire will retain it's _id_ in the database as a non-enumerable, read-only property. This makes it easier to [write changes](./writing-data.md#updates-to-collection-and-documents) and allows you to only copy the data using the [spread operator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax#Spread_in_object_literals) or [`Object.assign`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign).
 
 <FirebaseExample>
 
 ```js
-this.user['.key'] // -KguCoSMemQZw3JD6EPh
+store.state.user['.key'] // -KguCoSMemQZw3JD6EPh
 // the id is non enumerable
-Object.keys(this.user).includes('.key') // false
+Object.keys(store.state.user).includes('.key') // false
 
 // it originally comes from the `key` attribute
 db.ref('users/ada').key // 'ada'
@@ -177,9 +128,9 @@ db.ref('users/ada').key // 'ada'
 ```
 
 ```js
-this.user.id // jORwjIykFn1NmkdzTkhU
+store.state.user.id // jORwjIykFn1NmkdzTkhU
 // the id is non enumerable
-Object.keys(this.user).includes('id') // false
+Object.keys(store.state.user).includes('id') // false
 
 // it originally comes from the `id` attribute
 db.collection('users').doc('ada').id // 'ada'
@@ -193,7 +144,7 @@ db.collection('users').doc('ada').id // 'ada'
 
 In Firestore you can store [Geopoints](https://firebase.google.com/docs/reference/js/firebase.firestore.GeoPoint). They are retrieved as-is by Vuexfire, meaning that you can directly use methods like `isEqual` and access its properties `latitude` and `longitude`.
 
-> Refer to [Plugin installation](./getting-started.md#plugin) to retrieve the `Geopoint` class
+> Refer to [Easy access to Firebase database](./getting-started.md#easy-access-to-firebase-database) to retrieve the `Geopoint` class
 
 <FirebaseExample disable="0">
 
@@ -213,7 +164,7 @@ await db.collection('cities').add({
 
 // we consider `cities` to be bound to current component
 // we retrieve Paris that was just added
-const paris = this.cities[this.cities.length - 1]
+const paris = store.state.cities[this.cities.length - 1]
 paris.location.latitude // 48.8588377
 paris.location.longitude // 2.2770206
 ```
@@ -226,7 +177,7 @@ paris.location.longitude // 2.2770206
 
 In Firestore you can store [Timestamps](https://firebase.google.com/docs/reference/js/firebase.firestore.Timestamp). They are stored as-is by Vuexfire, meaning that you can directly use methods like `isEqual`, `toDate` and access its properties `seconds` and `nanoseconds`.
 
-> Refer to [Plugin installation](./getting-started.md#plugin) to retrieve the `Timestamp` class
+> Refer to [Easy access to Firebase database](./getting-started.md#easy-access-to-firebase-database) to retrieve the `Timestamp` class
 
 <FirebaseExample disable="0">
 
@@ -246,7 +197,7 @@ await db.collection('events').add({
 
 // we consider `events` to be bound to current component
 // we retrieve the event we just added
-const prise = this.events[this.events.length - 1]
+const prise = store.state.events[this.events.length - 1]
 prise.date.seconds // -5694969600
 prise.date.nanoseconds // 0
 prise.toDate() // Tue Jul 14 1789
@@ -258,7 +209,7 @@ prise.toDate() // Tue Jul 14 1789
 
 ### References (Firestore only)
 
-In Firestore you can store [References](https://firebase.google.com/docs/reference/js/firebase.firestore.DocumentReference) to other Documents in Documents. Vuefire automatically bind References found in Collections and documents. This also works for nested references (References found in bound References). By default, Vuefire will stop at that level (2 level nesting).
+In Firestore you can store [References](https://firebase.google.com/docs/reference/js/firebase.firestore.DocumentReference) to other Documents in Documents. Vuexfire automatically bind References found in Collections and documents. This also works for nested references (References found in bound References). By default, Vuexfire will stop at that level (2 level nesting).
 
 Given some _users_ with _documents_ that are being viewed by other _users_. This could be **users/1**:
 
@@ -283,7 +234,7 @@ Given some _users_ with _documents_ that are being viewed by other _users_. This
 }
 ```
 
-`sharedWith` is also an array of References, but those references are users. Users also contain references to documents, therefore, if we automatically bind every nested reference, we could end up with an infinite-memory-consumming binding. By default, if we bind `users/1` with Vuefire, this is what we end up having:
+`sharedWith` is also an array of References, but those references are users. Users also contain references to documents, therefore, if we automatically bind every nested reference, we could end up with an infinite-memory-consumming binding. By default, if we bind `users/1` with Vuexfire, this is what we end up having:
 
 ```js
 {
@@ -311,41 +262,13 @@ Given some _users_ with _documents_ that are being viewed by other _users_. This
 }
 ```
 
-`documents.sharedWith.documents` end up as arrays of strings. Those strings can be passed to `db.doc()` as in `db.doc('documents/robin-book')` to get the actual reference to the document. By being a string instead of a Reference, it is possibe to display a bound document with Vuefire as plain text.
+`documents.sharedWith.documents` end up as arrays of strings. Those strings can be passed to `db.doc()` as in `db.doc('documents/robin-book')` to get the actual reference to the document. By being a string instead of a Reference, it is possibe to display a bound document with Vuexfire as plain text.
 
-It is possible to customize this behaviour by providing a [`maxRefDepth` option](../api/vuefire.md#options-2) when invoking `$bind`:
+It is possible to customize this behaviour by providing a [`maxRefDepth` option](../api/vuexfire.md#options) when invoking `$bind`:
 
 ```js
 // override the default value of 2 for maxRefDepth
-this.$bind('user', db.collection('users').doc('1'), { maxRefDepth: 1 })
+bindFirestoreRef('user', db.collection('users').doc('1'), { maxRefDepth: 1 })
 ```
 
 Read more about [writing References to the database](./writing-data.md#references) in the [writing data](./writing-data.md) section.
-
-## Unbinding / Unsubscribing to changes
-
-While Vuefire will automatically unbind any reference bound in a component whenever needed, you may still want to do it on your own to stop displaying updates on a document or collection or because the user logged out and they do not have read-access to a resource anymore.
-
-<FirebaseExample>
-
-```js
-// unsubscribe from database updates
-this.$rtdbUnbind('user')
-this.$rtdbUnbind('documents')
-```
-
-```js
-// unsubscribe from database updates
-this.$unbind('user')
-this.$unbind('documents')
-```
-
-</FirebaseExample>
-
-Vuefire will **leave the data as-is**, if you want to reset it back to something is up to you to do so:
-
-```js
-// after calling `$rtdbUnbind` or `$unbind` on 'user' and 'documents'
-this.user = null
-this.documents = []
-```
