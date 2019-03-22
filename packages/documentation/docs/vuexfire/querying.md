@@ -1,10 +1,10 @@
 # Querying the database
 
-So far we have used references to documents and collections and feed them to Vuefire to get a in-sync local version of them but you can also pass queries. This is pretty much transparent from Vuefire perspective but here are some examples that you may find useful. If you need to check further, check Firebase documentation as there isn't any filtering or sorting feature in Vuefire, it all comes from Firebase.
+So far we have used references to documents and collections and feed them to Vuexfire to get a in-sync local version of them but you can also pass queries. This is pretty much transparent from Vuexfire perspective but here are some examples that you may find useful. If you need to check further, check Firebase documentation as there isn't any filtering or sorting feature in Vuexfire, it all comes from Firebase.
 
 ## One time read
 
-If you don't care about having the data updated in real time whenever you modify or when you need to fetch some data that isn't anywhere in your component and use it once, you can use the native Firebase JS SDK, that's right, you don't need Vuefire at all for that:
+If you don't care about having the data updated in real time whenever you modify or when you need to fetch some data that is only used once, you can use the native Firebase JS SDK, that's right, you don't need Vuexfire at all for that:
 
 <FirebaseExample>
 
@@ -55,49 +55,31 @@ RTDB and Cloudstore do not include the same set of features regarding sorting bu
 <FirebaseExample>
 
 ```js
-import { db } from './db'
-
-export default {
-  data() {
-    return {
-      documents: [],
-    }
-  },
-
-  firebase: {
-    documents: db.ref('documents').orderByChild('createdAt'),
-  },
+{
+  // omitting the rest of store options for simplicity reasons
+  actions: {
+    bindDocuments: firebaseAction(({ bindFirebaseRef }) => {
+      return bindFirebaseRef(
+        'documents',
+        db.ref('documents').orderByChild('createdAt')
+      )
+    })
+  }
 }
 ```
 
 ```js
-import { db } from './db'
-
-export default {
-  data() {
-    return {
-      documents: [],
-    }
-  },
-
-  firebase: {
-    documents: db.collection('documents').orderBy('createdAt'),
-  },
+{
+  // omitting the rest of store options for simplicity reasons
+  actions: {
+    bindDocuments: firestoreAction(({ bindFirestoreRef }) => {
+      return bindFirestoreRef(
+        'documents',
+        db.collection('documents').orderByChild('createdAt')
+      )
+    })
+  }
 }
-```
-
-</FirebaseExample>
-
-This also works with `$rtbBind`/`$bind`:
-
-<FirebaseExample>
-
-```js
-this.$rtdbBind('documnets', db.ref('documents').orderByChild('createdAt'))
-```
-
-```js
-this.$bind('documnets', db.collection('documents').orderBy('createdAt'))
 ```
 
 </FirebaseExample>
@@ -116,25 +98,17 @@ Cloudstore has many more features regarding filtering than RTDB but here is a ba
 ```js
 // only get documents with more than 200 words
 // we need to order by a field in order to use it for a filter
-this.$rtdbBind(
-  'documents',
-  db
-    .ref('documents')
-    .orderByChild('wordCount')
-    .startAt(200)
-)
+db.ref('documents')
+  .orderByChild('wordCount')
+  .startAt(200)
 ```
 
 ```js
 // only get documents with more than 200 words
 // the orderBy is optional
-this.$bind(
-  'documents',
-  db
-    .collection('documents')
-    .where('wordCount', '>', 200)
-    .orderBy('wordCount')
-)
+db.collection('documents')
+  .where('wordCount', '>', 200)
+  .orderBy('wordCount')
 ```
 
 </FirebaseExample>
