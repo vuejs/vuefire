@@ -16,17 +16,17 @@ const db = firebase.initializeApp({ projectId: 'MY PROJECT ID' }).firestore()
 
 </FirebaseExample>
 
-## vuefireMutations
+## vuexfireMutations
 
 Mutations required by vuexfire to work. Must be added **only** at the root level of your store:
 
 ```js
 import Vuex from 'vuex'
-import { vuefireMutations } from 'vuexfire'
+import { vuexfireMutations } from 'vuexfire'
 const store = new Vuex.Store({
   mutations: {
     // other mutations
-    ...vuefireMutations,
+    ...vuexfireMutations,
   },
 })
 ```
