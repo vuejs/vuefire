@@ -1,12 +1,12 @@
 import Vuex from 'vuex'
-import { vuefireMutations, firestoreAction } from '../src'
+import { vuexfireMutations, firestoreAction } from '../src'
 import { db, tick, Vue, delayUpdate } from '@posva/vuefire-test-helpers'
 
 Vue.use(Vuex)
 
 describe('firestoreAction', () => {
   const store = new Vuex.Store({
-    mutations: vuefireMutations,
+    mutations: vuexfireMutations,
     actions: {
       action: firestoreAction((context, fn) => fn(context))
     },

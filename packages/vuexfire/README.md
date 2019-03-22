@@ -25,7 +25,7 @@ Add the mutations to your root Store and make sure to define the property you
 want to bind in the state first:
 
 ```js
-import { vuefireMutations } from 'vuexfire'
+import { vuexfireMutations } from 'vuexfire'
 const store = new Vuex.Store({
   state: {
     todos: [], // Will be bound as an array
@@ -33,7 +33,7 @@ const store = new Vuex.Store({
   },
   mutations: {
     // your mutations
-    ...vuefireMutations,
+    ...vuexfireMutations,
   },
 })
 ```
@@ -111,7 +111,7 @@ You can check out a complete example in the `/examples` directory.
 
 ## API
 
-### vuefireMutations
+### vuexfireMutations
 
 This object contains VuexFire internal mutations. They are all prefixed by
 `vuexfire/`. This object must be added in the root Store mutations object.

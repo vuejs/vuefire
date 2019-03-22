@@ -1,7 +1,7 @@
 import { MutationTree, ActionContext, Action } from 'vuex'
 import { firestore } from 'firebase'
 
-export declare const vuefireMutations: MutationTree<any>
+export declare const vuexfireMutations: MutationTree<any>
 
 interface FirestoreActionContext<S, R> extends ActionContext<S, R> {
   bindFirestoreRef(

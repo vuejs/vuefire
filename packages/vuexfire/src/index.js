@@ -9,12 +9,12 @@ import {
 export * from './rtdb'
 
 import { bindCollection, bindDocument } from '@posva/vuefire-core'
-export const vuefireMutations = {}
+export const vuexfireMutations = {}
 const commitOptions = { root: true }
 
 Object.keys(mutations).forEach(type => {
   // the { commit, state, type, ...payload } syntax is not supported by buble...
-  vuefireMutations[type] = (_, context) => {
+  vuexfireMutations[type] = (_, context) => {
     mutations[type](context.state, context)
   }
 })

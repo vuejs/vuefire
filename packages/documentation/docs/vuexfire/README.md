@@ -177,7 +177,7 @@ Now let's look at the equivalent code with Vuexfire:
 <FirebaseExample id="getting-started">
 
 ```js
-import { vuefireMutations, firebaseAction } from 'vuexfire'
+import { vuexfireMutations, firebaseAction } from 'vuexfire'
 
 const db = firebase
   .initializeApp({ databaseURL: 'https://MY-DATABASE.firebaseio.com' })
@@ -189,7 +189,7 @@ new Vue.Store({
     todos: [],
   },
 
-  mutations: vuefireMutations,
+  mutations: vuexfireMutations,
 
   actions: {
     bindTodosRef: firebaseAction(context => {
@@ -204,7 +204,7 @@ new Vue.Store({
 ```
 
 ```js
-import { vuefireMutations, firestoreAction } from 'vuexfire'
+import { vuexfireMutations, firestoreAction } from 'vuexfire'
 
 const db = firebase.initializeApp({ projectId: 'MY PROJECT ID' }).firestore()
 
@@ -214,7 +214,7 @@ new Vue.Store({
     todos: [],
   },
 
-  mutations: vuefireMutations,
+  mutations: vuexfireMutations,
 
   actions: {
     bindTodosRef: firestoreAction(context => {

@@ -1,5 +1,5 @@
 import Vuex from 'vuex'
-import { vuefireMutations, firestoreAction } from '../'
+import { vuexfireMutations, firestoreAction } from '../'
 import { firestore } from 'firebase'
 
 interface Payload {
@@ -16,7 +16,7 @@ new Vuex.Store({
   },
   mutations: {
     // your mutations
-    ...vuefireMutations
+    ...vuexfireMutations
   },
   actions: {
     init: firestoreAction(

@@ -1,5 +1,5 @@
 import Vuex from 'vuex'
-import { firebaseAction, vuefireMutations } from '../../src'
+import { firebaseAction, vuexfireMutations } from '../../src'
 import { MockFirebase, tick, Vue } from '@posva/vuefire-test-helpers'
 
 Vue.use(Vuex)
@@ -8,7 +8,7 @@ const db = new MockFirebase().child('data')
 
 describe('RTDB: firebaseAction', () => {
   const store = new Vuex.Store({
-    mutations: vuefireMutations,
+    mutations: vuexfireMutations,
     actions: {
       action: firebaseAction((context, fn) => fn(context))
     },
