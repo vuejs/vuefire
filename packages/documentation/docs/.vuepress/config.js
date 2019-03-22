@@ -55,7 +55,7 @@ module.exports = {
         {
           title: 'Cookbook',
           collapsable: false,
-          children: ['', 'prototyping', 'rtdb-and-firestore'],
+          children: ['', 'prototyping', 'rtdb-and-firestore', 'ssr'],
         },
       ],
       '/api/': [

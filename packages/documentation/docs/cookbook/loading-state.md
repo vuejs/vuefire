@@ -1,3 +1,3 @@
-# Using RTDB and Firestore together
+# Waiting for the data to be present
 
 > This section is a work in progress
