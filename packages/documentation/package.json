@@ -1,7 +1,7 @@
 {
   "name": "documentation",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "docs for vuefire",
   "author": "Eduardo San Martin Morote <posva13@gmail.com>",
   "homepage": "https://github.com/vuejs/vuefire#readme",
