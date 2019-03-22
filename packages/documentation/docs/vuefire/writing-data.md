@@ -6,7 +6,9 @@ As said in the introduction, Vuefire **does not** handle writing data back to Fi
 
 There are two ways to update a document `set` and `update`. The first will replace the whole document (as a PUT in HTTP) while the later will keep the original document and overwrite values (as a PATCH in HTTP).
 
+:::tip
 In the following examples, `this.user` is a user bound to a Firebase document using Vuefire while `this.conferences` is a list of conferences bound to a Firebase collection using Vuefire.
+:::
 
 ### Replacing a document
 
@@ -16,6 +18,7 @@ If we want to update the whole user we can use `set`:
 
 ```js
 // we first create a copy that excludes `.key`
+// this exclusion is automatic because `.key` is non-enumerable
 const user = { ...this.user }
 user.lastName = newLastName
 
@@ -31,6 +34,7 @@ this.$firebaseRefs.user.set(user)
 
 ```js
 // we first create a copy that excludes `id`
+// this exclusion is automatic because `id` is non-enumerable
 const user = { ...this.user }
 user.lastName = newLastName
 
@@ -163,12 +167,6 @@ await db.collection('cities').add({
   name: 'Paris',
   location: new GeoPoint(48.8588377, 2.2770206),
 })
-
-// we consider `cities` to be bound to current component
-// we retrieve Paris that was just added
-const paris = this.cities[this.cities.length - 1]
-paris.location.latitude // 48.8588377
-paris.location.longitude // 2.2770206
 ```
 
 </FirebaseExample>
@@ -193,13 +191,6 @@ await db.collection('events').add({
   name: 'Prise de la Bastille',
   date: Timestamp.fromDate(new Date('1789-07-14')),
 })
-
-// we consider `events` to be bound to current component
-// we retrieve the event we just added
-const prise = this.events[this.events.length - 1]
-prise.date.seconds // -5694969600
-prise.date.nanoseconds // 0
-prise.toDate() // Tue Jul 14 1789
 ```
 
 </FirebaseExample>

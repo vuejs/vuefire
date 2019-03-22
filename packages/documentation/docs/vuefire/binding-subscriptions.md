@@ -251,7 +251,7 @@ prise.toDate() // Tue Jul 14 1789
 
 </FirebaseExample>
 
-Read more about [writing Timestamps to the database](./writing-data.md#timestamps) in the [writing data](./writing-data.md) section.
+<!-- Read more about [writing Timestamps to the database](./writing-data.md#timestamps) in the [writing data](./writing-data.md) section. -->
 
 ### References (Firestore only)
 
@@ -339,7 +339,7 @@ this.$unbind('documents')
 
 </FirebaseExample>
 
-Vuefire will **leave the data as-is**, if you want to reset it back to something is up to you do so:
+Vuefire will **leave the data as-is**, if you want to reset it back to something is up to you to do so:
 
 ```js
 // after calling `$rtdbUnbind` or `$unbind` on 'user' and 'documents'
