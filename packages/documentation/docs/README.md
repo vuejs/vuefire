@@ -1,6 +1,6 @@
 ---
 home: true
-heroImage: /logo.svg
+heroImage: /firebase-logo.svg
 actionText: Get Started →
 actionLink: /vuefire/
 footer: MIT Licensed | Copyright © 2016-present Eduardo San Martin Morote
@@ -21,10 +21,4 @@ footer: MIT Licensed | Copyright © 2016-present Eduardo San Martin Morote
   </div>
 </div>
 
-### Automatic Rebind
-
-TODO: Example here
-
-::: warning COMPATIBILITY NOTE
-Vuefire requires Firebase JS SDK >= 4.
-:::
+<!-- TODO: Example here -->
