@@ -1,13 +1,17 @@
 # Writing to the database
 
-As said in the introduction, Vuefire **does not** handle writing data back to Firebase because you can directly use the Firebase JS SDK to precisely update whatever you need. Here are some examples on how to create, update and remove documents but make sure to refer to the official documentation to fo further:
+As said in the introduction, Vuexfire **does not** handle writing data back to Firebase because you can directly use the Firebase JS SDK to precisely update whatever you need. Here are some examples on how to create, update and remove documents but make sure to refer to the official documentation to fo further:
+
+The main point here is wrapping writes in actions. This is not mandatory but can vastly improve your testing experience as you may not need to mock Firebase database at all if you mock your Store in components with something like [vuex-mock-store](https://github.com/posva/vuex-mock-store).
 
 ## Updates to collection and documents
 
 There are two ways to update a document `set` and `update`. The first will replace the whole document (as a PUT in HTTP) while the later will keep the original document and overwrite values (as a PATCH in HTTP).
 
 :::tip
-In the following examples, `this.user` is a user bound to a Firebase document using Vuefire while `this.conferences` is a list of conferences bound to a Firebase collection using Vuefire.
+In the following examples, `user` is a user bound to a Firebase document using Vuexfire while `conferences` is a list of conferences bound to a Firebase collection using Vuexfire.
+
+We are also omitting the whole store declaration but still calling `firestoreAction`/`firebaseAction` to create the action. Note we need to pass the returned function as an action for it to be useful.
 :::
 
 ### Replacing a document
@@ -17,38 +21,45 @@ If we want to update the whole user we can use `set`:
 <FirebaseExample>
 
 ```js
-// we first create a copy that excludes `.key`
-// this exclusion is automatic because `.key` is non-enumerable
-const user = { ...this.user }
-user.lastName = newLastName
+firebaseAction(({ state }) => {
+  // we first create a copy that excludes `.key`
+  // this exclusion is automatic because `.key` is non-enumerable
+  const user = { ...state.user }
+  user.lastName = newLastName
 
-db.ref('users/' + this.user['.key'])
-  .set(user)
-  .then(() => {
-    console.log('user updated!')
-  })
-
-// we can also use `$firebaseRefs.user` to refer to the bound user reference
-this.$firebaseRefs.user.set(user)
+  // return the promise so we can await this action
+  return db
+    .ref('users/' + this.user['.key'])
+    .set(user)
+    .then(() => {
+      console.log('user updated!')
+    })
+})
 ```
 
 ```js
-// we first create a copy that excludes `id`
-// this exclusion is automatic because `id` is non-enumerable
-const user = { ...this.user }
-user.lastName = newLastName
+firestoreAction(({ state }) => {
+  // we first create a copy that excludes `id`
+  // this exclusion is automatic because `id` is non-enumerable
+  const user = { ...state.user }
+  user.lastName = newLastName
 
-db.collection('users')
-  .doc(this.user.id)
-  .set(user)
-  .then(() => {
-    console.log('user updated!')
-  })
-// we can also use `$firestoreRefs.user` to refer to the bound user reference
-this.$firestoreRefs.user.set(user)
+  // return the promise so we can await this action
+  return db
+    .collection('users')
+    .doc(this.user.id)
+    .set(user)
+    .then(() => {
+      console.log('user updated!')
+    })
+})
 ```
 
 </FirebaseExample>
+
+:::tip
+If you await the promise returned by the write, your state will be up to date (if the write succeeds)
+:::
 
 ### Updating a document
 
@@ -57,14 +68,24 @@ You can achieve a similar thing by calling `update` with `lastName` instead:
 <FirebaseExample>
 
 ```js
-this.$firebaseRefs.user.update({ lastName: newLastName }).then(() => {
-  console.log('user updated!')
+firebaseAction(({ state }) => {
+  db.collection('users')
+    .doc(state.user['.key'])
+    .update({ lastName: newLastName })
+    .then(() => {
+      console.log('user updated!')
+    })
 })
 ```
 
 ```js
-this.$firestoreRefs.user.set({ lastName: newLastName }).then(() => {
-  console.log('user updated!')
+firestoreAction(({ state }) => {
+  db.collection('users')
+    .doc(state.user.id)
+    .set({ lastName: newLastName })
+    .then(() => {
+      console.log('user updated!')
+    })
 })
 ```
 
@@ -72,22 +93,22 @@ this.$firestoreRefs.user.set({ lastName: newLastName }).then(() => {
 
 ### Removing a document
 
-You can remove documents by calling `remove` on their reference which can be accessed directly on `$firebaseRefs`/`$firestoreRefs` or by creating a new reference using the database object:
+You can remove documents by calling `remove` on their reference:
 
 <FirebaseExample>
 
 ```js
-db.ref('cities/' + cityId).remove()
-this.$firebaseRefs.cities.child(cityId).remove()
-this.$firebaseRefs.selectedCity.remove()
+firebaseAction((context, cityId) => {
+  db.ref('cities/' + cityId).remove()
+})
 ```
 
 ```js
-db.collection('cities')
-  .doc(cityId)
-  .remove()
-this.$firestoreRefs.cities.doc(cityId).remove()
-this.$firestoreRefs.selectedCity.remove()
+firestoreAction((context, cityId) => {
+  db.collection('cities')
+    .doc(cityId)
+    .remove()
+})
 ```
 
 </FirebaseExample>
@@ -99,24 +120,22 @@ You can add documents to collections by calling `push`/`add` on a collection ref
 <FirebaseExample>
 
 ```js
-db.ref('cities').push({
-  name: 'Fuengirola',
-  slogan: 'Un sol de ciudad',
-})
-this.$firebaseRefs.cities.push({
-  name: 'Paris',
-  slogan: 'La Ville lumière',
+firebaseAction(context => {
+  // return the promise so we can await the write
+  return db.ref('cities').push({
+    name: 'Fuengirola',
+    slogan: 'Un sol de ciudad',
+  })
 })
 ```
 
 ```js
-db.collection('cities').add({
-  name: 'Fuengirola',
-  slogan: 'Un sol de ciudad',
-})
-this.$firestoreRefs.cities.add({
-  name: 'Paris',
-  slogan: 'La Ville lumière',
+firestoreAction(context => {
+  // return the promise so we can await the write
+  return db.collection('cities').add({
+    name: 'Fuengirola',
+    slogan: 'Un sol de ciudad',
+  })
 })
 ```
 
@@ -199,5 +218,22 @@ await db.collection('events').add({
 
 When you need the current time at creation or update, you need to pass a special value to tell Firebase to use the server value instead
 
-firebase.database.ServerValue.TIMESTAMP
-firebase.firestore.FieldValue.serverTimestamp();
+<FirebaseExample>
+
+```js
+await db.ref('documents').push({
+  name: 'A document',
+  createdAt: firebase.database.ServerValue.TIMESTAMP,
+})
+```
+
+```js
+import { Timestamp } from './db'
+
+await db.collection('documents').add({
+  name: 'A document',
+  createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+})
+```
+
+</FirebaseExample>

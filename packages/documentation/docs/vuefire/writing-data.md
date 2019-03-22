@@ -199,5 +199,22 @@ await db.collection('events').add({
 
 When you need the current time at creation or update, you need to pass a special value to tell Firebase to use the server value instead
 
-firebase.database.ServerValue.TIMESTAMP
-firebase.firestore.FieldValue.serverTimestamp();
+<FirebaseExample>
+
+```js
+await db.ref('documents').push({
+  name: 'A document',
+  createdAt: firebase.database.ServerValue.TIMESTAMP,
+})
+```
+
+```js
+import { Timestamp } from './db'
+
+await db.collection('documents').add({
+  name: 'A document',
+  createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+})
+```
+
+</FirebaseExample>
