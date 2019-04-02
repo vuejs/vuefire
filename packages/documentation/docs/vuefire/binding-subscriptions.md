@@ -43,7 +43,7 @@ export default {
     }
   },
 
-  firebase: {
+  firestore: {
     documents: db.collection('documents'),
   },
 }
