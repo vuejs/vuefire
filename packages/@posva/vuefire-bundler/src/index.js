@@ -50,7 +50,8 @@ function createBundle ({ filename, format, moduleName, banner }) {
       if (format) options.format = format
       return bundle.generate(options)
     })
-    .then(({ code }) => {
+    .then(({ output }) => {
+      const code = output[0].code
       if (/min$/.test(filename)) {
         const minified = uglify.minify(code, {
           output: {
