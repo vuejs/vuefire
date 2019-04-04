@@ -1771,6 +1771,11 @@
   dependencies:
     markdown-it-container "^2.0.0"
 
+"@vuepress/plugin-google-analytics@^1.0.0-alpha.30":
+  version "1.0.0-alpha.46"
+  resolved "https://registry.yarnpkg.com/@vuepress/plugin-google-analytics/-/plugin-google-analytics-1.0.0-alpha.46.tgz#a76d60b0441633483039835d2a34b9bbb88df28b"
+  integrity sha512-Lyr8gmCcIXg6EbBEKhppja+kQeTwGPsEALqSNttyonQfiDKSZDfeMAvHq5XdA8IO5gIFTdU9fgA6jhUFQUopzQ==
+
 "@vuepress/plugin-last-updated@^1.0.0-alpha.44":
   version "1.0.0-alpha.44"
   resolved "https://registry.yarnpkg.com/@vuepress/plugin-last-updated/-/plugin-last-updated-1.0.0-alpha.44.tgz#89349ad745439abbfb2ed411f5b0789234f9717d"

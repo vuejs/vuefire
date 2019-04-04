@@ -91,14 +91,23 @@ module.exports = {
     //   indexName: 'vuepress'
     // },
   },
-  plugins: {
-    '@vuepress/back-to-top': true,
-    // '@vuepress/pwa': {
-    //   serviceWorker: true,
-    //   updatePopup: true
-    // },
-    // '@vuepress/notification': true,
-  },
+  plugins: [
+    ['@vuepress/back-to-top', true],
+    [
+      '@vuepress/pwa',
+      {
+        serviceWorker: true,
+        updatePopup: true,
+      },
+    ],
+    ['@vuepress/notification', true],
+    [
+      '@vuepress/google-analytics',
+      {
+        ga: 'UA-137714612-1',
+      },
+    ],
+  ],
 
   markdown: {
     extendMarkdown: md => {
