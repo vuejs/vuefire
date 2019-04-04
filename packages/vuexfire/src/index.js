@@ -8,7 +8,7 @@ import {
 
 export * from './rtdb'
 
-import { bindCollection, bindDocument } from '@posva/vuefire-core'
+import { bindCollection, bindDocument, setScheduler } from '@posva/vuefire-core'
 export const vuexfireMutations = {}
 const commitOptions = { root: true }
 
@@ -69,6 +69,10 @@ function unbind ({ commit, key }) {
   // TODO dev check before
   sub[key]()
   delete sub[key]
+}
+
+export function setFirestoreScheduler (scheduler) {
+  setScheduler(scheduler)
 }
 
 export function firestoreAction (action) {

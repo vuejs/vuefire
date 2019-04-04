@@ -1,4 +1,4 @@
-import { bindCollection, bindDocument, walkSet } from '@posva/vuefire-core'
+import { bindCollection, bindDocument, setScheduler, walkSet } from '@posva/vuefire-core'
 export * from './rtdb'
 
 const ops = {
@@ -37,6 +37,10 @@ function bind ({ vm, key, ref, ops }, options = { maxRefDepth: 2 }) {
     }
     vm._firestoreUnbinds[key] = unbind
   })
+}
+
+export function setFirestoreScheduler (scheduler) {
+  setScheduler(scheduler)
 }
 
 export function firestorePlugin (Vue) {

@@ -72,6 +72,12 @@ function subscribeToRefs (
   })
 }
 
+let scheduler = fn => fn()
+
+export function setScheduler(fn) {
+  scheduler = fn
+} 
+
 export function bindCollection (
   { vm, key, collection, ops, resolve, reject },
   options = { maxRefDepth: 2 }
@@ -142,7 +148,7 @@ export function bindCollection (
     }
   }
 
-  const unbind = collection.onSnapshot(ref => {
+  const unbind = collection.onSnapshot(ref => scheduler(() => {
     // console.log('pending', metadata.hasPendingWrites)
     // docs.forEach(d => console.log('doc', d, '\n', 'data', d.data()))
     // NOTE this will only be triggered once and it will be with all the documents
@@ -176,7 +182,7 @@ export function bindCollection (
 
     // resolves when array is empty
     if (!docChanges.length) resolve()
-  }, reject)
+  }), reject)
 
   return () => {
     unbind()
@@ -212,7 +218,7 @@ function subscribeToDocument (
   options
 ) {
   const subs = Object.create(null)
-  const unbind = ref.onSnapshot(doc => {
+  const unbind = ref.onSnapshot(doc => scheduler(() => {
     if (doc.exists) {
       updateDataFromDocumentSnapshot(
         {
@@ -232,7 +238,7 @@ function subscribeToDocument (
       // walkSet(target, path, null)
       resolve(path)
     }
-  })
+  }))
 
   return () => {
     unbind()
@@ -262,7 +268,7 @@ export function bindDocument (
   // this is specially useful for refs
   // TODO use walkGet?
   resolve = callOnceWithArg(resolve, () => vm[key])
-  const unbind = document.onSnapshot(doc => {
+  const unbind = document.onSnapshot(doc => scheduler(() => {
     if (doc.exists) {
       updateDataFromDocumentSnapshot(
         {
@@ -278,7 +284,7 @@ export function bindDocument (
     } else {
       resolve()
     }
-  }, reject)
+  }), reject)
 
   return () => {
     unbind()
