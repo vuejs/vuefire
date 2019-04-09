@@ -93,11 +93,11 @@ This also works with `$rtbBind`/`$bind`:
 <FirebaseExample>
 
 ```js
-this.$rtdbBind('documnets', db.ref('documents').orderByChild('createdAt'))
+this.$rtdbBind('documents', db.ref('documents').orderByChild('createdAt'))
 ```
 
 ```js
-this.$bind('documnets', db.collection('documents').orderBy('createdAt'))
+this.$bind('documents', db.collection('documents').orderBy('createdAt'))
 ```
 
 </FirebaseExample>
