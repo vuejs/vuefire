@@ -29,7 +29,8 @@ Vue.use(firestorePlugin, options)
 
 ### options
 
-TODO: add options
+- `bindName`: name for the [`$bind`](#bind) method added to all Vue components. Defaults to `$bind`.
+- `unbindName`: name for the [`$unbind`](#unbind) method added to all Vue components. Defaults to `$unbind`.
 
 ## `firestore` option
 

@@ -39,7 +39,10 @@ function bind ({ vm, key, ref, ops }, options = { maxRefDepth: 2 }) {
   })
 }
 
-export function firestorePlugin (Vue) {
+export function firestorePlugin (
+  Vue,
+  { bindName = '$bind', unbindName = '$unbind' } = {}
+) {
   const strategies = Vue.config.optionMergeStrategies
   strategies.firestore = strategies.provide
 
@@ -52,7 +55,7 @@ export function firestorePlugin (Vue) {
         typeof firestore === 'function' ? firestore.call(this) : firestore
       if (!refs) return
       Object.keys(refs).forEach(key => {
-        this.$bind(key, refs[key])
+        this[bindName](key, refs[key])
       })
     },
 
@@ -65,10 +68,9 @@ export function firestorePlugin (Vue) {
     }
   })
 
-  // TODO test if $bind exist and warns
-  Vue.prototype.$bind = function (key, ref, options) {
+  Vue.prototype[bindName] = function (key, ref, options) {
     if (this._firestoreUnbinds[key]) {
-      this.$unbind(key)
+      this[unbindName](key)
     }
     const promise = bind(
       {
@@ -83,7 +85,7 @@ export function firestorePlugin (Vue) {
     return promise
   }
 
-  Vue.prototype.$unbind = function (key) {
+  Vue.prototype[unbindName] = function (key) {
     this._firestoreUnbinds[key]()
     delete this._firestoreUnbinds[key]
     delete this.$firestoreRefs[key]
