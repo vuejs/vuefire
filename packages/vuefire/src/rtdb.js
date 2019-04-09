@@ -70,7 +70,10 @@ function ensureRefs (vm) {
   }
 }
 
-export function rtdbPlugin (Vue) {
+export function rtdbPlugin (
+  Vue,
+  { bindName = '$rtdbBind', unbindName = '$rtdbUnbind' } = {}
+) {
   const strategies = Vue.config.optionMergeStrategies
   strategies.firebase = strategies.provide
 
@@ -82,12 +85,11 @@ export function rtdbPlugin (Vue) {
       if (!bindings) return
 
       for (const key in bindings) {
-        this.$rtdbBind(key, bindings[key])
+        this[bindName](key, bindings[key])
       }
     },
 
     beforeDestroy () {
-      // TODO: clear listeners
       for (const key in this._firebaseUnbinds) {
         this._firebaseUnbinds[key]()
       }
@@ -97,9 +99,9 @@ export function rtdbPlugin (Vue) {
     }
   })
 
-  Vue.prototype.$rtdbBind = function rtdbBind (key, source) {
+  Vue.prototype[bindName] = function rtdbBind (key, source) {
     if (this._firebaseUnbinds[key]) {
-      this.$rtdbUnbind(key)
+      this[unbindName](key)
     }
 
     const promise = bind(this, key, source)
@@ -109,7 +111,7 @@ export function rtdbPlugin (Vue) {
     return promise
   }
 
-  Vue.prototype.$rtdbUnbind = function rtdbUnbind (key) {
+  Vue.prototype[unbindName] = function rtdbUnbind (key) {
     unbind(this, key)
   }
 }

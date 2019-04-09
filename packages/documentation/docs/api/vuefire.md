@@ -160,7 +160,8 @@ Vue.use(rtdbPlugin, options)
 
 ### options
 
-TODO: add options
+- `bindName`: name for the [`$rtdbBind`](#rtdbBind) method added to all Vue components. Defaults to `$rtdbBind`.
+- `unbindName`: name for the [`$rtdbUnbind`](#rtdbUnbind) method added to all Vue components. Defaults to `$rtdbUnbind`.
 
 ## `firebase` option
 
