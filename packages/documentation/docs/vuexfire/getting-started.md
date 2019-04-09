@@ -21,7 +21,7 @@ npm install vuexfire@next firebase
 
 ## Adding mutations
 
-In order to use Vuexfire, you must add the mutations exported by the package **at the root of your store**:
+In order to use Vuexfire, you must add the mutations exported by the package **at the root of your store and only there**:
 
 ```js
 import { vuexfireMutations } from 'vuexfire'
@@ -35,7 +35,7 @@ const store = new Vuex.Store({
 })
 ```
 
-This will some mutations needed to keep your store state in sync with the remote database.
+This will add some mutations needed to keep your store state in sync with the remote database.
 
 ## Easy access to Firebase database
 
