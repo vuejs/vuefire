@@ -5,6 +5,7 @@ import { firestore } from 'firebase'
 interface Payload {
   todos: firestore.CollectionReference
   sortedTodos: firestore.Query
+  todosWitMaxDepthZero: firestore.Query
   user: firestore.DocumentReference
 }
 
@@ -12,11 +13,11 @@ new Vuex.Store({
   state: {
     sortedTodos: [], // Will be bound as an array
     todos: [], // Will be bound as an array
-    user: null // Will be bound as an object
+    user: null, // Will be bound as an object
   },
   mutations: {
     // your mutations
-    ...vuexfireMutations
+    ...vuexfireMutations,
   },
   actions: {
     init: firestoreAction(
@@ -39,6 +40,15 @@ new Vuex.Store({
             console.log(err)
           })
 
+        bindFirestoreRef('todosWitMaxDepthZero', payload.todosWitMaxDepthZero, {
+          maxRefDepth: 0,
+        })
+          .then(todos => {
+            todos.length
+            commit('setTodosWitMaxDepthZero', true)
+          })
+          .catch(err => console.log(err))
+
         bindFirestoreRef('user', payload.user).then(doc => {
           doc.something
         })
@@ -46,7 +56,7 @@ new Vuex.Store({
         // you can unbind any ref easily
         unbindFirestoreRef('user')
       }
-    )
+    ),
   },
   plugins: [
     store => {
@@ -55,10 +65,11 @@ new Vuex.Store({
       const payload: Payload = {
         todos: db.collection('todos'),
         sortedTodos: db.collection('todos').orderBy('createdAt'),
-        user: db.doc('user')
+        todosWitMaxDepthZero: db.collection('todos'),
+        user: db.doc('user'),
       }
 
       store.dispatch('init', payload)
-    }
-  ]
+    },
+  ],
 })
