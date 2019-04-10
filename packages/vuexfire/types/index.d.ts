@@ -3,7 +3,7 @@ import { firestore } from 'firebase'
 
 export declare const vuexfireMutations: MutationTree<any>
 
-export interface FirestoreBindActionOptions {
+export interface BindFirestoreRefOptions {
   maxRefDepth: number
 }
 
@@ -11,12 +11,12 @@ interface FirestoreActionContext<S, R> extends ActionContext<S, R> {
   bindFirestoreRef(
     key: string,
     ref: firestore.Query,
-    options?: FirestoreBindActionOptions
+    options?: BindFirestoreRefOptions
   ): Promise<firestore.DocumentData[]>
   bindFirestoreRef(
     key: string,
     ref: firestore.DocumentReference,
-    options?: FirestoreBindActionOptions
+    options?: BindFirestoreRefOptions
   ): Promise<firestore.DocumentData>
   unbindFirestoreRef(key: string): void
 }
