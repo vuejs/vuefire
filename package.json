@@ -14,7 +14,7 @@
   "devDependencies": {
     "conventional-changelog-cli": "^2.0.12",
     "cz-conventional-changelog": "^2.1.0",
-    "lerna": "^3.13.1"
+    "lerna": "^3.13.3"
   },
   "scripts": {
     "prerelease": "lerna version -m 'chore(release): publish'",
