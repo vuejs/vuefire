@@ -45,6 +45,10 @@ app.$bind('document', db.collection('todos').doc('1')).then(doc => {
   doc.something
 })
 
+app.$bind('document', db.collection('todos').doc('1'), { maxRefDepth: 2 })
+// empty option
+app.$bind('document', db.collection('todos').doc('1'), {})
+
 app.$rtdbBind('document', source).then(doc => {
   doc.val()
 })

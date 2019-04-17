@@ -13,11 +13,11 @@ new Vuex.Store({
   state: {
     sortedTodos: [], // Will be bound as an array
     todos: [], // Will be bound as an array
-    user: null, // Will be bound as an object
+    user: null // Will be bound as an object
   },
   mutations: {
     // your mutations
-    ...vuexfireMutations,
+    ...vuexfireMutations
   },
   actions: {
     init: firestoreAction(
@@ -40,8 +40,15 @@ new Vuex.Store({
             console.log(err)
           })
 
+        // empty options
+        bindFirestoreRef(
+          'todosWitMaxDepthZero',
+          payload.todosWitMaxDepthZero,
+          {}
+        )
+
         bindFirestoreRef('todosWitMaxDepthZero', payload.todosWitMaxDepthZero, {
-          maxRefDepth: 0,
+          maxRefDepth: 0
         })
           .then(todos => {
             todos.length
@@ -56,7 +63,7 @@ new Vuex.Store({
         // you can unbind any ref easily
         unbindFirestoreRef('user')
       }
-    ),
+    )
   },
   plugins: [
     store => {
@@ -66,10 +73,10 @@ new Vuex.Store({
         todos: db.collection('todos'),
         sortedTodos: db.collection('todos').orderBy('createdAt'),
         todosWitMaxDepthZero: db.collection('todos'),
-        user: db.doc('user'),
+        user: db.doc('user')
       }
 
       store.dispatch('init', payload)
-    },
-  ],
+    }
+  ]
 })

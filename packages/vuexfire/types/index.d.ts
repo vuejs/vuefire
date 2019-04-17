@@ -3,8 +3,9 @@ import { firestore } from 'firebase'
 
 export declare const vuexfireMutations: MutationTree<any>
 
+// TODO: could be refactor in vuefire-core
 export interface BindFirestoreRefOptions {
-  maxRefDepth: number
+  maxRefDepth?: number
 }
 
 interface FirestoreActionContext<S, R> extends ActionContext<S, R> {

@@ -5,16 +5,22 @@
 import Vue from 'vue'
 import { firestore, database } from 'firebase'
 
+export interface BindFirestoreRefOptions {
+  maxRefDepth?: number
+}
+
 declare module 'vue/types/vue' {
   // TODO: export types to allow custom function names
   interface Vue {
     $bind(
       name: string,
-      reference: firestore.Query
+      reference: firestore.Query,
+      options?: BindFirestoreRefOptions
     ): Promise<firestore.DocumentData[]>
     $bind(
       name: string,
-      reference: firestore.DocumentReference
+      reference: firestore.DocumentReference,
+      options?: BindFirestoreRefOptions
     ): Promise<firestore.DocumentData>
     $unbind: (name: string) => void
     $firestoreRefs: Readonly<
