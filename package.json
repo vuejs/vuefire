@@ -18,7 +18,7 @@
   },
   "scripts": {
     "prerelease": "lerna version -m 'chore(release): publish'",
-    "release": "lerna publish from-git --dist-tag next",
+    "release": "lerna publish from-git",
     "changelog": "conventional-changelog -p angular -r 2 -i CHANGELOG.md -s",
     "test": "lerna run test"
   }
