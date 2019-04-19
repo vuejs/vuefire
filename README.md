@@ -29,8 +29,8 @@ Note: _This repository contains the code for `vuefire` and `vuexfire` packages:_
 [\@posva/vuefire-bundler]: packages/@posva/vuefire-bundler
 [\@posva/vuefire-core]: packages/@posva/vuefire-core
 [\@posva/vuefire-test-helpers]: packages/@posva/vuefire-test-helpers
-[vuefire-status]: https://badgen.net/npm/v/vuefire/next
-[vuexfire-status]: https://badgen.net/npm/v/vuexfire/next
+[vuefire-status]: https://badgen.net/npm/v/vuefire
+[vuexfire-status]: https://badgen.net/npm/v/vuexfire
 [@posva/vuefire-bundler-status]: https://badgen.net/npm/v/@posva/vuefire-bundler
 [@posva/vuefire-core-status]: https://badgen.net/npm/v/@posva/vuefire-core
 [@posva/vuefire-test-helpers-status]: https://badgen.net/npm/v/@posva/vuefire-test-helpers

@@ -7,14 +7,13 @@ Before using Vuefire, make sure you have a Firebase account and a project setup 
 In order to get started make sure to install the latest version of `vuefire` as well as `firebase`:
 
 ```sh
-yarn add vuefire@next firebase
+yarn add vuefire firebase
 # or
-npm install vuefire@next firebase
+npm install vuefire firebase
 ```
 
 :::warning
 
-- Make sure you are installing the `next` tag, otherwise, you will be installing v1 of Vuefire which does not support Cloud Firestore.
 - Vuefire requires Firebase JS SDK >= 4.
 
 :::
