@@ -2,21 +2,14 @@
 
 > SSR ready Firebase binding for [Vuex](https://github.com/vuejs/vuex)
 
-Supports only Vue 2, Vuex 2 and Firebase JavaScript SDK 2/3/4.
-If you need an older version check the `v1` branch: `npm i -D vuexfire@v1`
+[Documentation](https://vuefire.vuejs.org/vuexfire)
 
 ## Installation
 
-1. Using a CDN:
-
-```html
-<script src="https://unpkg.com/vuexfire@next"></script>
-```
-
-2. In module environments, e.g CommonJS:
-
 ```bash
-npm install vue firebase vuexfire@next --save
+yarn add firebase vuexfire
+# or
+npm install firebase vuexfire
 ```
 
 ## Usage
@@ -38,7 +31,7 @@ const store = new Vuex.Store({
 })
 ```
 
-It works with modules as well, but **you don't need to add the mutations there**:
+It works with modules as well, but **you should not add the mutations there**:
 
 ```js
 const store = new Vuex.Store({
@@ -104,50 +97,6 @@ actual mutations to modify objects and arrays. It listens for updates to your
 firebase database and commits mutations to sync your state. Thanks to the action
 enhancer `firestoreAction`, it gets access to the local `state` and `commit` so
 it works with modules too :+1:
-
-## Examples
-
-You can check out a complete example in the `/examples` directory.
-
-## API
-
-### vuexfireMutations
-
-This object contains VuexFire internal mutations. They are all prefixed by
-`vuexfire/`. This object must be added in the root Store mutations object.
-
-### bindFirestoreRef(key, ref)
-
-_Only available inside of an enhanced action_
-
-Binds a firebase reference to a property in the state. If there was already
-another reference bound to the same property, it unbinds it first.
-
-```js
-bindFirestoreRef('todos', ref)
-```
-
-Returns a promise which will resolve when the data is ready, or throw an error if something goes wrong:
-
-```js
-bindFirestoreRef('todos', ref)
-  .then(() => {
-    commit('setTodosLoaded', true)
-  })
-  .catch(err => {
-    console.log(err)
-  })
-```
-
-### unbindFirestoreRef(key)
-
-_Only available inside of an enhanced action_
-
-Unbinds a bound firebase reference to a given property in the state.
-
-```js
-unbindFirestoreRef('todos')
-```
 
 ## License
 

@@ -2,6 +2,8 @@
 
 > Synchronize your data and Firebase Cloud Store database in real-time
 
+[**Documentation**](https://vuefire.vuejs.org)
+
 ## Introduction
 
 Firebase provides two solutions to handle real-time databases: Realtime Database and Cloud Store (which is also a realtime database).
