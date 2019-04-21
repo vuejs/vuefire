@@ -82,7 +82,7 @@ firebaseAction(({ state }) => {
 firestoreAction(({ state }) => {
   db.collection('users')
     .doc(state.user.id)
-    .set({ lastName: newLastName })
+    .update({ lastName: newLastName })
     .then(() => {
       console.log('user updated!')
     })
