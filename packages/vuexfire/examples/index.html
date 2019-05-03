@@ -6,24 +6,10 @@
     <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase.js"></script>
     <script src="https://unpkg.com/vue"></script>
     <script src="https://unpkg.com/vuex"></script>
-    <script src="../dist/vuexfire.js"></script>
+    <script src="https://unpkg.com/vuexfire@next"></script>
   </head>
 
   <body>
-    <!--
-      Before running this example, make sure to:
-
-      1. npm install
-      2. npm run build
-
-      Then you can open this file in your browser.
-      If you just prefer to see this example with
-      the latest published version of VueFire, you
-      play with the code in this fiddle:
-
-      https://jsfiddle.net/posva/wtyop5jy/
-    -->
-
     <div id="app">
       <button @click="toggleTodos">Toggle todos</button> <br />
       <input v-model.trim="newTodoText" @keyup.enter="addTodo" placeholder="Add new todo" />
@@ -70,7 +56,7 @@
       Vue.use(Vuex)
 
       const { Store, mapState } = Vuex
-      const { firebaseAction, firebaseMutations } = Vuexfire
+      const { firestoreAction, vuexfireMutations } = Vuexfire
 
       const store = new Vuex.Store({
         strict: true,
@@ -81,18 +67,18 @@
           config: null,
         },
 
-        mutations: firebaseMutations,
+        mutations: { ...vuexfireMutations },
 
         actions: {
-          bindRef: firebaseAction(({ bindFirebaseRef }, { name, ref }) => {
-            bindFirebaseRef(name, ref)
+          bindRef: firestoreAction(({ bindFirestoreRef }, { name, ref }) => {
+            bindFirestoreRef(name, ref)
           }),
 
-          init: firebaseAction(({ bindFirebaseRef }) => {
-            bindFirebaseRef('config', config)
-            bindFirebaseRef('todos', currentTodos)
-            bindFirebaseRef('tweets', db.collection('tweets'))
-            bindFirebaseRef('moments', db.collection('moments'))
+          init: firestoreAction(({ bindFirestoreRef }) => {
+            bindFirestoreRef('config', config)
+            bindFirestoreRef('todos', currentTodos)
+            bindFirestoreRef('tweets', db.collection('tweets'))
+            bindFirestoreRef('moments', db.collection('moments'))
           }),
         },
       })
