@@ -17,9 +17,9 @@
   "scripts": {
     "lint": "eslint --color --ext=js,html src test examples",
     "pretest": "npm run lint",
-    "test": "npm run unit && npm run types",
+    "test": "npm run build && npm run types && npm run test:unit",
+    "test:unit": "jest",
     "types": "tsc -p ./types/test/tsconfig.json",
-    "unit": "jest",
     "dev": "npm run unit -- --watchAll",
     "build": "node --eval 'require(\"@posva/vuefire-bundler\")(\"Vuefire\")'",
     "postversion": "npm run build"
@@ -51,19 +51,17 @@
     "firebase": ">=4.0.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.0.0-0",
+    "@babel/preset-env": "^7.4.4",
     "@posva/vuefire-bundler": "^1.1.3",
     "@posva/vuefire-test-helpers": "^1.0.4",
+    "@types/jest": "^24.0.12",
     "babel-preset-env": "^1.7.0",
     "eslint": "^5.9.0",
     "eslint-plugin-vue-libs": "^3.0.0",
-    "jest": "^23.6.0",
-    "typescript": "^3.2.1"
-  },
-  "jest": {
-    "collectCoverage": true,
-    "collectCoverageFrom": [
-      "<rootDir>/src/*.js"
-    ]
+    "firebase": "^5.11.1",
+    "jest": "^24.7.1",
+    "typescript": "^3.4.5"
   },
   "dependencies": {
     "@posva/vuefire-core": "^1.1.1"
