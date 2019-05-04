@@ -69,10 +69,10 @@
         })
         .firestore()
       db.settings({ timestampsInSnapshots: true })
-      const todos = db.collection('todos')
-      const unFinishedTodos = todos.where('finished', '==', false)
-      const finishedTodos = todos.where('finished', '==', true)
-      const config = db.collection('configs').doc('jORwjIykFo2NmkdzTkhU')
+      var todos = db.collection('todos')
+      var unFinishedTodos = todos.where('finished', '==', false)
+      var finishedTodos = todos.where('finished', '==', true)
+      var config = db.collection('configs').doc('jORwjIykFo2NmkdzTkhU')
 
       var vm = new Vue({
         el: '#app',
@@ -90,7 +90,7 @@
           moments: db.collection('moments'),
           nested: db.collection('nested'),
           tweets: db.collection('tweets'),
-          config,
+          config: config,
         },
 
         methods: {
