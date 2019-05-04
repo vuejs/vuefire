@@ -49,12 +49,9 @@
         strict: true,
         state: { items: [] },
         mutations: Vuexfire.vuexfireMutations,
-        getters: {
-          items: state => state.items,
-        },
         actions: {
-          setItemsRef: Vuexfire.firestoreAction(({ bindFirestoreRef }, ref) => {
-            bindFirestoreRef('items', ref)
+          setItemsRef: Vuexfire.firestoreAction(function(context, ref) {
+            context.bindFirestoreRef('items', ref)
           }),
         },
       })
@@ -62,16 +59,16 @@
       window.vm = new Vue({
         el: '#app',
         store: store,
-        computed: Vuex.mapGetters(['items']),
+        computed: Vuex.mapState(['items']),
         data: {
           newTodo: '',
         },
 
         methods: {
-          removeTodo(id) {
+          removeTodo: function(id) {
             this.source.doc(id).delete()
           },
-          addTodo() {
+          addTodo: function() {
             if (this.newTodo.trim()) {
               this.source.add({
                 text: this.newTodo,
@@ -79,13 +76,13 @@
               this.newTodo = ''
             }
           },
-          toggleSource() {
+          toggleSource: function() {
             this.source = this.source === itemsRef ? todosRef : itemsRef
             this.$store.dispatch('setItemsRef', this.source)
           },
         },
 
-        created() {
+        created: function() {
           this.source = itemsRef
           this.$store.dispatch('setItemsRef', this.source)
         },

@@ -33,13 +33,11 @@
       var itemsRef = db.collection('vuexfireItems1')
 
       var todos = {
+        namespaced: true,
         state: { items: [] },
-        getters: {
-          items: state => state.items,
-        },
         actions: {
-          setItemsRef: Vuexfire.firestoreAction(({ bindFirestoreRef }, ref) => {
-            bindFirestoreRef('items', ref)
+          setItemsRef: Vuexfire.firestoreAction((context, ref) => {
+            context.bindFirestoreRef('items', ref)
           }),
         },
       }
@@ -47,13 +45,13 @@
       var store = new Vuex.Store({
         strict: true,
         mutations: Vuexfire.vuexfireMutations,
-        modules: { todos },
+        modules: { todos: todos },
       })
 
       window.vm = new Vue({
         el: '#app',
         store: store,
-        computed: Vuex.mapGetters(['items']),
+        computed: Vuex.mapState('todos', ['items']),
         data: {
           newTodo: '',
         },
@@ -72,8 +70,8 @@
           },
         },
 
-        created() {
-          this.$store.dispatch('setItemsRef', itemsRef)
+        created: function() {
+          this.$store.dispatch('todos/setItemsRef', itemsRef)
         },
       })
     </script>
