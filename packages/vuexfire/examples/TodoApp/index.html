@@ -48,13 +48,13 @@
         // an object
         strict: true,
         state: { items: [] },
-        mutations: Vuexfire.firebaseMutations,
+        mutations: Vuexfire.vuexfireMutations,
         getters: {
           items: state => state.items,
         },
         actions: {
-          setItemsRef: Vuexfire.firebaseAction(({ bindFirebaseRef }, ref) => {
-            bindFirebaseRef('items', ref)
+          setItemsRef: Vuexfire.firestoreAction(({ bindFirestoreRef }, ref) => {
+            bindFirestoreRef('items', ref)
           }),
         },
       })

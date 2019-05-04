@@ -26,10 +26,17 @@
 
     <div id="app">
       <button @click="toggleTodos">Toggle todos</button> <br />
-      <input v-model.trim="newTodoText" @keyup.enter="addTodo" placeholder="Add new todo" />
+      <input
+        v-model.trim="newTodoText"
+        @keyup.enter="addTodo"
+        placeholder="Add new todo"
+      />
       <ul>
         <li v-for="todo in todos">
-          <input :value="todo.text" @input="updateTodoText(todo, $event.target.value)" />
+          <input
+            :value="todo.text"
+            @input="updateTodoText(todo, $event.target.value)"
+          />
           <button @click="removeTodo(todo)">X</button>
         </li>
       </ul>
@@ -70,7 +77,7 @@
       Vue.use(Vuex)
 
       const { Store, mapState } = Vuex
-      const { firebaseAction, firebaseMutations } = Vuexfire
+      const { firestoreAction, vuexfireMutations } = Vuexfire
 
       const store = new Vuex.Store({
         strict: true,
@@ -81,18 +88,18 @@
           config: null,
         },
 
-        mutations: firebaseMutations,
+        mutations: vuexfireMutations,
 
         actions: {
-          bindRef: firebaseAction(({ bindFirebaseRef }, { name, ref }) => {
-            bindFirebaseRef(name, ref)
+          bindRef: firestoreAction(({ bindFirestoreRef }, { name, ref }) => {
+            bindFirestoreRef(name, ref)
           }),
 
-          init: firebaseAction(({ bindFirebaseRef }) => {
-            bindFirebaseRef('config', config)
-            bindFirebaseRef('todos', currentTodos)
-            bindFirebaseRef('tweets', db.collection('tweets'))
-            bindFirebaseRef('moments', db.collection('moments'))
+          init: firestoreAction(({ bindFirestoreRef }) => {
+            bindFirestoreRef('config', config)
+            bindFirestoreRef('todos', currentTodos)
+            bindFirestoreRef('tweets', db.collection('tweets'))
+            bindFirestoreRef('moments', db.collection('moments'))
           }),
         },
       })
@@ -124,7 +131,8 @@
             todos.doc(todo.id).delete()
           },
           toggleTodos() {
-            currentTodos = currentTodos === unFinishedTodos ? finishedTodos : unFinishedTodos
+            currentTodos =
+              currentTodos === unFinishedTodos ? finishedTodos : unFinishedTodos
             this.$store.dispatch('bindRef', {
               name: 'todos',
               ref: currentTodos,

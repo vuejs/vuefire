@@ -38,15 +38,15 @@
           items: state => state.items,
         },
         actions: {
-          setItemsRef: Vuexfire.firebaseAction(({ bindFirebaseRef }, ref) => {
-            bindFirebaseRef('items', ref)
+          setItemsRef: Vuexfire.firestoreAction(({ bindFirestoreRef }, ref) => {
+            bindFirestoreRef('items', ref)
           }),
         },
       }
 
       var store = new Vuex.Store({
         strict: true,
-        mutations: Vuexfire.firebaseMutations,
+        mutations: Vuexfire.vuexfireMutations,
         modules: { todos },
       })
 
