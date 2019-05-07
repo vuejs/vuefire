@@ -72,22 +72,22 @@ this.$firestoreRefs.user.set({ lastName: newLastName }).then(() => {
 
 ### Removing a document
 
-You can remove documents by calling `remove` on their reference which can be accessed directly on `$firebaseRefs`/`$firestoreRefs` or by creating a new reference using the database object:
+You can remove documents by calling `delete` on their reference which can be accessed directly on `$firebaseRefs`/`$firestoreRefs` or by creating a new reference using the database object:
 
 <FirebaseExample>
 
 ```js
-db.ref('cities/' + cityId).remove()
-this.$firebaseRefs.cities.child(cityId).remove()
-this.$firebaseRefs.selectedCity.remove()
+db.ref('cities/' + cityId).delete()
+this.$firebaseRefs.cities.child(cityId).delete()
+this.$firebaseRefs.selectedCity.delete()
 ```
 
 ```js
 db.collection('cities')
   .doc(cityId)
-  .remove()
-this.$firestoreRefs.cities.doc(cityId).remove()
-this.$firestoreRefs.selectedCity.remove()
+  .delete()
+this.$firestoreRefs.cities.doc(cityId).delete()
+this.$firestoreRefs.selectedCity.delete()
 ```
 
 </FirebaseExample>

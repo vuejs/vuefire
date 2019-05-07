@@ -99,7 +99,7 @@ You can remove documents by calling `remove` on their reference:
 
 ```js
 firebaseAction((context, cityId) => {
-  db.ref('cities/' + cityId).remove()
+  db.ref('cities/' + cityId).delete()
 })
 ```
 
@@ -107,7 +107,7 @@ firebaseAction((context, cityId) => {
 firestoreAction((context, cityId) => {
   db.collection('cities')
     .doc(cityId)
-    .remove()
+    .delete()
 })
 ```
 
