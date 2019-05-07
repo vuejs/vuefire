@@ -99,7 +99,7 @@ You can remove documents by calling `remove` on their reference:
 
 ```js
 firebaseAction((context, cityId) => {
-  db.ref('cities/' + cityId).delete()
+  db.ref('cities/' + cityId).remove()
 })
 ```
 
