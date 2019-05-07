@@ -107,7 +107,7 @@ firebaseAction((context, cityId) => {
 firestoreAction((context, cityId) => {
   db.collection('cities')
     .doc(cityId)
-    .remove()
+    .delete()
 })
 ```
 
