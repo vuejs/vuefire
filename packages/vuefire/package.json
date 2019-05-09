@@ -1,6 +1,6 @@
 {
   "name": "vuefire",
-  "version": "2.0.0-alpha.22",
+  "version": "2.0.0-alpha.23",
   "description": "Firestore bindings for Vue.js",
   "main": "dist/vuefire.common.js",
   "module": "dist/vuefire.esm.js",
@@ -64,7 +64,7 @@
     "typescript": "^3.4.5"
   },
   "dependencies": {
-    "@posva/vuefire-core": "^1.1.1"
+    "@posva/vuefire-core": "^1.1.2"
   },
   "gitHead": "e3e2df3624572cec86ed861f2472df4d143f2265"
 }
