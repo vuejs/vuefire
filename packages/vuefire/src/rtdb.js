@@ -57,19 +57,6 @@ function unbind (vm, key) {
   delete vm._firebaseUnbinds[key]
 }
 
-/**
- * Ensure the related bookeeping variables on an instance.
- *
- * @param {Vue} vm
- */
-function ensureRefs (vm) {
-  if (!vm.$firebaseRefs) {
-    vm.$firebaseRefs = Object.create(null)
-    vm._firebaseSources = Object.create(null)
-    vm._firebaseUnbinds = Object.create(null)
-  }
-}
-
 export function rtdbPlugin (
   Vue,
   { bindName = '$rtdbBind', unbindName = '$rtdbUnbind' } = {}
@@ -78,8 +65,12 @@ export function rtdbPlugin (
   strategies.firebase = strategies.provide
 
   Vue.mixin({
+    beforeCreate () {
+      this.$firebaseRefs = Object.create(null)
+      this._firebaseSources = Object.create(null)
+      this._firebaseUnbinds = Object.create(null)
+    },
     created () {
-      ensureRefs(this)
       let bindings = this.$options.firebase
       if (typeof bindings === 'function') bindings = bindings.call(this)
       if (!bindings) return

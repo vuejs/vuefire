@@ -47,10 +47,12 @@ export function firestorePlugin (
   strategies.firestore = strategies.provide
 
   Vue.mixin({
-    created () {
-      const { firestore } = this.$options
+    beforeCreate () {
       this._firestoreUnbinds = Object.create(null)
       this.$firestoreRefs = Object.create(null)
+    },
+    created () {
+      const { firestore } = this.$options
       const refs =
         typeof firestore === 'function' ? firestore.call(this) : firestore
       if (!refs) return
