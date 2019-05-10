@@ -181,6 +181,7 @@ export function bindCollection (
     if (!docChanges.length) resolve()
   }, reject)
 
+  // TODO: we could allow an argument to unbind to override reset
   return () => {
     unbind()
     if (options.reset !== false) {

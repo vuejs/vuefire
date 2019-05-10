@@ -93,35 +93,43 @@ describe('RTDB document', () => {
     expect(vm.a.b.c).toEqual({ foo: 'foo' })
   })
 
-  it('correctly unbinds', () => {
+  it('resets the value when unbinding', () => {
     expect(vm.item).toEqual({})
     unbind()
     document.set({ foo: 'foo' })
     document.flush()
-    expect(vm.item).toEqual({})
+    expect(vm.item).toEqual(null)
   })
 
-  it('leaves data intact on unbind', async () => {
+  it('can be left as is', async () => {
     document.set({ foo: 'foo' })
-    document.flush()
+    let unbind
+    const promise = new Promise((resolve, reject) => {
+      unbind = rtdbBindAsObject(
+        { vm, document, key: 'item', resolve, reject, ops },
+        { reset: false }
+      )
+      document.flush()
+    })
+    await promise
+    expect(vm.item).toEqual({ foo: 'foo' })
     unbind()
     expect(vm.item).toEqual({ foo: 'foo' })
-    const other = new MockFirebase().child('other')
-    other.set({ bar: 'bar' })
-    other.flush()
+  })
+
+  it('can be reset to a specific value', async () => {
+    document.set({ foo: 'foo' })
+    let unbind
     const promise = new Promise((resolve, reject) => {
-      rtdbBindAsObject({
-        vm,
-        document: other,
-        key: 'item',
-        resolve,
-        reject,
-        ops
-      })
+      unbind = rtdbBindAsObject(
+        { vm, document, key: 'item', resolve, reject, ops },
+        { reset: () => ({ bar: 'bar' }) }
+      )
+      document.flush()
     })
-    expect(vm.item).toEqual({ foo: 'foo' })
-    other.flush()
     await promise
+    expect(vm.item).toEqual({ foo: 'foo' })
+    unbind()
     expect(vm.item).toEqual({ bar: 'bar' })
   })
 })
