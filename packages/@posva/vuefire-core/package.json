@@ -1,6 +1,6 @@
 {
   "name": "@posva/vuefire-core",
-  "version": "1.1.2",
+  "version": "2.0.0",
   "description": "Shared code for vue + Firebase apps used by vuefire and vuexfire",
   "author": "Eduardo San Martin Morote <posva13@gmail.com>",
   "homepage": "https://github.com/vuejs/vuefire#readme",
@@ -34,7 +34,7 @@
   "devDependencies": {
     "@babel/core": "^7.0.0-0",
     "@babel/preset-env": "^7.4.4",
-    "@posva/vuefire-test-helpers": "^1.0.4",
+    "@posva/vuefire-test-helpers": "^1.1.0",
     "@types/jest": "^24.0.12",
     "eslint": "^5.9.0",
     "eslint-plugin-vue-libs": "^3.0.0",
