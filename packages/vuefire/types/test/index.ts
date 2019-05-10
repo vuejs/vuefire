@@ -48,6 +48,15 @@ app.$bind('document', db.collection('todos').doc('1')).then(doc => {
 app.$bind('document', db.collection('todos').doc('1'), { maxRefDepth: 2 })
 // empty option
 app.$bind('document', db.collection('todos').doc('1'), {})
+app.$bind('document', db.collection('todos').doc('1'), { reset: false })
+app.$bind('document', db.collection('todos').doc('1'), {
+  reset: () => ({ foo: 'foo' })
+})
+app.$rtdbBind('document', source, {})
+app.$rtdbBind('document', source, { reset: false })
+app.$rtdbBind('document', source, {
+  reset: () => ({ foo: 'foo' })
+})
 
 app.$rtdbBind('document', source).then(doc => {
   doc.val()

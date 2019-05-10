@@ -22,11 +22,11 @@
     "url": "git+https://github.com/vuejs/vuefire.git"
   },
   "scripts": {
-    "pretest": "npm run lint",
-    "test": "npm run unit",
-    "unit": "jest",
+    "pretest": "yarn run lint",
+    "test": "yarn run test:unit",
+    "test:unit": "jest",
     "lint": "eslint --fix src test",
-    "dev": "npm run unit -- --watchAll"
+    "dev": "yarn run test:unit -- --watchAll"
   },
   "bugs": {
     "url": "https://github.com/vuejs/vuefire/issues"

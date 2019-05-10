@@ -7,7 +7,7 @@ const ops = {
   remove: (array, index) => array.splice(index, 1)
 }
 
-function bind ({ vm, key, ref, ops }, options = { maxRefDepth: 2 }) {
+function bind ({ vm, key, ref, ops }, options) {
   return new Promise((resolve, reject) => {
     let unbind
     if (ref.where) {

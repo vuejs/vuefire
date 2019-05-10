@@ -139,4 +139,46 @@ describe('RTDB collection', () => {
     collection.flush()
     expect(vm.items).toEqual([{ name: 'bar' }])
   })
+
+  it('resets the value when unbinding', () => {
+    collection.push({ name: 'foo' })
+    collection.flush()
+    expect(vm.items).toEqual([{ name: 'foo' }])
+    unbind()
+    expect(vm.items).toEqual([])
+  })
+
+  it('can be left as is', async () => {
+    let unbind
+    const promise = new Promise((resolve, reject) => {
+      unbind = rtdbBindAsArray(
+        { vm, collection, key: 'itemsReset', resolve, reject, ops },
+        { reset: false }
+      )
+      collection.flush()
+    })
+    await promise
+    collection.push({ foo: 'foo' })
+    collection.flush()
+    expect(vm.itemsReset).toEqual([{ foo: 'foo' }])
+    unbind()
+    expect(vm.itemsReset).toEqual([{ foo: 'foo' }])
+  })
+
+  it('can be reset to a specific value', async () => {
+    let unbind
+    const promise = new Promise((resolve, reject) => {
+      unbind = rtdbBindAsArray(
+        { vm, collection, key: 'itemsReset', resolve, reject, ops },
+        { reset: () => [{ bar: 'bar' }] }
+      )
+      collection.flush()
+    })
+    await promise
+    collection.push({ foo: 'foo' })
+    collection.flush()
+    expect(vm.itemsReset).toEqual([{ foo: 'foo' }])
+    unbind()
+    expect(vm.itemsReset).toEqual([{ bar: 'bar' }])
+  })
 })

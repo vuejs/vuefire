@@ -16,13 +16,13 @@
   ],
   "scripts": {
     "lint": "eslint --color --ext=js,html src test examples",
-    "pretest": "npm run lint",
-    "test": "npm run build && npm run types && npm run test:unit",
+    "pretest": "yarn run lint",
+    "test": "yarn run build && yarn run types && yarn run test:unit",
     "test:unit": "jest",
-    "dev": "npm run test:unit -- --watchAll",
+    "dev": "yarn run test:unit -- --watchAll",
     "types": "tsc -p ./types/test/tsconfig.json",
     "build": "node --eval 'require(\"@posva/vuefire-bundler\")(\"Vuexfire\")'",
-    "postversion": "npm run build"
+    "postversion": "yarn run build"
   },
   "repository": {
     "type": "git",

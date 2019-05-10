@@ -100,7 +100,73 @@ export default new Vuex.Store({
 }
 ```
 
-When unbinding, there is no need to wait for a promise, all listeners are teared down and the data remains intact, that means **it will keep the last value**. If you want to change that, you can `commit` a mutation to change the value
+</FirebaseExample>
+
+When unbinding, there is no need to wait for a promise, all listeners are teared down. By default, data **will be reset**, you can customize this behaviour with the [`reset` option](../api/vuefire.md#options-2):
+
+<FirebaseExample>
+
+```js
+// store.js
+export default new Vuex.Store({
+  // other store options are omitted for simplicity reasons
+
+  actions: {
+    someAction: firebaseAction(({ state, bindFirebaseRef unbindFirebaseRef }) => {
+      bindFirebaseRef('todos', db.ref('todos'))
+      unbindFirebaseRef('todos')
+      // state.todos === []
+
+      // using the boolean version
+      bindFirebaseRef('todos', db.ref('todos'), { reset: false })
+      unbindFirebaseRef('todos')
+      // state.todos === [{ text: 'Use Firestore Refs' }]
+
+      // using the function syntax
+      bindFirebaseRef('todos', db.ref('todos'), { reset: () => [{ text: 'placeholder' }] })
+      unbindFirebaseRef('todos')
+      // state.todos === [{ text: 'placeholder' }]
+
+      // documents are reset to null instead, you can also provide the same options as above
+      bindFirebaseRef('doc', db.ref('documents/1'))
+      unbindFirebaseRef('doc')
+      // state.doc === null
+
+    })
+  }
+}
+```
+
+```js
+// store.js
+export default new Vuex.Store({
+  // other store options are omitted for simplicity reasons
+
+  actions: {
+    someAction: firestoreAction(({ state, bindFirestoreRef unbindFirestoreRef }) => {
+      bindFirestoreRef('todos', db.collection('todos'))
+      unbindFirestoreRef('todos')
+      // state.todos === []
+
+      // using the boolean version
+      bindFirestoreRef('todos', db.collection('todos'), { reset: false })
+      unbindFirestoreRef('todos')
+      // state.todos === [{ text: 'Use Firestore Refs' }]
+
+      // using the function syntax
+      bindFirestoreRef('todos', db.collection('todos'), { reset: () => [{ text: 'placeholder' }] })
+      unbindFirestoreRef('todos')
+      // state.todos === [{ text: 'placeholder' }]
+
+      // documents are reset to null instead, you can also provide the same options as above
+      bindFirestoreRef('doc', db.collection('documents').doc('1'))
+      unbindFirestoreRef('doc')
+      // state.doc === null
+
+    })
+  }
+}
+```
 
 </FirebaseExample>
 

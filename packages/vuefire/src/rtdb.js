@@ -25,27 +25,33 @@ const ops = {
   remove: (array, index) => array.splice(index, 1)
 }
 
-function bind (vm, key, source) {
+function bind (vm, key, source, options) {
   return new Promise((resolve, reject) => {
     let unbind
     if (Array.isArray(vm[key])) {
-      unbind = bindAsArray({
-        vm,
-        key,
-        collection: source,
-        resolve,
-        reject,
-        ops
-      })
+      unbind = bindAsArray(
+        {
+          vm,
+          key,
+          collection: source,
+          resolve,
+          reject,
+          ops
+        },
+        options
+      )
     } else {
-      unbind = bindAsObject({
-        vm,
-        key,
-        document: source,
-        resolve,
-        reject,
-        ops
-      })
+      unbind = bindAsObject(
+        {
+          vm,
+          key,
+          document: source,
+          resolve,
+          reject,
+          ops
+        },
+        options
+      )
     }
     vm._firebaseUnbinds[key] = unbind
   })
@@ -90,12 +96,12 @@ export function rtdbPlugin (
     }
   })
 
-  Vue.prototype[bindName] = function rtdbBind (key, source) {
+  Vue.prototype[bindName] = function rtdbBind (key, source, options) {
     if (this._firebaseUnbinds[key]) {
       this[unbindName](key)
     }
 
-    const promise = bind(this, key, source)
+    const promise = bind(this, key, source, options)
     this._firebaseSources[key] = source
     this.$firebaseRefs[key] = getRef(source)
 

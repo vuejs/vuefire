@@ -339,10 +339,47 @@ this.$unbind('documents')
 
 </FirebaseExample>
 
-Vuefire will **leave the data as-is**, if you want to reset it back to something is up to you to do so:
+By default, Vuefire **will reset** the property, you can customize this behaviour with the [`reset` option](../api/vuefire.md#options-2):
+
+<FirebaseExample>
 
 ```js
-// after calling `$rtdbUnbind` or `$unbind` on 'user' and 'documents'
-this.user = null
-this.documents = []
+// default behavior
+this.$rtdbBind('user')
+this.$rtdbUnbind('user')
+// this.user === null
+// using a boolean value for reset
+this.$rtdbBind('user', { reset: false })
+this.$rtdbUnbind('user')
+// this.user === { name: 'Eduardo' }
+// using the function syntax
+this.$rtdbBind('user', { reset: () => ({ name: 'unregistered' }) })
+this.$rtdbUnbind('user')
+
+// for references bound as arrays, they are reset to an empty array by default instead of `null`
+this.$rtdbBind('documents')
+this.$rtdbUnbind('documents')
+// this.documents === []
 ```
+
+```js
+// default behavior
+this.$bind('user')
+this.$unbind('user')
+// this.user === null
+// using a boolean value for reset
+this.$bind('user', { reset: false })
+this.$unbind('user')
+// this.user === { name: 'Eduardo' }
+// using the function syntax
+this.$bind('user', { reset: () => ({ name: 'unregistered' }) })
+this.$unbind('user')
+// this.user === { name: 'unregistered' }
+
+// for collections, they are reset to an empty array by default instead of `null`
+this.$bind('documents')
+this.$unbind('documents')
+// this.documents === []
+```
+
+</FirebaseExample>
