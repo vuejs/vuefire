@@ -7,6 +7,11 @@ import { firestore, database } from 'firebase'
 
 export interface BindFirestoreRefOptions {
   maxRefDepth?: number
+  reset?: boolean | (() => any)
+}
+
+export interface BindRTDBRefOptions {
+  reset?: boolean | (() => any)
 }
 
 declare module 'vue/types/vue' {
@@ -32,7 +37,8 @@ declare module 'vue/types/vue' {
 
     $rtdbBind(
       name: string,
-      reference: database.Reference | database.Query
+      reference: database.Reference | database.Query,
+      options?: BindRTDBRefOptions
     ): Promise<database.DataSnapshot>
     $rtdbUnbind: (name: string) => void
     $firebaseRefs: Readonly<Record<string, database.Reference>>

@@ -75,6 +75,6 @@ describe('RTDB: manual bind', () => {
     expect(vm.item).toEqual({ name: 'foo' })
     vm.$rtdbUnbind('item')
     source.set({ name: 'bar' })
-    expect(vm.item).toEqual({ name: 'foo' })
+    expect(vm.item).toEqual(null)
   })
 })
