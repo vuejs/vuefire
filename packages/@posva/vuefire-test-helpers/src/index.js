@@ -2,6 +2,7 @@ import Vue from 'vue'
 import { MockFirebase } from 'firebase-mock'
 
 Vue.config.productionTip = false
+Vue.config.devtools = false
 export { Vue, MockFirebase }
 
 export * from './mock'
