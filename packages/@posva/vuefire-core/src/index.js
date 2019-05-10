@@ -6,6 +6,8 @@ import {
   walkSet
 } from './utils'
 
+const DEFAULT_OPTIONS = { maxRefDepth: 2, reset: true }
+
 export * from './rtdb'
 
 function unsubscribeAll (subs) {
@@ -74,8 +76,9 @@ function subscribeToRefs (
 
 export function bindCollection (
   { vm, key, collection, ops, resolve, reject },
-  options = { maxRefDepth: 2 }
+  options = DEFAULT_OPTIONS
 ) {
+  options = Object.assign({}, DEFAULT_OPTIONS, options) // fill default values
   // TODO support pathes? nested.obj.list (walkSet)
   // NOTE use ops object
   const array = ops.set(vm, key, [])
@@ -165,7 +168,7 @@ export function bindCollection (
           if (++count >= expectedItems) {
             originalResolve(vm[key])
             // reset resolve to noop
-            resolve = _ => {}
+            resolve = () => {}
           }
         }
       }
@@ -180,13 +183,17 @@ export function bindCollection (
 
   return () => {
     unbind()
+    if (options.reset !== false) {
+      const value = typeof options.reset === 'function' ? options.reset() : []
+      ops.set(vm, key, value)
+    }
     arraySubs.forEach(unsubscribeAll)
   }
 }
 
 function updateDataFromDocumentSnapshot (
   { snapshot, target, path, subs, ops, depth = 0, resolve },
-  options = { maxRefDepth: 2 }
+  options
 ) {
   const [data, refs] = extractRefs(snapshot, walkGet(target, path))
   // NOTE use ops
@@ -227,9 +234,7 @@ function subscribeToDocument (
         options
       )
     } else {
-      // NOTE use ops
       ops.set(target, path, null)
-      // walkSet(target, path, null)
       resolve(path)
     }
   })
@@ -252,8 +257,9 @@ function subscribeToDocument (
  */
 export function bindDocument (
   { vm, key, document, resolve, reject, ops },
-  options
+  options = DEFAULT_OPTIONS
 ) {
+  options = Object.assign({}, DEFAULT_OPTIONS, options) // fill default values
   // TODO warning check if key exists?
   // const boundRefs = Object.create(null)
 
@@ -282,6 +288,10 @@ export function bindDocument (
 
   return () => {
     unbind()
+    if (options.reset !== false) {
+      const value = typeof options.reset === 'function' ? options.reset() : null
+      ops.set(vm, key, value)
+    }
     unsubscribeAll(subs)
   }
 }

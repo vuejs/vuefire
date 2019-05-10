@@ -31,7 +31,10 @@ describe('documents', () => {
     expect(ops.remove).not.toHaveBeenCalled()
     await document.update({ bar: 'bar' })
     expect(ops.set).toHaveBeenCalledTimes(2)
-    expect(ops.set).toHaveBeenLastCalledWith(vm, 'item', { bar: 'bar', foo: 'foo' })
+    expect(ops.set).toHaveBeenLastCalledWith(vm, 'item', {
+      bar: 'bar',
+      foo: 'foo'
+    })
   })
 
   it('adds non-enumerable id', async () => {
@@ -88,5 +91,47 @@ describe('documents', () => {
     })
     await promise
     expect(vm.item).toEqual({ foo: 'foo' })
+  })
+
+  it('resets the value when unbinding', async () => {
+    await document.update({ foo: 'foo' })
+    let unbind
+    const promise = new Promise((resolve, reject) => {
+      unbind = bindDocument({ vm, document, key: 'item', resolve, reject, ops })
+    })
+    await promise
+    expect(vm.item).toEqual({ foo: 'foo' })
+    unbind()
+    expect(vm.item).toEqual(null)
+  })
+
+  it('can be left as is', async () => {
+    await document.update({ foo: 'foo' })
+    let unbind
+    const promise = new Promise((resolve, reject) => {
+      unbind = bindDocument(
+        { vm, document, key: 'item', resolve, reject, ops },
+        { reset: false }
+      )
+    })
+    await promise
+    expect(vm.item).toEqual({ foo: 'foo' })
+    unbind()
+    expect(vm.item).toEqual({ foo: 'foo' })
+  })
+
+  it('can be reset to a specific value', async () => {
+    await document.update({ foo: 'foo' })
+    let unbind
+    const promise = new Promise((resolve, reject) => {
+      unbind = bindDocument(
+        { vm, document, key: 'item', resolve, reject, ops },
+        { reset: () => ({ bar: 'bar' }) }
+      )
+    })
+    await promise
+    expect(vm.item).toEqual({ foo: 'foo' })
+    unbind()
+    expect(vm.item).toEqual({ bar: 'bar' })
   })
 })

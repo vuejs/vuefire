@@ -39,14 +39,18 @@ describe('collections', () => {
     const doc = await collection.add({ text: 'foo', more: true })
     await doc.update({ text: 'bar' })
     expect(ops.set).toHaveBeenCalledTimes(1)
-    expect(ops.set).toHaveBeenLastCalledWith(vm, 'items', [{ more: true, text: 'bar' }])
+    expect(ops.set).toHaveBeenLastCalledWith(vm, 'items', [
+      { more: true, text: 'bar' }
+    ])
   })
 
   it('add properties', async () => {
     const doc = await collection.add({ text: 'foo' })
     await doc.update({ other: 'bar' })
     expect(ops.set).toHaveBeenCalledTimes(1)
-    expect(ops.set).toHaveBeenLastCalledWith(vm, 'items', [{ other: 'bar', text: 'foo' }])
+    expect(ops.set).toHaveBeenLastCalledWith(vm, 'items', [
+      { other: 'bar', text: 'foo' }
+    ])
   })
 
   // TODO move to vuefire
@@ -87,7 +91,14 @@ describe('collections', () => {
     const unbindSpy = spyUnbind(collection)
     let unbind
     await new Promise((resolve, reject) => {
-      unbind = bindCollection({ vm, collection, key: 'items', resolve, reject, ops })
+      unbind = bindCollection({
+        vm,
+        collection,
+        key: 'items',
+        resolve,
+        reject,
+        ops
+      })
     })
 
     expect(unbindSpy).not.toHaveBeenCalled()
@@ -96,9 +107,10 @@ describe('collections', () => {
     expect(unbindSpy).toHaveBeenCalled()
 
     // reset data manually
+    const expected = vm.items
     await collection.add({ text: 'bar' })
     // still old version
-    expect(vm.items).toEqual([{ text: 'foo' }])
+    expect(vm.items).toEqual(expected)
     unbindSpy.mockRestore()
   })
 
@@ -124,5 +136,68 @@ describe('collections', () => {
     })
     await promise
     expect(vm.items).toEqual([{ foo: 'foo' }, { foo: 'foo' }])
+  })
+
+  it('resets the value when unbinding', async () => {
+    await collection.add({ foo: 'foo' })
+    let unbind
+    const promise = new Promise((resolve, reject) => {
+      unbind = bindCollection({
+        vm,
+        collection,
+        key: 'items',
+        resolve,
+        reject,
+        ops
+      })
+    })
+    await promise
+    expect(vm.items).toEqual([{ foo: 'foo' }])
+    unbind()
+    expect(vm.items).toEqual([])
+  })
+
+  it('can be left as is', async () => {
+    await collection.add({ foo: 'foo' })
+    let unbind
+    const promise = new Promise((resolve, reject) => {
+      unbind = bindCollection(
+        {
+          vm,
+          collection,
+          key: 'items',
+          resolve,
+          reject,
+          ops
+        },
+        { reset: false }
+      )
+    })
+    await promise
+    expect(vm.items).toEqual([{ foo: 'foo' }])
+    unbind()
+    expect(vm.items).toEqual([{ foo: 'foo' }])
+  })
+
+  it('can be reset to a specific value', async () => {
+    await collection.add({ foo: 'foo' })
+    let unbind
+    const promise = new Promise((resolve, reject) => {
+      unbind = bindCollection(
+        {
+          vm,
+          collection,
+          key: 'items',
+          resolve,
+          reject,
+          ops
+        },
+        { reset: () => [{ bar: 'bar' }, { baz: 'baz' }] }
+      )
+    })
+    await promise
+    expect(vm.items).toEqual([{ foo: 'foo' }])
+    unbind()
+    expect(vm.items).toEqual([{ bar: 'bar' }, { baz: 'baz' }])
   })
 })
