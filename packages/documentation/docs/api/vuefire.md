@@ -119,6 +119,7 @@ export default {
 Object that can contain the following properties:
 
 - `maxRefDepth`: How many levels of nested references should be automatically bound. Defaults to 2, meaning that References inside of References inside of documents bound with `bindFirestoreRef` will automatically be bound too.
+- `reset`: Allows to define the behavior when a reference is unbound. Defaults to `true`, which resets the property in the vue instance to `null` for documents and to an empty array `[]` for collections. It can also be set to a function returning a value to customize the value set. Setting it to `false` will keep the data as-is when unbounding.
 
 ## \$unbind
 
@@ -221,7 +222,7 @@ This method is only available after [installing `rtdbPlugin`](#rtdbplugin)
 
 `$rtdbBind` allows you to programatically bind a Reference or query to an **existing property** (created in `data`). It is called for you when you use the [`firebase` option](#firebase-option):
 
-`this.$rtdbBind(key: string, reference: Referenc | Query, options?): Promise<Object | Array>`
+`this.$rtdbBind(key: string, reference: Reference | Query, options?): Promise<Object | Array>`
 
 Depending on the type of the property, the Reference or Query will be bound as an array or as an object.
 
@@ -248,6 +249,12 @@ export default {
 ```
 
 `$rtdbBind` returns a Promise that is resolved once the data has been retrieved and synced into the state.
+
+#### `options`
+
+Object that can contain the following properties:
+
+- `reset`: Allows to define the behavior when a reference is unbound. Defaults to `true`, which resets the property in the vue instance to `null` for properties bound as objects and to an empty array `[]` for properties bound as arrays. It can also be set to a function returning a value to customize the value set. Setting it to `false` will keep the data as-is when unbounding.
 
 ## \$rtdbUnbind
 

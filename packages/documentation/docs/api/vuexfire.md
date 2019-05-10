@@ -61,12 +61,13 @@ Returns a Promise that is resolved once the data has been _completely_ fetched a
 Can contain the following properties:
 
 - `maxRefDepth`: How many levels of nested references should be automatically bound. Defaults to 2, meaning that References inside of References inside of documents bound with `bindFirestoreRef` will automatically be bound too.
+- `reset`: Allows to define the behavior when a reference is unbound. Defaults to `true`, which resets the property in the vue instance to `null` for documents and to an empty array `[]` for collections. It can also be set to a function returning a value to customize the value set. Setting it to `false` will keep the data as-is when unbounding.
 
 ### unbindFirestoreRef
 
 `unbindFirestoreRef(key: string): void`
 
-Unsubscribes from updates for a given key. Leaves the state as-is.
+Unsubscribes from updates for a given key.
 
 ## firebaseAction
 
@@ -86,15 +87,21 @@ export const setDocument = firebaseAction(
 
 ### bindFirebaseRef
 
-- `bindFirebaseRef(key: string, ref: Query): Promise<Object[]>`
-- `bindFirebaseRef(key: string, ref: Document): Promise<Object>`
+- `bindFirebaseRef(key: string, ref: Query, options?): Promise<Object[]>`
+- `bindFirebaseRef(key: string, ref: Reference, options?): Promise<Object>`
 
-Binds a collection, Query or Document to a property previously declared in the state, relatively to the module we are on. It unbinds any previouly bound reference with the same `key`. If the current value in the state is an Array, it binds the data as an array, otherwise it binds it as an object.
+Binds a collection, Query or Reference to a property previously declared in the state, relatively to the module we are on. It unbinds any previouly bound reference with the same `key`. If the current value in the state is an Array, it binds the data as an array, otherwise it binds it as an object.
 
 Returns a promise that is resolved once the data is fetched and the state is in sync.
+
+#### `options`
+
+Can contain the following properties:
+
+- `reset`: Allows to define the behavior when a reference is unbound. Defaults to `true`, which resets the property in the vue instance to `null` for properties bound as objects and to an empty array `[]` for properties bound as arrays. It can also be set to a function returning a value to customize the value set. Setting it to `false` will keep the data as-is when unbounding.
 
 ### unbindFirebaseRef
 
 `unbindFirebaseRef(key: string): void`
 
-Unsubscribes from updates for a given key. Leaves the state as-is.
+Unsubscribes from updates for a given key.
