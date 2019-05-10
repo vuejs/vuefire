@@ -8,11 +8,9 @@ Firebase provides two solutions to handle real-time databases: Realtime Database
 In order to keep all clients data in-sync with its cloud database, their [js SDK](https://firebase.google.com/docs/firestore/quickstart) provides the tools to do so. However, it quickly becomes bothersome to _bind_ multiple documents or collections to your application, keep them synchronized as well as handling [references](https://firebase.google.com/docs/firestore/manage-data/data-types) to other documents or collections, which can contain references themselves and must also be kept up to date.
 The goal of vuefire and vuexfire is to make this as simple as a function call that returns a promise so it is also easy to setup SSR and allows you to focus on developing your application.
 
-<!-- TODO compare code samples -->
+To better understand why Vuefire will make it so much easier to develop Vue apps with firebase, please, check [this link in the documentation](https://vuefire.vuejs.org/vuefire/#why)
 
 Note: _This repository contains the code for `vuefire` and `vuexfire` packages:_
-
-_Current version only supports Cloud Store. Support for both Realtime Database and Cloud Store will be added in the future. If you need to use Realtime Database, use [v1.x.x of vuefire](https://github.com/vuejs/vuefire/tree/v1) or [v2.x.x of vuexfire](https://github.com/posva/vuexfire)_
 
 ## Packages
 
