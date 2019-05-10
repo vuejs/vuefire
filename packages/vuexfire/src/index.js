@@ -97,7 +97,7 @@ export function firestoreAction (action) {
       }
     }
 
-    context.bindFirestoreRef = (key, ref, options = { maxRefDepth: 2 }) =>
+    context.bindFirestoreRef = (key, ref, options) =>
       bind({ state, commit, key, ref, ops }, options)
     context.unbindFirestoreRef = key => unbind({ commit, key })
     return action(context, payload)

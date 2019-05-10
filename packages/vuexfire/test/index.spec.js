@@ -142,9 +142,9 @@ describe('firestoreAction', () => {
       unbindFirestoreRef('items')
     )
 
-    expect(store.state.items).toEqual([{ text: 'foo' }])
+    expect(store.state.items).toEqual([])
     await collection.add({ text: 'foo' })
-    expect(store.state.items).toEqual([{ text: 'foo' }])
+    expect(store.state.items).toEqual([])
     await setItems(collection)
     expect(store.state.items).toEqual([{ text: 'foo' }, { text: 'foo' }])
   })

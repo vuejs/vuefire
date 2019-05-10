@@ -56,6 +56,14 @@ new Vuex.Store({
           })
           .catch(err => console.log(err))
 
+        bindFirestoreRef('todosWitMaxDepthZero', payload.todosWitMaxDepthZero, {
+          reset: false
+        })
+
+        bindFirestoreRef('todosWitMaxDepthZero', payload.todosWitMaxDepthZero, {
+          reset: () => ({ a: 'a' })
+        })
+
         bindFirestoreRef('user', payload.user).then(doc => {
           doc.something
         })
@@ -64,6 +72,7 @@ new Vuex.Store({
         unbindFirestoreRef('user')
       }
     )
+    // rtdb: rtdbA
   },
   plugins: [
     store => {
