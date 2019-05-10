@@ -1,3 +1,23 @@
+# [Vuefire 2.0.0-alpha.24 Vuexfire 3.0.0-alpha.18](https://github.com/vuejs/vuefire/compare/9699b09...694123c) (2019-05-10)
+
+### Bug Fixes
+
+- ensure objects in beforeCreate ([cd5046b](https://github.com/vuejs/vuefire/commit/cd5046b)), closes [#274](https://github.com/vuejs/vuefire/issues/274)
+- pass a default options to bind\* ([75c3e73](https://github.com/vuejs/vuefire/commit/75c3e73))
+
+### Features
+
+- **vuefire:** add reset option
+- **vuexfire:** add reset option
+
+### BREAKING CHANGES
+
+- **vuefire/vuexfire:** When unbinding, the data is now, by default reset
+  to `null` for items bound as objects, and to an empty array `[]` for
+  items bound as an array. This option option can be set to `false` to
+  keep the last value instead of resetting it, or to a function returning
+  a value to customize the new value. More about it [in the documentation](https://vuefire.vuejs.org/api/vuefire.html#options-2)
+
 # [Vuefire 2.0.0-alpha.21 Vuexfire 3.0.0-alpha.15](https://github.com/vuejs/vuefire/compare/4d9e355...9699b09) (2019-03-22)
 
 ### Features
