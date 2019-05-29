@@ -112,7 +112,7 @@ export default {
 }
 ```
 
-`$bind` returns a Promise that is resolved once the data has been _completely_ fetched and synced into the state. This means, it will wait for any [references](#TODO) inside **any** of the documents bound. By default it stops [at a level 2 nesting](#options-2)
+`$bind` returns a Promise that is resolved once the data has been _completely_ fetched and synced into the state. This means, it will wait for any [references](../vuefire/binding-subscriptions.md#references-firestore-only) inside **any** of the documents bound. By default it stops [at a level 2 nesting](#options-2)
 
 #### `options`
 
@@ -127,7 +127,7 @@ Object that can contain the following properties:
 This method is only available after [installing `firestorePlugin`](#firestoreplugin)
 :::
 
-Unsubscribe from updates for a given key as well as any nested [reference](#TODO) that is being listened to. Also removes the Reference from [`$firestoreRefs`](#firestorerefs)
+Unsubscribe from updates for a given key as well as any nested [reference](../vuefire/binding-subscriptions.md#references-firestore-only) that is being listened to. Also removes the Reference from [`$firestoreRefs`](#firestorerefs)
 
 `this.$unbind(key: string): void`
 
