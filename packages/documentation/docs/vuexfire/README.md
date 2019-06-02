@@ -9,6 +9,9 @@ While Firebase SDK does provide an API to keep your local data in sync with any 
 <FirebaseExample id="original">
 
 ```js
+import firebase from 'firebase/app'
+import 'firebase/database'
+
 // get RTDB the database instance
 const db = firebase
   .initializeApp({ databaseURL: 'https://MY-DATABASE.firebaseio.com' })
@@ -103,6 +106,9 @@ new Vuex.Store({
 ```
 
 ```js
+import firebase from 'firebase/app'
+import 'firebase/firestore'
+
 // get Firestore database instance
 const db = firebase.initializeApp({ projectId: 'MY PROJECT ID' }).firestore()
 
@@ -178,6 +184,8 @@ Now let's look at the equivalent code with Vuexfire:
 
 ```js
 import { vuexfireMutations, firebaseAction } from 'vuexfire'
+import firebase from 'firebase/app'
+import 'firebase/database'
 
 const db = firebase
   .initializeApp({ databaseURL: 'https://MY-DATABASE.firebaseio.com' })
@@ -205,6 +213,8 @@ new Vue.Store({
 
 ```js
 import { vuexfireMutations, firestoreAction } from 'vuexfire'
+import firebase from 'firebase/app'
+import 'firebase/firestore'
 
 const db = firebase.initializeApp({ projectId: 'MY PROJECT ID' }).firestore()
 
