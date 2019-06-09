@@ -65,8 +65,6 @@ export function extractRefs (doc, oldDoc = {}, path = '', result = [{}, {}]) {
       // TODO handle subpathes?
       refs[path + key] = ref
     } else if (Array.isArray(ref)) {
-      // const arrayExtractedRefs = ref.map(refItem => extractRefs())
-
       // TODO handle array
       data[key] = Array(ref.length).fill(null)
       const oldArray = oldDoc[key] || []
