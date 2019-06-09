@@ -1,6 +1,6 @@
 # Introduction
 
-Vuefire is a small and pragmatic solution to create realtime bindings between a Firebase RTDB or a Firebase Cloudstore and your Vue application. Making it straightforward to **always keep your local data in sync** with remotes databases.
+Vuefire is a small and pragmatic solution to create realtime bindings between a Firebase RTDB or a Firebase Cloud Firestore and your Vue application. Making it straightforward to **always keep your local data in sync** with remotes databases.
 
 ## Why
 
