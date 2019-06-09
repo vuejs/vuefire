@@ -68,7 +68,7 @@ export function extractRefs (doc, oldDoc = {}, path = '', result = [{}, {}]) {
       // TODO handle array
       data[key] = Array(ref.length).fill(null)
       const oldArray = oldDoc[key] || []
-      // Items there are no longer in the array aren't going to be processed
+      // Items that are no longer in the array aren't going to be processed
       const newElements = oldArray.filter(oldRef => ref.indexOf(oldRef) !== -1)
       extractRefs(ref, newElements, path + key + '.', [data[key], refs])
     } else if (
