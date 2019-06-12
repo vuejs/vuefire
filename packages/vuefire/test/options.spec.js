@@ -1,5 +1,5 @@
 import { firestorePlugin } from '../src'
-import { Vue, db, tick, delay } from '@posva/vuefire-test-helpers'
+import { Vue, db, delay } from '@posva/vuefire-test-helpers'
 
 describe('Firestore: plugin options', () => {
   it('allows customizing $rtdbBind', () => {
@@ -12,16 +12,17 @@ describe('Firestore: plugin options', () => {
       createSnapshot: jest.fn((documentSnapshot) => {
         return {
           customId: documentSnapshot.id,
-          globalIsBar: documentSnapshot.data().data.foo === 'bar'
+          globalIsBar: documentSnapshot.data().foo === 'bar',
+          stuff: documentSnapshot.data()
         }
       })
     }
     Vue.use(firestorePlugin, pluginOptions)
 
     const items = db.collection()
-    const item = db.collection().doc()
-    await item.set({ foo: 'bar' })
-    await items.add(item)
+    const item = items.doc()
+    const itemMock = { foo: 'bar' }
+    await item.set(itemMock)
 
     const vm = new Vue({
       data: () => ({ items: [] }),
@@ -30,6 +31,6 @@ describe('Firestore: plugin options', () => {
     await delay(5)
     expect(pluginOptions.createSnapshot).toHaveBeenCalledTimes(1)
     expect(Array.isArray(vm.items)).toBe(true)
-    expect(vm.items[0]).toEqual({ customId: '1', globalIsBar: true })
+    expect(vm.items[0]).toEqual({ customId: '0', globalIsBar: true, stuff: itemMock })
   })
 })
