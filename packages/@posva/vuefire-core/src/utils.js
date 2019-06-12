@@ -25,8 +25,7 @@ function isObject (o) {
 /**
  *
  * @param {any} o
- * should be o is Date https://github.com/Microsoft/TypeScript/issues/26297
- * @returns {boolean}
+ * @returns {o is Date}
  */
 function isTimestamp (o) {
   return o.toDate
