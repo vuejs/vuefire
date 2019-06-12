@@ -49,12 +49,11 @@ export default {
     const options = {
       createSnapshot: (documentSnapshot) => {
         // the object below is going to be bound to todos
-        return {
-          isTodo: true,
+        return Object.defineProperties(documentSnapshot.data(), {
+          isTodo: { value: true },
           // mannually adding the id
-          customId: documentSnapshot.id,
-          ...documentSnapshot.data()
-        }
+          customId: { value: documentSnapshot.id }
+        })
       }
     }
     this.$bind('todos', db.collection('todos'), options)
