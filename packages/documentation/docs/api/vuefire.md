@@ -31,6 +31,36 @@ Vue.use(firestorePlugin, options)
 
 - `bindName`: name for the [`$bind`](#bind) method added to all Vue components. Defaults to `$bind`.
 - `unbindName`: name for the [`$unbind`](#unbind) method added to all Vue components. Defaults to `$unbind`.
+- `createSnapshot`: a function to provide a custom binding strategy when a document is received from firebase
+
+`createSnapshot` is a function that receives a [DocumentSnapshot](https://firebase.google.com/docs/reference/js/firebase.firestore.DocumentSnapshot) as argument and returns the object that is going to be bound to your component instance.
+
+NOTE: when using the `createSnapshot` option you won't have the document `id` automatically bound to your data property. It's supposed to be used only for advanced cases, like adding `distance` to snapshots when using [Geofirestore](https://github.com/geofirestore/geofirestore-js/).
+
+For instance:
+```js
+export default {
+  data () {
+    return {
+      todos: []
+    }
+  },
+  created () {
+    const options = {
+      createSnapshot: (documentSnapshot) => {
+        // the object below is going to be bound to todos
+        return {
+          isTodo: true,
+          // mannually adding the id
+          customId: documentSnapshot.id,
+          ...documentSnapshot.data()
+        }
+      }
+    }
+    this.$bind('todos', db.collection('todos'), options)
+  }
+}
+```
 
 ## `firestore` option
 
