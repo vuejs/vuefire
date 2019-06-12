@@ -1,13 +1,16 @@
 import { firestorePlugin } from '../src'
-import { Vue, db, delay } from '@posva/vuefire-test-helpers'
+import { db, delay } from '@posva/vuefire-test-helpers'
+import { createLocalVue } from '@vue/test-utils'
 
 describe('Firestore: plugin options', () => {
   it('allows customizing $rtdbBind', () => {
-    // Vue.use(firestorePlugin, { bindName: '$myBind', unbindName: '$myUnbind' })
-    // expect(typeof Vue.prototype.$myBind).toBe('function')
-    // expect(typeof Vue.prototype.$myUnbind).toBe('function')
+    const Vue = createLocalVue()
+    Vue.use(firestorePlugin, { bindName: '$myBind', unbindName: '$myUnbind' })
+    expect(typeof Vue.prototype.$myBind).toBe('function')
+    expect(typeof Vue.prototype.$myUnbind).toBe('function')
   })
   it('allows global use of a custom createSnapshot function', async () => {
+    const Vue = createLocalVue()
     const pluginOptions = {
       createSnapshot: jest.fn((documentSnapshot) => {
         return {
