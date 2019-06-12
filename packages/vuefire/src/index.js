@@ -41,11 +41,13 @@ function bind ({ vm, key, ref, ops }, options) {
 
 export function firestorePlugin (
   Vue,
-  { bindName = '$bind', unbindName = '$unbind' } = {}
+  { bindName = '$bind', unbindName = '$unbind', createSnapshot } = {}
 ) {
   const strategies = Vue.config.optionMergeStrategies
   strategies.firestore = strategies.provide
-
+  const globalMixinOptions = {
+    createSnapshot
+  }
   Vue.mixin({
     beforeCreate () {
       this._firestoreUnbinds = Object.create(null)
@@ -57,7 +59,7 @@ export function firestorePlugin (
         typeof firestore === 'function' ? firestore.call(this) : firestore
       if (!refs) return
       Object.keys(refs).forEach(key => {
-        this[bindName](key, refs[key])
+        this[bindName](key, refs[key], globalMixinOptions)
       })
     },
 

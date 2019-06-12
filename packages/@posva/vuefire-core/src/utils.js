@@ -6,11 +6,22 @@
  * @param {firebase.firestore.DocumentSnapshot} doc
  * @return {DocumentData}
  */
-export function createSnapshot (doc) {
+export function defaultCreateSnapshot (doc) {
   // defaults everything to false, so no need to set
   return Object.defineProperty(doc.data(), 'id', {
     value: doc.id
   })
+}
+
+/**
+ *
+ * @param {object} options
+ * @param {firebase.firestore.DocumentSnapshot} doc
+ * @returns {DocumentData}
+ */
+export function createSnapshot ({ createSnapshot }, doc) {
+  const possibleUserImplementation = createSnapshot || defaultCreateSnapshot
+  return possibleUserImplementation(doc)
 }
 
 /**
