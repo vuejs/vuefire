@@ -2,7 +2,7 @@ import { firestorePlugin } from '../src'
 import { db, delay, Vue } from '@posva/vuefire-test-helpers'
 
 const createLocalVue = () => {
-  const newVue = Vue.extend({})
+  const newVue = Vue.extend()
   newVue.config = Vue.config
   return newVue
 }
