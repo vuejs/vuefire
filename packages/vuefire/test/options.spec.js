@@ -1,16 +1,21 @@
 import { firestorePlugin } from '../src'
-import { db, delay } from '@posva/vuefire-test-helpers'
-import { createLocalVue } from '@vue/test-utils'
+import { db, delay, Vue } from '@posva/vuefire-test-helpers'
+
+const createLocalVue = () => {
+  const newVue = Vue.extend({})
+  newVue.config = Vue.config
+  return newVue
+}
 
 describe('Firestore: plugin options', () => {
   it('allows customizing $rtdbBind', () => {
-    const Vue = createLocalVue()
-    Vue.use(firestorePlugin, { bindName: '$myBind', unbindName: '$myUnbind' })
-    expect(typeof Vue.prototype.$myBind).toBe('function')
-    expect(typeof Vue.prototype.$myUnbind).toBe('function')
+    const LocalVue = createLocalVue()
+    LocalVue.use(firestorePlugin, { bindName: '$myBind', unbindName: '$myUnbind' })
+    expect(typeof LocalVue.prototype.$myBind).toBe('function')
+    expect(typeof LocalVue.prototype.$myUnbind).toBe('function')
   })
   it('allows global use of a custom createSnapshot function', async () => {
-    const Vue = createLocalVue()
+    const LocalVue = createLocalVue()
     const pluginOptions = {
       createSnapshot: jest.fn((documentSnapshot) => {
         return {
@@ -20,14 +25,14 @@ describe('Firestore: plugin options', () => {
         }
       })
     }
-    Vue.use(firestorePlugin, pluginOptions)
+    LocalVue.use(firestorePlugin, pluginOptions)
 
     const items = db.collection()
     const item = items.doc()
     const itemMock = { foo: 'bar' }
     await item.set(itemMock)
 
-    const vm = new Vue({
+    const vm = new LocalVue({
       data: () => ({ items: [] }),
       firestore: { items }
     })
