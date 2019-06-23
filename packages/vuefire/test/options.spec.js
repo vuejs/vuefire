@@ -14,6 +14,7 @@ describe('Firestore: plugin options', () => {
     expect(typeof LocalVue.prototype.$myBind).toBe('function')
     expect(typeof LocalVue.prototype.$myUnbind).toBe('function')
   })
+
   it('allows global use of a custom createSnapshot function', async () => {
     const LocalVue = createLocalVue()
     const pluginOptions = {
