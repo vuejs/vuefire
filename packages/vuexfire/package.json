@@ -1,6 +1,6 @@
 {
   "name": "vuexfire",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Firestore binding for Vuex",
   "main": "dist/vuexfire.common.js",
   "module": "dist/vuexfire.esm.js",
@@ -55,7 +55,7 @@
   "devDependencies": {
     "@babel/core": "^7.4.5",
     "@babel/preset-env": "^7.4.5",
-    "@posva/vuefire-bundler": "^1.1.3",
+    "@posva/vuefire-bundler": "^1.1.4",
     "@posva/vuefire-test-helpers": "^1.1.0",
     "@types/jest": "^24.0.15",
     "codecov": "^3.5.0",
@@ -67,7 +67,7 @@
     "vuex": "^3.1.1"
   },
   "dependencies": {
-    "@posva/vuefire-core": "^2.0.0"
+    "@posva/vuefire-core": "^2.0.1"
   },
   "gitHead": "e3e2df3624572cec86ed861f2472df4d143f2265"
 }
