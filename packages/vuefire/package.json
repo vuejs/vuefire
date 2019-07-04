@@ -20,7 +20,7 @@
     "test": "yarn run build && yarn run types && yarn run test:unit",
     "test:unit": "jest",
     "types": "tsc -p ./types/test/tsconfig.json",
-    "dev": "yarn run test:unit -- --watchAll",
+    "dev": "yarn run test:unit --watchAll",
     "build": "node --eval 'require(\"@posva/vuefire-bundler\")(\"Vuefire\")'",
     "postversion": "yarn run build"
   },

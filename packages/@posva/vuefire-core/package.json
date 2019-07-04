@@ -26,7 +26,7 @@
     "test": "yarn run test:unit",
     "test:unit": "jest",
     "lint": "eslint --fix src test",
-    "dev": "yarn run test:unit -- --watchAll"
+    "dev": "yarn run test:unit --watchAll"
   },
   "bugs": {
     "url": "https://github.com/vuejs/vuefire/issues"
