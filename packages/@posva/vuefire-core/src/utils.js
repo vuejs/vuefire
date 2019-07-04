@@ -56,17 +56,21 @@ export function extractRefs (doc, oldDoc = {}, path = '', result = [{}, {}]) {
   if (idDescriptor && !idDescriptor.enumerable) {
     Object.defineProperty(result[0], 'id', idDescriptor)
   }
-  return Object.keys(doc).reduce((tot, key) => {
+  const [data, refs] = result
+  for (const key in doc) {
     const ref = doc[key]
     // if it's a ref
     if (isRef(ref)) {
-      tot[0][key] = oldDoc[key] || ref.path
+      data[key] = oldDoc[key] || ref.path
       // TODO handle subpathes?
-      tot[1][path + key] = ref
+      refs[path + key] = ref
     } else if (Array.isArray(ref)) {
       // TODO handle array
-      tot[0][key] = Array(ref.length).fill(null)
-      extractRefs(ref, oldDoc[key], path + key + '.', [tot[0][key], tot[1]])
+      data[key] = Array(ref.length).fill(null)
+      const oldArray = oldDoc[key] || []
+      // Items that are no longer in the array aren't going to be processed
+      const newElements = oldArray.filter(oldRef => ref.indexOf(oldRef) !== -1)
+      extractRefs(ref, newElements, path + key + '.', [data[key], refs])
     } else if (
       ref == null ||
       // Firestore < 4.13
@@ -74,15 +78,15 @@ export function extractRefs (doc, oldDoc = {}, path = '', result = [{}, {}]) {
       isTimestamp(ref) ||
       (ref.longitude && ref.latitude) // GeoPoint
     ) {
-      tot[0][key] = ref
+      data[key] = ref
     } else if (isObject(ref)) {
-      tot[0][key] = {}
-      extractRefs(ref, oldDoc[key], path + key + '.', [tot[0][key], tot[1]])
+      data[key] = {}
+      extractRefs(ref, oldDoc[key], path + key + '.', [data[key], refs])
     } else {
-      tot[0][key] = ref
+      data[key] = ref
     }
-    return tot
-  }, result)
+  }
+  return result
 }
 
 /**
