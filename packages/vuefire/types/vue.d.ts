@@ -7,12 +7,12 @@ import { firestore, database } from 'firebase'
 
 export interface BindFirestoreRefOptions {
   maxRefDepth?: number
-  reset?: boolean | (() => any),
+  reset?: boolean | (() => any)
   createSnapshot?: (documentSnapshot: firestore.DocumentSnapshot) => Record<string, any>
 }
 
 export interface BindRTDBRefOptions {
-  reset?: boolean | (() => any),
+  reset?: boolean | (() => any)
   createSnapshot?: (dataSnapshot: database.DataSnapshot) => Record<string, any>
 }
 
