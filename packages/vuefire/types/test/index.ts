@@ -66,6 +66,12 @@ app.$bind('collection', db.collection('todos')).then(todos => {
   todos.length
 })
 
+app.$bind('collection', db.collection('todos'), {
+  createSnapshot (snapshot) {
+    return { exists: snapshot.exists, ...snapshot.data() }
+  }
+})
+
 app.$bind('todos', todosSorted).then(todos => {
   todos.length
 })
