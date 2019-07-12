@@ -10,8 +10,8 @@
 
 After more than one year on alpha, Vuefire and Vuexfire are being released as stable releases. From this point on, no breaking changes will be made
 
-If you are upgrading from `vuefire@^1.0.0`, please check the [Migration guide](https://vuefire.vuejs.org/vuefire/migrating-from-v1.html)
-If you are upgrading from `vuexfire@^2.0.0`, please check the [Migration guide](https://vuefire.vuejs.org/vuexfire/migrating-from-v2.html)
+If you are upgrading from `vuefire@^1.0.0`, please check the [Migration guide](https://vuefire.vuejs.org/vuefire/upgrading-from-v1.html)
+If you are upgrading from `vuexfire@^2.0.0`, please check the [Migration guide](https://vuefire.vuejs.org/vuexfire/upgrading-from-v2.html)
 
 _This release doesn't add anything new compared to the latest alpha release_
 
