@@ -1,5 +1,5 @@
 import { firestorePlugin } from '../src'
-import { db, delay, Vue } from '@posva/vuefire-test-helpers'
+import { db, Vue } from '@posva/vuefire-test-helpers'
 
 const createLocalVue = () => {
   const newVue = Vue.extend()
@@ -10,36 +10,60 @@ const createLocalVue = () => {
 describe('Firestore: plugin options', () => {
   it('allows customizing $rtdbBind', () => {
     const LocalVue = createLocalVue()
-    LocalVue.use(firestorePlugin, { bindName: '$myBind', unbindName: '$myUnbind' })
+    LocalVue.use(firestorePlugin, {
+      bindName: '$myBind',
+      unbindName: '$myUnbind'
+    })
     expect(typeof LocalVue.prototype.$myBind).toBe('function')
     expect(typeof LocalVue.prototype.$myUnbind).toBe('function')
   })
 
-  it('allows global use of a custom createSnapshot function', async () => {
+  it('calls custom serialize function with collection', async () => {
     const LocalVue = createLocalVue()
     const pluginOptions = {
-      createSnapshot: jest.fn((documentSnapshot) => {
-        return {
-          customId: documentSnapshot.id,
-          globalIsBar: documentSnapshot.data().foo === 'bar',
-          stuff: documentSnapshot.data()
-        }
-      })
+      serialize: jest.fn(() => ({ foo: 'bar' }))
     }
     LocalVue.use(firestorePlugin, pluginOptions)
 
     const items = db.collection()
-    const item = items.doc()
-    const itemMock = { foo: 'bar' }
-    await item.set(itemMock)
+    await items.add({})
 
     const vm = new LocalVue({
-      data: () => ({ items: [] }),
-      firestore: { items }
+      data: () => ({ items: [] })
     })
-    await delay(5)
-    expect(pluginOptions.createSnapshot).toHaveBeenCalledTimes(1)
-    expect(Array.isArray(vm.items)).toBe(true)
-    expect(vm.items[0]).toEqual({ customId: '0', globalIsBar: true, stuff: itemMock })
+
+    await vm.$bind('items', items)
+
+    expect(pluginOptions.serialize).toHaveBeenCalledTimes(1)
+    expect(pluginOptions.serialize).toHaveBeenCalledWith(
+      expect.objectContaining({ data: expect.any(Function) })
+    )
+    expect(vm.items).toEqual([{ foo: 'bar' }])
+  })
+
+  it('can be ovrriden by local option', async () => {
+    const LocalVue = createLocalVue()
+    const pluginOptions = {
+      serialize: jest.fn(() => ({ foo: 'bar' }))
+    }
+    LocalVue.use(firestorePlugin, pluginOptions)
+
+    const items = db.collection()
+    await items.add({})
+
+    const vm = new LocalVue({
+      data: () => ({ items: [] })
+    })
+
+    const spy = jest.fn(() => ({ bar: 'bar' }))
+
+    await vm.$bind('items', items, { serialize: spy })
+
+    expect(pluginOptions.serialize).not.toHaveBeenCalled()
+    expect(spy).toHaveBeenCalledTimes(1)
+    expect(spy).toHaveBeenCalledWith(
+      expect.objectContaining({ data: expect.any(Function) })
+    )
+    expect(vm.items).toEqual([{ bar: 'bar' }])
   })
 })

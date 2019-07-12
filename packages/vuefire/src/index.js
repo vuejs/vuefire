@@ -1,4 +1,9 @@
-import { bindCollection, bindDocument, walkSet } from '@posva/vuefire-core'
+import {
+  bindCollection,
+  bindDocument,
+  walkSet,
+  firestoreOptions
+} from '@posva/vuefire-core'
 export * from './rtdb'
 
 const ops = {
@@ -41,13 +46,17 @@ function bind ({ vm, key, ref, ops }, options) {
 
 export function firestorePlugin (
   Vue,
-  { bindName = '$bind', unbindName = '$unbind', createSnapshot } = {}
+  {
+    bindName = '$bind',
+    unbindName = '$unbind',
+    serialize = firestoreOptions.serialize
+  } = {}
 ) {
   const strategies = Vue.config.optionMergeStrategies
   strategies.firestore = strategies.provide
-  const globalMixinOptions = {
-    createSnapshot
-  }
+
+  const globalOptions = Object.assign({}, firestoreOptions, { serialize })
+
   Vue.mixin({
     beforeCreate () {
       this._firestoreUnbinds = Object.create(null)
@@ -59,7 +68,7 @@ export function firestorePlugin (
         typeof firestore === 'function' ? firestore.call(this) : firestore
       if (!refs) return
       Object.keys(refs).forEach(key => {
-        this[bindName](key, refs[key], globalMixinOptions)
+        this[bindName](key, refs[key], globalOptions)
       })
     },
 
@@ -72,7 +81,8 @@ export function firestorePlugin (
     }
   })
 
-  Vue.prototype[bindName] = function (key, ref, options) {
+  Vue.prototype[bindName] = function (key, ref, options = globalOptions) {
+    options = Object.assign({}, globalOptions, options)
     if (this._firestoreUnbinds[key]) {
       this[unbindName](key)
     }

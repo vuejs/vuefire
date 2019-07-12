@@ -1,6 +1,7 @@
 import {
   rtdbBindAsArray as bindAsArray,
   rtdbBindAsObject as bindAsObject,
+  rtdbOptions,
   walkSet
 } from '@posva/vuefire-core'
 
@@ -65,10 +66,16 @@ function unbind (vm, key) {
 
 export function rtdbPlugin (
   Vue,
-  { bindName = '$rtdbBind', unbindName = '$rtdbUnbind' } = {}
+  {
+    bindName = '$rtdbBind',
+    unbindName = '$rtdbUnbind',
+    serialize = rtdbOptions.serialize
+  } = {}
 ) {
   const strategies = Vue.config.optionMergeStrategies
   strategies.firebase = strategies.provide
+
+  const globalOptions = Object.assign({}, rtdbOptions, { serialize })
 
   Vue.mixin({
     beforeCreate () {
@@ -82,7 +89,7 @@ export function rtdbPlugin (
       if (!bindings) return
 
       for (const key in bindings) {
-        this[bindName](key, bindings[key])
+        this[bindName](key, bindings[key], globalOptions)
       }
     },
 
@@ -96,7 +103,12 @@ export function rtdbPlugin (
     }
   })
 
-  Vue.prototype[bindName] = function rtdbBind (key, source, options) {
+  Vue.prototype[bindName] = function rtdbBind (
+    key,
+    source,
+    options = globalOptions
+  ) {
+    options = Object.assign({}, globalOptions, options)
     if (this._firebaseUnbinds[key]) {
       this[unbindName](key)
     }
