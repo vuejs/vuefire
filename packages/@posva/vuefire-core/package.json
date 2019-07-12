@@ -38,7 +38,7 @@
     "@types/jest": "^24.0.15",
     "eslint": "^6.0.1",
     "eslint-plugin-vue-libs": "^4.0.0",
-    "firebase": "^5.11.1",
+    "firebase": "^6.3.0",
     "jest": "^24.8.0",
     "typescript": "^3.5.2"
   },
