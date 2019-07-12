@@ -51,6 +51,7 @@ module.exports = {
             'binding-subscriptions',
             'querying',
             'writing-data',
+            'upgrading-from-v1',
           ],
         },
       ],
@@ -64,6 +65,7 @@ module.exports = {
             'binding-subscriptions',
             'querying',
             'writing-data',
+            'upgrading-from-v2',
           ],
         },
       ],
@@ -103,7 +105,7 @@ module.exports = {
     ],
     algolia: {
       apiKey: '0d5c32429ddf401270cbc9b4e24c4532',
-      indexName: 'vuefire'
+      indexName: 'vuefire',
     },
   },
   plugins: [

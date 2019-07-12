@@ -118,7 +118,7 @@ export default {
 
 Object that can contain the following properties:
 
-- `maxRefDepth`: How many levels of nested references should be automatically bound. Defaults to 2, meaning that References inside of References inside of documents bound with `bindFirestoreRef` will automatically be bound too.
+- `maxRefDepth`: How many levels of nested references should be automatically bound. Defaults to 2, meaning that References inside of References inside of documents bound with `$bind` will automatically be bound too.
 - `reset`: Allows to define the behavior when a reference is unbound. Defaults to `true`, which resets the property in the vue instance to `null` for documents and to an empty array `[]` for collections. It can also be set to a function returning a value to customize the value set. Setting it to `false` will keep the data as-is when unbounding.
 
 ## \$unbind
