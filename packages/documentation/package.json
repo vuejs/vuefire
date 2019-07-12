@@ -1,7 +1,7 @@
 {
   "name": "documentation",
   "private": true,
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "docs for vuefire",
   "author": "Eduardo San Martin Morote <posva13@gmail.com>",
   "homepage": "https://github.com/vuejs/vuefire#readme",
@@ -11,16 +11,16 @@
     "url": "git+https://github.com/vuejs/vuefire.git"
   },
   "devDependencies": {
-    "@vuepress/plugin-back-to-top": "^1.0.0-alpha.47",
-    "@vuepress/plugin-google-analytics": "^1.0.0-alpha.47",
+    "@vuepress/plugin-back-to-top": "^1.0.2",
+    "@vuepress/plugin-google-analytics": "^1.0.2",
     "@vuepress/plugin-notification": "^1.0.0-alpha.42",
-    "@vuepress/plugin-pwa": "^1.0.0-alpha.47",
-    "focus-visible": "^4.1.5",
-    "vuepress": "^1.0.0-alpha.47"
+    "@vuepress/plugin-pwa": "^1.0.2",
+    "focus-visible": "^5.0.1",
+    "vuepress": "^1.0.2"
   },
   "scripts": {
-    "docs:dev": "vuepress dev docs",
-    "docs:build": "vuepress build docs"
+    "dev": "vuepress dev docs",
+    "build": "vuepress build docs"
   },
   "bugs": {
     "url": "https://github.com/vuejs/vuefire/issues"

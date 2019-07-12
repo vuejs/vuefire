@@ -48,6 +48,17 @@ describe('refs in documents', () => {
     ops.remove.mockClear()
   })
 
+  it('item should be removed from binding when theres an arrays of refs', async () => {
+    const arr = collection.doc()
+    vm.arr = null
+
+    await arr.update({ refs: [a, b, c] })
+    await bind('arr', arr, { maxRefDepth: 0 })
+    await arr.update({ refs: [b, c] })
+
+    expect(vm.arr).toEqual({ refs: [b.path, c.path] })
+  })
+
   it('binds refs on documents', async () => {
     // create an empty doc and update using the ref instead of plain data
     await item.update({ ref: c })

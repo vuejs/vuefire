@@ -75,7 +75,7 @@ RTDB and Cloudstore do not include the same set of features regarding sorting bu
     bindDocuments: firestoreAction(({ bindFirestoreRef }) => {
       return bindFirestoreRef(
         'documents',
-        db.collection('documents').orderByChild('createdAt')
+        db.collection('documents').orderBy('createdAt', 'desc')
       )
     })
   }

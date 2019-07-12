@@ -63,7 +63,7 @@ this.$firebaseRefs.user.update({ lastName: newLastName }).then(() => {
 ```
 
 ```js
-this.$firestoreRefs.user.set({ lastName: newLastName }).then(() => {
+this.$firestoreRefs.user.update({ lastName: newLastName }).then(() => {
   console.log('user updated!')
 })
 ```

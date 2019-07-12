@@ -52,7 +52,7 @@ export default {
 </FirebaseExample>
 
 :::warning
-It's necessary to declare properties with their initial values in `data`. **For the RTDB, using an _Array_ as the initial value will bind the Reference as an array, otherwise it is bound as an object**. For Firestore, collections and queries and bound as arrays while documents are bound as objects.
+It's necessary to declare properties with their initial values in `data`. **For the RTDB, using an _Array_ as the initial value will bind the Reference as an array, otherwise it is bound as an object**. For Firestore, collections and queries are bound as arrays while documents are bound as objects.
 :::
 
 ## Programmatic binding
