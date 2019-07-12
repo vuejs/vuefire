@@ -1,6 +1,8 @@
 import { createRecordFromRTDBSnapshot, indexForKey } from './utils'
 
-const DEFAULT_OPTIONS = { reset: true }
+const DEFAULT_OPTIONS = { reset: true, serialize: createRecordFromRTDBSnapshot }
+
+export { DEFAULT_OPTIONS as rtdbOptions }
 
 export function rtdbBindAsObject (
   { vm, key, document, resolve, reject, ops },
@@ -10,7 +12,7 @@ export function rtdbBindAsObject (
   const listener = document.on(
     'value',
     snapshot => {
-      ops.set(vm, key, createRecordFromRTDBSnapshot(snapshot))
+      ops.set(vm, key, options.serialize(snapshot))
     },
     reject
   )
@@ -37,7 +39,7 @@ export function rtdbBindAsArray (
     'child_added',
     (snapshot, prevKey) => {
       const index = prevKey ? indexForKey(array, prevKey) + 1 : 0
-      ops.add(array, index, createRecordFromRTDBSnapshot(snapshot))
+      ops.add(array, index, options.serialize(snapshot))
     },
     reject
   )
@@ -56,7 +58,7 @@ export function rtdbBindAsArray (
       ops.set(
         array,
         indexForKey(array, snapshot.key),
-        createRecordFromRTDBSnapshot(snapshot)
+        options.serialize(snapshot)
       )
     },
     reject

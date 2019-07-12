@@ -1,6 +1,5 @@
 import { rtdbBindAsArray, walkSet } from '../../src'
-import { createOps } from '@posva/vuefire-test-helpers'
-import { MockFirebase } from '@posva/vuefire-test-helpers'
+import { MockFirebase, createOps } from '@posva/vuefire-test-helpers'
 
 describe('RTDB collection', () => {
   let collection, vm, resolve, reject, unbind

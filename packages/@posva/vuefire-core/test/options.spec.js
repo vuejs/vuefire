@@ -8,16 +8,11 @@ describe('options', () => {
     document = collection.doc()
     ops = createOps(walkSet)
     vm = {}
-    await new Promise((res, rej) => {
-      resolve = jest.fn(res)
-      reject = jest.fn(rej)
-      bindDocument({ vm, key: 'item', document, resolve, reject, ops })
-    })
+    await document.update({ foo: 'foo' })
   })
 
   it('allows customizing serialize when calling bindDocument', async () => {
     const spy = jest.fn(() => ({ bar: 'foo' }))
-    await document.update({ foo: 'foo' })
     await new Promise((res, rej) => {
       resolve = jest.fn(res)
       reject = jest.fn(rej)
@@ -30,7 +25,6 @@ describe('options', () => {
 
   it('allows customizing serialize when calling bindCollection', async () => {
     const spy = jest.fn(() => ({ bar: 'foo' }))
-    await collection.add({ foo: 'foo' })
     await new Promise((res, rej) => {
       resolve = jest.fn(res)
       reject = jest.fn(rej)
@@ -45,7 +39,6 @@ describe('options', () => {
     const { serialize } = firestoreOptions
     const spy = jest.fn(() => ({ bar: 'foo' }))
     firestoreOptions.serialize = spy
-    await document.update({ foo: 'foo' })
     await new Promise((res, rej) => {
       resolve = jest.fn(res)
       reject = jest.fn(rej)
@@ -62,7 +55,6 @@ describe('options', () => {
     const { serialize } = firestoreOptions
     const spy = jest.fn(() => ({ bar: 'foo' }))
     firestoreOptions.serialize = spy
-    await collection.add({ foo: 'foo' })
     await new Promise((res, rej) => {
       resolve = jest.fn(res)
       reject = jest.fn(rej)
