@@ -1,27 +1,17 @@
 /**
  * @typedef {firebase.firestore.DocumentReference | firebase.firestore.CollectionReference} Reference
  */
+
 /**
  *
  * @param {firebase.firestore.DocumentSnapshot} doc
- * @return {DocumentData}
+ * @returns {DocumentData}
  */
-export function defaultCreateSnapshot (doc) {
+export function createSnapshot (doc) {
   // defaults everything to false, so no need to set
   return Object.defineProperty(doc.data(), 'id', {
     value: doc.id
   })
-}
-
-/**
- *
- * @param {object} options
- * @param {firebase.firestore.DocumentSnapshot} doc
- * @returns {DocumentData}
- */
-export function createSnapshot ({ createSnapshot }, doc) {
-  const possibleUserImplementation = createSnapshot || defaultCreateSnapshot
-  return possibleUserImplementation(doc)
 }
 
 /**

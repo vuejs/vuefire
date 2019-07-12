@@ -26,29 +26,7 @@ describe('utils', () => {
       items: [{ text: 'foo' }],
       ref: docRef
     })
-    snapshot = createSnapshot({}, doc)
-  })
-
-  it('implements custom createSnapshot functions', () => {
-    const expectedObject = { foo: 'bar' }
-    let mockOptions = {
-      createSnapshot () {
-        return expectedObject
-      }
-    }
-    snapshot = createSnapshot(mockOptions, doc)
-    expect(snapshot).toStrictEqual(expectedObject)
-
-    mockOptions = {
-      createSnapshot (internalDoc) {
-        return Object.defineProperty(internalDoc.data(), 'customId', {
-          value: internalDoc.id
-        })
-      }
-    }
-
-    snapshot = createSnapshot(mockOptions, doc)
-    expect(snapshot.customId).toEqual(doc.id)
+    snapshot = createSnapshot(doc)
   })
 
   it('createSnapshot adds an id', () => {

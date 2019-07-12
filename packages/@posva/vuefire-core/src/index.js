@@ -6,7 +6,8 @@ import {
   walkSet
 } from './utils'
 
-const DEFAULT_OPTIONS = { maxRefDepth: 2, reset: true }
+const DEFAULT_OPTIONS = { maxRefDepth: 2, reset: true, serialize: createSnapshot }
+export { DEFAULT_OPTIONS as firestoreOptions }
 
 export * from './rtdb'
 
@@ -94,7 +95,7 @@ export function bindCollection (
     added: ({ newIndex, doc }) => {
       arraySubs.splice(newIndex, 0, Object.create(null))
       const subs = arraySubs[newIndex]
-      const snapshot = createSnapshot(options, doc)
+      const snapshot = options.serialize(doc)
       const [data, refs] = extractRefs(snapshot)
       // NOTE use ops
       ops.add(array, newIndex, data)
@@ -118,7 +119,7 @@ export function bindCollection (
       // NOTE use ops
       const oldData = ops.remove(array, oldIndex)[0]
       // const oldData = array.splice(oldIndex, 1)[0]
-      const snapshot = createSnapshot(options, doc)
+      const snapshot = options.serialize(doc)
       const [data, refs] = extractRefs(snapshot, oldData)
       // NOTE use ops
       ops.add(array, newIndex, data)
@@ -224,7 +225,7 @@ function subscribeToDocument (
     if (doc.exists) {
       updateDataFromDocumentSnapshot(
         {
-          snapshot: createSnapshot(options, doc),
+          snapshot: options.serialize(doc),
           target,
           path,
           ops,
@@ -273,7 +274,7 @@ export function bindDocument (
     if (doc.exists) {
       updateDataFromDocumentSnapshot(
         {
-          snapshot: createSnapshot(options, doc),
+          snapshot: options.serialize(doc),
           target: vm,
           path: key,
           subs,
