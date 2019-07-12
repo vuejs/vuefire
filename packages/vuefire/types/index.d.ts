@@ -2,18 +2,17 @@ import * as firebase from 'firebase'
 import { PluginFunction } from 'vue'
 import './vue'
 
-
 interface Options {
   bindName?: string
   unbindName?: string
 }
 
 interface FirestoreOptions extends Options {
-  createSnapshot?: (documentSnapshot: firebase.firestore.DocumentSnapshot) => Record<string, any>
+  serialize?: (documentSnapshot: firebase.firestore.DocumentSnapshot) => any
 }
 
 interface RTDBOptions extends Options {
-  createSnapshot?: (documentSnapshot: firebase.database.DataSnapshot) => Record<string, any>
+  serialize?: (documentSnapshot: firebase.database.DataSnapshot) => any
 }
 
 export declare const firestorePlugin: PluginFunction<FirestoreOptions>

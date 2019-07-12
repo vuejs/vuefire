@@ -4,16 +4,17 @@
 
 import Vue from 'vue'
 import { firestore, database } from 'firebase'
+import { FirestoreOptions, RTDBOptions } from './index'
 
 export interface BindFirestoreRefOptions {
   maxRefDepth?: number
   reset?: boolean | (() => any)
-  createSnapshot?: (documentSnapshot: firestore.DocumentSnapshot) => Record<string, any>
+  serialize?: FirestoreOptions['serialize']
 }
 
 export interface BindRTDBRefOptions {
   reset?: boolean | (() => any)
-  createSnapshot?: (dataSnapshot: database.DataSnapshot) => Record<string, any>
+  serialize?: RTDBOptions['serialize']
 }
 
 declare module 'vue/types/vue' {

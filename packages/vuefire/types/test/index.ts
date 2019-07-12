@@ -67,8 +67,14 @@ app.$bind('collection', db.collection('todos')).then(todos => {
 })
 
 app.$bind('collection', db.collection('todos'), {
-  createSnapshot (snapshot) {
+  serialize (snapshot) {
     return { exists: snapshot.exists, ...snapshot.data() }
+  }
+})
+
+app.$rtdbBind('collection', source, {
+  serialize (snapshot) {
+    return { exists: snapshot.exists, ...snapshot.val() }
   }
 })
 
