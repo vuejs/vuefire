@@ -1,4 +1,9 @@
-import { walkSet, rtdbBindAsObject, rtdbBindAsArray, rtdbOptions } from '../../src'
+import {
+  walkSet,
+  rtdbBindAsObject,
+  rtdbBindAsArray,
+  rtdbOptions
+} from '../../src'
 import { MockFirebase, createOps } from '@posva/vuefire-test-helpers'
 
 describe('options', () => {
@@ -17,22 +22,25 @@ describe('options', () => {
   it('allows customizing serialize when calling bindDocument', async () => {
     const spy = jest.fn(() => ({ bar: 'foo' }))
     await new Promise((resolve, reject) => {
-      unbind = rtdbBindAsObject({
-        vm,
-        key: 'item',
-        document,
-        resolve,
-        reject,
-        ops
-      },
-      { serialize: spy }
+      unbind = rtdbBindAsObject(
+        {
+          vm,
+          key: 'item',
+          document,
+          resolve,
+          reject,
+          ops
+        },
+        { serialize: spy }
       )
       document.set({ foo: 'foo' })
       document.flush()
     })
 
     expect(spy).toHaveBeenCalledTimes(2)
-    expect(spy).toHaveBeenLastCalledWith(expect.objectContaining({ val: expect.any(Function) }))
+    expect(spy).toHaveBeenLastCalledWith(
+      expect.objectContaining({ val: expect.any(Function) })
+    )
     expect(vm.item).toEqual({ bar: 'foo' })
   })
 
@@ -40,22 +48,25 @@ describe('options', () => {
     const spy = jest.fn(() => ({ bar: 'foo' }))
 
     await new Promise((resolve, reject) => {
-      unbind = rtdbBindAsArray({
-        vm,
-        key: 'items',
-        collection,
-        resolve,
-        reject,
-        ops
-      },
-      { serialize: spy }
+      unbind = rtdbBindAsArray(
+        {
+          vm,
+          key: 'items',
+          collection,
+          resolve,
+          reject,
+          ops
+        },
+        { serialize: spy }
       )
       collection.push({ foo: 'foo' })
       collection.flush()
     })
 
     expect(spy).toHaveBeenCalledTimes(1)
-    expect(spy).toBeCalledWith(expect.objectContaining({ val: expect.any(Function) }))
+    expect(spy).toBeCalledWith(
+      expect.objectContaining({ val: expect.any(Function) })
+    )
     expect(vm.items).toEqual([{ bar: 'foo' }])
   })
 
@@ -65,20 +76,25 @@ describe('options', () => {
     rtdbOptions.serialize = spy
 
     await new Promise((resolve, reject) => {
-      unbind = rtdbBindAsObject({
-        vm,
-        key: 'item',
-        document,
-        resolve,
-        reject,
-        ops
-      }, { serialize: spy })
+      unbind = rtdbBindAsObject(
+        {
+          vm,
+          key: 'item',
+          document,
+          resolve,
+          reject,
+          ops
+        },
+        { serialize: spy }
+      )
       document.set({ foo: 'foo' })
       document.flush()
     })
 
     expect(spy).toHaveBeenCalledTimes(2)
-    expect(spy).toBeCalledWith(expect.objectContaining({ val: expect.any(Function) }))
+    expect(spy).toBeCalledWith(
+      expect.objectContaining({ val: expect.any(Function) })
+    )
     expect(vm.item).toEqual({ bar: 'foo' })
     // restore it
     rtdbOptions.serialize = serialize
@@ -90,20 +106,25 @@ describe('options', () => {
     rtdbOptions.serialize = spy
 
     await new Promise((resolve, reject) => {
-      unbind = rtdbBindAsArray({
-        vm,
-        key: 'items',
-        collection,
-        resolve,
-        reject,
-        ops
-      }, { serialize: spy })
+      unbind = rtdbBindAsArray(
+        {
+          vm,
+          key: 'items',
+          collection,
+          resolve,
+          reject,
+          ops
+        },
+        { serialize: spy }
+      )
       collection.push({ foo: 'foo' })
       collection.flush()
     })
 
     expect(spy).toHaveBeenCalledTimes(1)
-    expect(spy).toBeCalledWith(expect.objectContaining({ val: expect.any(Function) }))
+    expect(spy).toBeCalledWith(
+      expect.objectContaining({ val: expect.any(Function) })
+    )
     expect(vm.items).toEqual([{ bar: 'foo' }])
     // restore it
     rtdbOptions.serialize = serialize

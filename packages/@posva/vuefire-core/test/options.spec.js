@@ -16,10 +16,15 @@ describe('options', () => {
     await new Promise((res, rej) => {
       resolve = jest.fn(res)
       reject = jest.fn(rej)
-      bindDocument({ vm, key: 'foo', document, resolve, reject, ops }, { serialize: spy })
+      bindDocument(
+        { vm, key: 'foo', document, resolve, reject, ops },
+        { serialize: spy }
+      )
     })
     expect(spy).toHaveBeenCalledTimes(1)
-    expect(spy).toBeCalledWith(expect.objectContaining({ data: expect.any(Function) }))
+    expect(spy).toBeCalledWith(
+      expect.objectContaining({ data: expect.any(Function) })
+    )
     expect(vm.foo).toEqual({ bar: 'foo' })
   })
 
@@ -28,10 +33,15 @@ describe('options', () => {
     await new Promise((res, rej) => {
       resolve = jest.fn(res)
       reject = jest.fn(rej)
-      bindCollection({ vm, key: 'foo', collection, resolve, reject, ops }, { serialize: spy })
+      bindCollection(
+        { vm, key: 'foo', collection, resolve, reject, ops },
+        { serialize: spy }
+      )
     })
     expect(spy).toHaveBeenCalledTimes(1)
-    expect(spy).toBeCalledWith(expect.objectContaining({ data: expect.any(Function) }))
+    expect(spy).toBeCalledWith(
+      expect.objectContaining({ data: expect.any(Function) })
+    )
     expect(vm.foo).toEqual([{ bar: 'foo' }])
   })
 
@@ -45,7 +55,9 @@ describe('options', () => {
       bindDocument({ vm, key: 'foo', document, resolve, reject, ops })
     })
     expect(spy).toHaveBeenCalledTimes(1)
-    expect(spy).toBeCalledWith(expect.objectContaining({ data: expect.any(Function) }))
+    expect(spy).toBeCalledWith(
+      expect.objectContaining({ data: expect.any(Function) })
+    )
     expect(vm.foo).toEqual({ bar: 'foo' })
     // restore it
     firestoreOptions.serialize = serialize
@@ -61,7 +73,9 @@ describe('options', () => {
       bindCollection({ vm, key: 'foo', collection, resolve, reject, ops })
     })
     expect(spy).toHaveBeenCalledTimes(1)
-    expect(spy).toBeCalledWith(expect.objectContaining({ data: expect.any(Function) }))
+    expect(spy).toBeCalledWith(
+      expect.objectContaining({ data: expect.any(Function) })
+    )
     expect(vm.foo).toEqual([{ bar: 'foo' }])
     // restore it
     firestoreOptions.serialize = serialize
