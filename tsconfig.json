@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "esnext",
+    "noEmit": true,
+    "strict": true,
+    "composite": true,
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+
+    "rootDir": ".",
+    "baseUrl": ".",
+    "paths": {
+      // "vue": ["./node_modules/vue"],
+      // "@posva/vuefire-core": ["./packages/@posva/vuefire-core/src"],
+      // "@posva/vuefire-test-helpers": ["./packages/@posva/vuefire-test-helpers/src"]
+      // "vuef": ["./packages/@posva/vuefire-test-helpers"],
+    }
+  },
+  "include": [
+    "packages/global.d.ts",
+    "packages/*/src",
+    "packages/*/__tests__",
+    "packages/@posva/*/src",
+    "packages/@posva/*/__tests__"
+  ]
+}
