@@ -1,7 +1,6 @@
-import { createSnapshot, extractRefs, FirestoreSerializer, FirestoreReference } from './utils'
+import { createSnapshot, extractRefs, FirestoreSerializer } from './utils'
 import { walkGet, callOnceWithArg, OperationsType } from '../shared'
 import { firestore } from 'firebase'
-import { DocumentReference } from '@posva/vuefire-test-helpers'
 
 export interface FirestoreOptions {
   maxRefDepth?: number
@@ -13,7 +12,7 @@ export interface FirestoreOptions {
 const DEFAULT_OPTIONS: Required<FirestoreOptions> = {
   maxRefDepth: 2,
   reset: true,
-  serialize: createSnapshot
+  serialize: createSnapshot,
 }
 export { DEFAULT_OPTIONS as firestoreOptions }
 
@@ -22,9 +21,81 @@ interface FirestoreSubscription {
   path: string
 }
 
-function unsubscribeAll (subs: Record<string, FirestoreSubscription>) {
+function unsubscribeAll(subs: Record<string, FirestoreSubscription>) {
   for (const sub in subs) {
     subs[sub].unsub()
+  }
+}
+
+interface UpdateDataFromDocumentSnapshot {
+  snapshot: firestore.DocumentSnapshot
+  subs: Record<string, FirestoreSubscription>
+  target: CommonBindOptionsParameter['vm']
+  path: string
+  depth: number
+  resolve: CommonBindOptionsParameter['resolve']
+  ops: CommonBindOptionsParameter['ops']
+}
+
+function updateDataFromDocumentSnapshot(
+  { snapshot, target, path, subs, ops, depth = 0, resolve }: UpdateDataFromDocumentSnapshot,
+  options: Required<FirestoreOptions>
+) {
+  const [data, refs] = extractRefs(snapshot, walkGet(target, path))
+  // NOTE use ops
+  ops.set(target, path, data)
+  // walkSet(target, path, data)
+  subscribeToRefs(
+    {
+      subs,
+      refs,
+      target,
+      path,
+      ops,
+      depth,
+      resolve,
+    },
+    options
+  )
+}
+
+interface SubscribeToDocumentParamater {
+  target: CommonBindOptionsParameter['vm']
+  path: string
+  depth: number
+  resolve: CommonBindOptionsParameter['resolve']
+  ops: CommonBindOptionsParameter['ops']
+  ref: firestore.DocumentReference
+}
+
+function subscribeToDocument(
+  { ref, target, path, depth, resolve, ops }: SubscribeToDocumentParamater,
+  options: Required<FirestoreOptions>
+) {
+  const subs = Object.create(null)
+  const unbind = ref.onSnapshot(doc => {
+    if (doc.exists) {
+      updateDataFromDocumentSnapshot(
+        {
+          snapshot: options.serialize(doc),
+          target,
+          path,
+          ops,
+          subs,
+          depth,
+          resolve,
+        },
+        options
+      )
+    } else {
+      ops.set(target, path, null)
+      resolve(path)
+    }
+  })
+
+  return () => {
+    unbind()
+    unsubscribeAll(subs)
   }
 }
 
@@ -41,7 +112,7 @@ interface SubscribeToRefsParameter {
 // NOTE not convinced by the naming of subscribeToRefs and subscribeToDocument
 // first one is calling the other on every ref and subscribeToDocument may call
 // updateDataFromDocumentSnapshot which may call subscribeToRefs as well
-function subscribeToRefs (
+function subscribeToRefs(
   { subs, refs, target, path, depth, ops, resolve }: SubscribeToRefsParameter,
   options: Required<FirestoreOptions>
 ) {
@@ -57,7 +128,7 @@ function subscribeToRefs (
   let resolvedCount = 0
   const totalToResolve = refKeys.length
   const validResolves: Record<string, boolean> = Object.create(null)
-  function deepResolve (key: string) {
+  function deepResolve(key: string) {
     if (key in validResolves) {
       if (++resolvedCount >= totalToResolve) resolve(path)
     }
@@ -85,11 +156,11 @@ function subscribeToRefs (
           path: docPath,
           depth,
           ops,
-          resolve: deepResolve.bind(null, docPath)
+          resolve: deepResolve.bind(null, docPath),
         },
         options
       ),
-      path: ref.path
+      path: ref.path,
     }
   })
 }
@@ -108,7 +179,7 @@ interface BindCollectionParamater extends CommonBindOptionsParameter {
   collection: firestore.CollectionReference | firestore.Query
 }
 
-export function bindCollection (
+export function bindCollection(
   { vm, key, collection, ops, resolve, reject }: BindCollectionParamater,
   extraOptions: FirestoreOptions = DEFAULT_OPTIONS
 ) {
@@ -141,7 +212,7 @@ export function bindCollection (
           path: newIndex,
           depth: 0,
           ops,
-          resolve: resolve.bind(null, doc)
+          resolve: resolve.bind(null, doc),
         },
         options
       )
@@ -165,7 +236,7 @@ export function bindCollection (
           target: array,
           path: newIndex,
           depth: 0,
-          resolve
+          resolve,
         },
         options
       )
@@ -175,7 +246,7 @@ export function bindCollection (
       ops.remove(array, oldIndex)
       // array.splice(oldIndex, 1)
       unsubscribeAll(arraySubs.splice(oldIndex, 1)[0])
-    }
+    },
   }
 
   const unbind = collection.onSnapshot(ref => {
@@ -230,78 +301,6 @@ export function bindCollection (
   }
 }
 
-interface UpdateDataFromDocumentSnapshot {
-  snapshot: firestore.DocumentSnapshot
-  subs: Record<string, FirestoreSubscription>
-  target: CommonBindOptionsParameter['vm']
-  path: string
-  depth: number
-  resolve: CommonBindOptionsParameter['resolve']
-  ops: CommonBindOptionsParameter['ops']
-}
-
-function updateDataFromDocumentSnapshot (
-  { snapshot, target, path, subs, ops, depth = 0, resolve }: UpdateDataFromDocumentSnapshot,
-  options: Required<FirestoreOptions>
-) {
-  const [data, refs] = extractRefs(snapshot, walkGet(target, path))
-  // NOTE use ops
-  ops.set(target, path, data)
-  // walkSet(target, path, data)
-  subscribeToRefs(
-    {
-      subs,
-      refs,
-      target,
-      path,
-      ops,
-      depth,
-      resolve
-    },
-    options
-  )
-}
-
-interface SubscribeToDocumentParamater {
-  target: CommonBindOptionsParameter['vm']
-  path: string
-  depth: number
-  resolve: CommonBindOptionsParameter['resolve']
-  ops: CommonBindOptionsParameter['ops']
-  ref: firestore.DocumentReference
-}
-
-function subscribeToDocument (
-  { ref, target, path, depth, resolve, ops }: SubscribeToDocumentParamater,
-  options: Required<FirestoreOptions>
-) {
-  const subs = Object.create(null)
-  const unbind = ref.onSnapshot(doc => {
-    if (doc.exists) {
-      updateDataFromDocumentSnapshot(
-        {
-          snapshot: options.serialize(doc),
-          target,
-          path,
-          ops,
-          subs,
-          depth,
-          resolve
-        },
-        options
-      )
-    } else {
-      ops.set(target, path, null)
-      resolve(path)
-    }
-  })
-
-  return () => {
-    unbind()
-    unsubscribeAll(subs)
-  }
-}
-
 interface BindDocumentParamater extends CommonBindOptionsParameter {
   document: firestore.DocumentReference
 }
@@ -316,7 +315,7 @@ interface BindDocumentParamater extends CommonBindOptionsParameter {
  * @param {OperationsType<any>} ops
  * @param {*} options
  */
-export function bindDocument (
+export function bindDocument(
   { vm, key, document, resolve, reject, ops }: BindDocumentParamater,
   extraOptions: FirestoreOptions = DEFAULT_OPTIONS
 ) {
@@ -339,7 +338,7 @@ export function bindDocument (
           subs,
           ops,
           depth: 0,
-          resolve
+          resolve,
         },
         options
       )

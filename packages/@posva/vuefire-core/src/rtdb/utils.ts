@@ -7,7 +7,7 @@ import { isObject } from '../shared'
  * @param snapshot
  * @return
  */
-export function createRecordFromRTDBSnapshot (snapshot: database.DataSnapshot): any {
+export function createRecordFromRTDBSnapshot(snapshot: database.DataSnapshot): any {
   const value = snapshot.val()
   const res = isObject(value) ? value : Object.defineProperty({}, '.value', { value })
   // if (isObject(value)) {
@@ -30,7 +30,7 @@ export type RTDBSerializer = typeof createRecordFromRTDBSnapshot
  * @param key
  * @return the index where the key was found
  */
-export function indexForKey (array: any[], key: string | null | number): number {
+export function indexForKey(array: any[], key: string | null | number): number {
   for (let i = 0; i < array.length; i++) {
     if (array[i]['.key'] === key) return i
   }

@@ -2,17 +2,15 @@ import { createSnapshot, extractRefs } from '../../src/firestore/utils'
 import {
   Key,
   db,
-  _id,
   DocumentReference,
   GeoPoint,
   DocumentSnapshot,
   Timestamp,
-  CollectionReference
+  CollectionReference,
 } from '@posva/vuefire-test-helpers'
 
 describe('Firestore utils', () => {
-  let id: number,
-    doc: DocumentSnapshot,
+  let doc: DocumentSnapshot,
     snapshot: any,
     collection: CollectionReference,
     docRef: DocumentReference
@@ -23,14 +21,13 @@ describe('Firestore utils', () => {
       collection,
       id: new Key(),
       data: {},
-      index: 0
+      index: 0,
     })
-    id = _id
     doc = new DocumentSnapshot(null, new Key(), {
       n: 42,
       is: true,
       items: [{ text: 'foo' }],
-      ref: docRef
+      ref: docRef,
     })
     // @ts-ignore
     snapshot = createSnapshot(doc)
@@ -49,7 +46,7 @@ describe('Firestore utils', () => {
       n: 42,
       is: true,
       items: [{ text: 'foo' }],
-      ref: docRef
+      ref: docRef,
     })
   })
 
@@ -57,7 +54,7 @@ describe('Firestore utils', () => {
     const [noRefsDoc, refs] = extractRefs(doc.data())
     expect(noRefsDoc.ref).toBe(docRef.path)
     expect(refs).toEqual({
-      ref: docRef
+      ref: docRef,
     })
   })
 
@@ -65,7 +62,7 @@ describe('Firestore utils', () => {
     const d = new Date()
     const [doc, refs] = extractRefs({
       foo: 1,
-      bar: d
+      bar: d,
     })
     expect(doc.foo).toBe(1)
     expect(doc.bar).toBe(d)
@@ -76,7 +73,7 @@ describe('Firestore utils', () => {
     const d = new Timestamp(10, 10)
     const [doc, refs] = extractRefs({
       foo: 1,
-      bar: d
+      bar: d,
     })
     expect(doc.foo).toBe(1)
     expect(doc.bar).toBe(d)
@@ -87,7 +84,7 @@ describe('Firestore utils', () => {
     const d = new GeoPoint(2, 48)
     const [doc, refs] = extractRefs({
       foo: 1,
-      bar: d
+      bar: d,
     })
     expect(doc.foo).toBe(1)
     expect(doc.bar).toBe(d)
@@ -97,12 +94,12 @@ describe('Firestore utils', () => {
   it('extract object nested refs from document', () => {
     const [noRefsDoc, refs] = extractRefs({
       obj: {
-        ref: docRef
-      }
+        ref: docRef,
+      },
     })
     expect(noRefsDoc.obj.ref).toBe(docRef.path)
     expect(refs).toEqual({
-      'obj.ref': docRef
+      'obj.ref': docRef,
     })
   })
 
@@ -110,14 +107,14 @@ describe('Firestore utils', () => {
     const [noRefsDoc, refs] = extractRefs({
       a: null,
       nested: {
-        a: null
-      }
+        a: null,
+      },
     })
     expect(noRefsDoc).toEqual({
       a: null,
       nested: {
-        a: null
-      }
+        a: null,
+      },
     })
     expect(refs).toEqual({})
   })
@@ -126,13 +123,13 @@ describe('Firestore utils', () => {
     const [noRefsDoc, refs] = extractRefs({
       obj: {
         nested: {
-          ref: docRef
-        }
-      }
+          ref: docRef,
+        },
+      },
     })
     expect(noRefsDoc.obj.nested.ref).toBe(docRef.path)
     expect(refs).toEqual({
-      'obj.nested.ref': docRef
+      'obj.nested.ref': docRef,
     })
   })
 
@@ -141,10 +138,10 @@ describe('Firestore utils', () => {
       collection,
       id: new Key(),
       data: {},
-      index: 0
+      index: 0,
     })
     const [noRefsDoc, refs] = extractRefs({
-      arr: [docRef, docRef2, docRef]
+      arr: [docRef, docRef2, docRef],
     })
     expect(noRefsDoc.arr[0]).toBe(docRef.path)
     expect(noRefsDoc.arr[1]).toBe(docRef2.path)
@@ -152,7 +149,7 @@ describe('Firestore utils', () => {
     expect(refs).toEqual({
       'arr.0': docRef,
       'arr.1': docRef2,
-      'arr.2': docRef
+      'arr.2': docRef,
     })
   })
 })

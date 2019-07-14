@@ -1,8 +1,7 @@
 import { rtdbBindAsObject, walkSet } from '../../src/index'
 import { MockFirebase, MockedReference, createOps } from '@posva/vuefire-test-helpers'
-import { OperationsType } from '../../src/shared'
 
-function createSnapshotFromPrimitive (value: any, key: string) {
+function createSnapshotFromPrimitive(value: any, key: string) {
   const data = {}
   Object.defineProperty(data, '.value', { value })
   Object.defineProperty(data, '.key', { value: key })
@@ -29,7 +28,7 @@ describe('RTDB document', () => {
         document,
         resolve,
         reject,
-        ops
+        ops,
       })
       document.flush()
     })
@@ -79,8 +78,8 @@ describe('RTDB document', () => {
     document.flush()
     vm.a = {
       b: {
-        c: null
-      }
+        c: null,
+      },
     }
     const promise = new Promise((resolve, reject) => {
       rtdbBindAsObject({ vm, document, key: 'a.b.c', resolve, reject, ops })

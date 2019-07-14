@@ -22,7 +22,7 @@ describe('refs in collections', () => {
       items: null,
       a: null,
       b: null,
-      c: null
+      c: null,
     }
     ops = createOps(walkSet)
     bind = (key, collection, options) => {
@@ -46,7 +46,7 @@ describe('refs in collections', () => {
   it('binds refs on collections', async () => {
     await bind('items', collection)
 
-    expect(vm.items).toEqual([{ ref: { isA: true }}, { ref: { isB: true }}])
+    expect(vm.items).toEqual([{ ref: { isA: true } }, { ref: { isB: true } }])
   })
 
   it('waits for array to be fully populated', async () => {
@@ -61,9 +61,9 @@ describe('refs in collections', () => {
 
     expect(data).toEqual(vm.items)
     expect(vm.items).toEqual([
-      { ref: { isA: true }},
-      { ref: { isB: true }},
-      { ref: { isC: true }}
+      { ref: { isA: true } },
+      { ref: { isB: true } },
+      { ref: { isC: true } },
     ])
   })
 
@@ -77,9 +77,9 @@ describe('refs in collections', () => {
     await delay(5)
 
     expect(vm.items).toEqual([
-      { ref: { isA: true }},
-      { ref: { isB: true }},
-      { ref: { isC: true }}
+      { ref: { isA: true } },
+      { ref: { isB: true } },
+      { ref: { isC: true } },
     ])
   })
 
@@ -107,7 +107,7 @@ describe('refs in collections', () => {
   it('unbinds nested refs when the collection is unbound', async () => {
     const items = db.collection()
     const spyA = spyUnbind(a)
-    await items.add({ ref: { ref: a }})
+    await items.add({ ref: { ref: a } })
     // @ts-ignore
     await bind('items', items)
 
@@ -148,7 +148,7 @@ describe('refs in collections', () => {
     await first.update({ newThing: true })
     await delay(5)
 
-    expect(vm.items).toEqual([{ ref: { isA: true }, newThing: true }, { ref: { isB: true }}])
+    expect(vm.items).toEqual([{ ref: { isA: true }, newThing: true }, { ref: { isB: true } }])
   })
 
   it('keeps old data of refs when modifying an item', async () => {
@@ -157,7 +157,7 @@ describe('refs in collections', () => {
 
     expect(vm.items[0]).toEqual({
       ref: { isA: true },
-      newThing: true
+      newThing: true,
     })
   })
 
@@ -178,9 +178,9 @@ describe('refs in collections', () => {
     expect(vm.items).toEqual([
       {
         a: {
-          b: b.path
-        }
-      }
+          b: b.path,
+        },
+      },
     ])
 
     // @ts-ignore
@@ -190,11 +190,11 @@ describe('refs in collections', () => {
         a: {
           b: {
             c: {
-              d: d.path
-            }
-          }
-        }
-      }
+              d: d.path,
+            },
+          },
+        },
+      },
     ])
   })
 
@@ -214,13 +214,13 @@ describe('refs in collections', () => {
             item: {
               item: {
                 item: {
-                  item: item.path
-                }
-              }
-            }
-          }
-        }
-      }
+                  item: item.path,
+                },
+              },
+            },
+          },
+        },
+      },
     ])
   })
 })

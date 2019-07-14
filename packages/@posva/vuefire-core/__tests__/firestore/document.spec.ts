@@ -43,7 +43,7 @@ describe('documents', () => {
     expect(ops.set).toHaveBeenCalledTimes(2)
     expect(ops.set).toHaveBeenLastCalledWith(vm, 'item', {
       bar: 'bar',
-      foo: 'foo'
+      foo: 'foo',
     })
   })
 
@@ -55,7 +55,7 @@ describe('documents', () => {
       configurable: false,
       enumerable: false,
       writable: false,
-      value: 'some-id'
+      value: 'some-id',
     })
   })
 

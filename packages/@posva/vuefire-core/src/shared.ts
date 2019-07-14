@@ -13,10 +13,10 @@ export type TODO = any
  * @param obj
  * @param path
  */
-export function walkGet (obj: object, path: string): any {
+export function walkGet(obj: object, path: string): any {
   // TODO: development warning when target[key] does not exist
   return path.split('.').reduce(
-    (target, key) =>
+    (target, key): any =>
       // @ts-ignore
       target[key],
     obj
@@ -31,12 +31,12 @@ export function walkGet (obj: object, path: string): any {
  * @param value
  * @returns an array with the element that was replaced or the value that was set
  */
-export function walkSet<T> (obj: object, path: string | number, value: T): T | T[] {
+export function walkSet<T>(obj: object, path: string | number, value: T): T | T[] {
   // path can be a number
   const keys = ('' + path).split('.')
   const key = keys.pop() as string // split will produce at least one element array
   const target = keys.reduce(
-    (target, key) =>
+    (target, key): any =>
       // TODO: dev errors
       // @ts-ignore
       target[key],
@@ -50,7 +50,7 @@ export function walkSet<T> (obj: object, path: string | number, value: T): T | T
  * Checks if a variable is an object
  * @param o
  */
-export function isObject (o: any): o is object {
+export function isObject(o: any): o is object {
   return o && typeof o === 'object'
 }
 
@@ -58,7 +58,7 @@ export function isObject (o: any): o is object {
  * Checks if a variable is a Date
  * @param o
  */
-export function isTimestamp (o: any): o is Date {
+export function isTimestamp(o: any): o is Date {
   return o.toDate
 }
 
@@ -66,7 +66,7 @@ export function isTimestamp (o: any): o is Date {
  * Checks if a variable is a Firestore Document Reference
  * @param o
  */
-export function isDocumentRef (o: any): o is firestore.DocumentReference {
+export function isDocumentRef(o: any): o is firestore.DocumentReference {
   return o && o.onSnapshot
 }
 
@@ -75,11 +75,11 @@ export function isDocumentRef (o: any): o is firestore.DocumentReference {
  * @param fn Function to be called once
  * @param argFn Function to compute the argument passed to fn
  */
-export function callOnceWithArg<T, K> (fn: (arg: T) => K, argFn: () => T): () => K | undefined {
+export function callOnceWithArg<T, K>(fn: (arg: T) => K, argFn: () => T): () => K | undefined {
   /** @type {boolean | undefined} */
-  let called: boolean = false
+  let called = false
 
-  return () => {
+  return (): K | undefined => {
     if (!called) {
       called = true
       return fn(argFn())

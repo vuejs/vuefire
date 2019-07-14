@@ -8,14 +8,14 @@ export type FirestoreReference =
 
 export type FirestoreSnapshot = firestore.DocumentSnapshot | firestore.QueryDocumentSnapshot
 
-export function createSnapshot (doc: FirestoreSnapshot) {
+export function createSnapshot(doc: FirestoreSnapshot) {
   // defaults everything to false, so no need to set
   return Object.defineProperty(doc.data(), 'id', { value: doc.id })
 }
 
 export type FirestoreSerializer = typeof createSnapshot
 
-export function extractRefs (
+export function extractRefs(
   doc: firestore.DocumentData,
   oldDoc: firestore.DocumentData = {},
   path: string = '',

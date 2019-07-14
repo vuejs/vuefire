@@ -8,7 +8,7 @@ interface RTDBOptions {
 
 const DEFAULT_OPTIONS: Required<RTDBOptions> = {
   reset: true,
-  serialize: createRecordFromRTDBSnapshot
+  serialize: createRecordFromRTDBSnapshot,
 }
 
 export { DEFAULT_OPTIONS as rtdbOptions }
@@ -31,7 +31,7 @@ interface BindAsObjectParameter extends CommonBindOptionsParameter {
  * @param options
  * @returns a function to be called to stop listeninng for changes
  */
-export function rtdbBindAsObject (
+export function rtdbBindAsObject(
   { vm, key, document, resolve, reject, ops }: BindAsObjectParameter,
   extraOptions: RTDBOptions = DEFAULT_OPTIONS
 ): () => void {
@@ -64,7 +64,7 @@ interface BindAsArrayParameter extends CommonBindOptionsParameter {
  * @param options
  * @returns a function to be called to stop listeninng for changes
  */
-export function rtdbBindAsArray (
+export function rtdbBindAsArray(
   { vm, key, collection, resolve, reject, ops }: BindAsArrayParameter,
   extraOptions: RTDBOptions = DEFAULT_OPTIONS
 ) {

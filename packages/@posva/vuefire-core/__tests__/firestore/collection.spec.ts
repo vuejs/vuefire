@@ -84,7 +84,7 @@ describe('collections', () => {
         configurable: false,
         enumerable: false,
         writable: false,
-        value: `u${i}`
+        value: `u${i}`,
       })
     })
   })
@@ -104,7 +104,7 @@ describe('collections', () => {
         key: 'items',
         resolve,
         reject,
-        ops
+        ops,
       })
     })
 
@@ -160,7 +160,7 @@ describe('collections', () => {
         key: 'items',
         resolve,
         reject,
-        ops
+        ops,
       })
     })
     await promise
@@ -182,7 +182,7 @@ describe('collections', () => {
           key: 'items',
           resolve,
           reject,
-          ops
+          ops,
         },
         { reset: false }
       )
@@ -206,7 +206,7 @@ describe('collections', () => {
           key: 'items',
           resolve,
           reject,
-          ops
+          ops,
         },
         { reset: () => [{ bar: 'bar' }, { baz: 'baz' }] }
       )

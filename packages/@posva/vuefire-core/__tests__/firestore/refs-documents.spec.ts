@@ -5,7 +5,7 @@ import {
   spyUnbind,
   spyOnSnapshot,
   spyOnSnapshotCallback,
-  createOps
+  createOps,
 } from '@posva/vuefire-test-helpers'
 import { firestore } from 'firebase'
 import { OperationsType } from '../../src/shared'
@@ -25,15 +25,14 @@ describe('refs in documents', () => {
     vm: Record<string, any>,
     bind: (key: string, document: firestore.DocumentReference, options?: FirestoreOptions) => void,
     unbind: () => void,
-    ops: OperationsType,
-    first: Record<string, any>
+    ops: OperationsType
 
   beforeEach(async () => {
     vm = {
       item: null,
       a: null,
       b: null,
-      c: null
+      c: null,
     }
     ops = createOps(walkSet)
     // @ts-ignore
@@ -91,15 +90,15 @@ describe('refs in documents', () => {
     expect(ops.set).toHaveBeenNthCalledWith(2, vm, 'item.ref', vm.item.ref)
 
     expect(vm.item).toEqual({
-      ref: { isC: true }
+      ref: { isC: true },
     })
   })
 
   it('binds refs nested in documents (objects)', async () => {
     await item.update({
       obj: {
-        ref: c
-      }
+        ref: c,
+      },
     })
     await bind('item', item)
 
@@ -109,8 +108,8 @@ describe('refs in documents', () => {
 
     expect(vm.item).toEqual({
       obj: {
-        ref: { isC: true }
-      }
+        ref: { isC: true },
+      },
     })
   })
 
@@ -118,9 +117,9 @@ describe('refs in documents', () => {
     await item.update({
       obj: {
         nested: {
-          ref: c
-        }
-      }
+          ref: c,
+        },
+      },
     })
     await bind('item', item)
 
@@ -132,18 +131,18 @@ describe('refs in documents', () => {
       obj: {
         nested: {
           ref: {
-            isC: true
-          }
-        }
-      }
+            isC: true,
+          },
+        },
+      },
     })
   })
 
   it('update inner ref', async () => {
     expect(vm.d).toEqual({
       ref: {
-        isC: true
-      }
+        isC: true,
+      },
     })
 
     await c.update({ isC: false })
@@ -156,8 +155,8 @@ describe('refs in documents', () => {
 
     expect(vm.d).toEqual({
       ref: {
-        isC: false
-      }
+        isC: false,
+      },
     })
   })
 
@@ -170,7 +169,7 @@ describe('refs in documents', () => {
     expect(ops.set).toHaveBeenNthCalledWith(2, vm, 'd.ref', null)
 
     expect(vm.d).toEqual({
-      ref: null
+      ref: null,
     })
   })
 
@@ -185,7 +184,7 @@ describe('refs in documents', () => {
     await item.update({ baz: 'bar' })
     // make sure things are updating correctly
     expect(vm.d).toEqual({
-      ref: { baz: 'bar' }
+      ref: { baz: 'bar' },
     })
     // we call update twice to make sure our mock works
     expect(spy).toHaveBeenCalledTimes(2)
@@ -194,13 +193,13 @@ describe('refs in documents', () => {
     await delay(5)
 
     expect(vm.d).toEqual({
-      ref: null
+      ref: null,
     })
     await item.update({ foo: 'bar' })
 
     expect(spy).toHaveBeenCalledTimes(2)
     expect(vm.d).toEqual({
-      ref: null
+      ref: null,
     })
     spy.mockRestore()
   })
@@ -224,7 +223,7 @@ describe('refs in documents', () => {
     await item.update({ ref: a })
 
     await bind('item', item)
-    expect(vm.item).toEqual({ ref: { isA: true }})
+    expect(vm.item).toEqual({ ref: { isA: true } })
   })
 
   it('resolves the promise when nested refs are resolved in a document', async () => {
@@ -232,7 +231,7 @@ describe('refs in documents', () => {
     await d.update({ ref: item })
 
     await bind('item', d)
-    expect(vm.item).toEqual({ ref: { ref: { isA: true }}})
+    expect(vm.item).toEqual({ ref: { ref: { isA: true } } })
   })
 
   it('resolves the promise when nested non-existant refs are resolved in a document', async () => {
@@ -240,7 +239,7 @@ describe('refs in documents', () => {
     await d.update({ ref: item })
 
     await bind('item', d)
-    expect(vm.item).toEqual({ ref: { ref: null }})
+    expect(vm.item).toEqual({ ref: { ref: null } })
   })
 
   it('resolves the promise when the document does not exist', async () => {
@@ -256,8 +255,8 @@ describe('refs in documents', () => {
     await bind('d', d)
     expect(vm.d).toEqual({
       ref: {
-        isC: true
-      }
+        isC: true,
+      },
     })
     unbind()
 
@@ -315,8 +314,8 @@ describe('refs in documents', () => {
     await bind('d', d)
     expect(vm.d).toEqual({
       ref: {
-        isC: true
-      }
+        isC: true,
+      },
     })
 
     await d.update({ ref: a })
@@ -324,8 +323,8 @@ describe('refs in documents', () => {
     await delay(5)
     expect(vm.d).toEqual({
       ref: {
-        isA: true
-      }
+        isA: true,
+      },
     })
 
     // expect(dSpy.mock.calls.length).toBe(1)
@@ -379,13 +378,13 @@ describe('refs in documents', () => {
     await b.update({ isB: true })
 
     await item.update({
-      arr: [a, b, a]
+      arr: [a, b, a],
     })
 
     await bind('item', item)
 
     expect(vm.item).toEqual({
-      arr: [{ isA: true }, { isB: true }, { isA: true }]
+      arr: [{ isA: true }, { isB: true }, { isA: true }],
     })
   })
 
@@ -394,7 +393,7 @@ describe('refs in documents', () => {
     await bind('item', item)
 
     expect(vm.item).toEqual({
-      a: { isA: true }
+      a: { isA: true },
     })
 
     await item.update({ newThing: true })
@@ -404,43 +403,43 @@ describe('refs in documents', () => {
 
     expect(vm.item).toEqual({
       newThing: true,
-      a: { isA: true }
+      a: { isA: true },
     })
   })
 
   it('updates values in arrays', async () => {
     await item.update({
-      arr: [a, b]
+      arr: [a, b],
     })
 
     await bind('item', item)
 
     expect(vm.item).toEqual({
-      arr: [{ isA: true }, null]
+      arr: [{ isA: true }, null],
     })
 
     await b.update({ isB: true })
 
     expect(vm.item).toEqual({
-      arr: [{ isA: true }, { isB: true }]
+      arr: [{ isA: true }, { isB: true }],
     })
 
     await item.update({
-      arr: [c]
+      arr: [c],
     })
 
     // NOTE see (1)
     await delay(5)
 
     expect(vm.item).toEqual({
-      arr: [{ isC: true }]
+      arr: [{ isC: true }],
     })
   })
 
   // TODO move to vuefire
   it.skip('correctly updates arrays', async () => {
     await item.update({
-      arr: [a, b]
+      arr: [a, b],
     })
 
     await bind('item', item)
@@ -453,7 +452,7 @@ describe('refs in documents', () => {
     expect(spy).toHaveBeenCalledTimes(1)
 
     await item.update({
-      arr: [c]
+      arr: [c],
     })
 
     expect(spy).toHaveBeenCalledTimes(2)
@@ -474,8 +473,8 @@ describe('refs in documents', () => {
     await bind('item', item, { maxRefDepth: 1 })
     expect(vm.item).toEqual({
       a: {
-        b: b.path
-      }
+        b: b.path,
+      },
     })
 
     await bind('item', item, { maxRefDepth: 3 })
@@ -483,10 +482,10 @@ describe('refs in documents', () => {
       a: {
         b: {
           c: {
-            d: d.path
-          }
-        }
-      }
+            d: d.path,
+          },
+        },
+      },
     })
   })
 
@@ -501,12 +500,12 @@ describe('refs in documents', () => {
           item: {
             item: {
               item: {
-                item: item.path
-              }
-            }
-          }
-        }
-      }
+                item: item.path,
+              },
+            },
+          },
+        },
+      },
     })
   })
 })

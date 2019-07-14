@@ -1,6 +1,5 @@
 import { rtdbBindAsArray, walkSet } from '../../src'
 import { MockFirebase, createOps, MockedReference } from '@posva/vuefire-test-helpers'
-import { OperationsType } from '../../src/shared'
 
 describe('RTDB collection', () => {
   let collection: MockedReference,
@@ -22,7 +21,7 @@ describe('RTDB collection', () => {
         collection,
         resolve,
         reject,
-        ops
+        ops,
       })
       collection.flush()
     })
@@ -65,7 +64,7 @@ describe('RTDB collection', () => {
         collection: items,
         resolve,
         reject,
-        ops
+        ops,
       })
       items.flush()
     })
@@ -102,7 +101,7 @@ describe('RTDB collection', () => {
         collection,
         resolve,
         reject,
-        ops
+        ops,
       })
       collection.flush()
     })
@@ -111,7 +110,7 @@ describe('RTDB collection', () => {
 
     childChangedCb(
       {
-        key: vm.items[0]['.key']
+        key: vm.items[0]['.key'],
       },
       vm.items[2]['.key']
     )
@@ -121,7 +120,7 @@ describe('RTDB collection', () => {
     // move to beginning
     childChangedCb(
       {
-        key: vm.items[1]['.key']
+        key: vm.items[1]['.key'],
       },
       null
     )

@@ -25,7 +25,7 @@
     "pretest": "yarn run lint",
     "test": "yarn run test:unit",
     "test:unit": "jest",
-    "lint": "eslint --fix src test",
+    "lint": "eslint --fix src __tests__ --ext ts",
     "dev": "yarn run test:unit --watchAll"
   },
   "bugs": {
@@ -36,8 +36,6 @@
     "@babel/preset-env": "^7.4.5",
     "@posva/vuefire-test-helpers": "^1.1.0",
     "@types/jest": "^24.0.15",
-    "eslint": "^6.0.1",
-    "eslint-plugin-vue-libs": "^4.0.0",
     "firebase": "^6.3.0",
     "jest": "^24.8.0",
     "ts-jest": "^24.0.2",

@@ -27,7 +27,7 @@ describe('RTDB options', () => {
           document,
           resolve,
           reject,
-          ops
+          ops,
         },
         { serialize: spy }
       )
@@ -51,7 +51,7 @@ describe('RTDB options', () => {
           collection,
           resolve,
           reject,
-          ops
+          ops,
         },
         { serialize: spy }
       )
@@ -77,7 +77,7 @@ describe('RTDB options', () => {
           document,
           resolve,
           reject,
-          ops
+          ops,
         },
         { serialize: spy }
       )
@@ -105,7 +105,7 @@ describe('RTDB options', () => {
           collection,
           resolve,
           reject,
-          ops
+          ops,
         },
         { serialize: spy }
       )
