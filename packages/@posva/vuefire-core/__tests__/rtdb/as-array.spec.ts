@@ -1,9 +1,15 @@
 import { rtdbBindAsArray, walkSet } from '../../src'
-import { MockFirebase, createOps } from '@posva/vuefire-test-helpers'
+import { MockFirebase, createOps, MockedReference } from '@posva/vuefire-test-helpers'
+import { OperationsType } from '../../src/shared'
 
 describe('RTDB collection', () => {
-  let collection, vm, resolve, reject, unbind
+  let collection: MockedReference,
+    vm: Record<string, any>,
+    resolve: (data: any) => void,
+    reject: (error: any) => void,
+    unbind: () => void
   const ops = createOps(walkSet)
+
   beforeEach(async () => {
     collection = new MockFirebase().child('data')
     vm = {}
@@ -27,11 +33,7 @@ describe('RTDB collection', () => {
     collection.push({ name: 'two' })
     collection.push({ name: 'three' })
     collection.flush()
-    expect(vm.items).toEqual([
-      { name: 'one' },
-      { name: 'two' },
-      { name: 'three' }
-    ])
+    expect(vm.items).toEqual([{ name: 'one' }, { name: 'two' }, { name: 'three' }])
   })
 
   it('removes elements', () => {
@@ -68,11 +70,7 @@ describe('RTDB collection', () => {
       items.flush()
     })
 
-    expect(vm.items).toEqual([
-      { other: 'one' },
-      { other: 'two' },
-      { other: 'three' }
-    ])
+    expect(vm.items).toEqual([{ other: 'one' }, { other: 'two' }, { other: 'three' }])
   })
 
   it('reorder elements', async () => {
@@ -83,15 +81,17 @@ describe('RTDB collection', () => {
 
     const originalOn = collection.on
     let childChangedCb = jest.fn()
-    const mock = jest
-      .spyOn(collection, 'on')
-      .mockImplementation((name, ...args) => {
+    const mock = jest.spyOn(collection, 'on').mockImplementation(
+      // @ts-ignore
+      (name, ...args) => {
         if (name === 'child_moved') {
+          // @ts-ignore
           childChangedCb = args[0]
           return
         }
         originalOn.call(collection, name, ...args)
-      })
+      }
+    )
 
     await new Promise((res, rej) => {
       resolve = jest.fn(res)
@@ -148,7 +148,9 @@ describe('RTDB collection', () => {
   })
 
   it('can be left as is', async () => {
-    let unbind
+    let unbind: () => void = () => {
+      throw new Error('Promise was not called')
+    }
     const promise = new Promise((resolve, reject) => {
       unbind = rtdbBindAsArray(
         { vm, collection, key: 'itemsReset', resolve, reject, ops },
@@ -165,7 +167,9 @@ describe('RTDB collection', () => {
   })
 
   it('can be reset to a specific value', async () => {
-    let unbind
+    let unbind: () => void = () => {
+      throw new Error('Promise was not called')
+    }
     const promise = new Promise((resolve, reject) => {
       unbind = rtdbBindAsArray(
         { vm, collection, key: 'itemsReset', resolve, reject, ops },

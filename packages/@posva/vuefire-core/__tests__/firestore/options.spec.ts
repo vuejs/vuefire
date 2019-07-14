@@ -1,12 +1,20 @@
-import { bindDocument, walkSet, firestoreOptions, bindCollection } from '../src'
-import { db, createOps } from '@posva/vuefire-test-helpers'
+import { bindDocument, walkSet, firestoreOptions, bindCollection } from '../../src'
+import { db, createOps, CollectionReference, DocumentReference } from '@posva/vuefire-test-helpers'
+import { firestore } from 'firebase'
 
 describe('options', () => {
-  let collection, document, vm, resolve, reject, ops
+  let collection: firestore.CollectionReference,
+    document: firestore.DocumentReference,
+    vm: Record<string, any>,
+    resolve: (data: any) => void,
+    reject: (error: any) => void
+  const ops = createOps(walkSet)
+
   beforeEach(async () => {
+    // @ts-ignore
     collection = db.collection()
+    // @ts-ignore
     document = collection.doc()
-    ops = createOps(walkSet)
     vm = {}
     await document.update({ foo: 'foo' })
   })
@@ -16,15 +24,10 @@ describe('options', () => {
     await new Promise((res, rej) => {
       resolve = jest.fn(res)
       reject = jest.fn(rej)
-      bindDocument(
-        { vm, key: 'foo', document, resolve, reject, ops },
-        { serialize: spy }
-      )
+      bindDocument({ vm, key: 'foo', document, resolve, reject, ops }, { serialize: spy })
     })
     expect(spy).toHaveBeenCalledTimes(1)
-    expect(spy).toBeCalledWith(
-      expect.objectContaining({ data: expect.any(Function) })
-    )
+    expect(spy).toBeCalledWith(expect.objectContaining({ data: expect.any(Function) }))
     expect(vm.foo).toEqual({ bar: 'foo' })
   })
 
@@ -33,15 +36,10 @@ describe('options', () => {
     await new Promise((res, rej) => {
       resolve = jest.fn(res)
       reject = jest.fn(rej)
-      bindCollection(
-        { vm, key: 'foo', collection, resolve, reject, ops },
-        { serialize: spy }
-      )
+      bindCollection({ vm, key: 'foo', collection, resolve, reject, ops }, { serialize: spy })
     })
     expect(spy).toHaveBeenCalledTimes(1)
-    expect(spy).toBeCalledWith(
-      expect.objectContaining({ data: expect.any(Function) })
-    )
+    expect(spy).toBeCalledWith(expect.objectContaining({ data: expect.any(Function) }))
     expect(vm.foo).toEqual([{ bar: 'foo' }])
   })
 
@@ -55,9 +53,7 @@ describe('options', () => {
       bindDocument({ vm, key: 'foo', document, resolve, reject, ops })
     })
     expect(spy).toHaveBeenCalledTimes(1)
-    expect(spy).toBeCalledWith(
-      expect.objectContaining({ data: expect.any(Function) })
-    )
+    expect(spy).toBeCalledWith(expect.objectContaining({ data: expect.any(Function) }))
     expect(vm.foo).toEqual({ bar: 'foo' })
     // restore it
     firestoreOptions.serialize = serialize
@@ -73,9 +69,7 @@ describe('options', () => {
       bindCollection({ vm, key: 'foo', collection, resolve, reject, ops })
     })
     expect(spy).toHaveBeenCalledTimes(1)
-    expect(spy).toBeCalledWith(
-      expect.objectContaining({ data: expect.any(Function) })
-    )
+    expect(spy).toBeCalledWith(expect.objectContaining({ data: expect.any(Function) }))
     expect(vm.foo).toEqual([{ bar: 'foo' }])
     // restore it
     firestoreOptions.serialize = serialize

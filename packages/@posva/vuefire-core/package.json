@@ -5,7 +5,7 @@
   "author": "Eduardo San Martin Morote <posva13@gmail.com>",
   "homepage": "https://github.com/vuejs/vuefire#readme",
   "license": "MIT",
-  "main": "src/index.js",
+  "main": "src/index.ts",
   "directories": {
     "lib": "src",
     "test": "test"
@@ -40,6 +40,7 @@
     "eslint-plugin-vue-libs": "^4.0.0",
     "firebase": "^6.3.0",
     "jest": "^24.8.0",
+    "ts-jest": "^24.0.2",
     "typescript": "^3.5.2"
   },
   "gitHead": "e3e2df3624572cec86ed861f2472df4d143f2265"

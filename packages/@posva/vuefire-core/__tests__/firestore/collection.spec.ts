@@ -1,12 +1,20 @@
-import { bindCollection, walkSet } from '../src'
+import { bindCollection, walkSet } from '../../src'
 import { db, createOps, spyUnbind } from '@posva/vuefire-test-helpers'
+import { firestore } from 'firebase'
+import { OperationsType } from '../../src/shared'
 
 describe('collections', () => {
-  let collection, vm, resolve, reject, ops
+  let collection: firestore.CollectionReference,
+    vm: Record<string, any>,
+    resolve: (data: any) => void,
+    reject: (error: any) => void,
+    ops: OperationsType
+
   beforeEach(async () => {
+    // @ts-ignore
     collection = db.collection()
-    ops = createOps(walkSet)
     vm = {}
+    ops = createOps(walkSet)
     await new Promise((res, rej) => {
       resolve = jest.fn(res)
       reject = jest.fn(rej)
@@ -39,18 +47,14 @@ describe('collections', () => {
     const doc = await collection.add({ text: 'foo', more: true })
     await doc.update({ text: 'bar' })
     expect(ops.set).toHaveBeenCalledTimes(1)
-    expect(ops.set).toHaveBeenLastCalledWith(vm, 'items', [
-      { more: true, text: 'bar' }
-    ])
+    expect(ops.set).toHaveBeenLastCalledWith(vm, 'items', [{ more: true, text: 'bar' }])
   })
 
   it('add properties', async () => {
     const doc = await collection.add({ text: 'foo' })
     await doc.update({ other: 'bar' })
     expect(ops.set).toHaveBeenCalledTimes(1)
-    expect(ops.set).toHaveBeenLastCalledWith(vm, 'items', [
-      { other: 'bar', text: 'foo' }
-    ])
+    expect(ops.set).toHaveBeenLastCalledWith(vm, 'items', [{ other: 'bar', text: 'foo' }])
   })
 
   // TODO move to vuefire
@@ -75,7 +79,7 @@ describe('collections', () => {
     await a.update({})
     await b.update({})
     expect(vm.items.length).toBe(2)
-    vm.items.forEach((item, i) => {
+    vm.items.forEach((item: Record<string, any>, i: number) => {
       expect(Object.getOwnPropertyDescriptor(item, 'id')).toEqual({
         configurable: false,
         enumerable: false,
@@ -86,10 +90,13 @@ describe('collections', () => {
   })
 
   it('manually unbinds a collection', async () => {
+    // @ts-ignore
     collection = db.collection()
     await collection.add({ text: 'foo' })
     const unbindSpy = spyUnbind(collection)
-    let unbind
+    let unbind: () => void = () => {
+      throw new Error('Promise was not called')
+    }
     await new Promise((resolve, reject) => {
       unbind = bindCollection({
         vm,
@@ -115,16 +122,19 @@ describe('collections', () => {
   })
 
   it('rejects when errors', async () => {
-    const fakeOnSnapshot = (_, fail) => {
+    const fakeOnSnapshot = (_: any, fail: (error: Error) => void) => {
       fail(new Error('nope'))
     }
+    // @ts-ignore
     collection = db.collection()
+    // @ts-ignore
     collection.onSnapshot = jest.fn(fakeOnSnapshot)
     await expect(
       new Promise((resolve, reject) => {
         bindCollection({ vm, collection, key: 'items', resolve, reject, ops })
       })
     ).rejects.toThrow()
+    // @ts-ignore
     collection.onSnapshot.mockRestore()
   })
 
@@ -140,7 +150,9 @@ describe('collections', () => {
 
   it('resets the value when unbinding', async () => {
     await collection.add({ foo: 'foo' })
-    let unbind
+    let unbind: () => void = () => {
+      throw new Error('Promise was not called')
+    }
     const promise = new Promise((resolve, reject) => {
       unbind = bindCollection({
         vm,
@@ -159,7 +171,9 @@ describe('collections', () => {
 
   it('can be left as is', async () => {
     await collection.add({ foo: 'foo' })
-    let unbind
+    let unbind: () => void = () => {
+      throw new Error('Promise was not called')
+    }
     const promise = new Promise((resolve, reject) => {
       unbind = bindCollection(
         {
@@ -181,7 +195,9 @@ describe('collections', () => {
 
   it('can be reset to a specific value', async () => {
     await collection.add({ foo: 'foo' })
-    let unbind
+    let unbind: () => void = () => {
+      throw new Error('Promise was not called')
+    }
     const promise = new Promise((resolve, reject) => {
       unbind = bindCollection(
         {

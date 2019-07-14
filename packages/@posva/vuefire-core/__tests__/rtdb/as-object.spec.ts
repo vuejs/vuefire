@@ -1,8 +1,8 @@
-import { rtdbBindAsObject, walkSet } from '../../src'
-import { createOps } from '@posva/vuefire-test-helpers'
-import { MockFirebase } from '@posva/vuefire-test-helpers'
+import { rtdbBindAsObject, walkSet } from '../../src/index'
+import { MockFirebase, MockedReference, createOps } from '@posva/vuefire-test-helpers'
+import { OperationsType } from '../../src/shared'
 
-function createSnapshotFromPrimitive (value, key) {
+function createSnapshotFromPrimitive (value: any, key: string) {
   const data = {}
   Object.defineProperty(data, '.value', { value })
   Object.defineProperty(data, '.key', { value: key })
@@ -10,10 +10,15 @@ function createSnapshotFromPrimitive (value, key) {
 }
 
 describe('RTDB document', () => {
-  let document, vm, resolve, reject, ops, unbind
+  let document: MockedReference,
+    vm: Record<string, any>,
+    resolve: (data: any) => void,
+    reject: (error: any) => void,
+    unbind: () => void
+  const ops = createOps(walkSet)
+
   beforeEach(async () => {
     document = new MockFirebase().child('data')
-    ops = createOps(walkSet)
     vm = {}
     await new Promise((res, rej) => {
       resolve = jest.fn(res)
@@ -45,18 +50,10 @@ describe('RTDB document', () => {
   it('creates non-enumerable fields with primitive values', () => {
     document.set('foo')
     document.flush()
-    expect(ops.set).toHaveBeenLastCalledWith(
-      vm,
-      'item',
-      createSnapshotFromPrimitive('foo', 'data')
-    )
+    expect(ops.set).toHaveBeenLastCalledWith(vm, 'item', createSnapshotFromPrimitive('foo', 'data'))
     document.set(2)
     document.flush()
-    expect(ops.set).toHaveBeenLastCalledWith(
-      vm,
-      'item',
-      createSnapshotFromPrimitive(2, 'data')
-    )
+    expect(ops.set).toHaveBeenLastCalledWith(vm, 'item', createSnapshotFromPrimitive(2, 'data'))
   })
 
   it('rejects when errors', async () => {
@@ -103,7 +100,9 @@ describe('RTDB document', () => {
 
   it('can be left as is', async () => {
     document.set({ foo: 'foo' })
-    let unbind
+    let unbind: () => void = () => {
+      throw new Error('Promise was not called')
+    }
     const promise = new Promise((resolve, reject) => {
       unbind = rtdbBindAsObject(
         { vm, document, key: 'item', resolve, reject, ops },
@@ -119,7 +118,9 @@ describe('RTDB document', () => {
 
   it('can be reset to a specific value', async () => {
     document.set({ foo: 'foo' })
-    let unbind
+    let unbind: () => void = () => {
+      throw new Error('Promise was not called')
+    }
     const promise = new Promise((resolve, reject) => {
       unbind = rtdbBindAsObject(
         { vm, document, key: 'item', resolve, reject, ops },

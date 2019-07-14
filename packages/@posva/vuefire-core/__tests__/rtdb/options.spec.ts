@@ -1,13 +1,11 @@
-import {
-  walkSet,
-  rtdbBindAsObject,
-  rtdbBindAsArray,
-  rtdbOptions
-} from '../../src'
-import { MockFirebase, createOps } from '@posva/vuefire-test-helpers'
+import { walkSet, rtdbBindAsObject, rtdbBindAsArray, rtdbOptions } from '../../src'
+import { MockFirebase, createOps, MockedReference } from '@posva/vuefire-test-helpers'
 
-describe('options', () => {
-  let collection, document, vm, unbind
+describe('RTDB options', () => {
+  let collection: MockedReference,
+    document: MockedReference,
+    vm: Record<string, any>,
+    unbind: () => void
   const ops = createOps(walkSet)
   beforeEach(async () => {
     collection = new MockFirebase().child('data')
@@ -38,9 +36,7 @@ describe('options', () => {
     })
 
     expect(spy).toHaveBeenCalledTimes(2)
-    expect(spy).toHaveBeenLastCalledWith(
-      expect.objectContaining({ val: expect.any(Function) })
-    )
+    expect(spy).toHaveBeenLastCalledWith(expect.objectContaining({ val: expect.any(Function) }))
     expect(vm.item).toEqual({ bar: 'foo' })
   })
 
@@ -64,9 +60,7 @@ describe('options', () => {
     })
 
     expect(spy).toHaveBeenCalledTimes(1)
-    expect(spy).toBeCalledWith(
-      expect.objectContaining({ val: expect.any(Function) })
-    )
+    expect(spy).toBeCalledWith(expect.objectContaining({ val: expect.any(Function) }))
     expect(vm.items).toEqual([{ bar: 'foo' }])
   })
 
@@ -92,9 +86,7 @@ describe('options', () => {
     })
 
     expect(spy).toHaveBeenCalledTimes(2)
-    expect(spy).toBeCalledWith(
-      expect.objectContaining({ val: expect.any(Function) })
-    )
+    expect(spy).toBeCalledWith(expect.objectContaining({ val: expect.any(Function) }))
     expect(vm.item).toEqual({ bar: 'foo' })
     // restore it
     rtdbOptions.serialize = serialize
@@ -122,9 +114,7 @@ describe('options', () => {
     })
 
     expect(spy).toHaveBeenCalledTimes(1)
-    expect(spy).toBeCalledWith(
-      expect.objectContaining({ val: expect.any(Function) })
-    )
+    expect(spy).toBeCalledWith(expect.objectContaining({ val: expect.any(Function) }))
     expect(vm.items).toEqual([{ bar: 'foo' }])
     // restore it
     rtdbOptions.serialize = serialize

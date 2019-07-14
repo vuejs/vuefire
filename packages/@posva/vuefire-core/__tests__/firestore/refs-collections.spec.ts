@@ -1,8 +1,22 @@
-import { bindCollection, walkSet } from '../src'
+import { bindCollection, walkSet, FirestoreOptions } from '../../src'
 import { db, delay, spyUnbind, delayUpdate, createOps } from '@posva/vuefire-test-helpers'
+import { OperationsType } from '../../src/shared'
+import { firestore } from 'firebase'
 
 describe('refs in collections', () => {
-  let vm, collection, a, b, first, bind, ops, unbind
+  let collection: firestore.CollectionReference,
+    a: firestore.DocumentReference,
+    b: firestore.DocumentReference,
+    vm: Record<string, any>,
+    bind: (
+      key: string,
+      collection: firestore.CollectionReference,
+      options?: FirestoreOptions
+    ) => void,
+    unbind: () => void,
+    ops: OperationsType,
+    first: Record<string, any>
+
   beforeEach(async () => {
     vm = {
       items: null,
@@ -17,10 +31,13 @@ describe('refs in collections', () => {
           (unbind = bindCollection({ vm, key, collection, resolve, reject, ops }, options))
       )
     }
+    // @ts-ignore
     a = db.collection().doc()
+    // @ts-ignore
     b = db.collection().doc()
     await a.update({ isA: true })
     await b.update({ isB: true })
+    // @ts-ignore
     collection = db.collection()
     first = await collection.add({ ref: a })
     await collection.add({ ref: b })
@@ -37,6 +54,8 @@ describe('refs in collections', () => {
     await c.update({ isC: true })
     await collection.add({ ref: c })
     // force callback delay
+
+    // @ts-ignore
     delayUpdate(c)
     const data = await bind('items', collection)
 
@@ -70,6 +89,7 @@ describe('refs in collections', () => {
     const spyB = spyUnbind(b)
     await items.add({ ref: a })
     await items.add({ ref: b })
+    // @ts-ignore
     await bind('items', items)
 
     expect(spyA).toHaveBeenCalledTimes(0)
@@ -88,6 +108,7 @@ describe('refs in collections', () => {
     const items = db.collection()
     const spyA = spyUnbind(a)
     await items.add({ ref: { ref: a }})
+    // @ts-ignore
     await bind('items', items)
 
     expect(spyA).toHaveBeenCalledTimes(0)
@@ -152,6 +173,7 @@ describe('refs in collections', () => {
     const collection = db.collection()
     await collection.add({ a })
 
+    // @ts-ignore
     await bind('items', collection, { maxRefDepth: 1 })
     expect(vm.items).toEqual([
       {
@@ -161,6 +183,7 @@ describe('refs in collections', () => {
       }
     ])
 
+    // @ts-ignore
     await bind('items', collection, { maxRefDepth: 3 })
     expect(vm.items).toEqual([
       {
@@ -180,6 +203,7 @@ describe('refs in collections', () => {
     await item.set({ item })
     const collection = db.collection()
     await collection.add({ item })
+    // @ts-ignore
     await bind('items', collection, { maxRefDepth: 5 })
 
     expect(vm.items).toEqual([

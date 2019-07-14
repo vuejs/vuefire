@@ -49,7 +49,7 @@ export function spyOnSnapshotCallback (ref: FirestoreReference) {
 }
 
 // This makes sure some tests fail by delaying callbacks
-export function delayUpdate (ref: FirestoreReference, time = 0) {
+export function delayUpdate (ref: firestore.DocumentReference, time = 0) {
   const onSnapshot = ref.onSnapshot.bind(ref)
   // @ts-ignore
   ref.onSnapshot = fn =>

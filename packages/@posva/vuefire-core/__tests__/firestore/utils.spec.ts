@@ -1,4 +1,4 @@
-import { createSnapshot, extractRefs } from '../src/utils'
+import { createSnapshot, extractRefs } from '../../src/firestore/utils'
 import {
   Key,
   db,
@@ -6,11 +6,17 @@ import {
   DocumentReference,
   GeoPoint,
   DocumentSnapshot,
-  Timestamp
+  Timestamp,
+  CollectionReference
 } from '@posva/vuefire-test-helpers'
 
-describe('utils', () => {
-  let id, doc, snapshot, collection, docRef
+describe('Firestore utils', () => {
+  let id: number,
+    doc: DocumentSnapshot,
+    snapshot: any,
+    collection: CollectionReference,
+    docRef: DocumentReference
+
   beforeEach(() => {
     collection = db.collection()
     docRef = new DocumentReference({
@@ -26,11 +32,12 @@ describe('utils', () => {
       items: [{ text: 'foo' }],
       ref: docRef
     })
+    // @ts-ignore
     snapshot = createSnapshot(doc)
   })
 
   it('createSnapshot adds an id', () => {
-    expect(snapshot.id).toBe('' + id)
+    expect(snapshot.id).toMatch(/^\d+$/)
   })
 
   it('id is not enumerable', () => {

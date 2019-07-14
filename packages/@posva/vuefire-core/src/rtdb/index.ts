@@ -1,14 +1,41 @@
-import { createRecordFromRTDBSnapshot, indexForKey } from './utils'
+import { createRecordFromRTDBSnapshot, indexForKey, RTDBSerializer, rtdb } from './utils'
+import { OperationsType } from '../shared'
 
-const DEFAULT_OPTIONS = { reset: true, serialize: createRecordFromRTDBSnapshot }
+interface RTDBOptions {
+  reset?: boolean | (() => any)
+  serialize?: RTDBSerializer
+}
+
+const DEFAULT_OPTIONS: Required<RTDBOptions> = {
+  reset: true,
+  serialize: createRecordFromRTDBSnapshot
+}
 
 export { DEFAULT_OPTIONS as rtdbOptions }
 
+interface CommonBindOptionsParameter {
+  vm: object
+  key: string
+  resolve: (value: any) => void
+  reject: (error: any) => void
+  ops: OperationsType
+}
+
+interface BindAsObjectParameter extends CommonBindOptionsParameter {
+  document: rtdb.Reference
+}
+
+/**
+ * Binds a RTDB reference as an object
+ * @param param0
+ * @param options
+ * @returns a function to be called to stop listeninng for changes
+ */
 export function rtdbBindAsObject (
-  { vm, key, document, resolve, reject, ops },
-  options = DEFAULT_OPTIONS
-) {
-  options = Object.assign({}, DEFAULT_OPTIONS, options)
+  { vm, key, document, resolve, reject, ops }: BindAsObjectParameter,
+  extraOptions: RTDBOptions = DEFAULT_OPTIONS
+): () => void {
+  const options = Object.assign({}, DEFAULT_OPTIONS, extraOptions)
   const listener = document.on(
     'value',
     snapshot => {
@@ -27,12 +54,22 @@ export function rtdbBindAsObject (
   }
 }
 
+interface BindAsArrayParameter extends CommonBindOptionsParameter {
+  collection: rtdb.Reference | rtdb.Query
+}
+
+/**
+ * Binds a RTDB reference or query as an array
+ * @param param0
+ * @param options
+ * @returns a function to be called to stop listeninng for changes
+ */
 export function rtdbBindAsArray (
-  { vm, key, collection, resolve, reject, ops },
-  options = DEFAULT_OPTIONS
+  { vm, key, collection, resolve, reject, ops }: BindAsArrayParameter,
+  extraOptions: RTDBOptions = DEFAULT_OPTIONS
 ) {
-  options = Object.assign({}, DEFAULT_OPTIONS, options)
-  const array = []
+  const options = Object.assign({}, DEFAULT_OPTIONS, extraOptions)
+  const array: any[] = []
   ops.set(vm, key, array)
 
   const childAdded = collection.on(
@@ -55,11 +92,7 @@ export function rtdbBindAsArray (
   const childChanged = collection.on(
     'child_changed',
     snapshot => {
-      ops.set(
-        array,
-        indexForKey(array, snapshot.key),
-        options.serialize(snapshot)
-      )
+      ops.set(array, indexForKey(array, snapshot.key), options.serialize(snapshot))
     },
     reject
   )

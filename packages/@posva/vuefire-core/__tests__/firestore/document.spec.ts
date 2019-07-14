@@ -1,10 +1,20 @@
-import { bindDocument, walkSet } from '../src'
+import { bindDocument, walkSet } from '../../src'
 import { db, spyUnbind, createOps } from '@posva/vuefire-test-helpers'
+import { firestore } from 'firebase'
+import { OperationsType } from '../../src/shared'
 
 describe('documents', () => {
-  let collection, document, vm, resolve, reject, ops
+  let collection: firestore.CollectionReference,
+    document: firestore.DocumentReference,
+    vm: Record<string, any>,
+    resolve: (data: any) => void,
+    reject: (error: any) => void,
+    ops: OperationsType
+
   beforeEach(async () => {
+    // @ts-ignore
     collection = db.collection()
+    // @ts-ignore
     document = collection.doc()
     ops = createOps(walkSet)
     vm = {}
@@ -53,7 +63,9 @@ describe('documents', () => {
     document = collection.doc()
     await document.update({ foo: 'foo' })
     const unbindSpy = spyUnbind(document)
-    let unbind
+    let unbind: () => void = () => {
+      throw new Error('Promise was not called')
+    }
     await new Promise((resolve, reject) => {
       unbind = bindDocument({ vm, document, key: 'item', resolve, reject, ops })
     })
@@ -71,16 +83,18 @@ describe('documents', () => {
   })
 
   it('rejects when errors', async () => {
-    const fakeOnSnapshot = (_, fail) => {
+    const fakeOnSnapshot = (_: any, fail: (err: Error) => void) => {
       fail(new Error('nope'))
     }
     document = collection.doc()
+    // @ts-ignore
     document.onSnapshot = jest.fn(fakeOnSnapshot)
     await expect(
       new Promise((resolve, reject) => {
         bindDocument({ vm, document, key: 'item', resolve, reject, ops })
       })
     ).rejects.toThrow()
+    // @ts-ignore
     document.onSnapshot.mockRestore()
   })
 
@@ -95,7 +109,9 @@ describe('documents', () => {
 
   it('resets the value when unbinding', async () => {
     await document.update({ foo: 'foo' })
-    let unbind
+    let unbind: () => void = () => {
+      throw new Error('Promise was not called')
+    }
     const promise = new Promise((resolve, reject) => {
       unbind = bindDocument({ vm, document, key: 'item', resolve, reject, ops })
     })
@@ -107,12 +123,11 @@ describe('documents', () => {
 
   it('can be left as is', async () => {
     await document.update({ foo: 'foo' })
-    let unbind
+    let unbind: () => void = () => {
+      throw new Error('Promise was not called')
+    }
     const promise = new Promise((resolve, reject) => {
-      unbind = bindDocument(
-        { vm, document, key: 'item', resolve, reject, ops },
-        { reset: false }
-      )
+      unbind = bindDocument({ vm, document, key: 'item', resolve, reject, ops }, { reset: false })
     })
     await promise
     expect(vm.item).toEqual({ foo: 'foo' })
@@ -122,7 +137,9 @@ describe('documents', () => {
 
   it('can be reset to a specific value', async () => {
     await document.update({ foo: 'foo' })
-    let unbind
+    let unbind: () => void = () => {
+      throw new Error('Promise was not called')
+    }
     const promise = new Promise((resolve, reject) => {
       unbind = bindDocument(
         { vm, document, key: 'item', resolve, reject, ops },

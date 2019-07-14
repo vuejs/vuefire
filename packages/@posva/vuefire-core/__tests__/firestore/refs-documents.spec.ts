@@ -1,4 +1,4 @@
-import { bindDocument, walkSet } from '../src'
+import { bindDocument, walkSet, FirestoreOptions } from '../../src'
 import {
   db,
   delay,
@@ -7,13 +7,27 @@ import {
   spyOnSnapshotCallback,
   createOps
 } from '@posva/vuefire-test-helpers'
+import { firestore } from 'firebase'
+import { OperationsType } from '../../src/shared'
 
 describe('refs in documents', () => {
   // a and c existing objects { isA: true }
   // item is an empty ready to use object
   // empty is an empty object that is left empty
   // d has a ref to c
-  let vm, collection, a, c, d, empty, item, b, ops, bind, unbind
+  let collection: firestore.CollectionReference,
+    a: firestore.DocumentReference,
+    b: firestore.DocumentReference,
+    c: firestore.DocumentReference,
+    d: firestore.DocumentReference,
+    empty: firestore.DocumentReference,
+    item: firestore.DocumentReference,
+    vm: Record<string, any>,
+    bind: (key: string, document: firestore.DocumentReference, options?: FirestoreOptions) => void,
+    unbind: () => void,
+    ops: OperationsType,
+    first: Record<string, any>
+
   beforeEach(async () => {
     vm = {
       item: null,
@@ -22,10 +36,15 @@ describe('refs in documents', () => {
       c: null
     }
     ops = createOps(walkSet)
+    // @ts-ignore
     collection = db.collection()
+    // @ts-ignore
     a = db.collection().doc()
+    // @ts-ignore
     b = db.collection().doc()
+    // @ts-ignore
     empty = db.collection().doc()
+    // @ts-ignore
     item = db.collection().doc()
     c = collection.doc()
     d = collection.doc()
@@ -43,8 +62,11 @@ describe('refs in documents', () => {
 
     // wait for refs to be ready as well
     await delay(5)
+    // @ts-ignore
     ops.set.mockClear()
+    // @ts-ignore
     ops.add.mockClear()
+    // @ts-ignore
     ops.remove.mockClear()
   })
 
@@ -255,7 +277,7 @@ describe('refs in documents', () => {
     await item.update({ ref: b })
 
     await bind('item', item)
-    unbind('item')
+    unbind()
 
     expect(dSpy).toHaveBeenCalledTimes(1)
     expect(cSpy).toHaveBeenCalledTimes(1)
@@ -274,7 +296,7 @@ describe('refs in documents', () => {
     await item.update({ c, a })
 
     await bind('item', item)
-    unbind('item')
+    unbind()
 
     expect(dSpy).toHaveBeenCalledTimes(1)
     expect(cSpy).toHaveBeenCalledTimes(1)
@@ -316,12 +338,14 @@ describe('refs in documents', () => {
   })
 
   it('unbinds removed properties', async () => {
-    const a = db.collection().doc()
+    // @ts-ignore
+    const a: firestore.DocumentReference = db.collection().doc()
     const unbindSpy = spyUnbind(a)
     const callbackSpy = spyOnSnapshotCallback(a)
     const onSnapshotSpy = spyOnSnapshot(a)
 
-    const item = db.collection().doc()
+    // @ts-ignore
+    const item: firestore.DocumentReference = db.collection().doc()
     await a.update({ isA: true })
     await b.update({ isB: true })
     await item.update({ a })
@@ -350,7 +374,8 @@ describe('refs in documents', () => {
   })
 
   it('binds refs on arrays', async () => {
-    const item = db.collection().doc()
+    // @ts-ignore
+    const item: firestore.DocumentReference = db.collection().doc()
     await b.update({ isB: true })
 
     await item.update({

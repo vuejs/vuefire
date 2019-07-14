@@ -162,7 +162,7 @@ export class DocumentReference extends CallbacksAndErrors {
   }
 }
 
-class CollectionReference extends CallbacksAndErrors {
+export class CollectionReference extends CallbacksAndErrors {
   name: string
   data: Record<string, DocumentReference> = {}
 
@@ -211,7 +211,7 @@ class CollectionReference extends CallbacksAndErrors {
   // used to check if it's a collection or document ref
   where () {}
 
-  doc (id: string | Key) {
+  doc (id?: string | Key) {
     id = new Key(id)
     return (
       this.data[id.v] ||
@@ -267,7 +267,7 @@ export const db = {
   _db: {} as Record<string, CollectionReference>,
   n: 0,
 
-  collection (name: string): CollectionReference {
+  collection (name?: string): CollectionReference {
     // create a collection if no name provided
     name = name || `random__${this.n++}`
     return (this._db[name] = this._db[name] || new CollectionReference(name))
