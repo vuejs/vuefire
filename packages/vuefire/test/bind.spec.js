@@ -13,8 +13,8 @@ describe('Firestore: binding', () => {
       // but it's a good practice to set it to an empty array
       data: () => ({
         items: null,
-        item: null
-      })
+        item: null,
+      }),
     })
     await tick()
   })
@@ -73,7 +73,7 @@ describe('Firestore: binding', () => {
 
     expect(vm.item).toEqual({
       a: null,
-      b: null
+      b: null,
     })
   })
 
@@ -93,7 +93,7 @@ describe('Firestore: binding', () => {
     expect(vm.item).toEqual({
       a: null,
       b: null,
-      c: null
+      c: null,
     })
   })
 
@@ -122,7 +122,7 @@ describe('Firestore: binding', () => {
 
     expect(vm.item).toEqual({
       a: null,
-      b: { c: null }
+      b: { c: null },
     })
   })
 
@@ -141,7 +141,7 @@ describe('Firestore: binding', () => {
 
     expect(vm.item).toEqual({
       a: { isA: true },
-      b: { c: { isC: true }}
+      b: { c: { isC: true } },
     })
   })
 
@@ -157,7 +157,7 @@ describe('Firestore: binding', () => {
 
     await vm.$bind('items', collection)
 
-    expect(vm.items).toEqual([{ a: null }, { b: { c: null }}])
+    expect(vm.items).toEqual([{ a: null }, { b: { c: null } }])
   })
 
   it('waits for nested refs with data in collections', async () => {
@@ -174,9 +174,6 @@ describe('Firestore: binding', () => {
 
     await vm.$bind('items', collection)
 
-    expect(vm.items).toEqual([
-      { a: { isA: true }},
-      { b: { c: { isC: true }}}
-    ])
+    expect(vm.items).toEqual([{ a: { isA: true } }, { b: { c: { isC: true } } }])
   })
 })

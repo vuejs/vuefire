@@ -13,7 +13,7 @@ const docs = [
   db.child('3'),
   db.child('4'),
   db.child('5'),
-  db.child('6')
+  db.child('6'),
 ]
 
 beforeEach(async () => {
@@ -21,8 +21,8 @@ beforeEach(async () => {
     data: () => ({ a: null, b: null }),
     firebase: {
       a: docs[0],
-      b: docs[1]
-    }
+      b: docs[1],
+    },
   }
 
   mWithObjB = {
@@ -31,58 +31,58 @@ beforeEach(async () => {
       // NOTE: probably because of the mock, Vue seems to be trying to merge the
       // objects and it results in a stack overflow but it works on a regular example
       a: docs[2],
-      c: docs[3]
-    }
+      c: docs[3],
+    },
   }
 
   mWithFn = {
-    firebase () {
+    firebase() {
       return {
         a: docs[4],
-        c: docs[5]
+        c: docs[5],
       }
-    }
+    },
   }
 })
 
 describe('RTDB: merging', () => {
   it.skip('should merge properties', () => {
     const vm = new Vue({
-      mixins: [mWithObjA, mWithObjB]
+      mixins: [mWithObjA, mWithObjB],
     })
     expect(Object.keys(vm.$firebaseRefs)).toEqual(['a', 'b', 'c'])
     expect(vm.$firebaseRefs).toEqual({
       a: docs[2],
       b: docs[1],
-      c: docs[3]
+      c: docs[3],
     })
   })
 
   it('supports function syntax', () => {
     const vm = new Vue({
-      mixins: [mWithFn]
+      mixins: [mWithFn],
     })
     expect(vm.$firebaseRefs).toEqual({
       a: docs[4],
-      c: docs[5]
+      c: docs[5],
     })
   })
 
   it.skip('should merge two functions', () => {
     const vm = new Vue({
-      mixins: [mWithObjA, mWithObjB, mWithFn]
+      mixins: [mWithObjA, mWithObjB, mWithFn],
     })
     expect(vm.$firebaseRefs).toEqual({
       a: docs[4],
       b: docs[1],
-      c: docs[5]
+      c: docs[5],
     })
   })
 
   it('ignores no return', () => {
     const spy = (Vue.config.errorHandler = jest.fn())
     new Vue({
-      firebase: _ => {}
+      firebase: () => {},
     })
     expect(spy).not.toHaveBeenCalled()
     spy.mockRestore()

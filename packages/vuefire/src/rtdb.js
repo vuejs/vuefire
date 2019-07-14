@@ -2,7 +2,7 @@ import {
   rtdbBindAsArray as bindAsArray,
   rtdbBindAsObject as bindAsObject,
   rtdbOptions,
-  walkSet
+  walkSet,
 } from '@posva/vuefire-core'
 
 /**
@@ -11,7 +11,7 @@ import {
  * @param {firebase.database.Reference|firebase.database.Query} refOrQuery
  * @return {firebase.database.Reference}
  */
-export function getRef (refOrQuery) {
+export function getRef(refOrQuery) {
   // check if it is a query
   if (typeof refOrQuery.ref === 'object') {
     refOrQuery = refOrQuery.ref
@@ -23,10 +23,10 @@ export function getRef (refOrQuery) {
 const ops = {
   set: (target, key, value) => walkSet(target, key, value),
   add: (array, index, data) => array.splice(index, 0, data),
-  remove: (array, index) => array.splice(index, 1)
+  remove: (array, index) => array.splice(index, 1),
 }
 
-function bind (vm, key, source, options) {
+function bind(vm, key, source, options) {
   return new Promise((resolve, reject) => {
     let unbind
     if (Array.isArray(vm[key])) {
@@ -37,7 +37,7 @@ function bind (vm, key, source, options) {
           collection: source,
           resolve,
           reject,
-          ops
+          ops,
         },
         options
       )
@@ -49,7 +49,7 @@ function bind (vm, key, source, options) {
           document: source,
           resolve,
           reject,
-          ops
+          ops,
         },
         options
       )
@@ -58,19 +58,15 @@ function bind (vm, key, source, options) {
   })
 }
 
-function unbind (vm, key) {
+function unbind(vm, key) {
   vm._firebaseUnbinds[key]()
   delete vm._firebaseSources[key]
   delete vm._firebaseUnbinds[key]
 }
 
-export function rtdbPlugin (
+export function rtdbPlugin(
   Vue,
-  {
-    bindName = '$rtdbBind',
-    unbindName = '$rtdbUnbind',
-    serialize = rtdbOptions.serialize
-  } = {}
+  { bindName = '$rtdbBind', unbindName = '$rtdbUnbind', serialize = rtdbOptions.serialize } = {}
 ) {
   const strategies = Vue.config.optionMergeStrategies
   strategies.firebase = strategies.provide
@@ -78,12 +74,12 @@ export function rtdbPlugin (
   const globalOptions = Object.assign({}, rtdbOptions, { serialize })
 
   Vue.mixin({
-    beforeCreate () {
+    beforeCreate() {
       this.$firebaseRefs = Object.create(null)
       this._firebaseSources = Object.create(null)
       this._firebaseUnbinds = Object.create(null)
     },
-    created () {
+    created() {
       let bindings = this.$options.firebase
       if (typeof bindings === 'function') bindings = bindings.call(this)
       if (!bindings) return
@@ -93,21 +89,17 @@ export function rtdbPlugin (
       }
     },
 
-    beforeDestroy () {
+    beforeDestroy() {
       for (const key in this._firebaseUnbinds) {
         this._firebaseUnbinds[key]()
       }
       this._firebaseSources = null
       this._firebaseUnbinds = null
       this.$firebaseRefs = null
-    }
+    },
   })
 
-  Vue.prototype[bindName] = function rtdbBind (
-    key,
-    source,
-    options = globalOptions
-  ) {
+  Vue.prototype[bindName] = function rtdbBind(key, source, options = globalOptions) {
     options = Object.assign({}, globalOptions, options)
     if (this._firebaseUnbinds[key]) {
       this[unbindName](key)
@@ -120,7 +112,7 @@ export function rtdbPlugin (
     return promise
   }
 
-  Vue.prototype[unbindName] = function rtdbUnbind (key) {
+  Vue.prototype[unbindName] = function rtdbUnbind(key) {
     unbind(this, key)
   }
 }

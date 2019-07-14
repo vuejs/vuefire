@@ -15,7 +15,7 @@
     "LICENSE"
   ],
   "scripts": {
-    "lint": "eslint --color --ext=js,html src test examples",
+    "lint": "eslint --color --ext=js,ts src test",
     "pretest": "yarn run lint",
     "test": "yarn run build && yarn run types && yarn run test:unit",
     "test:unit": "jest",
@@ -56,8 +56,6 @@
     "@posva/vuefire-bundler": "^1.1.4",
     "@posva/vuefire-test-helpers": "^1.1.0",
     "@types/jest": "^24.0.15",
-    "eslint": "^6.0.1",
-    "eslint-plugin-vue-libs": "^4.0.0",
     "firebase": "^6.3.0",
     "jest": "^24.8.0",
     "typescript": "^3.5.2"

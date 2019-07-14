@@ -12,19 +12,19 @@ describe('RTDB: firebase option', () => {
       // but it's a good practice to set it to an empty array
       data: () => ({
         items: [],
-        item: null
+        item: null,
       }),
       firebase: {
         items: source,
-        item: source
-      }
+        item: source,
+      },
     })
     await tick()
   })
 
   it('does nothing with no firebase', () => {
     const vm = new Vue({
-      data: () => ({ items: null })
+      data: () => ({ items: null }),
     })
     expect(vm.items).toEqual(null)
   })
@@ -36,7 +36,7 @@ describe('RTDB: firebase option', () => {
 
   it('setups _firebaseUnbinds with no firebase options', () => {
     const vm = new Vue({
-      data: () => ({ items: null })
+      data: () => ({ items: null }),
     })
     expect(vm._firebaseUnbinds).toBeTruthy()
     expect(Object.keys(vm._firebaseUnbinds)).toEqual([])

@@ -9,65 +9,65 @@ describe('Firestore: option merging', () => {
     mWithObjA = {
       firestore: {
         a: db.collection(1),
-        b: db.collection(2)
-      }
+        b: db.collection(2),
+      },
     }
 
     mWithObjB = {
       firestore: {
         a: db.collection(3),
-        c: db.collection(4)
-      }
+        c: db.collection(4),
+      },
     }
 
     mWithFn = {
-      firestore () {
+      firestore() {
         return {
           a: db.collection(5),
-          c: db.collection(6)
+          c: db.collection(6),
         }
-      }
+      },
     }
   })
 
   it('should merge properties', () => {
     const vm = new Vue({
-      mixins: [mWithObjA, mWithObjB]
+      mixins: [mWithObjA, mWithObjB],
     })
     expect(vm.$firestoreRefs.a).toBe(mWithObjB.firestore.a)
     expect(vm.$firestoreRefs.b).toBe(mWithObjA.firestore.b)
     expect(vm.$firestoreRefs).toEqual({
       a: db.collection(3),
       b: db.collection(2),
-      c: db.collection(4)
+      c: db.collection(4),
     })
   })
 
   it('supports function syntax', () => {
     const vm = new Vue({
-      mixins: [mWithFn]
+      mixins: [mWithFn],
     })
     expect(vm.$firestoreRefs).toEqual({
       a: db.collection(5),
-      c: db.collection(6)
+      c: db.collection(6),
     })
   })
 
   it('should merge two functions', () => {
     const vm = new Vue({
-      mixins: [mWithObjA, mWithObjB, mWithFn]
+      mixins: [mWithObjA, mWithObjB, mWithFn],
     })
     expect(vm.$firestoreRefs).toEqual({
       a: db.collection(5),
       b: db.collection(2),
-      c: db.collection(6)
+      c: db.collection(6),
     })
   })
 
   it('ignores no return', () => {
     const spy = (Vue.config.errorHandler = jest.fn())
     new Vue({
-      firestore: _ => {}
+      firestore: () => {},
     })
     expect(spy).not.toHaveBeenCalled()
     spy.mockRestore()

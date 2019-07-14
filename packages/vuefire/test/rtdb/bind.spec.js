@@ -12,8 +12,8 @@ describe('RTDB: manual bind', () => {
       // but it's a good practice to set it to an empty array
       data: () => ({
         items: [],
-        item: null
-      })
+        item: null,
+      }),
     })
     await tick()
   })

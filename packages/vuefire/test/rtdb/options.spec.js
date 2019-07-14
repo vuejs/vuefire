@@ -18,13 +18,13 @@ describe('RTDB: plugin options', () => {
   it('calls custom serialize function with collection', async () => {
     const LocalVue = createLocalVue()
     const pluginOptions = {
-      serialize: jest.fn(() => ({ foo: 'bar' }))
+      serialize: jest.fn(() => ({ foo: 'bar' })),
     }
     LocalVue.use(rtdbPlugin, pluginOptions)
 
     const items = new MockFirebase().child('data')
     const vm = new LocalVue({
-      data: () => ({ items: [] })
+      data: () => ({ items: [] }),
     })
 
     const p = vm.$rtdbBind('items', items)
@@ -43,13 +43,13 @@ describe('RTDB: plugin options', () => {
   it('can be ovrriden by local option', async () => {
     const LocalVue = createLocalVue()
     const pluginOptions = {
-      serialize: jest.fn(() => ({ foo: 'bar' }))
+      serialize: jest.fn(() => ({ foo: 'bar' })),
     }
     LocalVue.use(rtdbPlugin, pluginOptions)
 
     const items = new MockFirebase().child('data')
     const vm = new LocalVue({
-      data: () => ({ items: [] })
+      data: () => ({ items: [] }),
     })
 
     const spy = jest.fn(() => ({ bar: 'bar' }))
@@ -62,9 +62,7 @@ describe('RTDB: plugin options', () => {
 
     expect(pluginOptions.serialize).not.toHaveBeenCalled()
     expect(spy).toHaveBeenCalledTimes(1)
-    expect(spy).toHaveBeenCalledWith(
-      expect.objectContaining({ val: expect.any(Function) })
-    )
+    expect(spy).toHaveBeenCalledWith(expect.objectContaining({ val: expect.any(Function) }))
     expect(vm.items).toEqual([{ bar: 'bar' }])
   })
 })

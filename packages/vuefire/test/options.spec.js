@@ -12,7 +12,7 @@ describe('Firestore: plugin options', () => {
     const LocalVue = createLocalVue()
     LocalVue.use(firestorePlugin, {
       bindName: '$myBind',
-      unbindName: '$myUnbind'
+      unbindName: '$myUnbind',
     })
     expect(typeof LocalVue.prototype.$myBind).toBe('function')
     expect(typeof LocalVue.prototype.$myUnbind).toBe('function')
@@ -21,7 +21,7 @@ describe('Firestore: plugin options', () => {
   it('calls custom serialize function with collection', async () => {
     const LocalVue = createLocalVue()
     const pluginOptions = {
-      serialize: jest.fn(() => ({ foo: 'bar' }))
+      serialize: jest.fn(() => ({ foo: 'bar' })),
     }
     LocalVue.use(firestorePlugin, pluginOptions)
 
@@ -29,7 +29,7 @@ describe('Firestore: plugin options', () => {
     await items.add({})
 
     const vm = new LocalVue({
-      data: () => ({ items: [] })
+      data: () => ({ items: [] }),
     })
 
     await vm.$bind('items', items)
@@ -44,7 +44,7 @@ describe('Firestore: plugin options', () => {
   it('can be ovrriden by local option', async () => {
     const LocalVue = createLocalVue()
     const pluginOptions = {
-      serialize: jest.fn(() => ({ foo: 'bar' }))
+      serialize: jest.fn(() => ({ foo: 'bar' })),
     }
     LocalVue.use(firestorePlugin, pluginOptions)
 
@@ -52,7 +52,7 @@ describe('Firestore: plugin options', () => {
     await items.add({})
 
     const vm = new LocalVue({
-      data: () => ({ items: [] })
+      data: () => ({ items: [] }),
     })
 
     const spy = jest.fn(() => ({ bar: 'bar' }))
@@ -61,9 +61,7 @@ describe('Firestore: plugin options', () => {
 
     expect(pluginOptions.serialize).not.toHaveBeenCalled()
     expect(spy).toHaveBeenCalledTimes(1)
-    expect(spy).toHaveBeenCalledWith(
-      expect.objectContaining({ data: expect.any(Function) })
-    )
+    expect(spy).toHaveBeenCalledWith(expect.objectContaining({ data: expect.any(Function) }))
     expect(vm.items).toEqual([{ bar: 'bar' }])
   })
 })
