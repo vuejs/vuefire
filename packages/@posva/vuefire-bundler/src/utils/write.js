@@ -2,7 +2,7 @@ const fs = require('fs')
 
 const { blue } = require('./log.js')
 
-function write (dest, code) {
+function write(dest, code) {
   return new Promise((resolve, reject) => {
     fs.writeFile(dest, code, err => {
       if (err) return reject(err)
@@ -12,7 +12,7 @@ function write (dest, code) {
   })
 }
 
-function getSize (code) {
+function getSize(code) {
   return (code.length / 1024).toFixed(2) + 'kb'
 }
 

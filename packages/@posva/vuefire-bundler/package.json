@@ -33,9 +33,5 @@
     "shelljs": "^0.8.3",
     "uglify-js": "^3.6.0"
   },
-  "devDependencies": {
-    "eslint": "^6.0.1",
-    "eslint-plugin-vue-libs": "^4.0.0"
-  },
   "gitHead": "e3e2df3624572cec86ed861f2472df4d143f2265"
 }

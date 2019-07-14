@@ -21,7 +21,7 @@ mkdirp(distFolder)
 
 const bundleOptions = {
   exports: 'auto',
-  format: 'umd'
+  format: 'umd',
 }
 
 const plugins = [
@@ -30,20 +30,20 @@ const plugins = [
   //   // 'process.env.NODE_ENV': '"development"',
   // }),
   resolve({
-    extensions: ['.js', '.vue', '.jsx', '.json']
+    extensions: ['.js', '.vue', '.jsx', '.json'],
   }),
   buble({
     objectAssign: 'Object.assign',
     transforms: {
-      dangerousForOf: true
-    }
-  })
+      dangerousForOf: true,
+    },
+  }),
 ]
 
-function createBundle ({ filename, format, moduleName, banner }) {
+function createBundle({ filename, format, moduleName, banner }) {
   rollup({
     input: join(cwd, 'src/index.js'),
-    plugins
+    plugins,
   })
     .then(bundle => {
       const options = Object.assign({ banner, name: moduleName }, bundleOptions)
@@ -56,8 +56,8 @@ function createBundle ({ filename, format, moduleName, banner }) {
         const minified = uglify.minify(code, {
           output: {
             preamble: banner,
-            ascii_only: true
-          }
+            ascii_only: true,
+          },
         }).code
         return write(`${distFolder}/${filename}.js`, minified)
       } else {
@@ -67,7 +67,7 @@ function createBundle ({ filename, format, moduleName, banner }) {
     .catch(logError)
 }
 
-module.exports = function run (moduleName) {
+module.exports = function run(moduleName) {
   const banner =
     '/*!\n' +
     ` * ${name} v${version}\n` +
@@ -79,7 +79,7 @@ module.exports = function run (moduleName) {
   createBundle({
     banner,
     filename: name,
-    moduleName
+    moduleName,
   })
 
   // Commonjs bundle (preserves process.env.NODE_ENV) so
@@ -88,20 +88,20 @@ module.exports = function run (moduleName) {
     banner,
     filename: `${name}.esm`,
     format: 'es',
-    moduleName
+    moduleName,
   })
 
   createBundle({
     banner,
     filename: `${name}.common`,
     format: 'cjs',
-    moduleName
+    moduleName,
   })
 
   // Minified version for browser
   createBundle({
     banner,
     filename: `${name}.min`,
-    moduleName
+    moduleName,
   })
 }

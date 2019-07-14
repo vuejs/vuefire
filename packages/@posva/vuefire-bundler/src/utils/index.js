@@ -3,5 +3,5 @@ const { logError } = require('./log.js')
 
 module.exports = {
   write,
-  logError
+  logError,
 }
