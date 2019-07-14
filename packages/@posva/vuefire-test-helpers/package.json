@@ -6,6 +6,9 @@
   "homepage": "https://github.com/vuejs/vuefire#readme",
   "license": "MIT",
   "main": "src/index.ts",
+  "scripts": {
+    "lint": "eslint --fix src --ext ts"
+  },
   "directories": {
     "lib": "src"
   },

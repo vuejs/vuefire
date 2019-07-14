@@ -14,7 +14,7 @@ type FirestoreReference =
   | firestore.DocumentReference
   | firestore.Query
 
-export function spyUnbind (ref: FirestoreReference) {
+export function spyUnbind(ref: FirestoreReference) {
   const unbindSpy = jest.fn()
   const onSnapshot = ref.onSnapshot.bind(ref)
   ref.onSnapshot =
@@ -30,13 +30,13 @@ export function spyUnbind (ref: FirestoreReference) {
   return unbindSpy
 }
 
-export function spyOnSnapshot (ref: FirestoreReference) {
+export function spyOnSnapshot(ref: FirestoreReference) {
   const onSnapshot = ref.onSnapshot.bind(ref)
   // @ts-ignore
   return (ref.onSnapshot = jest.fn((...args) => onSnapshot(...args)))
 }
 
-export function spyOnSnapshotCallback (ref: FirestoreReference) {
+export function spyOnSnapshotCallback(ref: FirestoreReference) {
   const onSnapshot = ref.onSnapshot.bind(ref)
   const spy = jest.fn()
   ref.onSnapshot = (fn: any) =>
@@ -49,7 +49,7 @@ export function spyOnSnapshotCallback (ref: FirestoreReference) {
 }
 
 // This makes sure some tests fail by delaying callbacks
-export function delayUpdate (ref: firestore.DocumentReference, time = 0) {
+export function delayUpdate(ref: firestore.DocumentReference, time = 0) {
   const onSnapshot = ref.onSnapshot.bind(ref)
   // @ts-ignore
   ref.onSnapshot = fn =>
@@ -60,13 +60,13 @@ export function delayUpdate (ref: firestore.DocumentReference, time = 0) {
     })
 }
 
-export function tick () {
-  return new Promise((resolve, reject) => {
+export function tick() {
+  return new Promise(resolve => {
     Vue.nextTick(resolve)
   })
 }
 
-export function delay (time: number) {
+export function delay(time: number) {
   return new Promise(resolve => setTimeout(resolve, time))
 }
 
@@ -74,5 +74,5 @@ type WalkSet = typeof walkSet
 export const createOps = (walkSet: WalkSet) => ({
   add: jest.fn((array, index, data) => array.splice(index, 0, data)),
   set: jest.fn(walkSet),
-  remove: jest.fn((array, index) => array.splice(index, 1))
+  remove: jest.fn((array, index) => array.splice(index, 1)),
 })

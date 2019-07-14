@@ -1,15 +1,15 @@
 export class GeoPoint {
   _lat: number
   _long: number
-  constructor (lat: number, long: number) {
+  constructor(lat: number, long: number) {
     this._lat = lat
     this._long = long
   }
 
-  get latitude () {
+  get latitude() {
     return this._lat
   }
-  get longitude () {
+  get longitude() {
     return this._long
   }
 }
@@ -17,16 +17,16 @@ export class GeoPoint {
 export class Timestamp {
   seconds: number
   nanoseconds: number
-  constructor (seconds: number, nanoseconds: number) {
+  constructor(seconds: number, nanoseconds: number) {
     this.seconds = seconds
     this.nanoseconds = nanoseconds
   }
 
-  toDate () {
+  toDate() {
     return new Date(this.toMillis())
   }
 
-  toMillis () {
+  toMillis() {
     return this.seconds * 1000 + this.nanoseconds / 1e6
   }
 }
@@ -34,31 +34,10 @@ export class Timestamp {
 type TODO = any
 type DataObject = Record<string, any>
 
-export class DocumentSnapshot {
-  _firestore: TODO
-  _key: Key
-  _document: DataObject
-  exists: boolean
-  constructor (firestore: TODO, key: string | Key, document: DataObject, exists?: boolean) {
-    this._firestore = firestore
-    this._key = new Key(key)
-    this._document = document
-    this.exists = !!exists
-  }
-
-  data () {
-    return this._document
-  }
-
-  get id () {
-    return this._key.path.lastSegment()
-  }
-}
-
 export let _id = 0
 export class Key {
   v: string
-  constructor (v?: Key | string) {
+  constructor(v?: Key | string) {
     if (v instanceof Key) {
       this.v = v.v
     } else {
@@ -66,10 +45,30 @@ export class Key {
     }
   }
 
-  get path () {
+  get path() {
     return {
-      lastSegment: () => this.v
+      lastSegment: () => this.v,
     }
+  }
+}
+export class DocumentSnapshot {
+  _firestore: TODO
+  _key: Key
+  _document: DataObject
+  exists: boolean
+  constructor(firestore: TODO, key: string | Key, document: DataObject, exists?: boolean) {
+    this._firestore = firestore
+    this._key = new Key(key)
+    this._document = document
+    this.exists = !!exists
+  }
+
+  data() {
+    return this._document
+  }
+
+  get id() {
+    return this._key.path.lastSegment()
   }
 }
 
@@ -86,7 +85,7 @@ class CallbacksAndErrors {
   cbs: Record<number, OnSuccessCallback> = {}
   onErrors: Record<number, OnErrorCallback> = {}
 
-  _addCallbacks (cb: OnSuccessCallback, onError: OnErrorCallback) {
+  _addCallbacks(cb: OnSuccessCallback, onError: OnErrorCallback) {
     const id = this._cbId++
     this.cbs[id] = cb
     this.onErrors[id] = onError
@@ -96,7 +95,7 @@ class CallbacksAndErrors {
     }
   }
 
-  _callCallbacks (data: DataObject) {
+  _callCallbacks(data: DataObject) {
     Object.values(this.cbs).forEach(cb => cb(data))
   }
 }
@@ -115,7 +114,7 @@ export class DocumentReference extends CallbacksAndErrors {
   index: number
   exists: boolean
 
-  constructor ({ collection, id, data, index }: DocumentReferenceConstructorOption) {
+  constructor({ collection, id, data, index }: DocumentReferenceConstructorOption) {
     super()
     this.collection = collection
     this.id = new Key(id)
@@ -124,7 +123,7 @@ export class DocumentReference extends CallbacksAndErrors {
     this.exists = false
   }
 
-  onSnapshot (cb: OnSuccessCallback, onError: OnErrorCallback) {
+  onSnapshot(cb: OnSuccessCallback, onError: OnErrorCallback) {
     if (typeof this.id === 'string') {
       debugger
     }
@@ -134,27 +133,27 @@ export class DocumentReference extends CallbacksAndErrors {
     return this._addCallbacks(cb, onError)
   }
 
-  get path () {
+  get path() {
     return `${this.collection.name}/${this.id.v}`
   }
 
-  async delete () {
+  async delete() {
     this.exists = false
     return this.collection._remove(this.id)
   }
 
-  isEqual (ref: DocumentReference) {
+  isEqual(ref: DocumentReference) {
     return this.id.v === ref.id.v
   }
 
-  async update (data: DataObject) {
+  async update(data: DataObject) {
     Object.assign(this.data, data)
     this.exists = true
     this._callCallbacks(new DocumentSnapshot(null, this.id, this.data, true))
     return this.collection._modify(this.id, this.data, this)
   }
 
-  async set (data: object) {
+  async set(data: object) {
     this.data = { ...data }
     this.exists = true
     this._callCallbacks(new DocumentSnapshot(null, this.id, this.data, true))
@@ -166,12 +165,12 @@ export class CollectionReference extends CallbacksAndErrors {
   name: string
   data: Record<string, DocumentReference> = {}
 
-  constructor (name: string) {
+  constructor(name: string) {
     super()
     this.name = name
   }
 
-  onSnapshot (cb: OnSuccessCallback, onError: OnErrorCallback) {
+  onSnapshot(cb: OnSuccessCallback, onError: OnErrorCallback) {
     setTimeout(() => {
       // Object.keys(this.data).map((k, i) => console.log(k, 'at', i, this.data[k].data))
       cb({
@@ -180,20 +179,20 @@ export class CollectionReference extends CallbacksAndErrors {
             type: 'added',
             doc: new DocumentSnapshot(null, new Key(id), this.data[id].data),
             newIndex,
-            oldIndex: -1
-          }))
+            oldIndex: -1,
+          })),
       })
     }, 0)
     return this._addCallbacks(cb, onError)
   }
 
-  async add (data: DataObject) {
+  async add(data: DataObject) {
     const id = new Key()
     this.data[id.v] = new DocumentReference({
       collection: this,
       id,
       data,
-      index: Object.keys(this.data).length
+      index: Object.keys(this.data).length,
     })
     this._callCallbacks({
       docChanges: () => [
@@ -201,17 +200,17 @@ export class CollectionReference extends CallbacksAndErrors {
           type: 'added',
           doc: new DocumentSnapshot(null, id, data),
           newIndex: Object.keys(this.data).length - 1,
-          oldIndex: -1
-        }
-      ]
+          oldIndex: -1,
+        },
+      ],
     })
     return this.data[id.v]
   }
 
   // used to check if it's a collection or document ref
-  where () {}
+  where() {}
 
-  doc (id?: string | Key) {
+  doc(id?: string | Key) {
     id = new Key(id)
     return (
       this.data[id.v] ||
@@ -219,12 +218,12 @@ export class CollectionReference extends CallbacksAndErrors {
         collection: this,
         id,
         data: {},
-        index: Object.keys(this.data).length
+        index: Object.keys(this.data).length,
       })
     )
   }
 
-  async _remove (id: Key) {
+  async _remove(id: Key) {
     const ref = this.data[id.v]
     // not super reliant to emit a valid oldIndex
     const oldIndex = Object.keys(this.data).indexOf(id.v)
@@ -234,16 +233,16 @@ export class CollectionReference extends CallbacksAndErrors {
         {
           doc: new DocumentSnapshot(null, id, ref.data),
           type: 'removed',
-          oldIndex
-        }
-      ]
+          oldIndex,
+        },
+      ],
     })
     // free references
     delete ref.collection
     delete ref.data
   }
 
-  async _modify (id: Key, data: DataObject, ref: DocumentReference) {
+  async _modify(id: Key, data: DataObject, ref: DocumentReference) {
     let type = 'modified'
     if (!this.data[id.v]) {
       ref.index = Object.keys(this.data).length
@@ -256,20 +255,22 @@ export class CollectionReference extends CallbacksAndErrors {
           type,
           doc: new DocumentSnapshot(null, id, data),
           oldIndex: this.data[id.v].index,
-          newIndex: this.data[id.v].index
-        }
-      ]
+          newIndex: this.data[id.v].index,
+        },
+      ],
     })
   }
 }
 
+const _db: Record<string, CollectionReference> = {}
+
 export const db = {
-  _db: {} as Record<string, CollectionReference>,
+  _db,
   n: 0,
 
-  collection (name?: string): CollectionReference {
+  collection(name?: string): CollectionReference {
     // create a collection if no name provided
     name = name || `random__${this.n++}`
     return (this._db[name] = this._db[name] || new CollectionReference(name))
-  }
+  },
 }

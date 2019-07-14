@@ -15,7 +15,7 @@ module.exports = {
     '@typescript-eslint/no-explicit-any': 0,
     '@typescript-eslint/explicit-function-return-type': 0,
     '@typescript-eslint/no-use-before-define': ['error', { functions: false }],
-    'space-after-function-name': ['error', 'always'],
+    '@typescript-eslint/explicit-member-accessibility': ['error', { accessibility: 'no-public' }],
   },
   env: {
     jest: true,
