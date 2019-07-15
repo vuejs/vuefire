@@ -31,35 +31,44 @@ Vue.use(firestorePlugin, options)
 
 - `bindName`: name for the [`$bind`](#bind) method added to all Vue components. Defaults to `$bind`.
 - `unbindName`: name for the [`$unbind`](#unbind) method added to all Vue components. Defaults to `$unbind`.
-- `createSnapshot`: a function to provide a custom binding strategy when a document is received from firebase
+- `serialize`: a function to provide a custom serialization strategy when a
+  document from firebase is set on the Vue instance. This allows to customize
+  the `id` key, to transform data, ignore or support extra properties [like
+  `distance` with Geofirestore](#TODO-cookbook)
 
-`createSnapshot` is a function that receives a [DocumentSnapshot](https://firebase.google.com/docs/reference/js/firebase.firestore.DocumentSnapshot) as argument and returns the object that is going to be bound to your component instance.
+#### Serialize
 
-NOTE: when using the `createSnapshot` option you won't have the document `id` automatically bound to your data property. It's supposed to be used only for advanced cases, like adding `distance` to snapshots when using [Geofirestore](https://github.com/geofirestore/geofirestore-js/).
+For _Firestore_, it receives a
+[DocumentSnapshot](https://firebase.google.com/docs/reference/js/firebase.firestore.DocumentSnapshot)
+as its first argument and is expected to return a plain object to be set on
+the Vue Instance. Here is the default function that is used when no override is provided:
 
-For instance:
-```js
-export default {
-  data () {
-    return {
-      todos: []
-    }
-  },
-  created () {
-    const options = {
-      createSnapshot: (documentSnapshot) => {
-        // the object below is going to be bound to todos.
-        // Since isTodo and customId aren't enumerable properties,
-        // they won't be passed when persisting data to firestore.
-        return Object.defineProperties(documentSnapshot.data(), {
-          isTodo: { value: true },
-          // mannually adding the id
-          customId: { value: documentSnapshot.id }
-        })
-      }
-    }
-    this.$bind('todos', db.collection('todos'), options)
-  }
+```ts
+const serialize = (snapshot: firestore.DocumentSnapshot) => {
+  // documentSnapshot.data() DOES NOT contain the `id` of the document. By
+  // default, Vuefire adds it as a non enumerable property named id.
+  // This allows to easily create copies when updating documents, as using
+  // the spread operator won't copy it
+  return Object.defineProperty(doc.data(), 'id', { value: doc.id })
+}
+
+Vue.use(firestorePlugin, { serialize })
+```
+
+For _RTDB_ it receives a
+[DataSnapshot](https://firebase.google.com/docs/reference/js/firebase.database.DataSnapshot)
+as its first argument and is expected to return a plain object to be set on the
+Vue instance. Here is the default function that is used when no override is provided:
+
+```ts
+const serialize = (snapshot: database.DataSnapshot) => {
+  const value = snapshot.val()
+  // if the value is a primitive, we create an object instead and assign the .value
+  const doc = isObject(value) ? value : Object.defineProperty({}, '.value', { value })
+  // you could change `.key` by `id` if you want to be able to write
+  Object.defineProperty(doc, '.key', { value: snapshot.key })
+
+  return doc
 }
 ```
 

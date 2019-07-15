@@ -6,9 +6,7 @@ export type FirestoreReference =
   | firestore.DocumentReference
   | firestore.CollectionReference
 
-export type FirestoreSnapshot = firestore.DocumentSnapshot | firestore.QueryDocumentSnapshot
-
-export function createSnapshot(doc: FirestoreSnapshot) {
+export function createSnapshot(doc: firestore.DocumentSnapshot) {
   // defaults everything to false, so no need to set
   return Object.defineProperty(doc.data(), 'id', { value: doc.id })
 }
