@@ -5,13 +5,18 @@
   "author": "Eduardo San Martin Morote <posva13@gmail.com>",
   "homepage": "https://github.com/vuejs/vuefire#readme",
   "license": "MIT",
-  "main": "src/index.ts",
+  "sideEffects": false,
+  "main": "dist/vuefire-core.cjs.js",
+  "types": "dist/packages/@posva/vuefire-core/src",
+  "browser": "dist/vuefire-core.esm.js",
+  "module": "dist/vuefire-core.esm.js",
   "directories": {
     "lib": "src",
     "test": "test"
   },
   "files": [
     "src",
+    "dist",
     "LICENSE"
   ],
   "publishConfig": {
@@ -24,6 +29,8 @@
   "scripts": {
     "pretest": "yarn run lint",
     "test": "yarn run test:unit",
+    "build": "rollup -c ../../../rollup.config.js",
+    "postversion": "yarn run build",
     "test:unit": "jest",
     "lint": "eslint --fix src __tests__ --ext ts",
     "dev": "yarn run test:unit --watchAll"

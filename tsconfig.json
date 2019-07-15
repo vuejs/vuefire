@@ -9,13 +9,7 @@
     "moduleResolution": "node",
 
     "rootDir": ".",
-    "baseUrl": ".",
-    "paths": {
-      // "vue": ["./node_modules/vue"],
-      // "@posva/vuefire-core": ["./packages/@posva/vuefire-core/src"],
-      // "@posva/vuefire-test-helpers": ["./packages/@posva/vuefire-test-helpers/src"]
-      // "vuef": ["./packages/@posva/vuefire-test-helpers"],
-    }
+    "baseUrl": "."
   },
   "include": [
     "packages/global.d.ts",

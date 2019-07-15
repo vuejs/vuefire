@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.json",
+  "include": ["src"],
+  "compilerOptions": {
+    "target": "es5",
+    "module": "esnext",
+    "noEmit": false,
+    "strict": true,
+    "composite": true,
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "outDir": "dist"
+  }
+}

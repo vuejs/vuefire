@@ -305,15 +305,10 @@ interface BindDocumentParamater extends CommonBindOptionsParameter {
   document: firestore.DocumentReference
 }
 
-/* TODO do not use an object
- *
- * @param {*} vm
- * @param {string} key
- * @param {firebase.firestore.DocumentReference} document
- * @param {*} resolve
- * @param {*} reject
- * @param {OperationsType<any>} ops
- * @param {*} options
+/**
+ * Binds a Document to a property of vm
+ * @param param0
+ * @param extraOptions
  */
 export function bindDocument(
   { vm, key, document, resolve, reject, ops }: BindDocumentParamater,

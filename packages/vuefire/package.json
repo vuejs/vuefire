@@ -6,7 +6,7 @@
   "module": "dist/vuefire.esm.js",
   "unpkg": "dist/vuefire.js",
   "browser": "dist/vuefire.esm.js",
-  "types": "types/index.d.ts",
+  "types": "dist/packages/vuefire/src",
   "sideEffects": false,
   "files": [
     "dist",
@@ -21,7 +21,7 @@
     "test:unit": "jest",
     "types": "tsc -p ./types/test/tsconfig.json",
     "dev": "yarn run test:unit --watchAll",
-    "build": "node --eval 'require(\"@posva/vuefire-bundler\")(\"Vuefire\")'",
+    "build": "rollup -c ../../rollup.config.js",
     "postversion": "yarn run build"
   },
   "repository": {
