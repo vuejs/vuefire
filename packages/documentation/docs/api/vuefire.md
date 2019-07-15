@@ -36,9 +36,9 @@ Vue.use(firestorePlugin, options)
   the `id` key, to transform data, ignore or support extra properties [like
   `distance` with Geofirestore](#TODO-cookbook)
 
-#### Serialize
+#### `options.serialize`
 
-For _Firestore_, it receives a
+The function receives a
 [DocumentSnapshot](https://firebase.google.com/docs/reference/js/firebase.firestore.DocumentSnapshot)
 as its first argument and is expected to return a plain object to be set on
 the Vue Instance. Here is the default function that is used when no override is provided:
@@ -53,23 +53,6 @@ const serialize = (snapshot: firestore.DocumentSnapshot) => {
 }
 
 Vue.use(firestorePlugin, { serialize })
-```
-
-For _RTDB_ it receives a
-[DataSnapshot](https://firebase.google.com/docs/reference/js/firebase.database.DataSnapshot)
-as its first argument and is expected to return a plain object to be set on the
-Vue instance. Here is the default function that is used when no override is provided:
-
-```ts
-const serialize = (snapshot: database.DataSnapshot) => {
-  const value = snapshot.val()
-  // if the value is a primitive, we create an object instead and assign the .value
-  const doc = isObject(value) ? value : Object.defineProperty({}, '.value', { value })
-  // you could change `.key` by `id` if you want to be able to write
-  Object.defineProperty(doc, '.key', { value: snapshot.key })
-
-  return doc
-}
 ```
 
 ## `firestore` option
@@ -160,7 +143,7 @@ Object that can contain the following properties:
 
 - `maxRefDepth`: How many levels of nested references should be automatically bound. Defaults to 2, meaning that References inside of References inside of documents bound with `$bind` will automatically be bound too.
 - `reset`: Allows to define the behavior when a reference is unbound. Defaults to `true`, which resets the property in the vue instance to `null` for documents and to an empty array `[]` for collections. It can also be set to a function returning a value to customize the value set. Setting it to `false` will keep the data as-is when unbounding.
-- `createSnapshot`: A function that defines a custom snapshot binding strategy. It works just like the global createSnapshot in [firestorePlugin](#firestoreplugin) but only for the reference being bound.
+- `serialize`: same as [plugin options](#options-serialize)
 
 ## \$unbind
 
@@ -205,6 +188,30 @@ Vue.use(rtdbPlugin, options)
 
 - `bindName`: name for the [`$rtdbBind`](#rtdbBind) method added to all Vue components. Defaults to `$rtdbBind`.
 - `unbindName`: name for the [`$rtdbUnbind`](#rtdbUnbind) method added to all Vue components. Defaults to `$rtdbUnbind`.
+- `serialize`: a function to provide a custom serialization strategy when a
+  document from firebase is set on the Vue instance. This allows to customize
+  the `id` key, to transform data, etc.
+
+#### `options.serialize`
+
+The function receives a
+[DataSnapshot](https://firebase.google.com/docs/reference/js/firebase.database.DataSnapshot)
+as its first argument and is expected to return a plain object to be set on the
+Vue instance. Here is the default function that is used when no override is provided:
+
+```ts
+const serialize = (snapshot: database.DataSnapshot) => {
+  const value = snapshot.val()
+  // if the value is a primitive, we create an object instead and assign the .value
+  const doc = isObject(value) ? value : Object.defineProperty({}, '.value', { value })
+  // you could change `.key` by `id` if you want to be able to write
+  Object.defineProperty(doc, '.key', { value: snapshot.key })
+
+  return doc
+}
+
+Vue.use(rtdbPlugin, { serialize })
+```
 
 ## `firebase` option
 
@@ -295,7 +302,12 @@ export default {
 
 Object that can contain the following properties:
 
-- `reset`: Allows to define the behavior when a reference is unbound. Defaults to `true`, which resets the property in the vue instance to `null` for properties bound as objects and to an empty array `[]` for properties bound as arrays. It can also be set to a function returning a value to customize the value set. Setting it to `false` will keep the data as-is when unbounding.
+- `reset`: Allows to define the behavior when a reference is unbound. Defaults
+  to `true`, which resets the property in the vue instance to `null` for
+  properties bound as objects and to an empty array `[]` for properties bound as
+  arrays. It can also be set to a function returning a value to customize the
+  value set. Setting it to `false` will keep the data as-is when unbounding.
+- `serialize`: Same as [plugin options](#options-serialize-2)
 
 ## \$rtdbUnbind
 
