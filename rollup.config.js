@@ -51,7 +51,6 @@ function createEntry(
       }),
       alias({
         resolve: ['ts'],
-        consola: path.resolve(__dirname, './src/consola.ts'),
         firebase: path.resolve(__dirname, './stub.ts'),
       }),
     ],
