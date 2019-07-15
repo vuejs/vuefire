@@ -1,11 +1,18 @@
 import { VUEXFIRE_SET_VALUE, VUEXFIRE_ARRAY_ADD, VUEXFIRE_ARRAY_REMOVE } from './mutations-types'
-import { rtdbBindAsArray, rtdbBindAsObject, OperationsType, RTDBOptions } from '@posva/vuefire-core'
+import {
+  rtdbBindAsArray,
+  rtdbBindAsObject,
+  OperationsType,
+  RTDBOptions,
+  rtdbOptions,
+} from '@posva/vuefire-core'
 import { database } from 'firebase'
 import { CommitFunction } from './shared'
 
 import { Action, ActionContext } from 'vuex'
 
 const commitOptions = { root: true }
+export { rtdbOptions }
 
 // Firebase binding
 const subscriptions = new WeakMap()

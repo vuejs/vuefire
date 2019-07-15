@@ -1,10 +1,18 @@
 import { VUEXFIRE_SET_VALUE, VUEXFIRE_ARRAY_ADD, VUEXFIRE_ARRAY_REMOVE } from './mutations-types'
-import { bindCollection, bindDocument, OperationsType, FirestoreOptions } from '@posva/vuefire-core'
+import {
+  bindCollection,
+  bindDocument,
+  OperationsType,
+  FirestoreOptions,
+  firestoreOptions,
+} from '@posva/vuefire-core'
 import { CommitFunction } from './shared'
 import { firestore } from 'firebase'
 import { ActionContext, Action } from 'vuex'
 
 const commitOptions = { root: true }
+
+export { firestoreOptions }
 
 // Firebase binding
 const subscriptions = new WeakMap()
