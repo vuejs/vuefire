@@ -268,9 +268,9 @@ export const db = {
   _db,
   n: 0,
 
-  collection(name?: string): CollectionReference {
+  collection(name?: string | number): CollectionReference {
     // create a collection if no name provided
     name = name || `random__${this.n++}`
-    return (this._db[name] = this._db[name] || new CollectionReference(name))
+    return (this._db[name] = this._db[name] || new CollectionReference('' + name))
   },
 }

@@ -10,6 +10,7 @@ declare module 'firebase-mock' {
   export interface MockedReference extends database.Reference {
     flush: () => void
     forceCancel: (error: any) => void
+    autoFlush: () => void
   }
 
   interface MockFirebaseI {

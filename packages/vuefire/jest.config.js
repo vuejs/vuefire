@@ -4,5 +4,12 @@ module.exports = {
   collectCoverageFrom: ['<rootDir>/src/**/*.ts'],
   testMatch: ['<rootDir>/__tests__/**/*.spec.ts'],
   testEnvironment: 'node',
+  globals: {
+    'ts-jest': {
+      diagnostics: {
+        warnOnly: true,
+      },
+    },
+  },
   testURL: 'http://localhost/',
 }

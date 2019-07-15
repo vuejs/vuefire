@@ -1,7 +1,7 @@
 import { createRecordFromRTDBSnapshot, indexForKey, RTDBSerializer, rtdb } from './utils'
 import { OperationsType } from '../shared'
 
-interface RTDBOptions {
+export interface RTDBOptions {
   reset?: boolean | (() => any)
   serialize?: RTDBSerializer
 }
@@ -22,7 +22,7 @@ interface CommonBindOptionsParameter {
 }
 
 interface BindAsObjectParameter extends CommonBindOptionsParameter {
-  document: rtdb.Reference
+  document: rtdb.Reference | rtdb.Query
 }
 
 /**

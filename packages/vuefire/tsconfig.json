@@ -1,14 +1,7 @@
 {
   "extends": "../../tsconfig.json",
-  "include": ["src"],
+  "include": ["src", "__tests__", "../global.d.ts"],
   "compilerOptions": {
-    "target": "es5",
-    "module": "esnext",
-    "noEmit": false,
-    "strict": true,
-    "composite": true,
-    "esModuleInterop": true,
-    "moduleResolution": "node",
-    "outDir": "dist"
+    "target": "esnext"
   }
 }

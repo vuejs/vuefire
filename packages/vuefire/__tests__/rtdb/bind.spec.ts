@@ -4,10 +4,9 @@ import { Vue, tick, MockFirebase } from '@posva/vuefire-test-helpers'
 Vue.use(rtdbPlugin)
 
 describe('RTDB: manual bind', () => {
-  let source, vm
-  beforeEach(async () => {
-    source = new MockFirebase().child('data')
-    vm = new Vue({
+  async function createVm() {
+    const source = new MockFirebase().child('data')
+    const vm = new Vue({
       // purposely set items as null
       // but it's a good practice to set it to an empty array
       data: () => ({
@@ -16,9 +15,12 @@ describe('RTDB: manual bind', () => {
       }),
     })
     await tick()
-  })
+
+    return { vm, source }
+  }
 
   it('manually binds as an array', async () => {
+    const { vm, source } = await createVm()
     expect(vm.items).toEqual([])
     const promise = vm.$rtdbBind('items', source)
     expect(vm.items).toEqual([])
@@ -29,6 +31,7 @@ describe('RTDB: manual bind', () => {
   })
 
   it('removes children in arrays', async () => {
+    const { vm, source } = await createVm()
     source.autoFlush()
     source.push({ name: 'one' })
     source.push({ name: 'two' })
@@ -38,12 +41,14 @@ describe('RTDB: manual bind', () => {
     expect(vm.items).toEqual([{ name: 'one' }])
   })
 
-  it('returs a promise', () => {
+  it('returs a promise', async () => {
+    const { vm, source } = await createVm()
     expect(vm.$rtdbBind('items', source) instanceof Promise).toBe(true)
     expect(vm.$rtdbBind('item', source) instanceof Promise).toBe(true)
   })
 
   it('manually binds as an object', async () => {
+    const { vm, source } = await createVm()
     expect(vm.item).toEqual(null)
     const promise = vm.$rtdbBind('item', source)
     expect(vm.item).toEqual(null)
@@ -54,6 +59,7 @@ describe('RTDB: manual bind', () => {
   })
 
   it('unbinds when overriting existing bindings', async () => {
+    const { vm, source } = await createVm()
     source.autoFlush()
     source.set({ name: 'foo' })
     await vm.$rtdbBind('item', source)
@@ -69,6 +75,7 @@ describe('RTDB: manual bind', () => {
   })
 
   it('manually unbinds a ref', async () => {
+    const { vm, source } = await createVm()
     source.autoFlush()
     source.set({ name: 'foo' })
     await vm.$rtdbBind('item', source)

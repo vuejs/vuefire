@@ -1,5 +1,3 @@
-import { walkSet } from './shared'
+export { walkSet, OperationsType } from './shared'
 export * from './rtdb/index'
 export * from './firestore/index'
-
-export { walkSet }

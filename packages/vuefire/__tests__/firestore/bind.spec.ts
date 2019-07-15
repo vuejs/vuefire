@@ -1,13 +1,20 @@
-import { firestorePlugin } from '../src'
+import { firestorePlugin } from '../../src'
 import { db, tick, delayUpdate, Vue } from '@posva/vuefire-test-helpers'
+import { firestore } from 'firebase'
+import { CombinedVueInstance } from 'vue/types/vue'
 
 Vue.use(firestorePlugin)
 
 describe('Firestore: binding', () => {
-  let collection, document, vm
+  let collection: firestore.CollectionReference,
+    document: firestore.DocumentReference,
+    vm: CombinedVueInstance<Vue, { items: any[]; item: any }, object, object, Record<never, any>>
   beforeEach(async () => {
+    // @ts-ignore
     collection = db.collection()
+    // @ts-ignore
     document = db.collection().doc()
+    // @ts-ignore
     vm = new Vue({
       // purposely set items as null
       // but it's a good practice to set it to an empty array
@@ -51,7 +58,8 @@ describe('Firestore: binding', () => {
 
   it('unbinds previously bound refs', async () => {
     await document.update({ foo: 'foo' })
-    const doc2 = db.collection().doc()
+    // @ts-ignore
+    const doc2: firestore.DocumentReference = db.collection().doc()
     await doc2.update({ bar: 'bar' })
     await vm.$bind('item', document)
     expect(vm.$firestoreRefs.item).toBe(document)
@@ -65,7 +73,8 @@ describe('Firestore: binding', () => {
 
   it('waits for all refs in document', async () => {
     const a = db.collection().doc()
-    const b = db.collection().doc()
+    // @ts-ignore
+    const b: firestore.DocumentReference = db.collection().doc()
     delayUpdate(b)
     await document.update({ a, b })
 
@@ -79,7 +88,8 @@ describe('Firestore: binding', () => {
 
   test('waits for all refs in document with interrupting by new ref', async () => {
     const a = db.collection().doc()
-    const b = db.collection().doc()
+    // @ts-ignore
+    const b: firestore.DocumentReference = db.collection().doc()
     const c = db.collection().doc()
     delayUpdate(b)
     await document.update({ a, b })
@@ -99,7 +109,8 @@ describe('Firestore: binding', () => {
 
   it('waits for all refs in collection', async () => {
     const a = db.collection().doc()
-    const b = db.collection().doc()
+    // @ts-ignore
+    const b: firestore.DocumentReference = db.collection().doc()
     delayUpdate(b)
     await collection.add({ a })
     await collection.add({ b })
@@ -111,8 +122,10 @@ describe('Firestore: binding', () => {
 
   it('waits for nested refs in document', async () => {
     const a = db.collection().doc()
-    const b = db.collection().doc()
-    const c = db.collection().doc()
+    // @ts-ignore
+    const b: firestore.DocumentReference = db.collection().doc()
+    // @ts-ignore
+    const c: firestore.DocumentReference = db.collection().doc()
     await b.update({ c })
     delayUpdate(b)
     delayUpdate(c, 5)
@@ -128,8 +141,10 @@ describe('Firestore: binding', () => {
 
   it('waits for nested refs with data in document', async () => {
     const a = db.collection().doc()
-    const b = db.collection().doc()
-    const c = db.collection().doc()
+    // @ts-ignore
+    const b: firestore.DocumentReference = db.collection().doc()
+    // @ts-ignore
+    const c: firestore.DocumentReference = db.collection().doc()
     await a.update({ isA: true })
     await c.update({ isC: true })
     await b.update({ c })
@@ -147,8 +162,10 @@ describe('Firestore: binding', () => {
 
   it('waits for nested refs in collections', async () => {
     const a = db.collection().doc()
-    const b = db.collection().doc()
-    const c = db.collection().doc()
+    // @ts-ignore
+    const b: firestore.DocumentReference = db.collection().doc()
+    // @ts-ignore
+    const c: firestore.DocumentReference = db.collection().doc()
     await b.update({ c })
     delayUpdate(b)
     delayUpdate(c, 5)
@@ -162,8 +179,10 @@ describe('Firestore: binding', () => {
 
   it('waits for nested refs with data in collections', async () => {
     const a = db.collection().doc()
-    const b = db.collection().doc()
-    const c = db.collection().doc()
+    // @ts-ignore
+    const b: firestore.DocumentReference = db.collection().doc()
+    // @ts-ignore
+    const c: firestore.DocumentReference = db.collection().doc()
     await a.update({ isA: true })
     await c.update({ isC: true })
     await b.update({ c })

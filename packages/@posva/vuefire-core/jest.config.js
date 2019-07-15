@@ -5,4 +5,11 @@ module.exports = {
   testMatch: ['<rootDir>/__tests__/**/*.spec.ts'],
   testEnvironment: 'node',
   testURL: 'http://localhost/',
+  globals: {
+    'ts-jest': {
+      diagnostics: {
+        warnOnly: true,
+      },
+    },
+  },
 }

@@ -89,6 +89,7 @@ function createEntry(
       // only check once, during the es version with browser (it includes external libs)
       check: format === 'es' && isBrowser && !minify,
       tsconfigOverride: {
+        exclude: ['__tests__'],
         compilerOptions: {
           // same for d.ts files
           declaration: format === 'es' && isBrowser && !minify,

@@ -1,5 +1,6 @@
-import { firestorePlugin } from '../src'
+import { firestorePlugin } from '../../src'
 import { db, Vue } from '@posva/vuefire-test-helpers'
+import { firestore } from 'firebase'
 
 const createLocalVue = () => {
   const newVue = Vue.extend()
@@ -25,7 +26,8 @@ describe('Firestore: plugin options', () => {
     }
     LocalVue.use(firestorePlugin, pluginOptions)
 
-    const items = db.collection()
+    // @ts-ignore
+    const items: firestore.CollectionReference = db.collection()
     await items.add({})
 
     const vm = new LocalVue({
@@ -48,7 +50,8 @@ describe('Firestore: plugin options', () => {
     }
     LocalVue.use(firestorePlugin, pluginOptions)
 
-    const items = db.collection()
+    // @ts-ignore
+    const items: firestore.CollectionReference = db.collection()
     await items.add({})
 
     const vm = new LocalVue({
