@@ -38,7 +38,7 @@ interface UpdateDataFromDocumentSnapshot {
 }
 
 function updateDataFromDocumentSnapshot(
-  { snapshot, target, path, subs, ops, depth = 0, resolve }: UpdateDataFromDocumentSnapshot,
+  { snapshot, target, path, subs, ops, depth, resolve }: UpdateDataFromDocumentSnapshot,
   options: Required<FirestoreOptions>
 ) {
   const [data, refs] = extractRefs(snapshot, walkGet(target, path))
@@ -257,10 +257,11 @@ export function bindCollection(
     // (https://firebase.google.com/docs/firestore/query-data/listen#view_changes_between_snapshots)
 
     const docChanges =
-      // FIXME: maybe it's no longer necessary? check firebase version
+      /* istanbul ignore next */
       typeof ref.docChanges === 'function'
         ? ref.docChanges()
-        : ((ref.docChanges as unknown) as firestore.DocumentChange[])
+        : /* istanbul ignore next to support firebase < 5*/
+          ((ref.docChanges as unknown) as firestore.DocumentChange[])
 
     if (!isResolved && docChanges.length) {
       // isResolved is only meant to make sure we do the check only once
