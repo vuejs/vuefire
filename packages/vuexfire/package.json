@@ -6,22 +6,20 @@
   "module": "dist/vuexfire.esm.js",
   "unpkg": "dist/vuexfire.js",
   "browser": "dist/vuexfire.esm.js",
-  "types": "types/index.d.ts",
+  "types": "dist/packages/vuexfire/src",
   "sideEffects": false,
   "files": [
     "src",
     "dist",
-    "types/*.d.ts",
     "LICENSE"
   ],
   "scripts": {
-    "lint": "eslint --color --ext=js,html src test examples",
+    "lint": "eslint --color --ext=js,ts src __tests__",
     "pretest": "yarn run lint",
-    "test": "yarn run build && yarn run types && yarn run test:unit",
+    "test": "yarn run build && yarn run test:unit",
     "test:unit": "jest",
     "dev": "yarn run test:unit --watchAll",
-    "types": "tsc -p ./types/test/tsconfig.json",
-    "build": "node --eval 'require(\"@posva/vuefire-bundler\")(\"Vuexfire\")'",
+    "build": "rollup -c ../../rollup.config.js",
     "postversion": "yarn run build"
   },
   "repository": {
@@ -53,16 +51,11 @@
   },
   "homepage": "https://github.com/vuejs/vuefire#readme",
   "devDependencies": {
-    "@babel/core": "^7.4.5",
-    "@babel/preset-env": "^7.4.5",
-    "@posva/vuefire-bundler": "^1.1.4",
     "@posva/vuefire-test-helpers": "^1.1.0",
     "@types/jest": "^24.0.15",
-    "codecov": "^3.5.0",
-    "eslint": "^6.0.1",
-    "eslint-plugin-vue-libs": "^4.0.0",
     "firebase": "^6.3.0",
     "jest": "^24.8.0",
+    "ts-jest": "^24.0.2",
     "typescript": "^3.5.2",
     "vuex": "^3.1.1"
   },

@@ -1,45 +1,51 @@
 import Vuex from 'vuex'
 import { vuexfireMutations, firestoreAction } from '../src'
 import { db, tick, Vue, delayUpdate } from '@posva/vuefire-test-helpers'
+import { firestore } from 'firebase'
 
 Vue.use(Vuex)
 
 describe('firestoreAction', () => {
-  const store = new Vuex.Store({
+  const item: any = null,
+    items: any[] = []
+  const store = new Vuex.Store<{ item: any; items: any[] }>({
+    state: { item, items },
     mutations: vuexfireMutations,
     actions: {
-      action: firestoreAction((context, fn) => fn(context))
+      action: firestoreAction((context, fn) => fn(context)),
     },
 
     modules: {
       module: {
         namespaced: true,
         actions: {
-          action: firestoreAction((context, fn) => fn(context))
-        }
-      }
-    }
+          action: firestoreAction((context, fn) => fn(context)),
+        },
+      },
+    },
   })
 
-  const setItems = collection =>
-    store.dispatch('action', ({ bindFirestoreRef }) =>
-      bindFirestoreRef('items', collection)
-    )
-  const setItem = document =>
-    store.dispatch('action', ({ bindFirestoreRef }) =>
-      bindFirestoreRef('item', document)
-    )
+  const setItems = (collection: firestore.CollectionReference | firestore.Query) =>
+    // @ts-ignore
+    store.dispatch('action', ({ bindFirestoreRef }) => bindFirestoreRef('items', collection))
+  const setItem = (document: firestore.DocumentReference) =>
+    // @ts-ignore
+    store.dispatch('action', ({ bindFirestoreRef }) => bindFirestoreRef('item', document))
 
-  let collection, document
+  let collection: firestore.CollectionReference, document: firestore.DocumentReference
   beforeEach(async () => {
     store.replaceState({
+      // @ts-ignore
       items: null,
       item: null,
       module: {
-        items: null
-      }
+        items: [],
+      },
     })
+
+    // @ts-ignore
     collection = db.collection()
+    // @ts-ignore
     document = db.collection().doc()
     await tick()
   })
@@ -71,7 +77,8 @@ describe('firestoreAction', () => {
   it('unbinds previously bound refs', async () => {
     await setItem(document)
     expect(store.state.item).toEqual(null)
-    const doc2 = db.collection().doc()
+    // @ts-ignore
+    const doc2: firestore.DocumentReference = db.collection().doc()
     await doc2.update({ bar: 'bar' })
     await document.update({ foo: 'foo' })
     expect(store.state.item).toEqual({ foo: 'foo' })
@@ -83,7 +90,8 @@ describe('firestoreAction', () => {
 
   it('waits for all refs in document', async () => {
     const a = db.collection().doc()
-    const b = db.collection().doc()
+    // @ts-ignore
+    const b: firestore.DocumentReference = db.collection().doc()
     delayUpdate(b)
     await document.update({ a, b })
 
@@ -91,13 +99,14 @@ describe('firestoreAction', () => {
 
     expect(store.state.item).toEqual({
       a: null,
-      b: null
+      b: null,
     })
   })
 
   it('waits for all refs in document with interrupting by new ref', async () => {
     const a = db.collection().doc()
-    const b = db.collection().doc()
+    // @ts-ignore
+    const b: firestore.DocumentReference = db.collection().doc()
     const c = db.collection().doc()
     delayUpdate(b)
     await document.update({ a, b })
@@ -111,14 +120,16 @@ describe('firestoreAction', () => {
     expect(store.state.item).toEqual({
       a: null,
       b: null,
-      c: null
+      c: null,
     })
   })
 
   it('waits for nested refs with data in collections', async () => {
     const a = db.collection().doc()
-    const b = db.collection().doc()
-    const c = db.collection().doc()
+    // @ts-ignore
+    const b: firestore.DocumentReference = db.collection().doc()
+    // @ts-ignore
+    const c: firestore.DocumentReference = db.collection().doc()
     await a.update({ isA: true })
     await c.update({ isC: true })
     await b.update({ c })
@@ -129,17 +140,16 @@ describe('firestoreAction', () => {
 
     await setItems(collection)
 
-    expect(store.state.items).toEqual([
-      { a: { isA: true }},
-      { b: { c: { isC: true }}}
-    ])
+    expect(store.state.items).toEqual([{ a: { isA: true } }, { b: { c: { isC: true } } }])
   })
 
   it('can unbind a reference', async () => {
     await setItems(collection)
     await collection.add({ text: 'foo' })
-    await store.dispatch('action', ({ unbindFirestoreRef }) =>
-      unbindFirestoreRef('items')
+    await store.dispatch(
+      'action',
+      // @ts-ignore
+      ({ unbindFirestoreRef }) => unbindFirestoreRef('items')
     )
 
     expect(store.state.items).toEqual([])
@@ -151,18 +161,24 @@ describe('firestoreAction', () => {
 
   it('does not throw there is nothing to unbind', async () => {
     await setItems(collection)
-    await store.dispatch('action', ({ unbindFirestoreRef }) =>
-      expect(() => {
-        unbindFirestoreRef('items')
-        unbindFirestoreRef('items')
-      }).not.toThrow()
+    await store.dispatch(
+      'action',
+      // @ts-ignore
+      ({ unbindFirestoreRef }) =>
+        expect(() => {
+          unbindFirestoreRef('items')
+          unbindFirestoreRef('items')
+        }).not.toThrow()
     )
 
-    await store.dispatch('module/action', ({ unbindFirestoreRef }) =>
-      expect(() => {
-        unbindFirestoreRef('items')
-        unbindFirestoreRef('items')
-      }).not.toThrow()
+    await store.dispatch(
+      'module/action',
+      // @ts-ignore
+      ({ unbindFirestoreRef }) =>
+        expect(() => {
+          unbindFirestoreRef('items')
+          unbindFirestoreRef('items')
+        }).not.toThrow()
     )
   })
 })

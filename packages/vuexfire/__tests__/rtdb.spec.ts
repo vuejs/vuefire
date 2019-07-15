@@ -1,46 +1,50 @@
 import Vuex from 'vuex'
-import { firebaseAction, vuexfireMutations } from '../../src'
+import { firebaseAction, vuexfireMutations } from '../src'
 import { MockFirebase, tick, Vue } from '@posva/vuefire-test-helpers'
+import { database } from 'firebase'
 
 Vue.use(Vuex)
 
 const db = new MockFirebase().child('data')
 
 describe('RTDB: firebaseAction', () => {
-  const store = new Vuex.Store({
+  const item: any = null,
+    items: any[] = []
+  const store = new Vuex.Store<{ item: any; items: any[] }>({
+    state: { items, item },
     mutations: vuexfireMutations,
     actions: {
-      action: firebaseAction((context, fn) => fn(context))
+      action: firebaseAction((context, fn) => fn(context)),
     },
 
     modules: {
       module: {
         namespaced: true,
         actions: {
-          action: firebaseAction((context, fn) => fn(context))
-        }
-      }
-    }
+          action: firebaseAction((context, fn) => fn(context)),
+        },
+      },
+    },
   })
 
-  const setItems = collection =>
-    store.dispatch('action', ({ bindFirebaseRef }) =>
-      bindFirebaseRef('items', collection)
-    )
-  const setItem = document =>
-    store.dispatch('action', ({ bindFirebaseRef }) =>
-      bindFirebaseRef('item', document)
-    )
+  const setItems = (collection: database.Query) =>
+    // @ts-ignore
+    store.dispatch('action', ({ bindFirebaseRef }) => bindFirebaseRef('items', collection))
+  const setItem = (document: database.Reference) =>
+    // @ts-ignore
+    store.dispatch('action', ({ bindFirebaseRef }) => bindFirebaseRef('item', document))
 
-  let collection, document
+  let collection: database.Reference, document: database.Reference
   beforeEach(async () => {
     store.replaceState({
       items: [],
-      item: null
+      item: null,
     })
     collection = db.child('data')
     document = db.child('item')
+    // @ts-ignore
     collection.autoFlush()
+    // @ts-ignore
     document.autoFlush()
     await tick()
   })
@@ -71,6 +75,7 @@ describe('RTDB: firebaseAction', () => {
   it('unbinds previously bound refs', async () => {
     await setItem(document)
     const doc2 = db.child('doc2')
+    // @ts-ignore
     doc2.autoFlush()
     doc2.set({ bar: 'bar' })
     setItem(doc2)
@@ -82,8 +87,10 @@ describe('RTDB: firebaseAction', () => {
   it('can unbind a reference', async () => {
     await setItems(collection)
     collection.push({ text: 'foo' })
-    await store.dispatch('action', ({ unbindFirebaseRef }) =>
-      unbindFirebaseRef('items')
+    await store.dispatch(
+      'action',
+      // @ts-ignore
+      ({ unbindFirebaseRef }) => unbindFirebaseRef('items')
     )
 
     expect(store.state.items).toEqual([])
@@ -95,18 +102,24 @@ describe('RTDB: firebaseAction', () => {
 
   it('does not throw there is nothing to unbind', async () => {
     await setItems(collection)
-    await store.dispatch('action', ({ unbindFirebaseRef }) =>
-      expect(() => {
-        unbindFirebaseRef('items')
-        unbindFirebaseRef('items')
-      }).not.toThrow()
+    await store.dispatch(
+      'action',
+      // @ts-ignore
+      ({ unbindFirebaseRef }) =>
+        expect(() => {
+          unbindFirebaseRef('items')
+          unbindFirebaseRef('items')
+        }).not.toThrow()
     )
 
-    await store.dispatch('module/action', ({ unbindFirebaseRef }) =>
-      expect(() => {
-        unbindFirebaseRef('items')
-        unbindFirebaseRef('items')
-      }).not.toThrow()
+    await store.dispatch(
+      'module/action',
+      // @ts-ignore
+      ({ unbindFirebaseRef }) =>
+        expect(() => {
+          unbindFirebaseRef('items')
+          unbindFirebaseRef('items')
+        }).not.toThrow()
     )
   })
 })
