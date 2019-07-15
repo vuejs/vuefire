@@ -13,7 +13,7 @@
     "src"
   ],
   "scripts": {
-    "lint": "eslint --fix src"
+    "lint": "eslint src"
   },
   "publishConfig": {
     "access": "public"

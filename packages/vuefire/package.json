@@ -17,7 +17,7 @@
   "scripts": {
     "lint": "eslint --color --ext=js,ts src __tests__",
     "pretest": "yarn run lint",
-    "test": "yarn run build && yarn run types && yarn run test:unit",
+    "test": "yarn run build && yarn run test:unit",
     "test:unit": "jest",
     "dev": "yarn run test:unit --watchAll",
     "build": "rollup -c ../../rollup.config.js",
@@ -50,9 +50,6 @@
     "firebase": ">=4.0.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.4.5",
-    "@babel/preset-env": "^7.4.5",
-    "@posva/vuefire-bundler": "^1.1.4",
     "@posva/vuefire-test-helpers": "^1.1.0",
     "@types/jest": "^24.0.15",
     "firebase": "^6.3.0",

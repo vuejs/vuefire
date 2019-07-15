@@ -7,7 +7,7 @@
   "license": "MIT",
   "main": "src/index.ts",
   "scripts": {
-    "lint": "eslint --fix src --ext ts"
+    "lint": "eslint src --ext ts"
   },
   "directories": {
     "lib": "src"

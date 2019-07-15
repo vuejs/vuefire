@@ -32,7 +32,7 @@
     "build": "rollup -c ../../../rollup.config.js",
     "postversion": "yarn run build",
     "test:unit": "jest",
-    "lint": "eslint --fix src __tests__ --ext ts",
+    "lint": "eslint src __tests__ --ext ts",
     "dev": "yarn run test:unit --watchAll"
   },
   "bugs": {
