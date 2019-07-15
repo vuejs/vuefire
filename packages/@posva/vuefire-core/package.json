@@ -30,6 +30,7 @@
     "pretest": "yarn run lint",
     "test": "yarn run test:unit",
     "build": "rollup -c ../../../rollup.config.js",
+    "prepublish": "yarn run build",
     "postversion": "yarn run build",
     "test:unit": "jest",
     "lint": "eslint src __tests__ --ext ts",
