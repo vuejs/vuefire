@@ -6,7 +6,7 @@ Once a Reference is bound, Vuexfire will keep the local version in sync with the
 
 ## Binding in actions
 
-**The right place to bind references is in actions**. This will also simplify your testing strategy if you choose to mock the store with something like [vuex-mock-store](https://github.com/posva/vuex-mock-store) and also keep writes in actions, you won't have to worry about mocking Firebase databse at all in most scenarios. Because of this, Vuexfire provides an action wrapper that injects into the _context_ (first parameter of actions) two new functions: `bindFirestoreRef`/`bindFirebaseRef` and `unbindFirestoreRef`/`unbindFirebaseRef`. That way you can bind a reference as well as unbind existing bindings directly in actions:
+**The right place to bind references is in actions**. This will also simplify your testing strategy if you choose to mock the store with something like [vuex-mock-store](https://github.com/posva/vuex-mock-store) and also keep writes in actions, you won't have to worry about mocking Firebase database at all in most scenarios. Because of this, Vuexfire provides an action wrapper that injects into the _context_ (first parameter of actions) two new functions: `bindFirestoreRef`/`bindFirebaseRef` and `unbindFirestoreRef`/`unbindFirebaseRef`. That way you can bind a reference as well as unbind existing bindings directly in actions:
 
 <FirebaseExample>
 

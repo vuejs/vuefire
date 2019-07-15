@@ -5,7 +5,10 @@
   "author": "Eduardo San Martin Morote <posva13@gmail.com>",
   "homepage": "https://github.com/vuejs/vuefire#readme",
   "license": "MIT",
-  "main": "src/index.js",
+  "main": "src/index.ts",
+  "scripts": {
+    "lint": "eslint src --ext ts"
+  },
   "directories": {
     "lib": "src"
   },

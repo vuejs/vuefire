@@ -12,13 +12,30 @@
     }
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^1.12.0",
+    "@typescript-eslint/parser": "^1.12.0",
     "conventional-changelog-cli": "^2.0.21",
+    "codecov": "^3.5.0",
     "cz-conventional-changelog": "^2.1.0",
-    "lerna": "^3.15.0"
+    "eslint": "^6.0.1",
+    "eslint-config-prettier": "^6.0.0",
+    "eslint-plugin-prettier": "^3.1.0",
+    "lerna": "^3.15.0",
+    "prettier": "^1.18.2",
+    "rimraf": "^2.6.3",
+    "rollup": "^1.16.7",
+    "rollup-plugin-alias": "^1.5.2",
+    "rollup-plugin-commonjs": "^10.0.1",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-replace": "^2.2.0",
+    "rollup-plugin-strip-banner": "^0.2.0",
+    "rollup-plugin-terser": "^5.1.1",
+    "rollup-plugin-typescript2": "^0.22.0"
   },
   "scripts": {
     "prerelease": "lerna version -m 'chore(release): publish'",
     "release": "lerna publish from-git",
+    "prepare": "lerna run prepare",
     "changelog": "conventional-changelog -p angular -r 2 -i CHANGELOG.md -s",
     "test": "lerna run test"
   }

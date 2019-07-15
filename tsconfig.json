@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "esnext",
+    "noEmit": true,
+    "strict": true,
+    "composite": true,
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+
+    "rootDir": ".",
+    "baseUrl": "."
+  },
+  "include": [
+    "packages/global.d.ts",
+    "packages/*/src",
+    "packages/*/__tests__",
+    "packages/@posva/*/src",
+    "packages/@posva/*/__tests__"
+  ]
+}
