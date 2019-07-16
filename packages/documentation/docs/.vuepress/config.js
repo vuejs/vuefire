@@ -37,7 +37,7 @@ module.exports = {
   themeConfig: {
     repo: 'vuejs/vuefire',
     editLinks: true,
-    docsDir: 'docs',
+    docsDir: 'packages/documentation/docs',
     // sidebarDepth: 2,
     // sidebar: 'auto',
     sidebar: {
