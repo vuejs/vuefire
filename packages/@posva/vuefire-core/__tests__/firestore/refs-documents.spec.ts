@@ -1,4 +1,4 @@
-import { bindDocument, walkSet, FirestoreOptions } from '../../src'
+import { bindDocument, FirestoreOptions } from '../../src'
 import {
   db,
   delay,
@@ -34,7 +34,7 @@ describe('refs in documents', () => {
       b: null,
       c: null,
     }
-    ops = createOps(walkSet)
+    ops = createOps()
     // @ts-ignore
     collection = db.collection()
     // @ts-ignore
