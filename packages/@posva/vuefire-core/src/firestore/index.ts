@@ -299,11 +299,11 @@ export function bindCollection(
     }
   }, reject)
 
-  // TODO: we could allow an argument to unbind to override reset
-  return () => {
+  return (reset?: FirestoreOptions['reset']) => {
     unbind()
-    if (options.reset !== false) {
-      const value = typeof options.reset === 'function' ? options.reset() : []
+    const resetOption = reset === undefined ? options.reset : reset
+    if (resetOption !== false) {
+      const value = typeof resetOption === 'function' ? resetOption() : []
       ops.set(vm, key, value)
     }
     arraySubs.forEach(unsubscribeAll)
