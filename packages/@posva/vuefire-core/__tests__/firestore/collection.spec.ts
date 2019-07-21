@@ -8,7 +8,8 @@ describe('collections', () => {
     vm: Record<string, any>,
     resolve: (data: any) => void,
     reject: (error: any) => void,
-    ops: OperationsType
+    ops: OperationsType,
+    unbind: ReturnType<typeof bindCollection>
 
   beforeEach(async () => {
     // @ts-ignore
@@ -18,7 +19,7 @@ describe('collections', () => {
     await new Promise((res, rej) => {
       resolve = jest.fn(res)
       reject = jest.fn(rej)
-      bindCollection({ vm, key: 'items', collection, resolve, reject, ops })
+      unbind = bindCollection({ vm, key: 'items', collection, resolve, reject, ops })
     })
   })
 
@@ -225,6 +226,8 @@ describe('collections', () => {
     // @ts-ignore
     const other: firestore.CollectionReference = db.collection()
 
+    // force the unbind without resetting the value
+    unbind(false)
     const promise = new Promise((resolve, reject) => {
       bindCollection({ vm, collection: other, key: 'items', resolve, reject, ops }, { wait: true })
     })
@@ -245,6 +248,8 @@ describe('collections', () => {
     await other.add({ a: 0 })
     await other.add({ b: 1 })
 
+    // force the unbind without resetting the value
+    unbind(false)
     const promise = new Promise((resolve, reject) => {
       bindCollection({ vm, collection: other, key: 'items', resolve, reject, ops }, { wait: true })
     })
