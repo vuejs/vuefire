@@ -35,7 +35,7 @@ interface BindAsObjectParameter extends CommonBindOptionsParameter {
 export function rtdbBindAsObject(
   { vm, key, document, resolve, reject, ops }: BindAsObjectParameter,
   extraOptions: RTDBOptions = DEFAULT_OPTIONS
-): () => void {
+) {
   const options = Object.assign({}, DEFAULT_OPTIONS, extraOptions)
   const listener = document.on(
     'value',
@@ -46,10 +46,11 @@ export function rtdbBindAsObject(
   )
   document.once('value', resolve)
 
-  return () => {
+  return (reset?: RTDBOptions['reset']) => {
+    const resetOption = reset === undefined ? options.reset : reset
     document.off('value', listener)
-    if (options.reset !== false) {
-      const value = typeof options.reset === 'function' ? options.reset() : null
+    if (resetOption !== false) {
+      const value = typeof resetOption === 'function' ? resetOption() : null
       ops.set(vm, key, value)
     }
   }
@@ -111,13 +112,14 @@ export function rtdbBindAsArray(
 
   collection.once('value', resolve)
 
-  return () => {
+  return (reset?: RTDBOptions['reset']) => {
+    const resetOption = reset === undefined ? options.reset : reset
     collection.off('child_added', childAdded)
     collection.off('child_changed', childChanged)
     collection.off('child_removed', childRemoved)
     collection.off('child_moved', childMoved)
-    if (options.reset !== false) {
-      const value = typeof options.reset === 'function' ? options.reset() : []
+    if (resetOption !== false) {
+      const value = typeof resetOption === 'function' ? resetOption() : []
       ops.set(vm, key, value)
     }
   }
