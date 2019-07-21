@@ -257,4 +257,21 @@ describe('collections', () => {
     await promise
     expect(vm.items).toEqual([{ a: 0 }, { b: 1 }])
   })
+
+  it('reset option can be overriden on unbind', async () => {
+    // @ts-ignore
+    const other: firestore.CollectionReference = db.collection()
+    await other.add({ a: 0 })
+    await other.add({ b: 1 })
+
+    await new Promise((resolve, reject) => {
+      unbind = bindCollection(
+        { vm, collection: other, key: 'items', resolve, reject, ops },
+        { reset: false }
+      )
+    })
+    expect(vm.items).toEqual([{ a: 0 }, { b: 1 }])
+    unbind(() => 'Foo')
+    expect(vm.items).toEqual('Foo')
+  })
 })

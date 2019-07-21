@@ -151,4 +151,18 @@ describe('documents', () => {
     unbind()
     expect(vm.item).toEqual({ bar: 'bar' })
   })
+
+  it('reset option can be overriden on unbind', async () => {
+    await document.update({ foo: 'foo' })
+    let unbind: ReturnType<typeof bindDocument> = () => {
+      throw new Error('Promise was not called')
+    }
+    const promise = new Promise((resolve, reject) => {
+      unbind = bindDocument({ vm, document, key: 'item', resolve, reject, ops }, { reset: false })
+    })
+    await promise
+    expect(vm.item).toEqual({ foo: 'foo' })
+    unbind(() => 'hello')
+    expect(vm.item).toEqual('hello')
+  })
 })
