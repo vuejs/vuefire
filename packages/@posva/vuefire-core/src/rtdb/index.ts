@@ -5,11 +5,13 @@ import { OperationsType } from '../shared'
 export interface RTDBOptions {
   reset?: boolean | (() => any)
   serialize?: RTDBSerializer
+  wait?: boolean
 }
 
 const DEFAULT_OPTIONS: Required<RTDBOptions> = {
   reset: true,
   serialize: createRecordFromRTDBSnapshot,
+  wait: false,
 }
 
 export { DEFAULT_OPTIONS as rtdbOptions }
@@ -71,8 +73,8 @@ export function rtdbBindAsArray(
   extraOptions: RTDBOptions = DEFAULT_OPTIONS
 ) {
   const options = Object.assign({}, DEFAULT_OPTIONS, extraOptions)
-  const array: any[] = []
-  ops.set(vm, key, array)
+
+  const array: any[] = options.wait ? [] : ops.set(vm, key, [])
 
   const childAdded = collection.on(
     'child_added',
@@ -110,7 +112,10 @@ export function rtdbBindAsArray(
     reject
   )
 
-  collection.once('value', resolve)
+  collection.once('value', data => {
+    if (options.wait) ops.set(vm, key, array)
+    resolve(data)
+  })
 
   return (reset?: RTDBOptions['reset']) => {
     const resetOption = reset === undefined ? options.reset : reset

@@ -6,7 +6,7 @@ describe('RTDB collection', () => {
     vm: Record<string, any>,
     resolve: (data: any) => void,
     reject: (error: any) => void,
-    unbind: () => void
+    unbind: ReturnType<typeof rtdbBindAsArray>
   const ops = createOps()
 
   beforeEach(async () => {
@@ -202,7 +202,7 @@ describe('RTDB collection', () => {
     expect(vm.itemsReset).toEqual('Foo')
   })
 
-  it.skip('can wait until ready', async () => {
+  it('can wait until ready', async () => {
     collection.push({ name: 'one' })
     collection.push({ name: 'two' })
     collection.flush()
@@ -211,6 +211,8 @@ describe('RTDB collection', () => {
 
     expect(vm.items).toEqual([{ name: 'one' }, { name: 'two' }])
 
+    // force the unbind without resetting the value
+    unbind(false)
     const promise = new Promise((resolve, reject) => {
       rtdbBindAsArray(
         {
@@ -223,10 +225,10 @@ describe('RTDB collection', () => {
         },
         { wait: true }
       )
-      other.flush()
     })
 
     expect(vm.items).toEqual([{ name: 'one' }, { name: 'two' }])
+    other.flush()
     await promise
     expect(vm.items).toEqual([])
 
@@ -237,18 +239,31 @@ describe('RTDB collection', () => {
     expect(vm.items).toEqual([{ other: 'one' }, { other: 'two' }])
   })
 
-  it.skip('can wait until ready with empty arrays', async () => {
+  it('can wait until ready with empty arrays', async () => {
     expect(vm.items).toEqual([])
 
-    // @ts-ignore
-    const other: firestore.CollectionReference = db.collection()
-    await other.add({ a: 0 })
-    await other.add({ b: 1 })
+    const other = new MockFirebase().child('other')
+    other.push({ a: 0 })
+    other.push({ b: 1 })
+    other.flush()
 
+    unbind(false)
     const promise = new Promise((resolve, reject) => {
-      bindCollection({ vm, collection: other, key: 'items', resolve, reject, ops }, { wait: true })
+      rtdbBindAsArray(
+        {
+          vm,
+          key: 'items',
+          collection: other,
+          resolve,
+          reject,
+          ops,
+        },
+        { wait: true }
+      )
     })
+
     expect(vm.items).toEqual([])
+    other.flush()
     await promise
     expect(vm.items).toEqual([{ a: 0 }, { b: 1 }])
   })
