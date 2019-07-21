@@ -183,4 +183,73 @@ describe('RTDB collection', () => {
     unbind()
     expect(vm.itemsReset).toEqual([{ bar: 'bar' }])
   })
+
+  it('can override reset option in unbind', async () => {
+    let unbind: ReturnType<typeof rtdbBindAsArray> = () => {
+      throw new Error('Promise was not called')
+    }
+    const promise = new Promise((resolve, reject) => {
+      unbind = rtdbBindAsArray(
+        { vm, collection, key: 'itemsReset', resolve, reject, ops },
+        { reset: false }
+      )
+      collection.flush()
+    })
+    await promise
+    collection.push({ foo: 'foo' })
+    collection.flush()
+    unbind(() => 'Foo')
+    expect(vm.itemsReset).toEqual('Foo')
+  })
+
+  it.skip('can wait until ready', async () => {
+    collection.push({ name: 'one' })
+    collection.push({ name: 'two' })
+    collection.flush()
+
+    const other = new MockFirebase().child('other')
+
+    expect(vm.items).toEqual([{ name: 'one' }, { name: 'two' }])
+
+    const promise = new Promise((resolve, reject) => {
+      rtdbBindAsArray(
+        {
+          vm,
+          key: 'items',
+          collection: other,
+          resolve,
+          reject,
+          ops,
+        },
+        { wait: true }
+      )
+      other.flush()
+    })
+
+    expect(vm.items).toEqual([{ name: 'one' }, { name: 'two' }])
+    await promise
+    expect(vm.items).toEqual([])
+
+    other.push({ other: 'one' })
+    other.push({ other: 'two' })
+    other.flush()
+
+    expect(vm.items).toEqual([{ other: 'one' }, { other: 'two' }])
+  })
+
+  it.skip('can wait until ready with empty arrays', async () => {
+    expect(vm.items).toEqual([])
+
+    // @ts-ignore
+    const other: firestore.CollectionReference = db.collection()
+    await other.add({ a: 0 })
+    await other.add({ b: 1 })
+
+    const promise = new Promise((resolve, reject) => {
+      bindCollection({ vm, collection: other, key: 'items', resolve, reject, ops }, { wait: true })
+    })
+    expect(vm.items).toEqual([])
+    await promise
+    expect(vm.items).toEqual([{ a: 0 }, { b: 1 }])
+  })
 })

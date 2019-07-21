@@ -132,4 +132,22 @@ describe('RTDB document', () => {
     unbind()
     expect(vm.item).toEqual({ bar: 'bar' })
   })
+
+  it('can override reset option in unbind', async () => {
+    document.set({ foo: 'foo' })
+    let unbind: ReturnType<typeof rtdbBindAsObject> = () => {
+      throw new Error('Promise was not called')
+    }
+    const promise = new Promise((resolve, reject) => {
+      unbind = rtdbBindAsObject(
+        { vm, document, key: 'item', resolve, reject, ops },
+        { reset: false }
+      )
+      document.flush()
+    })
+    await promise
+    expect(vm.item).toEqual({ foo: 'foo' })
+    unbind(() => 'foo')
+    expect(vm.item).toEqual('foo')
+  })
 })
