@@ -216,4 +216,40 @@ describe('collections', () => {
     unbind()
     expect(vm.items).toEqual([{ bar: 'bar' }, { baz: 'baz' }])
   })
+
+  it('can wait until ready', async () => {
+    await collection.add({ foo: 'foo' })
+    await collection.add({ foo: 'foo' })
+    expect(vm.items).toEqual([{ foo: 'foo' }, { foo: 'foo' }])
+
+    // @ts-ignore
+    const other: firestore.CollectionReference = db.collection()
+
+    const promise = new Promise((resolve, reject) => {
+      bindCollection({ vm, collection: other, key: 'items', resolve, reject, ops }, { wait: true })
+    })
+    expect(vm.items).toEqual([{ foo: 'foo' }, { foo: 'foo' }])
+    await promise
+    expect(vm.items).toEqual([])
+    // we can add other stuff
+    await other.add({ a: 0 })
+    await other.add({ b: 1 })
+    expect(vm.items).toEqual([{ a: 0 }, { b: 1 }])
+  })
+
+  it('can wait until ready with empty arrays', async () => {
+    expect(vm.items).toEqual([])
+
+    // @ts-ignore
+    const other: firestore.CollectionReference = db.collection()
+    await other.add({ a: 0 })
+    await other.add({ b: 1 })
+
+    const promise = new Promise((resolve, reject) => {
+      bindCollection({ vm, collection: other, key: 'items', resolve, reject, ops }, { wait: true })
+    })
+    expect(vm.items).toEqual([])
+    await promise
+    expect(vm.items).toEqual([{ a: 0 }, { b: 1 }])
+  })
 })

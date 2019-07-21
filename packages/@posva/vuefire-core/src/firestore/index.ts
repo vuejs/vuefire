@@ -6,6 +6,7 @@ export interface FirestoreOptions {
   maxRefDepth?: number
   reset?: boolean | (() => any)
   serialize?: FirestoreSerializer
+  wait?: boolean
 }
 
 // TODO: do the opposite, use optioal<> only on one function
@@ -13,6 +14,7 @@ const DEFAULT_OPTIONS: Required<FirestoreOptions> = {
   maxRefDepth: 2,
   reset: true,
   serialize: createSnapshot,
+  wait: false,
 }
 export { DEFAULT_OPTIONS as firestoreOptions }
 
@@ -186,9 +188,7 @@ export function bindCollection(
 ) {
   const options = Object.assign({}, DEFAULT_OPTIONS, extraOptions) // fill default values
   // TODO support pathes? nested.obj.list (walkSet)
-  // NOTE use ops object
-  const array = ops.set(vm, key, [])
-  // const array = (vm[key] = [])
+  const array = options.wait ? [] : ops.set(vm, key, [])
   const originalResolve = resolve
   let isResolved: boolean
 
@@ -277,6 +277,8 @@ export function bindCollection(
       resolve = ({ id }) => {
         if (id in validDocs) {
           if (++count >= expectedItems) {
+            // if wait is true, finally set the array
+            if (options.wait) ops.set(vm, key, array)
             originalResolve(vm[key])
             // reset resolve to noop
             resolve = () => {}
@@ -289,7 +291,12 @@ export function bindCollection(
     })
 
     // resolves when array is empty
-    if (!docChanges.length) resolve()
+    // since this can only happen once, there is no need to guard against it
+    // being called multiple times
+    if (!docChanges.length) {
+      if (options.wait) ops.set(vm, key, array)
+      resolve()
+    }
   }, reject)
 
   // TODO: we could allow an argument to unbind to override reset
