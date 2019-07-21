@@ -84,7 +84,7 @@
 
         actions: {
           bindRef: firestoreAction(function(context, payload) {
-            context.bindFirestoreRef(payload.name, payload.ref)
+            context.bindFirestoreRef(payload.name, payload.ref, payload.options)
           }),
 
           init: firestoreAction(function(context) {
