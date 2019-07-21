@@ -351,10 +351,11 @@ export function bindDocument(
     }
   }, reject)
 
-  return () => {
+  return (reset?: FirestoreOptions['reset']) => {
     unbind()
-    if (options.reset !== false) {
-      const value = typeof options.reset === 'function' ? options.reset() : null
+    const resetOption = reset === undefined ? options.reset : reset
+    if (resetOption !== false) {
+      const value = typeof resetOption === 'function' ? resetOption() : null
       ops.set(vm, key, value)
     }
     unsubscribeAll(subs)
