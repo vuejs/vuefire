@@ -52,11 +52,6 @@
   "homepage": "https://github.com/vuejs/vuefire#readme",
   "devDependencies": {
     "@posva/vuefire-test-helpers": "^1.2.0",
-    "@types/jest": "^24.0.15",
-    "firebase": "^6.3.0",
-    "jest": "^24.8.0",
-    "ts-jest": "^24.0.2",
-    "typescript": "^3.5.2",
     "vuex": "^3.1.1"
   },
   "dependencies": {

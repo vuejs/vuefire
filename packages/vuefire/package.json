@@ -49,11 +49,7 @@
     "firebase": ">=4.0.0"
   },
   "devDependencies": {
-    "@posva/vuefire-test-helpers": "^1.2.0",
-    "@types/jest": "^24.0.15",
-    "firebase": "^6.3.0",
-    "jest": "^24.8.0",
-    "typescript": "^3.5.2"
+    "@posva/vuefire-test-helpers": "^1.2.0"
   },
   "dependencies": {
     "@posva/vuefire-core": "^2.1.0"
