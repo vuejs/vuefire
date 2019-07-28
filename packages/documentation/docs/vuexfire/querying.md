@@ -27,7 +27,7 @@ db.ref('documents/' + documentId).once('value', snapshot => {
 db.collection('documents')
   .get()
   .then(querySnapshot => {
-    const documents = querySnapshot.map(doc => doc.data())
+    const documents = querySnapshot.docs.map(doc => doc.data())
     // do something with documents
   })
 
