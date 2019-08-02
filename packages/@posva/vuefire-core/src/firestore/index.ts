@@ -28,7 +28,7 @@ function unsubscribeAll(subs: Record<string, FirestoreSubscription>) {
 }
 
 interface UpdateDataFromDocumentSnapshot {
-  snapshot: firestore.DocumentSnapshot
+  readonly snapshot: firestore.DocumentSnapshot
   subs: Record<string, FirestoreSubscription>
   target: CommonBindOptionsParameter['vm']
   path: string
@@ -41,6 +41,7 @@ function updateDataFromDocumentSnapshot(
   { snapshot, target, path, subs, ops, depth, resolve }: UpdateDataFromDocumentSnapshot,
   options: Required<FirestoreOptions>
 ) {
+  // TODO: maybe we should options.serialize the snapshot here
   const [data, refs] = extractRefs(snapshot, walkGet(target, path))
   // NOTE use ops
   ops.set(target, path, data)
