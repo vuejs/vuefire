@@ -92,7 +92,7 @@ function createEntry(
         compilerOptions: {
           // same for d.ts files
           declaration: format === 'es' && isBrowser && !minify,
-          target: format === 'iife' || format === 'cjs' ? 'es5' : 'esnext',
+          target: format === 'es' && !isBrowser ? 'esnext' : 'es5',
         },
       },
     })
