@@ -37,7 +37,7 @@ export function extractRefs(
       refs[path + key] = ref
     } else if (Array.isArray(ref)) {
       // TODO handle array
-      data[key] = Array(ref.length).fill(null)
+      data[key] = Array(ref.length)
       const oldArray = oldDoc[key] || []
       // Items that are no longer in the array aren't going to be processed
       const newElements = oldArray.filter(
