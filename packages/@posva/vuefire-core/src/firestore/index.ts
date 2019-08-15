@@ -362,7 +362,7 @@ export function bindDocument(
     unbind()
     const resetOption = reset === undefined ? options.reset : reset
     if (resetOption !== false) {
-      const value = typeof resetOption === 'function' ? resetOption() : []
+      const value = typeof resetOption === 'function' ? resetOption() : null
       ops.set(vm, key, value)
     }
     unsubscribeAll(subs)
