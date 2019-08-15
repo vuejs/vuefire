@@ -4,11 +4,13 @@ import { OperationsType } from '../shared'
 export interface RTDBOptions {
   reset?: boolean | (() => any)
   serialize?: RTDBSerializer
+  wait?: boolean
 }
 
 const DEFAULT_OPTIONS: Required<RTDBOptions> = {
   reset: true,
   serialize: createRecordFromRTDBSnapshot,
+  wait: false,
 }
 
 export { DEFAULT_OPTIONS as rtdbOptions }
@@ -45,10 +47,11 @@ export function rtdbBindAsObject(
   )
   document.once('value', resolve)
 
-  return () => {
+  return (reset?: RTDBOptions['reset']) => {
     document.off('value', listener)
-    if (options.reset !== false) {
-      const value = typeof options.reset === 'function' ? options.reset() : null
+    const resetOption = reset === undefined ? options.reset : reset
+    if (resetOption !== false) {
+      const value = typeof resetOption === 'function' ? resetOption() : null
       ops.set(vm, key, value)
     }
   }
@@ -69,8 +72,7 @@ export function rtdbBindAsArray(
   extraOptions: RTDBOptions = DEFAULT_OPTIONS
 ) {
   const options = Object.assign({}, DEFAULT_OPTIONS, extraOptions)
-  const array: any[] = []
-  ops.set(vm, key, array)
+  const array: any[] = options.wait ? [] : ops.set(vm, key, [])
 
   const childAdded = collection.on(
     'child_added',
@@ -108,15 +110,21 @@ export function rtdbBindAsArray(
     reject
   )
 
-  collection.once('value', resolve)
+  collection.once('value', data => {
+    if (options.wait) {
+      ops.set(vm, key, array)
+    }
+    resolve(data)
+  })
 
-  return () => {
+  return (reset?: RTDBOptions['reset']) => {
+    const resetOption = reset === undefined ? options.reset : reset
     collection.off('child_added', childAdded)
     collection.off('child_changed', childChanged)
     collection.off('child_removed', childRemoved)
     collection.off('child_moved', childMoved)
-    if (options.reset !== false) {
-      const value = typeof options.reset === 'function' ? options.reset() : []
+    if (resetOption !== false) {
+      const value = typeof resetOption === 'function' ? resetOption() : []
       ops.set(vm, key, value)
     }
   }

@@ -123,11 +123,20 @@ export function firestoreAction<S, R>(
         )
         return data
       },
-      add: (target, newIndex, data) =>
-        commit(VUEXFIRE_ARRAY_ADD, { target, newIndex, data }, commitOptions),
+      add: (target, newIndex, data) => {
+        if ('__ob__' in target) {
+          commit(VUEXFIRE_ARRAY_ADD, { target, newIndex, data }, commitOptions)
+        } else {
+          target[newIndex] = data
+        }
+      },
       remove: (target, oldIndex) => {
         const data = target[oldIndex]
-        commit(VUEXFIRE_ARRAY_REMOVE, { target, oldIndex }, commitOptions)
+        if ('__ob__' in target) {
+          commit(VUEXFIRE_ARRAY_REMOVE, { target, oldIndex }, commitOptions)
+        } else {
+          target.splice(oldIndex, 1)
+        }
         return [data]
       },
     }

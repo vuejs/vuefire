@@ -5,6 +5,7 @@ import { firestore } from 'firebase'
 export interface FirestoreOptions {
   maxRefDepth?: number
   reset?: boolean | (() => any)
+  wait?: boolean
   serialize?: FirestoreSerializer
 }
 
@@ -13,6 +14,7 @@ const DEFAULT_OPTIONS: Required<FirestoreOptions> = {
   maxRefDepth: 2,
   reset: true,
   serialize: createSnapshot,
+  wait: false,
 }
 export { DEFAULT_OPTIONS as firestoreOptions }
 
@@ -187,7 +189,8 @@ export function bindCollection(
   const options = Object.assign({}, DEFAULT_OPTIONS, extraOptions) // fill default values
   // TODO support pathes? nested.obj.list (walkSet)
   // NOTE use ops object
-  const array = ops.set(vm, key, [])
+  let array: any[] = options.wait ? [] : ops.set(vm, key, [])
+
   // const array = (vm[key] = [])
   const originalResolve = resolve
   let isResolved: boolean
@@ -204,6 +207,7 @@ export function bindCollection(
       const [data, refs] = extractRefs(snapshot)
       // NOTE use ops
       ops.add(array, newIndex, data)
+
       // array.splice(newIndex, 0, data)
       subscribeToRefs(
         {
@@ -228,7 +232,7 @@ export function bindCollection(
       const [data, refs] = extractRefs(snapshot, oldData)
       // NOTE use ops
       ops.add(array, newIndex, data)
-      // array.splice(newIndex, 0, data)
+
       subscribeToRefs(
         {
           refs,
@@ -277,6 +281,9 @@ export function bindCollection(
       resolve = ({ id }) => {
         if (id in validDocs) {
           if (++count >= expectedItems) {
+            if (options.wait) {
+              array = ops.set(vm, key, array)
+            }
             originalResolve(vm[key])
             // reset resolve to noop
             resolve = () => {}
@@ -284,19 +291,26 @@ export function bindCollection(
         }
       }
     }
+
     docChanges.forEach(c => {
       change[c.type](c)
     })
 
     // resolves when array is empty
-    if (!docChanges.length) resolve()
+    if (!docChanges.length) {
+      if (options.wait) {
+        array = ops.set(vm, key, array)
+      }
+      resolve()
+    }
   }, reject)
 
   // TODO: we could allow an argument to unbind to override reset
-  return () => {
+  return (reset?: FirestoreOptions['reset']) => {
     unbind()
-    if (options.reset !== false) {
-      const value = typeof options.reset === 'function' ? options.reset() : []
+    const resetOption = reset === undefined ? options.reset : reset
+    if (resetOption !== false) {
+      const value = typeof resetOption === 'function' ? resetOption() : []
       ops.set(vm, key, value)
     }
     arraySubs.forEach(unsubscribeAll)
@@ -344,10 +358,11 @@ export function bindDocument(
     }
   }, reject)
 
-  return () => {
+  return (reset?: FirestoreOptions['reset']) => {
     unbind()
-    if (options.reset !== false) {
-      const value = typeof options.reset === 'function' ? options.reset() : null
+    const resetOption = reset === undefined ? options.reset : reset
+    if (resetOption !== false) {
+      const value = typeof resetOption === 'function' ? resetOption() : []
       ops.set(vm, key, value)
     }
     unsubscribeAll(subs)
