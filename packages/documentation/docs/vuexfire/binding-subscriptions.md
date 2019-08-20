@@ -18,7 +18,7 @@ import { db } from './db'
 
 export default new Vuex.Store({
   state: {
-    documents: []
+    todos: []
   },
 
   mutations: vuexfireMutations,
@@ -26,7 +26,7 @@ export default new Vuex.Store({
   actions: {
     bindTodos: firebaseAction(({ bindFirebaseRef }) => {
       // return the promise returned by `bindFirebaseRef`
-      return bindFirebaseRef('todos', db.ref('documents'))
+      return bindFirebaseRef('todos', db.ref('todos'))
     })
   }
 }
@@ -40,7 +40,7 @@ import { db } from './db'
 
 export default new Vuex.Store({
   state: {
-    documents: []
+    todos: []
   },
 
   mutations: vuexfireMutations,
@@ -48,7 +48,7 @@ export default new Vuex.Store({
   actions: {
     bindTodos: firestoreAction(({ bindFirestoreRef }) => {
       // return the promise returned by `bindFirestoreRef`
-      return bindFirestoreRef('todos', db.collection('documents'))
+      return bindFirestoreRef('todos', db.collection('todos'))
     })
   }
 }
