@@ -208,7 +208,9 @@ export class CollectionReference extends CallbacksAndErrors {
   }
 
   // used to check if it's a collection or document ref
-  where() {}
+  where() {
+    // not implemented
+  }
 
   doc(id?: string | Key) {
     id = new Key(id)

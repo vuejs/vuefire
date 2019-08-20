@@ -16,7 +16,7 @@ export type FirestoreSerializer = typeof createSnapshot
 export function extractRefs(
   doc: firestore.DocumentData,
   oldDoc: firestore.DocumentData = {},
-  path: string = '',
+  path = '',
   result: [firestore.DocumentData, Record<string, firestore.DocumentReference>] = [{}, {}]
 ): [firestore.DocumentData, Record<string, firestore.DocumentReference>] {
   // must be set here because walkGet can return null or undefined
