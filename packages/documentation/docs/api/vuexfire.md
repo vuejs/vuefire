@@ -81,8 +81,14 @@ Wraps an action to inject [`bindFirebaseRef`](#bindfirebaseref) as well as [`unb
 import { firebaseAction } from 'vuexfire'
 
 export const setDocument = firebaseAction(({ bindFirebaseRef, unbindFirebaseRef }, documentId) => {
-  bindFirebaseRef('documents', db.ref('documents').child(documentId))
+  // binds the documents collection onto the `state.documents` property
+  // `bindFirebaseRef` also automatically unbinds any previously bound reference on the same property `documents`
+  bindFirebaseRef('documents', db.ref('documents'))
+  // binds the document with id `documentId` onto the `state.currentDocument` property
+  bindFirebaseRef('currentDocument', db.ref('documents').child(documentId))
+  // manually unbinds any previously bound collection or document and stop listening for updates
   unbindFirebaseRef('documents')
+  unbindFirebaseRef('currentDocument')
 })
 ```
 
