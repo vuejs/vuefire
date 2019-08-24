@@ -16,16 +16,18 @@ export type FirestoreSerializer = typeof createSnapshot
 export function extractRefs(
   doc: firestore.DocumentData,
   oldDoc: firestore.DocumentData = {},
-  path: string = '',
+  path = '',
   result: [firestore.DocumentData, Record<string, firestore.DocumentReference>] = [{}, {}]
 ): [firestore.DocumentData, Record<string, firestore.DocumentReference>] {
   // must be set here because walkGet can return null or undefined
   oldDoc = oldDoc || {}
+  const [data, refs] = result
+  // TODO: this won't work if the user defines their own defined properties
+  // should we do it for every non enumerable property?
   const idDescriptor = Object.getOwnPropertyDescriptor(doc, 'id')
   if (idDescriptor && !idDescriptor.enumerable) {
-    Object.defineProperty(result[0], 'id', idDescriptor)
+    Object.defineProperty(data, 'id', idDescriptor)
   }
-  const [data, refs] = result
   for (const key in doc) {
     const ref = doc[key]
     // if it's a ref
@@ -35,7 +37,7 @@ export function extractRefs(
       refs[path + key] = ref
     } else if (Array.isArray(ref)) {
       // TODO handle array
-      data[key] = Array(ref.length).fill(null)
+      data[key] = Array(ref.length)
       const oldArray = oldDoc[key] || []
       // Items that are no longer in the array aren't going to be processed
       const newElements = oldArray.filter(

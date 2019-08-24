@@ -18,7 +18,7 @@ import { db } from './db'
 
 export default new Vuex.Store({
   state: {
-    documents: []
+    todos: []
   },
 
   mutations: vuexfireMutations,
@@ -26,10 +26,10 @@ export default new Vuex.Store({
   actions: {
     bindTodos: firebaseAction(({ bindFirebaseRef }) => {
       // return the promise returned by `bindFirebaseRef`
-      return bindFirebaseRef('todos', db.ref('documents'))
+      return bindFirebaseRef('todos', db.ref('todos'))
     })
   }
-}
+})
 ```
 
 ```js
@@ -40,7 +40,7 @@ import { db } from './db'
 
 export default new Vuex.Store({
   state: {
-    documents: []
+    todos: []
   },
 
   mutations: vuexfireMutations,
@@ -48,10 +48,10 @@ export default new Vuex.Store({
   actions: {
     bindTodos: firestoreAction(({ bindFirestoreRef }) => {
       // return the promise returned by `bindFirestoreRef`
-      return bindFirestoreRef('todos', db.collection('documents'))
+      return bindFirestoreRef('todos', db.collection('todos'))
     })
   }
-}
+})
 ```
 
 </FirebaseExample>
@@ -84,7 +84,7 @@ export default new Vuex.Store({
       unbindFirebaseRef('todos')
     })
   }
-}
+})
 ```
 
 ```js
@@ -97,7 +97,7 @@ export default new Vuex.Store({
       unbindFirestoreRef('todos')
     })
   }
-}
+})
 ```
 
 </FirebaseExample>
@@ -112,7 +112,7 @@ export default new Vuex.Store({
   // other store options are omitted for simplicity reasons
 
   actions: {
-    someAction: firebaseAction(({ state, bindFirebaseRef unbindFirebaseRef }) => {
+    someAction: firebaseAction(({ state, bindFirebaseRef, unbindFirebaseRef }) => {
       bindFirebaseRef('todos', db.ref('todos'))
       unbindFirebaseRef('todos')
       // state.todos === []
@@ -134,7 +134,7 @@ export default new Vuex.Store({
 
     })
   }
-}
+})
 ```
 
 ```js
@@ -143,7 +143,7 @@ export default new Vuex.Store({
   // other store options are omitted for simplicity reasons
 
   actions: {
-    someAction: firestoreAction(({ state, bindFirestoreRef unbindFirestoreRef }) => {
+    someAction: firestoreAction(({ state, bindFirestoreRef, unbindFirestoreRef }) => {
       bindFirestoreRef('todos', db.collection('todos'))
       unbindFirestoreRef('todos')
       // state.todos === []
@@ -165,7 +165,7 @@ export default new Vuex.Store({
 
     })
   }
-}
+})
 ```
 
 </FirebaseExample>

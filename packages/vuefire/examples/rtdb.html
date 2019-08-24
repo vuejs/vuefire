@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <title>VueFire Todo App Demo</title>
-    <script src="https://www.gstatic.com/firebasejs/4.11.0/firebase.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/6.3.0/firebase.js"></script>
     <script src="https://unpkg.com/vue/dist/vue.js"></script>
     <script src="../dist/vuefire.js"></script>
   </head>
@@ -24,17 +24,10 @@
     -->
 
     <div id="app">
-      <input
-        v-model.trim="newTodoText"
-        @keyup.enter="addTodo"
-        placeholder="Add new todo"
-      />
+      <input v-model.trim="newTodoText" @keyup.enter="addTodo" placeholder="Add new todo" />
       <ul>
         <li v-for="todo in todos">
-          <input
-            :value="todo.text"
-            @input="updateTodoText(todo, $event.target.value)"
-          />
+          <input :value="todo.text" @input="updateTodoText(todo, $event.target.value)" />
           <button @click="removeTodo(todo)">X</button>
         </li>
       </ul>
