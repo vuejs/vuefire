@@ -62,8 +62,8 @@ function bind(
   })
 }
 
-function unbind(vm: Record<string, any>, key: string) {
-  vm._firebaseUnbinds[key]()
+function unbind(vm: Record<string, any>, key: string, reset?: RTDBOptions['reset']) {
+  vm._firebaseUnbinds[key](reset)
   delete vm._firebaseSources[key]
   delete vm._firebaseUnbinds[key]
 }
@@ -88,10 +88,10 @@ declare module 'vue/types/vue' {
       reference: database.Reference | database.Query,
       options?: RTDBOptions
     ): Promise<database.DataSnapshot>
-    $rtdbUnbind: (name: string) => void
+    $rtdbUnbind: (name: string, reset?: RTDBOptions['reset']) => void
     $firebaseRefs: Readonly<Record<string, database.Reference>>
     _firebaseSources: Readonly<Record<string, database.Reference | database.Query>>
-    _firebaseUnbinds: Readonly<Record<string, () => void>>
+    _firebaseUnbinds: Readonly<Record<string, ReturnType<typeof bindAsArray | typeof bindAsObject>>>
   }
 }
 
@@ -136,8 +136,8 @@ export const rtdbPlugin: PluginFunction<PluginOptions> = function rtdbPlugin(
     return promise
   }
 
-  Vue.prototype[unbindName] = function rtdbUnbind(key: string) {
-    unbind(this, key)
+  Vue.prototype[unbindName] = function rtdbUnbind(key: string, reset?: RTDBOptions['reset']) {
+    unbind(this, key, reset)
   }
 
   // handle firebase option

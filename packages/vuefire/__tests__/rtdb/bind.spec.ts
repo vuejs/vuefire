@@ -84,4 +84,36 @@ describe('RTDB: manual bind', () => {
     source.set({ name: 'bar' })
     expect(vm.item).toEqual(null)
   })
+
+  it('can customize the reset option through $rtdbBind', async () => {
+    const { vm, source } = await createVm()
+    const otherSource = new MockFirebase().child('data2')
+    source.set({ name: 'foo' })
+    otherSource.set({ name: 'bar' })
+    let p = vm.$rtdbBind('item', source, { reset: false })
+    source.flush()
+    await p
+    p = vm.$rtdbBind('item', otherSource)
+    expect(vm.item).toEqual({ name: 'foo' })
+    otherSource.flush()
+    await p
+    expect(vm.item).toEqual({ name: 'bar' })
+    p = vm.$rtdbBind('item', source)
+    expect(vm.item).toEqual(null)
+    source.flush()
+  })
+
+  it('can customize the reset option through $rtdbUnbind', async () => {
+    const { vm, source } = await createVm()
+    source.autoFlush()
+    source.set({ name: 'foo' })
+    await vm.$rtdbBind('item', source)
+    expect(vm.item).toEqual({ name: 'foo' })
+    vm.$rtdbUnbind('item', false)
+    expect(vm.item).toEqual({ name: 'foo' })
+    await vm.$rtdbBind('item', source, { reset: true })
+    expect(vm.item).toEqual({ name: 'foo' })
+    vm.$rtdbUnbind('item')
+    expect(vm.item).toEqual(null)
+  })
 })
