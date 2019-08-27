@@ -148,7 +148,7 @@ export default {
 Object that can contain the following properties:
 
 - `maxRefDepth`: How many levels of nested references should be automatically bound. Defaults to 2, meaning that References inside of References inside of documents bound with `$bind` will automatically be bound too.
-- `reset`: Allows to define the behavior when a reference is unbound. Defaults to `true`, which resets the property in the vue instance to `null` for documents and to an empty array `[]` for collections. It can also be set to a function returning a value to customize the value set. Setting it to `false` will keep the data as-is when unbounding.
+- `reset`: Allows to define the behavior when a reference is unbound. Defaults to `true`, which resets the property in the vue instance to `null` for documents and to an empty array `[]` for collections. It can also be set to a function returning a value to customize the value set. Setting it to `false` will keep the data as-is when unbinding.
 - `serialize`: same as [plugin options](#options-serialize)
 
 ## \$unbind
@@ -159,7 +159,9 @@ This method is only available after [installing `firestorePlugin`](#firestoreplu
 
 Unsubscribe from updates for a given key as well as any nested [reference](../vuefire/binding-subscriptions.md#references-firestore-only) that is being listened to. Also removes the Reference from [`$firestoreRefs`](#firestorerefs)
 
-`this.$unbind(key: string): void`
+`this.$unbind(key: string, reset?: FirestoreOptions['reset']): void`
+
+The `reset` parameter accepts the same values as the property `reset` of [`$bind`'s third paramenter `options`](#options-2).
 
 ## \$firestoreRefs
 
@@ -312,7 +314,7 @@ Object that can contain the following properties:
   to `true`, which resets the property in the vue instance to `null` for
   properties bound as objects and to an empty array `[]` for properties bound as
   arrays. It can also be set to a function returning a value to customize the
-  value set. Setting it to `false` will keep the data as-is when unbounding.
+  value set. Setting it to `false` will keep the data as-is when unbinding.
 - `serialize`: Same as [plugin options](#options-serialize-2)
 
 ## \$rtdbUnbind
@@ -323,7 +325,9 @@ This method is only available after [installing `rtdbPlugin`](#rtdbplugin)
 
 Unsubscribes from updates for a given key and removes the given Reference from [`$firebaseRefs`](#firebaserefs)
 
-`this.$rtdbUnbind(key: string): void`
+`this.$rtdbUnbind(key: string, reset?: RTDBOptions['reset']): void`
+
+The `reset` parameter accepts the same values as the property `reset` of [`$rtdbBind`'s third paramenter `options`](#options-4).
 
 ## \$firebaseRefs
 
