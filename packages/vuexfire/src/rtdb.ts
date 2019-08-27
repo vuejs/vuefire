@@ -23,7 +23,7 @@ interface FirebaseActionContext<S, R> extends ActionContext<S, R> {
     reference: database.Reference | database.Query,
     options?: RTDBOptions
   ): Promise<database.DataSnapshot>
-  unbindFirebaseRef(key: string): void
+  unbindFirebaseRef(key: string, reset?: RTDBOptions['reset']): void
 }
 
 function bind(
@@ -44,7 +44,7 @@ function bind(
 
   // unbind if ref is already bound
   if (key in sub) {
-    unbind(commit, key)
+    unbind(commit, key, options && options.reset)
   }
 
   return new Promise((resolve, reject) => {
@@ -74,11 +74,11 @@ function bind(
   })
 }
 
-function unbind(commit: CommitFunction, key: string) {
+function unbind(commit: CommitFunction, key: string, reset?: RTDBOptions['reset']) {
   const sub = subscriptions.get(commit)
   if (!sub || !sub[key]) return
   // TODO dev check before
-  sub[key]()
+  sub[key](reset)
   delete sub[key]
 }
 
@@ -119,7 +119,8 @@ export function firebaseAction<S, R>(
           ref: database.Reference | database.Query,
           options?: RTDBOptions
         ) => bind(state, commit, key, ref, ops, options),
-        unbindFirebaseRef: (key: string) => unbind(commit, key),
+        unbindFirebaseRef: (key: string, reset?: RTDBOptions['reset']) =>
+          unbind(commit, key, reset),
       },
       payload
     )

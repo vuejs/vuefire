@@ -2,6 +2,7 @@ import Vuex from 'vuex'
 import { firebaseAction, vuexfireMutations } from '../src'
 import { MockFirebase, tick, Vue } from '@posva/vuefire-test-helpers'
 import { database } from 'firebase'
+import { RTDBOptions } from '@posva/vuefire-core/dist/packages/@posva/vuefire-core/src'
 
 Vue.use(Vuex)
 
@@ -36,12 +37,12 @@ describe('RTDB: firebaseAction', () => {
     },
   })
 
-  const setItems = (collection: database.Query) =>
+  const setItems = (query: database.Query, options?: RTDBOptions) =>
     // @ts-ignore
-    store.dispatch('action', ({ bindFirebaseRef }) => bindFirebaseRef('items', collection))
-  const setItem = (document: database.Reference) =>
+    store.dispatch('action', ({ bindFirebaseRef }) => bindFirebaseRef('items', query, options))
+  const setItem = (ref: database.Reference, options?: RTDBOptions) =>
     // @ts-ignore
-    store.dispatch('action', ({ bindFirebaseRef }) => bindFirebaseRef('item', document))
+    store.dispatch('action', ({ bindFirebaseRef }) => bindFirebaseRef('item', ref, options))
 
   let collection: database.Reference, document: database.Reference
   beforeEach(async () => {
@@ -87,7 +88,7 @@ describe('RTDB: firebaseAction', () => {
     // @ts-ignore
     doc2.autoFlush()
     doc2.set({ bar: 'bar' })
-    setItem(doc2)
+    await setItem(doc2)
     expect(store.state.item).toEqual({ bar: 'bar' })
     document.set({ foo: 'baz' })
     expect(store.state.item).toEqual({ bar: 'bar' })
@@ -137,5 +138,46 @@ describe('RTDB: firebaseAction', () => {
       // @ts-ignore
       expect(this._vm).toBeInstanceOf(Vue)
     })
+  })
+
+  it('can prevent resetting the value when unbinding', async () => {
+    await setItem(document)
+    document.set({ text: 'foo' })
+    await store.dispatch(
+      'action',
+      // @ts-ignore
+      ({ unbindFirebaseRef }) =>
+        expect(() => {
+          unbindFirebaseRef('item', false)
+        }).not.toThrow()
+    )
+
+    expect(store.state.item).toEqual({ text: 'foo' })
+  })
+
+  // TODO: for some reason the manual flushing is not working
+  // and setItem is resolved right away, so it's impossible to check in between calls
+  it.skip('can customize the reset option when binding', async () => {
+    const document = db.child('foo')
+    const other = db.child('bar')
+
+    let p = setItem(document)
+    document.set({ text: 'foo' })
+    // @ts-ignore
+    // document.flush()
+    await p
+    expect(store.state.item).toEqual({ text: 'foo' })
+    p = setItem(other, { reset: false })
+    expect(store.state.item).toEqual({ text: 'foo' })
+    other.set({ text: 'bar' })
+    // @ts-ignore
+    other.flush()
+    await p
+    expect(store.state.item).toEqual({ text: 'bar' })
+    p = setItem(document)
+    // @ts-ignore
+    // document.flush()
+    // await p
+    expect(store.state.item).toEqual(null)
   })
 })
