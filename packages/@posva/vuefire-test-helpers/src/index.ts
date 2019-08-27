@@ -71,7 +71,7 @@ export function delay(time: number) {
 }
 
 type WalkSet = typeof walkSet
-export const createOps = (localWalkSet: WalkSet) => ({
+export const createOps = (localWalkSet: WalkSet = walkSet) => ({
   add: jest.fn((array, index, data) => array.splice(index, 0, data)),
   set: jest.fn(localWalkSet),
   remove: jest.fn((array, index) => array.splice(index, 1)),
