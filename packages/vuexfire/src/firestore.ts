@@ -132,7 +132,8 @@ export function firestoreAction<S, R>(
       },
     }
 
-    return action(
+    return action.call(
+      this,
       {
         ...context,
         bindFirestoreRef: (

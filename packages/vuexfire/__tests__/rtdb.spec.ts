@@ -24,6 +24,15 @@ describe('RTDB: firebaseAction', () => {
           action: firebaseAction((context, fn) => fn(context)),
         },
       },
+      vanillaFunction: {
+        namespaced: true,
+        actions: {
+          action: firebaseAction(function(context, fn) {
+            // @ts-ignore
+            return fn.call(this, context)
+          }),
+        },
+      },
     },
   })
 
@@ -121,5 +130,12 @@ describe('RTDB: firebaseAction', () => {
           unbindFirebaseRef('items')
         }).not.toThrow()
     )
+  })
+
+  it('propagates value of `this` to wrapped action', async () => {
+    await store.dispatch('vanillaFunction/action', function() {
+      // @ts-ignore
+      expect(this._vm).toBeInstanceOf(Vue)
+    })
   })
 })

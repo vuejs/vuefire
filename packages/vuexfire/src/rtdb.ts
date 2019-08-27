@@ -110,7 +110,8 @@ export function firebaseAction<S, R>(
       },
     }
 
-    return action(
+    return action.call(
+      this,
       {
         ...context,
         bindFirebaseRef: (

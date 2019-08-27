@@ -22,6 +22,15 @@ describe('firestoreAction', () => {
           action: firestoreAction((context, fn) => fn(context)),
         },
       },
+      vanillaFunction: {
+        namespaced: true,
+        actions: {
+          action: firestoreAction(function(context, fn) {
+            // @ts-ignore
+            return fn.call(this, context)
+          }),
+        },
+      },
     },
   })
 
@@ -180,5 +189,12 @@ describe('firestoreAction', () => {
           unbindFirestoreRef('items')
         }).not.toThrow()
     )
+  })
+
+  it('propagates value of `this` to wrapped action', async () => {
+    await store.dispatch('vanillaFunction/action', function() {
+      // @ts-ignore
+      expect(this._vm).toBeInstanceOf(Vue)
+    })
   })
 })
