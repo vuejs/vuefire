@@ -128,10 +128,7 @@ this.$rtdbBind('user', users.child(this.id)).then(user => {
   // this.user === user
 })
 
-this.$rtdbBind(
-  'documents',
-  documents.orderByChild('creator').equalTo(this.id)
-).then(documents => {
+this.$rtdbBind('documents', documents.orderByChild('creator').equalTo(this.id)).then(documents => {
   // documents will be an array if this.documents was initially set to an array
   // and it will point to the same property declared in data:
   // this.documents === documents
@@ -144,12 +141,10 @@ this.$bind('user', users.doc(this.id)).then(user => {
   // this.user === user
 })
 
-this.$bind('documents', documents.where('creator', '==', this.id)).then(
-  documents => {
-    // documents will point to the same property declared in data:
-    // this.documents === documents
-  }
-)
+this.$bind('documents', documents.where('creator', '==', this.id)).then(documents => {
+  // documents will point to the same property declared in data:
+  // this.documents === documents
+})
 ```
 
 </FirebaseExample>
@@ -339,47 +334,143 @@ this.$unbind('documents')
 
 </FirebaseExample>
 
-By default, Vuefire **will reset** the property, you can customize this behaviour with the [`reset` option](../api/vuefire.md#options-2):
+By default, Vuefire **will reset** the property, you can customize this behaviour by providing a value to the `unbind`/`rtdbUnbind`
 
 <FirebaseExample>
 
 ```js
 // default behavior
-this.$rtdbBind('user')
 this.$rtdbUnbind('user')
+this.$rtdbUnbind('user', true)
 // this.user === null
-// using a boolean value for reset
-this.$rtdbBind('user', { reset: false })
-this.$rtdbUnbind('user')
+
+// using a boolean value for reset to keep current value
+this.$rtdbUnbind('user', false)
 // this.user === { name: 'Eduardo' }
-// using the function syntax
-this.$rtdbBind('user', { reset: () => ({ name: 'unregistered' }) })
-this.$rtdbUnbind('user')
+
+// using the function syntax to customize the value
+this.$rtdbUnbind('user', () => ({ name: 'unregistered' }) }))
+// this.user === { name: 'unregistered' }
 
 // for references bound as arrays, they are reset to an empty array by default instead of `null`
-this.$rtdbBind('documents')
 this.$rtdbUnbind('documents')
 // this.documents === []
 ```
 
 ```js
 // default behavior
-this.$bind('user')
 this.$unbind('user')
+this.$unbind('user', true)
 // this.user === null
-// using a boolean value for reset
-this.$bind('user', { reset: false })
-this.$unbind('user')
+
+// using a boolean value for reset to keep current value
+this.$unbind('user', false)
 // this.user === { name: 'Eduardo' }
-// using the function syntax
-this.$bind('user', { reset: () => ({ name: 'unregistered' }) })
-this.$unbind('user')
+
+// using the function syntax to customize the value
+this.$unbind('user', () => ({ name: 'unregistered' }))
 // this.user === { name: 'unregistered' }
 
 // for collections, they are reset to an empty array by default instead of `null`
-this.$bind('documents')
 this.$unbind('documents')
 // this.documents === []
 ```
 
 </FirebaseExample>
+
+It's also possible to customize this behavior when _binding_ by using the [`reset` option](../api/vuefire.md#options-2):
+
+<FirebaseExample>
+
+```js
+const userRef = db.ref('users').child('1')
+
+// default behavior
+this.$rtdbBind('user', userRef)
+this.$rtdbUnbind('user')
+// this.user === null
+
+// using a boolean value for reset
+this.$rtdbBind('user', userRef, { reset: false })
+this.$rtdbUnbind('user')
+// this.user === { name: 'Eduardo' }
+
+// using the function syntax
+this.$rtdbBind('user', userRef, { reset: () => ({ name: 'unregistered' }) })
+this.$rtdbUnbind('user')
+
+// for references bound as arrays, they are reset to an empty array by default instead of `null`
+this.$rtdbBind('documents', db.ref('documents'))
+this.$rtdbUnbind('documents')
+// this.documents === []
+```
+
+```js
+const userRef = db.collection('users').doc('1')
+// default behavior
+this.$bind('user', userRef)
+this.$unbind('user')
+// this.user === null
+
+// using a boolean value for reset
+this.$bind('user', userRef, { reset: false })
+this.$unbind('user')
+// this.user === { name: 'Eduardo' }
+
+// using the function syntax
+this.$bind('user', userRef, { reset: () => ({ name: 'unregistered' }) })
+this.$unbind('user')
+// this.user === { name: 'unregistered' }
+
+// for collections, they are reset to an empty array by default instead of `null`
+this.$bind('documents', db.collection('documents'))
+this.$unbind('documents')
+// this.documents === []
+```
+
+</FirebaseExample>
+
+This is useful when you are only calling _binding_ functions and allowing them to automatically reset:
+
+<FirebaseExample>
+
+```js
+watch: {
+  userId (userId) {
+    this.$rtdbBind('user', db.ref('users').child(userId), { reset: false })
+  }
+}
+```
+
+```js
+watch: {
+  userId (userId) {
+    this.$bind('user', db.collection('users').doc(userId), { reset: false })
+  }
+}
+```
+
+</FirebaseExample>
+
+:::warning
+Keep in mind that the `reset` option that is taken into account is the one that was set on the previous _bind_ call:
+
+<FirebaseExample>
+
+```js
+await this.$rtdbBind('user', db.ref('users').child('1'))
+this.$rtdbBind('user', db.ref('users').child('2'), { reset: false })
+// this.user will be reset because of the previous `$rtdbBind` call
+// this.user === null
+```
+
+```js
+await this.$bind('user', db.collection('users').doc('1'))
+this.$bind('user', db.collection('users').doc('2'), { reset: false })
+// this.user will be reset because of the previous `$bind` call
+// this.user === null
+```
+
+</FirebaseExample>
+
+:::
