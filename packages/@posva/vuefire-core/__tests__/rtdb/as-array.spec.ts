@@ -1,5 +1,6 @@
 import { rtdbBindAsArray } from '../../src'
 import { MockFirebase, createOps, MockedReference } from '@posva/vuefire-test-helpers'
+import { ResetOption } from '../../src/shared'
 
 describe('RTDB collection', () => {
   let collection: MockedReference,
@@ -147,21 +148,18 @@ describe('RTDB collection', () => {
   })
 
   it('can be left as is', async () => {
-    let unbind: () => void = () => {
+    let unbind: (reset?: ResetOption) => void = () => {
       throw new Error('Promise was not called')
     }
     const promise = new Promise((resolve, reject) => {
-      unbind = rtdbBindAsArray(
-        { vm, collection, key: 'itemsReset', resolve, reject, ops },
-        { reset: false }
-      )
+      unbind = rtdbBindAsArray({ vm, collection, key: 'itemsReset', resolve, reject, ops })
       collection.flush()
     })
     await promise
     collection.push({ foo: 'foo' })
     collection.flush()
     expect(vm.itemsReset).toEqual([{ foo: 'foo' }])
-    unbind()
+    unbind(false)
     expect(vm.itemsReset).toEqual([{ foo: 'foo' }])
   })
 
@@ -172,6 +170,7 @@ describe('RTDB collection', () => {
     const promise = new Promise((resolve, reject) => {
       unbind = rtdbBindAsArray(
         { vm, collection, key: 'itemsReset', resolve, reject, ops },
+        // same note as in as-object.spec.ts
         { reset: () => [{ bar: 'bar' }] }
       )
       collection.flush()
