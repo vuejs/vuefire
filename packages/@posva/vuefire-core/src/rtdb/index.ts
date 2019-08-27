@@ -1,9 +1,9 @@
 import { database } from 'firebase'
 import { createRecordFromRTDBSnapshot, indexForKey, RTDBSerializer } from './utils'
-import { OperationsType } from '../shared'
+import { OperationsType, ResetOption } from '../shared'
 
 export interface RTDBOptions {
-  reset?: boolean | (() => any)
+  reset?: ResetOption
   serialize?: RTDBSerializer
   wait?: boolean
 }
@@ -48,7 +48,7 @@ export function rtdbBindAsObject(
   )
   document.once('value', resolve)
 
-  return (reset?: RTDBOptions['reset']) => {
+  return (reset?: ResetOption) => {
     const resetOption = reset === undefined ? options.reset : reset
     document.off('value', listener)
     if (resetOption !== false) {
@@ -117,7 +117,7 @@ export function rtdbBindAsArray(
     resolve(data)
   })
 
-  return (reset?: RTDBOptions['reset']) => {
+  return (reset?: ResetOption) => {
     const resetOption = reset === undefined ? options.reset : reset
     collection.off('child_added', childAdded)
     collection.off('child_changed', childChanged)

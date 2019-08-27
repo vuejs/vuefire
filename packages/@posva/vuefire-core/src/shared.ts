@@ -6,6 +6,8 @@ export interface OperationsType {
   remove: (array: TODO[], index: number) => any
 }
 
+export type ResetOption = boolean | (() => any)
+
 export type TODO = any
 /**
  * Walks a path inside an object

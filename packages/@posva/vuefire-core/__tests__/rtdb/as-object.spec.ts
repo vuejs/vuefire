@@ -1,5 +1,6 @@
 import { rtdbBindAsObject } from '../../src/index'
 import { MockFirebase, MockedReference, createOps } from '@posva/vuefire-test-helpers'
+import { ResetOption } from '../../src/shared'
 
 function createSnapshotFromPrimitive(value: any, key: string) {
   const data = {}
@@ -99,19 +100,16 @@ describe('RTDB document', () => {
 
   it('can be left as is', async () => {
     document.set({ foo: 'foo' })
-    let unbind: () => void = () => {
+    let unbind: (reset?: ResetOption) => void = () => {
       throw new Error('Promise was not called')
     }
     const promise = new Promise((resolve, reject) => {
-      unbind = rtdbBindAsObject(
-        { vm, document, key: 'item', resolve, reject, ops },
-        { reset: false }
-      )
+      unbind = rtdbBindAsObject({ vm, document, key: 'item', resolve, reject, ops })
       document.flush()
     })
     await promise
     expect(vm.item).toEqual({ foo: 'foo' })
-    unbind()
+    unbind(false)
     expect(vm.item).toEqual({ foo: 'foo' })
   })
 
@@ -123,12 +121,14 @@ describe('RTDB document', () => {
     const promise = new Promise((resolve, reject) => {
       unbind = rtdbBindAsObject(
         { vm, document, key: 'item', resolve, reject, ops },
+        // this could be considered as global reset option
         { reset: () => ({ bar: 'bar' }) }
       )
       document.flush()
     })
     await promise
     expect(vm.item).toEqual({ foo: 'foo' })
+    // not passing anything
     unbind()
     expect(vm.item).toEqual({ bar: 'bar' })
   })
