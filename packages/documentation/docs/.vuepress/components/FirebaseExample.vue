@@ -9,7 +9,7 @@
         @click="select(0)"
         :disabled="disable === '0'"
       >
-        <rtdb-logo/>
+        <rtdb-logo />
       </button>
       <button
         :id="id + '_firestore'"
@@ -19,14 +19,14 @@
         @click="select(1)"
         :disabled="disable === '1'"
       >
-        <cloudstore-logo/>
+        <cloudstore-logo />
       </button>
     </nav>
     <section>
       <keep-alive>
         <!-- the key forces recreation of the slot child instead of reusing it -->
         <div class="tab-content" :key="selectedTab">
-          <SlotSelector :slot="$slots.default[selectedTab]"/>
+          <SlotSelector :slot="$slots.default[selectedTab]" />
         </div>
       </keep-alive>
     </section>
@@ -81,8 +81,6 @@ $bgColor = #fff;
 $lightGray = #ddd;
 
 .tab-container {
-  background-color: $bgColor;
-
   & > nav {
     display: flex;
     align-items: flex-end;
