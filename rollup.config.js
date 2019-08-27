@@ -50,8 +50,8 @@ function createEntry(
         'process.env.NODE_ENV': `'${env}'`,
       }),
       alias({
-        resolve: ['ts'],
-        firebase: path.resolve(__dirname, './stub.ts'),
+        resolve: ['.ts', '.js'],
+        entries: [{ find: 'firebase', replacement: path.join(__dirname, './stub') }],
       }),
     ],
     output: {

@@ -37,5 +37,3 @@ export function indexForKey(array: any[], key: string | null | number): number {
 
   return -1
 }
-
-export { database as rtdb }

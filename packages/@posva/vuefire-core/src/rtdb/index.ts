@@ -1,4 +1,5 @@
-import { createRecordFromRTDBSnapshot, indexForKey, RTDBSerializer, rtdb } from './utils'
+import { database } from 'firebase'
+import { createRecordFromRTDBSnapshot, indexForKey, RTDBSerializer } from './utils'
 import { OperationsType } from '../shared'
 
 export interface RTDBOptions {
@@ -22,7 +23,7 @@ interface CommonBindOptionsParameter {
 }
 
 interface BindAsObjectParameter extends CommonBindOptionsParameter {
-  document: rtdb.Reference | rtdb.Query
+  document: database.Reference | database.Query
 }
 
 /**
@@ -55,7 +56,7 @@ export function rtdbBindAsObject(
 }
 
 interface BindAsArrayParameter extends CommonBindOptionsParameter {
-  collection: rtdb.Reference | rtdb.Query
+  collection: database.Reference | database.Query
 }
 
 /**
