@@ -1,4 +1,4 @@
-import { bindCollection, walkSet, FirestoreOptions } from '../../src'
+import { bindCollection, FirestoreOptions } from '../../src'
 import { db, delay, spyUnbind, delayUpdate, createOps } from '@posva/vuefire-test-helpers'
 import { OperationsType } from '../../src/shared'
 import { firestore } from 'firebase'
@@ -24,7 +24,7 @@ describe('refs in collections', () => {
       b: null,
       c: null,
     }
-    ops = createOps(walkSet)
+    ops = createOps()
     bind = (key, collection, options) => {
       return new Promise(
         (resolve, reject) =>

@@ -1,4 +1,4 @@
-import { rtdbBindAsObject, walkSet } from '../../src/index'
+import { rtdbBindAsObject } from '../../src/index'
 import { MockFirebase, MockedReference, createOps } from '@posva/vuefire-test-helpers'
 
 function createSnapshotFromPrimitive(value: any, key: string) {
@@ -14,7 +14,7 @@ describe('RTDB document', () => {
     resolve: (data: any) => void,
     reject: (error: any) => void,
     unbind: () => void
-  const ops = createOps(walkSet)
+  const ops = createOps()
 
   beforeEach(async () => {
     document = new MockFirebase().child('data')

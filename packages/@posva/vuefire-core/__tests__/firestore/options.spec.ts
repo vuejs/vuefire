@@ -1,4 +1,4 @@
-import { bindDocument, walkSet, firestoreOptions, bindCollection } from '../../src'
+import { bindDocument, firestoreOptions, bindCollection } from '../../src'
 import { db, createOps, CollectionReference, DocumentReference } from '@posva/vuefire-test-helpers'
 import { firestore } from 'firebase'
 
@@ -8,7 +8,7 @@ describe('options', () => {
     vm: Record<string, any>,
     resolve: (data: any) => void,
     reject: (error: any) => void
-  const ops = createOps(walkSet)
+  const ops = createOps()
 
   beforeEach(async () => {
     // @ts-ignore

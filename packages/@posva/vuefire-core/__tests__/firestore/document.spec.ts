@@ -1,4 +1,4 @@
-import { bindDocument, walkSet } from '../../src'
+import { bindDocument } from '../../src'
 import { db, spyUnbind, createOps } from '@posva/vuefire-test-helpers'
 import { firestore } from 'firebase'
 import { OperationsType } from '../../src/shared'
@@ -16,7 +16,7 @@ describe('documents', () => {
     collection = db.collection()
     // @ts-ignore
     document = collection.doc()
-    ops = createOps(walkSet)
+    ops = createOps()
     vm = {}
     await new Promise((res, rej) => {
       resolve = jest.fn(res)

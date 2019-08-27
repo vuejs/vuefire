@@ -1,4 +1,4 @@
-import { rtdbBindAsArray, walkSet } from '../../src'
+import { rtdbBindAsArray } from '../../src'
 import { MockFirebase, createOps, MockedReference } from '@posva/vuefire-test-helpers'
 
 describe('RTDB collection', () => {
@@ -7,7 +7,7 @@ describe('RTDB collection', () => {
     resolve: (data: any) => void,
     reject: (error: any) => void,
     unbind: () => void
-  const ops = createOps(walkSet)
+  const ops = createOps()
 
   beforeEach(async () => {
     collection = new MockFirebase().child('data')

@@ -1,4 +1,4 @@
-import { walkSet, rtdbBindAsObject, rtdbBindAsArray, rtdbOptions } from '../../src'
+import { rtdbBindAsObject, rtdbBindAsArray, rtdbOptions } from '../../src'
 import { MockFirebase, createOps, MockedReference } from '@posva/vuefire-test-helpers'
 
 describe('RTDB options', () => {
@@ -6,7 +6,7 @@ describe('RTDB options', () => {
     document: MockedReference,
     vm: Record<string, any>,
     unbind: () => void
-  const ops = createOps(walkSet)
+  const ops = createOps()
   beforeEach(async () => {
     collection = new MockFirebase().child('data')
     document = new MockFirebase().child('data')
