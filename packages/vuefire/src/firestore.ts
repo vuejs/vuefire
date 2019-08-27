@@ -78,14 +78,16 @@ declare module 'vue/types/vue' {
       reference: firestore.DocumentReference,
       options?: FirestoreOptions
     ): Promise<firestore.DocumentData>
-    $unbind: (name: string) => void
+    $unbind: (name: string, reset?: FirestoreOptions['reset']) => void
     $firestoreRefs: Readonly<
       Record<string, firestore.DocumentReference | firestore.CollectionReference>
     >
     // _firestoreSources: Readonly<
     //   Record<string, firestore.CollectionReference | firestore.Query | firestore.DocumentReference>
     // >
-    _firestoreUnbinds: Readonly<Record<string, () => void>>
+    _firestoreUnbinds: Readonly<
+      Record<string, ReturnType<typeof bindCollection | typeof bindDocument>>
+    >
   }
 }
 
@@ -129,8 +131,11 @@ export const firestorePlugin: PluginFunction<PluginOptions> = function firestore
     return promise
   }
 
-  Vue.prototype[unbindName] = function firestoreUnbind(key: string) {
-    this._firestoreUnbinds[key]()
+  Vue.prototype[unbindName] = function firestoreUnbind(
+    key: string,
+    reset?: FirestoreOptions['reset']
+  ) {
+    this._firestoreUnbinds[key](reset)
     delete this._firestoreUnbinds[key]
     delete this.$firestoreRefs[key]
   }

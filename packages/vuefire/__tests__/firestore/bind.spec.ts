@@ -195,4 +195,30 @@ describe('Firestore: binding', () => {
 
     expect(vm.items).toEqual([{ a: { isA: true } }, { b: { c: { isC: true } } }])
   })
+
+  it('can customize the reset option through $bind', async () => {
+    await document.update({ foo: 'foo' })
+    // @ts-ignore
+    const doc2: firestore.DocumentReference = db.collection().doc()
+    await doc2.update({ bar: 'bar' })
+    await vm.$bind('item', document, { reset: false })
+    expect(vm.item).toEqual({ foo: 'foo' })
+    let p = vm.$bind('item', doc2)
+    expect(vm.item).toEqual({ foo: 'foo' })
+    await p
+    expect(vm.item).toEqual({ bar: 'bar' })
+    // reset false here do not matter
+    p = vm.$bind('item', document, { reset: false })
+    expect(vm.item).toEqual(null)
+  })
+
+  it('can customize the reset option through $unbind', async () => {
+    await document.update({ foo: 'foo' })
+    // @ts-ignore
+    const doc2: firestore.DocumentReference = db.collection().doc()
+    await doc2.update({ bar: 'bar' })
+    await vm.$bind('item', document)
+    vm.$unbind('item', false)
+    expect(vm.item).toEqual({ foo: 'foo' })
+  })
 })
