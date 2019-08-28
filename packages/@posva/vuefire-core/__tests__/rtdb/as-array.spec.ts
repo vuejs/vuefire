@@ -183,4 +183,13 @@ describe('RTDB collection', () => {
     unbind()
     expect(vm.itemsReset).toEqual([{ bar: 'bar' }])
   })
+
+  it('adds elements when user manually removes items', () => {
+    collection.push({ name: 'one' })
+    collection.flush()
+    collection.push({ name: 'two' })
+    vm.items.splice(0, 1)
+    collection.flush()
+    expect(vm.items).toEqual([{ name: 'two' }])
+  })
 })
