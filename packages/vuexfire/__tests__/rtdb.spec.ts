@@ -140,7 +140,7 @@ describe('RTDB: firebaseAction', () => {
     })
   })
 
-  it('can prevent resetting the value when unbinding', async () => {
+  it('can unbind without resetting', async () => {
     await setItem(document)
     document.set({ text: 'foo' })
     await store.dispatch(

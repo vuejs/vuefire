@@ -68,13 +68,14 @@ Can contain the following properties:
 
 - `maxRefDepth`: How many levels of nested references should be automatically bound. Defaults to 2, meaning that References inside of References inside of documents bound with `bindFirestoreRef` will automatically be bound too.
 - `reset`: Allows to define the behavior when a previously bound reference is unbound. Defaults to `true`, which resets the property in the vue instance to `null` for documents and to an empty array `[]` for collections. It can also be set to a function returning a value to customize the value set. Setting it to `false` will keep the data as-is when unbinding.
+- `wait`: Waits for the binding to be completely resolved before setting the value in data. This will also force `reset: false` unless `reset` is provided as a function.
 - `serialize`: a function to provide a custom serialization strategy when a
   document from firebase is set on the Vue instance. This allows to customize
   the `id` key, to transform data, etc. See [Vuefire plugin options for examples](./vuefire.md#options-serialize)
 
 ### unbindFirestoreRef
 
-`unbindFirestoreRef(key: string): void`
+`unbindFirestoreRef(key: string, reset?: FirestoreOptions['reset']): void`
 
 Unsubscribes from updates for a given key.
 
@@ -112,12 +113,13 @@ Returns a promise that is resolved once the data is fetched and the state is in 
 Can contain the following properties:
 
 - `reset`: Allows to define the behavior when a previously bound reference is unbound. Defaults to `true`, which resets the property in the vue instance to `null` for properties bound as objects and to an empty array `[]` for properties bound as arrays. It can also be set to a function returning a value to customize the value set. Setting it to `false` will keep the data as-is when unbinding.
+- `wait`: Waits for the binding to be completely resolved before setting the value in data. This will also force `reset: false` unless `reset` is provided as a function.
 - `serialize`: a function to provide a custom serialization strategy when a
   document from firebase is set on the Vue instance. This allows to customize
   the `id` key, to transform data, etc. See [Vuefire plugin options for examples](./vuefire.md#options-serialize-2)
 
 ### unbindFirebaseRef
 
-`unbindFirebaseRef(key: string): void`
+`unbindFirebaseRef(key: string, reset?: RTDBOptions['reset']): void`
 
 Unsubscribes from updates for a given key.

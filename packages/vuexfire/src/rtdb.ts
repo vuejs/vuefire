@@ -32,7 +32,7 @@ function bind(
   key: string,
   ref: database.Reference | database.Query,
   ops: OperationsType,
-  options?: RTDBOptions
+  options: RTDBOptions
 ): Promise<database.DataSnapshot> {
   // TODO check ref is valid
   // TODO check defined in state
@@ -118,7 +118,7 @@ export function firebaseAction<S, R>(
           key: string,
           ref: database.Reference | database.Query,
           options?: RTDBOptions
-        ) => bind(state, commit, key, ref, ops, options),
+        ) => bind(state, commit, key, ref, ops, Object.assign({}, rtdbOptions, options)),
         unbindFirebaseRef: (key: string, reset?: RTDBOptions['reset']) =>
           unbind(commit, key, reset),
       },
