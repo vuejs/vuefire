@@ -124,7 +124,7 @@ export const rtdbPlugin: PluginFunction<PluginOptions> = function rtdbPlugin(
     const options = Object.assign({}, globalOptions, userOptions)
     if (this._firebaseUnbinds[key]) {
       // @ts-ignore
-      this[unbindName](key)
+      this[unbindName](key, options.reset)
     }
 
     const promise = bind(this, key, source, options)

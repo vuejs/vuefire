@@ -123,7 +123,7 @@ export const firestorePlugin: PluginFunction<PluginOptions> = function firestore
 
     if (this._firestoreUnbinds[key]) {
       // @ts-ignore
-      this[unbindName](key)
+      this[unbindName](key, options.reset)
     }
     const promise = bind(this, key, ref, ops, options)
     // @ts-ignore
