@@ -72,12 +72,14 @@ interface PluginOptions {
   bindName?: string
   unbindName?: string
   serialize?: RTDBOptions['serialize']
+  reset?: RTDBOptions['reset']
 }
 
-const defaultOptions: Required<PluginOptions> = {
+const defaultOptions: Readonly<Required<PluginOptions>> = {
   bindName: '$rtdbBind',
   unbindName: '$rtdbUnbind',
   serialize: rtdbOptions.serialize,
+  reset: rtdbOptions.reset,
 }
 
 declare module 'vue/types/vue' {
@@ -106,20 +108,24 @@ declare module 'vue/types/options' {
 
 export const rtdbPlugin: PluginFunction<PluginOptions> = function rtdbPlugin(
   Vue,
-  userOptions = defaultOptions
+  pluginOptions = defaultOptions
 ) {
   const strategies = Vue.config.optionMergeStrategies
   strategies.firebase = strategies.provide
 
-  const globalOptions = Object.assign({}, defaultOptions, userOptions)
+  const globalOptions = Object.assign({}, defaultOptions, pluginOptions)
   const { bindName, unbindName } = globalOptions
+
+  Vue.prototype[unbindName] = function rtdbUnbind(key: string, reset?: RTDBOptions['reset']) {
+    unbind(this, key, reset)
+  }
 
   // add $rtdbBind and $rtdbUnbind methods
   Vue.prototype[bindName] = function rtdbBind(
     this: Vue,
     key: string,
     source: database.Reference | database.Query,
-    userOptions: RTDBOptions = globalOptions
+    userOptions?: RTDBOptions
   ) {
     const options = Object.assign({}, globalOptions, userOptions)
     if (this._firebaseUnbinds[key]) {
@@ -134,10 +140,6 @@ export const rtdbPlugin: PluginFunction<PluginOptions> = function rtdbPlugin(
     this.$firebaseRefs[key] = getRef(source)
 
     return promise
-  }
-
-  Vue.prototype[unbindName] = function rtdbUnbind(key: string, reset?: RTDBOptions['reset']) {
-    unbind(this, key, reset)
   }
 
   // handle firebase option

@@ -57,12 +57,14 @@ interface PluginOptions {
   bindName?: string
   unbindName?: string
   serialize?: FirestoreOptions['serialize']
+  reset?: FirestoreOptions['reset']
 }
 
-const defaultOptions: Required<PluginOptions> = {
+const defaultOptions: Readonly<Required<PluginOptions>> = {
   bindName: '$bind',
   unbindName: '$unbind',
   serialize: firestoreOptions.serialize,
+  reset: firestoreOptions.reset,
 }
 
 declare module 'vue/types/vue' {
@@ -105,19 +107,28 @@ declare module 'vue/types/options' {
 
 export const firestorePlugin: PluginFunction<PluginOptions> = function firestorePlugin(
   Vue,
-  userOptions = defaultOptions
+  pluginOptions = defaultOptions
 ) {
   const strategies = Vue.config.optionMergeStrategies
   strategies.firestore = strategies.provide
 
-  const globalOptions = Object.assign({}, defaultOptions, userOptions)
+  const globalOptions = Object.assign({}, defaultOptions, pluginOptions)
   const { bindName, unbindName } = globalOptions
+
+  Vue.prototype[unbindName] = function firestoreUnbind(
+    key: string,
+    reset?: FirestoreOptions['reset']
+  ) {
+    this._firestoreUnbinds[key](reset)
+    delete this._firestoreUnbinds[key]
+    delete this.$firestoreRefs[key]
+  }
 
   Vue.prototype[bindName] = function firestoreBind(
     this: Vue,
     key: string,
     ref: firestore.Query | firestore.CollectionReference | firestore.DocumentReference,
-    userOptions: FirestoreOptions = globalOptions
+    userOptions?: FirestoreOptions
   ) {
     const options = Object.assign({}, globalOptions, userOptions)
 
@@ -129,15 +140,6 @@ export const firestorePlugin: PluginFunction<PluginOptions> = function firestore
     // @ts-ignore
     this.$firestoreRefs[key] = ref
     return promise
-  }
-
-  Vue.prototype[unbindName] = function firestoreUnbind(
-    key: string,
-    reset?: FirestoreOptions['reset']
-  ) {
-    this._firestoreUnbinds[key](reset)
-    delete this._firestoreUnbinds[key]
-    delete this.$firestoreRefs[key]
   }
 
   Vue.mixin({

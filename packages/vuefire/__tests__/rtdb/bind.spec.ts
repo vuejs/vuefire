@@ -115,7 +115,8 @@ describe('RTDB: manual bind', () => {
     expect(vm.item).toEqual({ name: 'foo' })
     vm.$rtdbUnbind('item', false)
     expect(vm.item).toEqual({ name: 'foo' })
-    await vm.$rtdbBind('item', otherSource)
+    // should not apply the option to the next unbind call
+    await vm.$rtdbBind('item', otherSource, { reset: false })
     expect(vm.item).toEqual({ name: 'bar' })
     vm.$rtdbUnbind('item')
     expect(vm.item).toEqual(null)
