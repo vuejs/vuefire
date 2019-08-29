@@ -70,6 +70,7 @@
 
       var { Store, mapState } = Vuex
       var { firestoreAction, vuexfireMutations } = Vuexfire
+      Vuexfire.firestoreOptions.wait = true
 
       var store = new Vuex.Store({
         strict: true,
