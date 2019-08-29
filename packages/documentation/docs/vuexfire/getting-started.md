@@ -43,6 +43,9 @@ You also need to get a database instance from firebase. This can be put into a `
 <FirebaseExample>
 
 ```js
+import firebase from 'firebase/app'
+import 'firebase/database'
+
 // Get a RTDB instance
 export const db = firebase
   .initializeApp({ databaseURL: 'MY PROJECT URL' })
@@ -50,6 +53,9 @@ export const db = firebase
 ```
 
 ```js
+import firebase from 'firebase/app'
+import 'firebase/firestore'
+
 // Get a Firestore instance
 export const db = firebase
   .initializeApp({ projectId: 'MY PROJECT ID' })
