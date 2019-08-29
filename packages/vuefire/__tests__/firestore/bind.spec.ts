@@ -224,4 +224,28 @@ describe('Firestore: binding', () => {
     vm.$unbind('item')
     expect(vm.item).toEqual(null)
   })
+
+  it('do not reset if wait: true', async () => {
+    await collection.add({ foo: 'foo' })
+    await vm.$bind('items', collection)
+    // @ts-ignore
+    const col2: firestore.CollectionReference = db.collection()
+    await col2.add({ bar: 'bar' })
+    const p = vm.$bind('items', col2, { wait: true, reset: true })
+    expect(vm.items).toEqual([{ foo: 'foo' }])
+    await p
+    expect(vm.items).toEqual([{ bar: 'bar' }])
+  })
+
+  it('wait + reset can be overriden with a function', async () => {
+    await collection.add({ foo: 'foo' })
+    await vm.$bind('items', collection)
+    // @ts-ignore
+    const col2: firestore.CollectionReference = db.collection()
+    await col2.add({ bar: 'bar' })
+    const p = vm.$bind('items', col2, { wait: true, reset: () => ['foo'] })
+    expect(vm.items).toEqual(['foo'])
+    await p
+    expect(vm.items).toEqual([{ bar: 'bar' }])
+  })
 })

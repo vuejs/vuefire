@@ -35,7 +35,7 @@
 
     <script>
       /* global Vue, firebase */
-      Vue.use(Vuefire.rtdbPlugin)
+      Vue.use(Vuefire.rtdbPlugin, { wait: true })
       var db = firebase
         .initializeApp({
           databaseURL: 'https://vuefiredemo.firebaseio.com',

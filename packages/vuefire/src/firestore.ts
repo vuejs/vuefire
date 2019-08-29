@@ -58,6 +58,7 @@ interface PluginOptions {
   unbindName?: string
   serialize?: FirestoreOptions['serialize']
   reset?: FirestoreOptions['reset']
+  wait?: FirestoreOptions['wait']
 }
 
 const defaultOptions: Readonly<Required<PluginOptions>> = {
@@ -65,6 +66,7 @@ const defaultOptions: Readonly<Required<PluginOptions>> = {
   unbindName: '$unbind',
   serialize: firestoreOptions.serialize,
   reset: firestoreOptions.reset,
+  wait: firestoreOptions.wait,
 }
 
 declare module 'vue/types/vue' {
@@ -134,7 +136,12 @@ export const firestorePlugin: PluginFunction<PluginOptions> = function firestore
 
     if (this._firestoreUnbinds[key]) {
       // @ts-ignore
-      this[unbindName](key, options.reset)
+      this[unbindName](
+        key,
+        // if wait, allow overriding with a function or reset, otherwise, force reset to false
+        // else pass the reset option
+        options.wait ? (typeof options.reset === 'function' ? options.reset : false) : options.reset
+      )
     }
     const promise = bind(this, key, ref, ops, options)
     // @ts-ignore

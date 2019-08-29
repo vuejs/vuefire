@@ -73,6 +73,7 @@ interface PluginOptions {
   unbindName?: string
   serialize?: RTDBOptions['serialize']
   reset?: RTDBOptions['reset']
+  wait?: RTDBOptions['wait']
 }
 
 const defaultOptions: Readonly<Required<PluginOptions>> = {
@@ -80,6 +81,7 @@ const defaultOptions: Readonly<Required<PluginOptions>> = {
   unbindName: '$rtdbUnbind',
   serialize: rtdbOptions.serialize,
   reset: rtdbOptions.reset,
+  wait: rtdbOptions.wait,
 }
 
 declare module 'vue/types/vue' {
@@ -130,7 +132,12 @@ export const rtdbPlugin: PluginFunction<PluginOptions> = function rtdbPlugin(
     const options = Object.assign({}, globalOptions, userOptions)
     if (this._firebaseUnbinds[key]) {
       // @ts-ignore
-      this[unbindName](key, options.reset)
+      this[unbindName](
+        key,
+        // if wait, allow overriding with a function or reset, otherwise, force reset to false
+        // else pass the reset option
+        options.wait ? (typeof options.reset === 'function' ? options.reset : false) : options.reset
+      )
     }
 
     const promise = bind(this, key, source, options)

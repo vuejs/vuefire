@@ -121,4 +121,39 @@ describe('RTDB: manual bind', () => {
     vm.$rtdbUnbind('item')
     expect(vm.item).toEqual(null)
   })
+
+  it('do not reset if wait: true', async () => {
+    const { vm, source } = await createVm()
+    const otherSource = new MockFirebase().child('data2')
+
+    // source.autoFlush()
+    let p = vm.$rtdbBind('items', source)
+    source.push({ name: 'foo' })
+    source.flush()
+    await p
+    p = vm.$rtdbBind('items', otherSource, { wait: true, reset: true })
+    expect(vm.items).toEqual([{ name: 'foo' }])
+    otherSource.push({ name: 'bar' })
+    otherSource.flush()
+    await p
+    expect(vm.items).toEqual([{ name: 'bar' }])
+  })
+
+  it('wait + reset can be overriden with a function', async () => {
+    const { vm, source } = await createVm()
+    const otherSource = new MockFirebase().child('data2')
+
+    // source.autoFlush()
+    let p = vm.$rtdbBind('items', source)
+    source.push({ name: 'foo' })
+    source.flush()
+    await p
+    // using an array is important as we use that to choose between bindAsObject and bindAsArray
+    p = vm.$rtdbBind('items', otherSource, { wait: true, reset: () => ['foo'] })
+    expect(vm.items).toEqual(['foo'])
+    otherSource.push({ name: 'bar' })
+    otherSource.flush()
+    await p
+    expect(vm.items).toEqual([{ name: 'bar' }])
+  })
 })
