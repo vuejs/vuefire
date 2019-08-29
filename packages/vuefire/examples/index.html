@@ -54,7 +54,7 @@
 
     <script>
       /* global Vue, firebase, Vuefire */
-      Vue.use(Vuefire.firestorePlugin)
+      Vue.use(Vuefire.firestorePlugin, { wait: true })
       var db = firebase
         .initializeApp({
           projectId: 'vue-fire-store',
