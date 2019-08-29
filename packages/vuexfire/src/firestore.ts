@@ -51,7 +51,11 @@ function bind(
 
   // unbind if ref is already bound
   if (key in sub) {
-    unbind(commit, key)
+    unbind(
+      commit,
+      key,
+      options.wait ? (typeof options.reset === 'function' ? options.reset : false) : options.reset
+    )
   }
 
   return new Promise((resolve, reject) => {
@@ -82,11 +86,11 @@ function bind(
   })
 }
 
-function unbind(commit: CommitFunction, key: string) {
+function unbind(commit: CommitFunction, key: string, reset?: FirestoreOptions['reset']) {
   const sub = subscriptions.get(commit)
   if (!sub || !sub[key]) return
   // TODO dev check before
-  sub[key]()
+  sub[key](reset)
   delete sub[key]
 }
 
@@ -148,9 +152,10 @@ export function firestoreAction<S, R>(
             // @ts-ignore
             ref,
             ops,
-            options
+            Object.assign({}, firestoreOptions, options)
           ),
-        unbindFirestoreRef: (key: string) => unbind(commit, key),
+        unbindFirestoreRef: (key: string, reset?: FirestoreOptions['reset']) =>
+          unbind(commit, key, reset),
       },
       payload
     )

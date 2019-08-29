@@ -2,6 +2,7 @@ import Vuex from 'vuex'
 import { vuexfireMutations, firestoreAction } from '../src'
 import { db, tick, Vue, delayUpdate } from '@posva/vuefire-test-helpers'
 import { firestore } from 'firebase'
+import { FirestoreOptions } from '@posva/vuefire-core/dist/packages/@posva/vuefire-core/src'
 
 Vue.use(Vuex)
 
@@ -34,9 +35,14 @@ describe('firestoreAction', () => {
     },
   })
 
-  const setItems = (collection: firestore.CollectionReference | firestore.Query) =>
+  const setItems = (
+    collection: firestore.CollectionReference | firestore.Query,
+    options?: FirestoreOptions
+  ) =>
     // @ts-ignore
-    store.dispatch('action', ({ bindFirestoreRef }) => bindFirestoreRef('items', collection))
+    store.dispatch('action', ({ bindFirestoreRef }) =>
+      bindFirestoreRef('items', collection, options)
+    )
   const setItem = (document: firestore.DocumentReference) =>
     // @ts-ignore
     store.dispatch('action', ({ bindFirestoreRef }) => bindFirestoreRef('item', document))
@@ -168,6 +174,18 @@ describe('firestoreAction', () => {
     expect(store.state.items).toEqual([{ text: 'foo' }, { text: 'foo' }])
   })
 
+  it('can unbind without resetting', async () => {
+    await setItems(collection)
+    await collection.add({ text: 'foo' })
+    await store.dispatch(
+      'action',
+      // @ts-ignore
+      ({ unbindFirestoreRef }) => unbindFirestoreRef('items', false)
+    )
+
+    expect(store.state.items).toEqual([{ text: 'foo' }])
+  })
+
   it('does not throw there is nothing to unbind', async () => {
     await setItems(collection)
     await store.dispatch(
@@ -196,5 +214,27 @@ describe('firestoreAction', () => {
       // @ts-ignore
       expect(this._vm).toBeInstanceOf(Vue)
     })
+  })
+
+  it('does not reset if wait: true', async () => {
+    // @ts-ignore
+    const col2: firestore.CollectionReference = db.collection()
+    await setItems(collection)
+    await collection.add({ text: 'foo' })
+    const p = setItems(col2, { wait: true, reset: true })
+    expect(store.state.items).toEqual([{ text: 'foo' }])
+    await p
+    expect(store.state.items).toEqual([])
+  })
+
+  it('wait + reset can be overriden with a function', async () => {
+    // @ts-ignore
+    const col2: firestore.CollectionReference = db.collection()
+    await setItems(collection)
+    await collection.add({ text: 'foo' })
+    const p = setItems(col2, { wait: true, reset: () => ['foo'] })
+    expect(store.state.items).toEqual(['foo'])
+    await p
+    expect(store.state.items).toEqual([])
   })
 })
