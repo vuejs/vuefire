@@ -170,52 +170,63 @@ describe('collections', () => {
     expect(vm.items).toEqual([])
   })
 
-  it('can be left as is', async () => {
+  it('can be left as is with reset: false', async () => {
     await collection.add({ foo: 'foo' })
-    let unbind: () => void = () => {
+    let unbind: ReturnType<typeof bindCollection> = () => {
       throw new Error('Promise was not called')
     }
     const promise = new Promise((resolve, reject) => {
-      unbind = bindCollection(
-        {
-          vm,
-          collection,
-          key: 'items',
-          resolve,
-          reject,
-          ops,
-        },
-        { reset: false }
-      )
+      unbind = bindCollection({
+        vm,
+        collection,
+        key: 'items',
+        resolve,
+        reject,
+        ops,
+      })
     })
     await promise
     expect(vm.items).toEqual([{ foo: 'foo' }])
-    unbind()
+    unbind(false)
     expect(vm.items).toEqual([{ foo: 'foo' }])
   })
 
   it('can be reset to a specific value', async () => {
     await collection.add({ foo: 'foo' })
-    let unbind: () => void = () => {
+    let unbind: ReturnType<typeof bindCollection> = () => {
       throw new Error('Promise was not called')
     }
     const promise = new Promise((resolve, reject) => {
-      unbind = bindCollection(
-        {
-          vm,
-          collection,
-          key: 'items',
-          resolve,
-          reject,
-          ops,
-        },
-        { reset: () => [{ bar: 'bar' }, { baz: 'baz' }] }
-      )
+      unbind = bindCollection({
+        vm,
+        collection,
+        key: 'items',
+        resolve,
+        reject,
+        ops,
+      })
     })
     await promise
     expect(vm.items).toEqual([{ foo: 'foo' }])
-    unbind()
+    unbind(() => [{ bar: 'bar' }, { baz: 'baz' }])
     expect(vm.items).toEqual([{ bar: 'bar' }, { baz: 'baz' }])
+  })
+
+  it('ignores reset option in bind when calling unbind', async () => {
+    // @ts-ignore
+    const other: firestore.CollectionReference = db.collection()
+    await other.add({ a: 0 })
+    await other.add({ b: 1 })
+
+    await new Promise((resolve, reject) => {
+      unbind = bindCollection(
+        { vm, collection: other, key: 'items', resolve, reject, ops },
+        { reset: false }
+      )
+    })
+    expect(vm.items).toEqual([{ a: 0 }, { b: 1 }])
+    unbind()
+    expect(vm.items).toEqual([])
   })
 
   it('can wait until ready', async () => {
@@ -256,22 +267,5 @@ describe('collections', () => {
     expect(vm.items).toEqual([])
     await promise
     expect(vm.items).toEqual([{ a: 0 }, { b: 1 }])
-  })
-
-  it('reset option can be overriden on unbind', async () => {
-    // @ts-ignore
-    const other: firestore.CollectionReference = db.collection()
-    await other.add({ a: 0 })
-    await other.add({ b: 1 })
-
-    await new Promise((resolve, reject) => {
-      unbind = bindCollection(
-        { vm, collection: other, key: 'items', resolve, reject, ops },
-        { reset: false }
-      )
-    })
-    expect(vm.items).toEqual([{ a: 0 }, { b: 1 }])
-    unbind(() => 'Foo')
-    expect(vm.items).toEqual('Foo')
   })
 })

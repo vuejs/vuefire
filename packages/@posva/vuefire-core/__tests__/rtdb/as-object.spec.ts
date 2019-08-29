@@ -98,7 +98,7 @@ describe('RTDB document', () => {
     expect(vm.item).toEqual(null)
   })
 
-  it('can be left as is', async () => {
+  it('can be left as is with reset: false', async () => {
     document.set({ foo: 'foo' })
     let unbind: (reset?: ResetOption) => void = () => {
       throw new Error('Promise was not called')
@@ -115,25 +115,21 @@ describe('RTDB document', () => {
 
   it('can be reset to a specific value', async () => {
     document.set({ foo: 'foo' })
-    let unbind: () => void = () => {
+    let unbind: ReturnType<typeof rtdbBindAsObject> = () => {
       throw new Error('Promise was not called')
     }
     const promise = new Promise((resolve, reject) => {
-      unbind = rtdbBindAsObject(
-        { vm, document, key: 'item', resolve, reject, ops },
-        // this could be considered as global reset option
-        { reset: () => ({ bar: 'bar' }) }
-      )
+      unbind = rtdbBindAsObject({ vm, document, key: 'item', resolve, reject, ops })
       document.flush()
     })
     await promise
     expect(vm.item).toEqual({ foo: 'foo' })
     // not passing anything
-    unbind()
+    unbind(() => ({ bar: 'bar' }))
     expect(vm.item).toEqual({ bar: 'bar' })
   })
 
-  it('can override reset option in unbind', async () => {
+  it('ignores reset option in bind when calling unbind', async () => {
     document.set({ foo: 'foo' })
     let unbind: ReturnType<typeof rtdbBindAsObject> = () => {
       throw new Error('Promise was not called')
@@ -141,13 +137,14 @@ describe('RTDB document', () => {
     const promise = new Promise((resolve, reject) => {
       unbind = rtdbBindAsObject(
         { vm, document, key: 'item', resolve, reject, ops },
-        { reset: false }
+        // this will have no effect when unbinding
+        { reset: () => 'foo' }
       )
       document.flush()
     })
     await promise
     expect(vm.item).toEqual({ foo: 'foo' })
-    unbind(() => 'foo')
-    expect(vm.item).toEqual('foo')
+    unbind()
+    expect(vm.item).toEqual(null)
   })
 })

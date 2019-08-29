@@ -147,7 +147,7 @@ describe('RTDB collection', () => {
     expect(vm.items).toEqual([])
   })
 
-  it('can be left as is', async () => {
+  it('can be left as is reset: false', async () => {
     let unbind: (reset?: ResetOption) => void = () => {
       throw new Error('Promise was not called')
     }
@@ -164,41 +164,38 @@ describe('RTDB collection', () => {
   })
 
   it('can be reset to a specific value', async () => {
-    let unbind: () => void = () => {
+    let unbind: ReturnType<typeof rtdbBindAsArray> = () => {
       throw new Error('Promise was not called')
     }
     const promise = new Promise((resolve, reject) => {
-      unbind = rtdbBindAsArray(
-        { vm, collection, key: 'itemsReset', resolve, reject, ops },
-        // same note as in as-object.spec.ts
-        { reset: () => [{ bar: 'bar' }] }
-      )
+      unbind = rtdbBindAsArray({ vm, collection, key: 'itemsReset', resolve, reject, ops })
       collection.flush()
     })
     await promise
     collection.push({ foo: 'foo' })
     collection.flush()
     expect(vm.itemsReset).toEqual([{ foo: 'foo' }])
-    unbind()
+    unbind(() => [{ bar: 'bar' }])
     expect(vm.itemsReset).toEqual([{ bar: 'bar' }])
   })
 
-  it('can override reset option in unbind', async () => {
+  it('ignores reset option in bind when calling unbind', async () => {
     let unbind: ReturnType<typeof rtdbBindAsArray> = () => {
       throw new Error('Promise was not called')
     }
     const promise = new Promise((resolve, reject) => {
       unbind = rtdbBindAsArray(
         { vm, collection, key: 'itemsReset', resolve, reject, ops },
-        { reset: false }
+        // will have no effect when unbinding
+        { reset: () => ['Foo'] }
       )
       collection.flush()
     })
     await promise
     collection.push({ foo: 'foo' })
     collection.flush()
-    unbind(() => 'Foo')
-    expect(vm.itemsReset).toEqual('Foo')
+    unbind()
+    expect(vm.itemsReset).toEqual([])
   })
 
   it('can wait until ready', async () => {
