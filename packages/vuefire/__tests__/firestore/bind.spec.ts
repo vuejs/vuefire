@@ -201,14 +201,13 @@ describe('Firestore: binding', () => {
     // @ts-ignore
     const doc2: firestore.DocumentReference = db.collection().doc()
     await doc2.update({ bar: 'bar' })
-    await vm.$bind('item', document, { reset: false })
+    await vm.$bind('item', document)
     expect(vm.item).toEqual({ foo: 'foo' })
-    let p = vm.$bind('item', doc2)
+    const p = vm.$bind('item', doc2, { reset: false })
     expect(vm.item).toEqual({ foo: 'foo' })
     await p
     expect(vm.item).toEqual({ bar: 'bar' })
-    // reset false here do not matter
-    p = vm.$bind('item', document, { reset: false })
+    vm.$bind('item', document, { reset: false })
     expect(vm.item).toEqual(null)
   })
 
