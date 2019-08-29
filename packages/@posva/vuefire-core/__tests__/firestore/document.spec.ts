@@ -109,7 +109,7 @@ describe('documents', () => {
 
   it('resets the value when unbinding', async () => {
     await document.update({ foo: 'foo' })
-    let unbind: () => void = () => {
+    let unbind: ReturnType<typeof bindDocument> = () => {
       throw new Error('Promise was not called')
     }
     const promise = new Promise((resolve, reject) => {
@@ -121,38 +121,35 @@ describe('documents', () => {
     expect(vm.item).toEqual(null)
   })
 
-  it('can be left as is', async () => {
+  it('can be left as is with reset: false', async () => {
     await document.update({ foo: 'foo' })
-    let unbind: () => void = () => {
+    let unbind: ReturnType<typeof bindDocument> = () => {
       throw new Error('Promise was not called')
     }
     const promise = new Promise((resolve, reject) => {
-      unbind = bindDocument({ vm, document, key: 'item', resolve, reject, ops }, { reset: false })
+      unbind = bindDocument({ vm, document, key: 'item', resolve, reject, ops })
     })
     await promise
     expect(vm.item).toEqual({ foo: 'foo' })
-    unbind()
+    unbind(false)
     expect(vm.item).toEqual({ foo: 'foo' })
   })
 
   it('can be reset to a specific value', async () => {
     await document.update({ foo: 'foo' })
-    let unbind: () => void = () => {
+    let unbind: ReturnType<typeof bindDocument> = () => {
       throw new Error('Promise was not called')
     }
     const promise = new Promise((resolve, reject) => {
-      unbind = bindDocument(
-        { vm, document, key: 'item', resolve, reject, ops },
-        { reset: () => ({ bar: 'bar' }) }
-      )
+      unbind = bindDocument({ vm, document, key: 'item', resolve, reject, ops })
     })
     await promise
     expect(vm.item).toEqual({ foo: 'foo' })
-    unbind()
+    unbind(() => ({ bar: 'bar' }))
     expect(vm.item).toEqual({ bar: 'bar' })
   })
 
-  it('reset option can be overriden on unbind', async () => {
+  it('ignores reset option in bind when calling unbind', async () => {
     await document.update({ foo: 'foo' })
     let unbind: ReturnType<typeof bindDocument> = () => {
       throw new Error('Promise was not called')
@@ -162,7 +159,7 @@ describe('documents', () => {
     })
     await promise
     expect(vm.item).toEqual({ foo: 'foo' })
-    unbind(() => 'hello')
-    expect(vm.item).toEqual('hello')
+    unbind()
+    expect(vm.item).toEqual(null)
   })
 })

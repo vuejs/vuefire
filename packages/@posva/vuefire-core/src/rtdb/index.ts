@@ -8,7 +8,7 @@ export interface RTDBOptions {
   wait?: boolean
 }
 
-const DEFAULT_OPTIONS: Required<RTDBOptions> = {
+const DEFAULT_OPTIONS: Readonly<Required<RTDBOptions>> = {
   reset: true,
   serialize: createRecordFromRTDBSnapshot,
   wait: false,
@@ -49,10 +49,9 @@ export function rtdbBindAsObject(
   document.once('value', resolve)
 
   return (reset?: ResetOption) => {
-    const resetOption = reset === undefined ? options.reset : reset
     document.off('value', listener)
-    if (resetOption !== false) {
-      const value = typeof resetOption === 'function' ? resetOption() : null
+    if (reset !== false) {
+      const value = typeof reset === 'function' ? reset() : null
       ops.set(vm, key, value)
     }
   }
@@ -118,13 +117,12 @@ export function rtdbBindAsArray(
   })
 
   return (reset?: ResetOption) => {
-    const resetOption = reset === undefined ? options.reset : reset
     collection.off('child_added', childAdded)
     collection.off('child_changed', childChanged)
     collection.off('child_removed', childRemoved)
     collection.off('child_moved', childMoved)
-    if (resetOption !== false) {
-      const value = typeof resetOption === 'function' ? resetOption() : []
+    if (reset !== false) {
+      const value = typeof reset === 'function' ? reset() : []
       ops.set(vm, key, value)
     }
   }

@@ -10,7 +10,7 @@ export interface FirestoreOptions {
 }
 
 // TODO: do the opposite, use optioal<> only on one function
-const DEFAULT_OPTIONS: Required<FirestoreOptions> = {
+const DEFAULT_OPTIONS: Readonly<Required<FirestoreOptions>> = {
   maxRefDepth: 2,
   reset: true,
   serialize: createSnapshot,
@@ -301,9 +301,8 @@ export function bindCollection(
 
   return (reset?: FirestoreOptions['reset']) => {
     unbind()
-    const resetOption = reset === undefined ? options.reset : reset
-    if (resetOption !== false) {
-      const value = typeof resetOption === 'function' ? resetOption() : []
+    if (reset !== false) {
+      const value = typeof reset === 'function' ? reset() : []
       ops.set(vm, key, value)
     }
     arraySubs.forEach(unsubscribeAll)
@@ -353,9 +352,8 @@ export function bindDocument(
 
   return (reset?: FirestoreOptions['reset']) => {
     unbind()
-    const resetOption = reset === undefined ? options.reset : reset
-    if (resetOption !== false) {
-      const value = typeof resetOption === 'function' ? resetOption() : null
+    if (reset !== false) {
+      const value = typeof reset === 'function' ? reset() : null
       ops.set(vm, key, value)
     }
     unsubscribeAll(subs)
