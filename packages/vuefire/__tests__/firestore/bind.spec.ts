@@ -207,7 +207,7 @@ describe('Firestore: binding', () => {
     expect(vm.item).toEqual({ foo: 'foo' })
     await p
     expect(vm.item).toEqual({ bar: 'bar' })
-    vm.$bind('item', document, { reset: false })
+    vm.$bind('item', document)
     expect(vm.item).toEqual(null)
   })
 
@@ -219,5 +219,9 @@ describe('Firestore: binding', () => {
     await vm.$bind('item', document)
     vm.$unbind('item', false)
     expect(vm.item).toEqual({ foo: 'foo' })
+    // the reset option should have no effect on the latter unbind
+    await vm.$bind('item', document, { reset: () => ({ bar: 'bar' }) })
+    vm.$unbind('item')
+    expect(vm.item).toEqual(null)
   })
 })
