@@ -24,11 +24,12 @@ const db = firebase.initializeApp({ projectId: 'MY PROJECT ID' }).firestore()
 
 ## vuexfireMutations
 
-Mutations required by vuexfire to work. Must be added **only** at the root level of your store:
+Mutations required by vuexfire to work. Must be added **only** at the root level of your store and works for both _Firestore_ and _RTDB_:
 
 ```js
 import Vuex from 'vuex'
 import { vuexfireMutations } from 'vuexfire'
+
 const store = new Vuex.Store({
   mutations: {
     // other mutations
@@ -79,6 +80,19 @@ Can contain the following properties:
 
 Unsubscribes from updates for a given key.
 
+## Global options for Firestore
+
+While it's possible to always pass the same options every time you need to `bindFirestoreRef`, you can globally set options by modifying the `firestoreOptions` object:
+
+```js
+import { firestoreOptions } from 'vuexfire'
+
+// always wait for bindings to be resolved
+firestoreOptions.wait = true
+```
+
+All the options that can be used in `bindFirestoreRef` can be set through this option.
+
 ## firebaseAction
 
 Wraps an action to inject [`bindFirebaseRef`](#bindfirebaseref) as well as [`unbindFirebaseRef`](#unbindfirebaseref)
@@ -123,3 +137,16 @@ Can contain the following properties:
 `unbindFirebaseRef(key: string, reset?: RTDBOptions['reset']): void`
 
 Unsubscribes from updates for a given key.
+
+## Global options for RTDB
+
+While it's possible to always pass the same options every time you need to `bindFirebaseRef`, you can globally set options by modifying the `rtdbOptions` object:
+
+```js
+import { rtdbOptions } from 'vuexfire'
+
+// always wait for bindings to be resolved
+rtdbOptions.wait = true
+```
+
+All the options that can be used in `bindFirebaseRef` can be set through this option.
