@@ -18,7 +18,7 @@ import { db } from './db'
 
 export default new Vuex.Store({
   state: {
-    todos: []
+    todos: [],
   },
 
   mutations: vuexfireMutations,
@@ -27,8 +27,8 @@ export default new Vuex.Store({
     bindTodos: firebaseAction(({ bindFirebaseRef }) => {
       // return the promise returned by `bindFirebaseRef`
       return bindFirebaseRef('todos', db.ref('todos'))
-    })
-  }
+    }),
+  },
 })
 ```
 
@@ -40,7 +40,7 @@ import { db } from './db'
 
 export default new Vuex.Store({
   state: {
-    todos: []
+    todos: [],
   },
 
   mutations: vuexfireMutations,
@@ -49,8 +49,8 @@ export default new Vuex.Store({
     bindTodos: firestoreAction(({ bindFirestoreRef }) => {
       // return the promise returned by `bindFirestoreRef`
       return bindFirestoreRef('todos', db.collection('todos'))
-    })
-  }
+    }),
+  },
 })
 ```
 
@@ -82,8 +82,8 @@ export default new Vuex.Store({
   actions: {
     unbindTodos: firebaseAction(({ unbindFirebaseRef }) => {
       unbindFirebaseRef('todos')
-    })
-  }
+    }),
+  },
 })
 ```
 
@@ -95,14 +95,16 @@ export default new Vuex.Store({
   actions: {
     unbindTodos: firestoreAction(({ unbindFirestoreRef }) => {
       unbindFirestoreRef('todos')
-    })
-  }
+    }),
+  },
 })
 ```
 
 </FirebaseExample>
 
-When unbinding, there is no need to wait for a promise, all listeners are teared down. By default, data **will be reset**, you can customize this behaviour with the [`reset` option](../api/vuefire.md#options-2):
+When unbinding, there is no need to wait for a promise, all listeners are teared down. By default, data **will be reset**, you can customize by providing a second argument to the `unbindFirebaseRef`/`unbindFirestoreRef` function:
+
+<!-- TODO: most of the time useless without wait option, specially for arrays? or will wait make reset non necessary? -->
 
 <FirebaseExample>
 
@@ -113,27 +115,24 @@ export default new Vuex.Store({
 
   actions: {
     someAction: firebaseAction(({ state, bindFirebaseRef, unbindFirebaseRef }) => {
-      bindFirebaseRef('todos', db.ref('todos'))
       unbindFirebaseRef('todos')
+      // or
+      unbindFirebaseRef('todos', true)
       // state.todos === []
 
       // using the boolean version
-      bindFirebaseRef('todos', db.ref('todos'), { reset: false })
-      unbindFirebaseRef('todos')
+      unbindFirebaseRef('todos', false)
       // state.todos === [{ text: 'Use Firestore Refs' }]
 
       // using the function syntax
-      bindFirebaseRef('todos', db.ref('todos'), { reset: () => [{ text: 'placeholder' }] })
-      unbindFirebaseRef('todos')
+      unbindFirebaseRef('todos', () => [{ text: 'placeholder' }])
       // state.todos === [{ text: 'placeholder' }]
 
       // documents are reset to null instead, you can also provide the same options as above
-      bindFirebaseRef('doc', db.ref('documents/1'))
       unbindFirebaseRef('doc')
       // state.doc === null
-
-    })
-  }
+    }),
+  },
 })
 ```
 
@@ -144,27 +143,24 @@ export default new Vuex.Store({
 
   actions: {
     someAction: firestoreAction(({ state, bindFirestoreRef, unbindFirestoreRef }) => {
-      bindFirestoreRef('todos', db.collection('todos'))
       unbindFirestoreRef('todos')
+      // or
+      unbindFirestoreRef('todos', true)
       // state.todos === []
 
       // using the boolean version
-      bindFirestoreRef('todos', db.collection('todos'), { reset: false })
-      unbindFirestoreRef('todos')
+      unbindFirestoreRef('todos', false)
       // state.todos === [{ text: 'Use Firestore Refs' }]
 
       // using the function syntax
-      bindFirestoreRef('todos', db.collection('todos'), { reset: () => [{ text: 'placeholder' }] })
-      unbindFirestoreRef('todos')
+      unbindFirestoreRef('todos', () => [{ text: 'placeholder' }])
       // state.todos === [{ text: 'placeholder' }]
 
       // documents are reset to null instead, you can also provide the same options as above
-      bindFirestoreRef('doc', db.collection('documents').doc('1'))
       unbindFirestoreRef('doc')
       // state.doc === null
-
-    })
-  }
+    }),
+  },
 })
 ```
 
@@ -172,7 +168,41 @@ export default new Vuex.Store({
 
 ## Binding over existing bindings
 
-When calling `bindFirestoreRef`/`bindFirebaseRef` to bind a collection or document over an existing binding, **it isn't necessary to call `unbindFirestoreRef`/`unbindFirebaseRef`**, it's automatically done for you
+When calling `bindFirestoreRef`/`bindFirebaseRef` to bind a collection or document over an existing binding, **it isn't necessary to call `unbindFirestoreRef`/`unbindFirebaseRef`**, it's automatically done for you.
+
+By default, values are reset but this behaviour can be customized with the [`reset` option](../api/vuexfire.md#options):
+
+<FirebaseExample>
+
+```js
+// store.js
+export default new Vuex.Store({
+  // other store options are omitted for simplicity reasons
+
+  actions: {
+    someAction: firebaseAction(({ state, bindFirebaseRef, unbindFirebaseRef }) => {
+      // will keep the previous value
+      bindFirebaseRef('todos', { reset: false })
+    }),
+  },
+})
+```
+
+```js
+// store.js
+export default new Vuex.Store({
+  // other store options are omitted for simplicity reasons
+
+  actions: {
+    someAction: firestoreAction(({ state, bindFirestoreRef, unbindFirestoreRef }) => {
+      // will keep the previous value
+      bindFirestoreRef('todos', { reset: false })
+    }),
+  },
+})
+```
+
+</FirebaseExample>
 
 ## Using the data bound by Vuexfire
 
