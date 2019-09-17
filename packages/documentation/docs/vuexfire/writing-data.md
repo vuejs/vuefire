@@ -1,6 +1,6 @@
 # Writing to the database
 
-As said in the introduction, Vuexfire **does not** handle writing data back to Firebase because you can directly use the Firebase JS SDK to precisely update whatever you need. Here are some examples on how to create, update and remove documents but make sure to refer to the official documentation to fo further:
+As said in the introduction, Vuexfire **does not** handle writing data back to Firebase because you can directly use the Firebase JS SDK to precisely update whatever you need. Here are some examples on how to create, update and remove documents but make sure to refer to the official documentation to go further:
 
 The main point here is wrapping writes in actions. This is not mandatory but can vastly improve your testing experience as you may not need to mock Firebase database at all if you mock your Store in components with something like [vuex-mock-store](https://github.com/posva/vuex-mock-store).
 
