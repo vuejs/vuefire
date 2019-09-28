@@ -8,6 +8,7 @@ import {
 } from '@posva/vuefire-core'
 import { database } from 'firebase'
 import Vue, { PluginFunction } from 'vue'
+import { CombinedVueInstance } from 'vue/types/vue'
 
 /**
  * Returns the original reference of a Firebase reference or query across SDK versions.
@@ -99,8 +100,15 @@ type VueFirebaseObject = Record<string, database.Query | database.Reference>
 type FirebaseOption<V> = VueFirebaseObject | ((this: V) => VueFirebaseObject)
 
 declare module 'vue/types/options' {
-  interface ComponentOptions<V extends Vue> {
-    firebase?: FirebaseOption<V>
+  interface ComponentOptions<
+    V extends Vue,
+    Data = DefaultData<V>,
+    Methods = DefaultMethods<V>,
+    Computed = DefaultComputed,
+    PropsDef = PropsDefinition<DefaultProps>,
+    Props = DefaultProps
+  > {
+    firebase?: FirebaseOption<CombinedVueInstance<V, Data, Methods, Computed, Props>>
   }
 }
 

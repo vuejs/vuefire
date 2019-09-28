@@ -8,6 +8,7 @@ import {
 } from '@posva/vuefire-core'
 import { firestore } from 'firebase'
 import Vue, { PluginFunction } from 'vue'
+import { CombinedVueInstance } from 'vue/types/vue'
 
 const ops: OperationsType = {
   set: (target, key, value) => walkSet(target, key, value),
@@ -96,8 +97,15 @@ type VueFirestoreObject = Record<
 type FirestoreOption<V> = VueFirestoreObject | ((this: V) => VueFirestoreObject)
 
 declare module 'vue/types/options' {
-  interface ComponentOptions<V extends Vue> {
-    firestore?: FirestoreOption<V>
+  interface ComponentOptions<
+    V extends Vue,
+    Data = DefaultData<V>,
+    Methods = DefaultMethods<V>,
+    Computed = DefaultComputed,
+    PropsDef = PropsDefinition<DefaultProps>,
+    Props = DefaultProps
+  > {
+    firestore?: FirestoreOption<CombinedVueInstance<V, Data, Methods, Computed, Props>>
   }
 }
 
@@ -142,6 +150,7 @@ export const firestorePlugin: PluginFunction<PluginOptions> = function firestore
     },
     created(this: Vue) {
       const { firestore } = this.$options
+      // @ts-ignore
       const refs = typeof firestore === 'function' ? firestore.call(this) : firestore
       if (!refs) return
       for (const key in refs) {
