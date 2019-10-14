@@ -8,7 +8,7 @@ export interface RTDBOptions {
   wait?: boolean
 }
 
-const DEFAULT_OPTIONS: Readonly<Required<RTDBOptions>> = {
+const DEFAULT_OPTIONS: Required<RTDBOptions> = {
   reset: true,
   serialize: createRecordFromRTDBSnapshot,
   wait: false,

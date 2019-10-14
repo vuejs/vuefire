@@ -10,7 +10,7 @@ export interface FirestoreOptions {
 }
 
 // TODO: do the opposite, use optioal<> only on one function
-const DEFAULT_OPTIONS: Readonly<Required<FirestoreOptions>> = {
+const DEFAULT_OPTIONS: Required<FirestoreOptions> = {
   maxRefDepth: 2,
   reset: true,
   serialize: createSnapshot,
