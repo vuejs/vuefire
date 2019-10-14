@@ -16,12 +16,12 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - v3-vue-{{ .Branch }}-{{ checksum "yarn.lock" }}
-            - v3-vue-{{ .Branch }}-
-            - v3-vue-
-      - run: yarn install
+            - v4-vue-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            - v4-vue-{{ .Branch }}-
+            - v4-vue-
+      - run: yarn install --frozen-lockfile
       - save_cache:
-          key: v3-vue-{{ .Branch }}-{{ checksum "yarn.lock" }}
+          key: v4-vue-{{ .Branch }}-{{ checksum "yarn.lock" }}
           paths:
             - node_modules/
       - persist_to_workspace:
