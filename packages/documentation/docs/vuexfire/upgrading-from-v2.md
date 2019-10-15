@@ -29,11 +29,12 @@ const store = new Vuex.Store({
 })
 ```
 
-`firebaseAction` as well as the injected functions
-`bindFirebaseRef`/`unbindFirebaseRef` have also been renamed! But because we
-also support `RTDB`, `firebaseAction` still exists but is meant to be used with
-_RTDB_ references. If you are migrating from v2, you were likely using
-_Firestore_, so you should apply these modifications:
+**If you were using Firestore**, you will also have to rename
+`firebaseAction` and the injected functions
+`bindFirebaseRef`/`unbindFirebaseRef`! But because we
+support both _RTDB_ and _Firestore_, there is now `firebaseAction` and `firestoreAction`.
+
+**If you were using the _RTDB_ then you don't need to change rename the `firebaseAction`**. Otherwise, you will have to rename it to `firestoreAction`:
 
 ```diff
 - import { firebaseAction } from 'vuexfire'
