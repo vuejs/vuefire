@@ -43,7 +43,7 @@ export function walkSet<T>(obj: object, path: string | number, value: T): T | T[
       // @ts-ignore
       target[key],
     obj
-  ) as (Record<string | number, T> | T[])
+  ) as Record<string | number, T> | T[]
 
   return Array.isArray(target) ? target.splice(Number(key), 1, value) : (target[key] = value)
 }
