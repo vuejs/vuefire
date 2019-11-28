@@ -1,6 +1,8 @@
 <template>
   <ParentLayout>
-    <CarbonAds slot="sidebar-top"/>
+    <template #sidebar-top>
+      <CarbonAds />
+    </template>
     <!-- <BuySellAds slot="page-bottom"/> -->
   </ParentLayout>
 </template>
@@ -15,6 +17,6 @@ export default {
     ParentLayout,
     CarbonAds,
     // BuySellAds
-  }
+  },
 }
 </script>

@@ -16,7 +16,7 @@
     "@vuepress/plugin-notification": "^1.0.0-alpha.42",
     "@vuepress/plugin-pwa": "^1.0.2",
     "focus-visible": "^5.0.1",
-    "vuepress": "^1.0.2"
+    "vuepress": "^1.1.0"
   },
   "scripts": {
     "dev": "vuepress dev docs",
