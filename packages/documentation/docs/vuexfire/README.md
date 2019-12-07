@@ -240,4 +240,4 @@ new Vue.Store({
 
 </FirebaseExample>
 
-And that's it! You can use `todos` anywhere, it will be always in sync with your remote database. Let's dive deeper and learn about all the features added by Vuexfire: [Getting started](getting-started.md)
+And that's it! You can use `todos` anywhere. It will always be in sync with your remote database. Let's dive deeper and learn about all the features added by Vuexfire: [Getting started](getting-started.md)
