@@ -846,11 +846,12 @@
   dependencies:
     "@firebase/app-types" "0.4.9"
 
-"@firebase/database@0.5.14":
-  version "0.5.14"
-  resolved "https://registry.yarnpkg.com/@firebase/database/-/database-0.5.14.tgz#758bc5cc6f50736e31c5fb41f6c95c1ac5052311"
-  integrity sha512-5CeBp8m89m7JdbQl//D2ceww6mqoSnp0Qi/clU3SJ934GZFeI84ehApBNn1OpFPSqhDwxG7k/56EcoQs8nka0w==
+"@firebase/database@0.5.15":
+  version "0.5.15"
+  resolved "https://registry.yarnpkg.com/@firebase/database/-/database-0.5.15.tgz#1d88d169368b01d745956720776eb2312110d4e8"
+  integrity sha512-6GsZGDOoRbAaeBQjjbcKTCscEMV+qDXS1UWPmRYI0UBdhgCY05S1z5aNkjF2B3pFgkr35zDbVAdsQC+JhRCzLQ==
   dependencies:
+    "@firebase/component" "0.1.0"
     "@firebase/database-types" "0.4.9"
     "@firebase/logger" "0.1.32"
     "@firebase/util" "0.2.35"
@@ -5715,15 +5716,15 @@ firebase-mock@^2.2.10:
     rsvp "^3.6.2"
 
 firebase@^7.2.3:
-  version "7.5.1"
-  resolved "https://registry.yarnpkg.com/firebase/-/firebase-7.5.1.tgz#baa04583ad31179e84636c8ca823c74f3ae3b20c"
-  integrity sha512-iG+o0WvnAxlxjKbN5fiAUcyt1Q1qvguMGgy46r52ks8sX34VN+BZDNJrVY0ktPD/Ty45jaVegjfFRmtThPt3jw==
+  version "7.5.2"
+  resolved "https://registry.yarnpkg.com/firebase/-/firebase-7.5.2.tgz#6b711a09d5a880b37e5ce5b97eba4ef7ec408c0d"
+  integrity sha512-G1hJ59CoV/gdNulBAFKiGD8EIDKCeQS16tc3TQ/sBCb87urDuaYKv7/n/CgK8llSt+pWJjPc6U0F223zt0OdKA==
   dependencies:
     "@firebase/analytics" "0.2.8"
     "@firebase/app" "0.4.26"
     "@firebase/app-types" "0.4.9"
     "@firebase/auth" "0.13.2"
-    "@firebase/database" "0.5.14"
+    "@firebase/database" "0.5.15"
     "@firebase/firestore" "1.8.1"
     "@firebase/functions" "0.4.27"
     "@firebase/installations" "0.3.7"
