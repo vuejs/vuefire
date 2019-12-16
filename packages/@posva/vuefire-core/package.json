@@ -33,7 +33,7 @@
     "prepare": "yarn run build",
     "postversion": "yarn run build",
     "test:unit": "jest",
-    "lint": "eslint src __tests__ --ext ts",
+    "lint": "eslint src __tests__ --color --ext ts",
     "dev": "yarn run test:unit --watchAll"
   },
   "bugs": {

@@ -17,6 +17,7 @@ module.exports = {
     '@typescript-eslint/no-use-before-define': ['error', { functions: false }],
     '@typescript-eslint/explicit-member-accessibility': ['error', { accessibility: 'no-public' }],
     '@typescript-eslint/ban-ts-ignore': 0,
+    '@typescript-eslint/no-empty-function': 0,
   },
   env: {
     jest: true,

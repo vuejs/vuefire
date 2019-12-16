@@ -7,7 +7,7 @@
   "license": "MIT",
   "main": "src/index.ts",
   "scripts": {
-    "lint": "eslint src --ext ts"
+    "lint": "eslint src --color --ext ts"
   },
   "directories": {
     "lib": "src"
@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "firebase-mock": "^2.2.10",
-    "vue": "^2.6.10"
+    "vue": "^2.6.11"
   },
   "gitHead": "e3e2df3624572cec86ed861f2472df4d143f2265"
 }
