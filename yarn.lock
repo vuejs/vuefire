@@ -5676,9 +5676,9 @@ firebase-auto-ids@~1.1.0:
   integrity sha1-N4/7hZCIjDfrLdi3BGWa0PSfkGE=
 
 firebase-mock@^2.2.10:
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/firebase-mock/-/firebase-mock-2.3.0.tgz#ab2ab42dfab85508771d9f2cb4c9139dbc052e01"
-  integrity sha512-9BAMiuLdBWe30dCJ7FuwZv7d6mcakfFrYWECJWqaB+0QaPO+3j8IWGOIW0oFA25qO6lpo+oyTgnM+DsQgNEohg==
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/firebase-mock/-/firebase-mock-2.3.1.tgz#54a01f0d79bd71d8c437aff940d73e6849c12897"
+  integrity sha512-G8sDd58RYpzbtgfQTvu0iWGufN/lwn2b69EgKfz+PCvGqG1WbBNU0NWbQ1V1sR5gYLN1qaCxvRGyeYkQEwuUKg==
   dependencies:
     firebase-auto-ids "~1.1.0"
     lodash.assign "^4.2.0"
