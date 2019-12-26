@@ -4,14 +4,14 @@ In Vuefire, subscriptions to changes are handled transparently, that's why we al
 
 There are two ways of binding a Reference to the Database with Vuefire:
 
-- Using the `firebase`/`firestore` option
-- Calling the injected methods `$bind`/`$rtdbBind`
+- Simple "declarative" method, which you can only use when you are always binding to the same source, for example, a data structure accessible to all users. This uses the `firebase` or `firestore` option inside `export default`.
+- More flexible "programmatic" binding, which you must use when personalising what you are binding to, for example, binding a "current user" variable to the relevant user entry in a database. This uses the injected method `$rtdbBind` or `$bind`: 
 
-Once a Reference is bound, Vuefire will keep the local version in sync with the remote database. However, this synchronisation **is only one-way**, the local state is always a reflection of the remote Database that you should treat as read only state. If you want to [push changes to the remote Database](./writing-data.md), you need to use Firebase JS SDK. But, more about that later.
+Once a Reference is bound, Vuefire will keep the local version updated in line with the remote database. However, this synchronisation **is only one-way**. Do not modify the variable, because (a) it will not change the remote Database and (b) it can be overwritten at any time by Vuefire. To [write changes to the Database](./writing-data.md), you must use the Firebase JS SDK.
 
 ## Declarative binding
 
-Any Database Reference provided in a `firebase`/`firestore` option will be bound at creation (after Vue's `created` hook). In the following example we bind a Collection of Documents to our `documents` property. The key provided in the `firebase`/`firestore` option (`documents`) matches the property declared in `data`:
+Any Database Reference provided in a `firebase`/`firestore` option will be bound at creation (after Vue's `created` hook, but before the `mounted` hook). In the following example we bind a Collection of Documents to our `documents` property. The key provided in the `firebase`/`firestore` option (`documents`) matches the property declared in `data`:
 
 <FirebaseExample>
 
@@ -52,12 +52,12 @@ export default {
 </FirebaseExample>
 
 :::warning
-It's necessary to declare properties with their initial values in `data`. **For the RTDB, using an _Array_ as the initial value will bind the Reference as an array, otherwise it is bound as an object**. For Firestore, collections and queries are bound as arrays while documents are bound as objects.
+You must declare properties with their initial values in `data`. **For the RTDB, using an _Array_ as the initial value will bind the Reference as an array, otherwise it is bound as an object**. For Firestore, collections and queries are bound as arrays while documents are bound as objects.
 :::
 
 ## Programmatic binding
 
-Declarative binding is simple and easy to write, however, you will probably need to change the reference to the database while the application is running. Changing the active document you are displaying, displaying a different user profile, etc. This can be achieved through the `$rtdbBind`/`$bind` methods added by `rtdbPlugin`/`firestorePlugin` in any Vue component.
+For most data you obtain from a database, you will want to change the reference to point to various different parts of the database at different times while the application is running, e.g. to display a different user profile, or different product detail page. This can be achieved through the `$rtdbBind`/`$bind` methods added by `rtdbPlugin`/`firestorePlugin` in any Vue component.
 
 <FirebaseExample>
 
@@ -114,7 +114,7 @@ export default {
 With the approach above, `user` will always be bound to the user defined by the prop `id`
 
 :::tip
-No need to call [`$rtdbUnbind`/`$unbind`](#unbinding-unsubscribing-to-changes) as `$rtdbBind`/`$bind` will automatically unbind any existant binding on the provided key. Upon component removal, all bindings are removed as well so no need to use `$rtdbUnbind`/`$unbind` in `destroyed` hooks.
+No need to call [`$rtdbUnbind`/`$unbind`](#unbinding-unsubscribing-to-changes) as `$rtdbBind`/`$bind` will automatically unbind any existing binding on the provided key. Upon component removal, all bindings are removed as well, so no need to use `$rtdbUnbind`/`$unbind` in `destroyed` hooks.
 :::
 
 If you need to wait for a binding to be ready before doing something, you can _await_ for the returned Promise:
