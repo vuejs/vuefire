@@ -15,14 +15,9 @@ export type TODO = any
  * @param obj
  * @param path
  */
-export function walkGet(obj: object, path: string): any {
+export function walkGet(obj: Record<string, any>, path: string): any {
   // TODO: development warning when target[key] does not exist
-  return path.split('.').reduce(
-    (target, key): any =>
-      // @ts-ignore
-      target[key],
-    obj
-  )
+  return path.split('.').reduce((target, key) => target[key], obj)
 }
 
 /**

@@ -207,10 +207,8 @@ export function bindCollection(
       arraySubs.splice(newIndex, 0, Object.create(null))
       const subs = arraySubs[newIndex]
       const snapshot = options.serialize(doc)
-      const [data, refs] = extractRefs(snapshot)
-      // NOTE use ops
+      const [data, refs] = extractRefs(snapshot, undefined, subs)
       ops.add(array, newIndex, data)
-      // array.splice(newIndex, 0, data)
       subscribeToRefs(
         {
           refs,
@@ -225,16 +223,15 @@ export function bindCollection(
       )
     },
     modified: ({ oldIndex, newIndex, doc }: firestore.DocumentChange) => {
-      const subs = arraySubs.splice(oldIndex, 1)[0]
-      arraySubs.splice(newIndex, 0, subs)
-      // NOTE use ops
-      const oldData = ops.remove(array, oldIndex)[0]
-      // const oldData = array.splice(oldIndex, 1)[0]
       const snapshot = options.serialize(doc)
-      const [data, refs] = extractRefs(snapshot, oldData)
-      // NOTE use ops
+      const subs = arraySubs[oldIndex]
+      const oldData = array[oldIndex]
+      const [data, refs] = extractRefs(snapshot, oldData, subs)
+      // only move things around after extracting refs
+      arraySubs.splice(oldIndex, 1)
+      arraySubs.splice(newIndex, 0, subs)
+      ops.remove(array, oldIndex)
       ops.add(array, newIndex, data)
-      // array.splice(newIndex, 0, data)
       subscribeToRefs(
         {
           refs,
@@ -249,9 +246,7 @@ export function bindCollection(
       )
     },
     removed: ({ oldIndex }: firestore.DocumentChange) => {
-      // NOTE use ops
       ops.remove(array, oldIndex)
-      // array.splice(oldIndex, 1)
       unsubscribeAll(arraySubs.splice(oldIndex, 1)[0])
     },
   }
@@ -259,7 +254,7 @@ export function bindCollection(
   const unbind = collection.onSnapshot(ref => {
     // console.log('pending', metadata.hasPendingWrites)
     // docs.forEach(d => console.log('doc', d, '\n', 'data', d.data()))
-    // NOTE this will only be triggered once and it will be with all the documents
+    // NOTE: this will only be triggered once and it will be with all the documents
     // from the query appearing as added
     // (https://firebase.google.com/docs/firestore/query-data/listen#view_changes_between_snapshots)
 
@@ -329,13 +324,13 @@ export function bindDocument(
   extraOptions: FirestoreOptions = DEFAULT_OPTIONS
 ) {
   const options = Object.assign({}, DEFAULT_OPTIONS, extraOptions) // fill default values
-  // TODO warning check if key exists?
+  // TODO: warning check if key exists?
   // const boundRefs = Object.create(null)
 
   const subs = Object.create(null)
   // bind here the function so it can be resolved anywhere
   // this is specially useful for refs
-  // TODO use walkGet?
+  // TODO: use walkGet?
   resolve = callOnceWithArg(resolve, () => vm[key])
   const unbind = document.onSnapshot(doc => {
     if (doc.exists) {

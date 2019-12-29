@@ -161,6 +161,96 @@ describe('refs in collections', () => {
     })
   })
 
+  it('does not lose empty references in objects when updating a property', async () => {
+    // @ts-ignore
+    const items: firestore.CollectionReference = db.collection()
+    const emptyItem = collection.doc()
+    const item = await items.add({ o: { ref: emptyItem }, toggle: true })
+    await bind('items', items)
+    expect(vm.items).toEqual([
+      {
+        o: { ref: null },
+        toggle: true,
+      },
+    ])
+    await items.add({ foo: 'bar' })
+    expect(vm.items).toEqual([
+      {
+        o: { ref: null },
+        toggle: true,
+      },
+      { foo: 'bar' },
+    ])
+    await item.update({ toggle: false })
+    expect(vm.items).toEqual([
+      {
+        o: { ref: null },
+        toggle: false,
+      },
+      { foo: 'bar' },
+    ])
+  })
+
+  it('does not lose empty references in arrays when updating a property', async () => {
+    // @ts-ignore
+    const items: firestore.CollectionReference = db.collection()
+    const emptyItem = collection.doc()
+    const item = await items.add({ a: [emptyItem], toggle: true })
+    await bind('items', items)
+    expect(vm.items).toEqual([
+      {
+        a: [null],
+        toggle: true,
+      },
+    ])
+    await items.add({ foo: 'bar' })
+    expect(vm.items).toEqual([
+      {
+        a: [null],
+        toggle: true,
+      },
+      { foo: 'bar' },
+    ])
+    await item.update({ toggle: false })
+    expect(vm.items).toEqual([
+      {
+        a: [null],
+        toggle: false,
+      },
+      { foo: 'bar' },
+    ])
+  })
+
+  it('keeps array of references when updating a property', async () => {
+    // @ts-ignore
+    const items: firestore.CollectionReference = db.collection()
+    const c = collection.doc()
+    const item = await items.add({ a: [a, b, c, { foo: 'bar' }], toggle: true })
+    await bind('items', items)
+    expect(vm.items).toEqual([
+      {
+        a: [{ isA: true }, { isB: true }, null, { foo: 'bar' }],
+        toggle: true,
+      },
+    ])
+    await items.add({ foo: 'bar' })
+    expect(vm.items).toEqual([
+      {
+        a: [{ isA: true }, { isB: true }, null, { foo: 'bar' }],
+        toggle: true,
+      },
+      { foo: 'bar' },
+    ])
+    await item.update({ toggle: false })
+    expect(vm.items).toEqual([
+      {
+        a: [{ isA: true }, { isB: true }, null, { foo: 'bar' }],
+        toggle: false,
+      },
+      { foo: 'bar' },
+    ])
+  })
+
   it('respects provided maxRefDepth', async () => {
     const a = db.collection().doc()
     const b = db.collection().doc()
