@@ -46,9 +46,8 @@ export function extractRefs(
       // TODO handle subpathes?
       refs[path + key] = ref
     } else if (Array.isArray(ref)) {
-      // TODO handle array
       data[key] = Array(ref.length)
-      // Items that are no longer in the array aren't going to be processed
+      // fill existing refs into data but leave the rest empty
       for (let i = 0; i < ref.length; i++) {
         const newRef = ref[i]
         const existingSub =

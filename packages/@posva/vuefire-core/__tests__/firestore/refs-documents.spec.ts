@@ -124,6 +124,20 @@ describe('refs in documents', () => {
     })
   })
 
+  it('keeps array of references when updating a property', async () => {
+    await item.update({ a: [a, b, c], toggle: true })
+    await bind('item', item)
+    expect(vm.item).toEqual({
+      a: [{ isA: true }, null, { isC: true }],
+      toggle: true,
+    })
+    await item.update({ toggle: false })
+    expect(vm.item).toEqual({
+      a: [{ isA: true }, null, { isC: true }],
+      toggle: false,
+    })
+  })
+
   it('binds refs nested in documents (objects)', async () => {
     await item.update({
       obj: {
