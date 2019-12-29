@@ -20,10 +20,10 @@ export { DEFAULT_OPTIONS as firestoreOptions }
 
 interface FirestoreSubscription {
   unsub: () => void
-  // Firestore unique key eg: todos/12
+  // Firestore unique key eg: items/12
   path: string
   data: () => firestore.DocumentData
-  // // path inside the object to access the data todos.3
+  // // path inside the object to access the data items.3
   // key: string
 }
 
@@ -117,7 +117,7 @@ interface SubscribeToRefsParameter {
   ops: CommonBindOptionsParameter['ops']
 }
 
-// NOTE not convinced by the naming of subscribeToRefs and subscribeToDocument
+// NOTE: not convinced by the naming of subscribeToRefs and subscribeToDocument
 // first one is calling the other on every ref and subscribeToDocument may call
 // updateDataFromDocumentSnapshot which may call subscribeToRefs as well
 function subscribeToRefs(

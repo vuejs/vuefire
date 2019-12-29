@@ -24,8 +24,14 @@ export function extractRefs(
   // must be set here because walkGet can return null or undefined
   oldDoc = oldDoc || {}
   const [data, refs] = result
-  // TODO: this won't work if the user defines their own defined properties
-  // should we do it for every non enumerable property?
+  // Add all properties that are not enumerable (not visible in the for loop)
+  // getOwnPropertyDescriptors does not exist on IE
+  // Object.getOwnPropertyNames(doc).forEach(propertyName => {
+  //   const descriptor = Object.getOwnPropertyDescriptor(doc, propertyName)
+  //   if (descriptor && !descriptor.enumerable) {
+  //     Object.defineProperty(data, propertyName, descriptor)
+  //   }
+  // })
   const idDescriptor = Object.getOwnPropertyDescriptor(doc, 'id')
   if (idDescriptor && !idDescriptor.enumerable) {
     Object.defineProperty(data, 'id', idDescriptor)
