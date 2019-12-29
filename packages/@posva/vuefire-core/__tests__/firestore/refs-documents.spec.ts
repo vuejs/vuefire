@@ -125,15 +125,15 @@ describe('refs in documents', () => {
   })
 
   it('keeps array of references when updating a property', async () => {
-    await item.update({ a: [a, b, c], toggle: true })
+    await item.update({ a: [a, b, c, { foo: 'bar' }], toggle: true })
     await bind('item', item)
     expect(vm.item).toEqual({
-      a: [{ isA: true }, null, { isC: true }],
+      a: [{ isA: true }, null, { isC: true }, { foo: 'bar' }],
       toggle: true,
     })
     await item.update({ toggle: false })
     expect(vm.item).toEqual({
-      a: [{ isA: true }, null, { isC: true }],
+      a: [{ isA: true }, null, { isC: true }, { foo: 'bar' }],
       toggle: false,
     })
   })
