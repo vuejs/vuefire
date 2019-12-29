@@ -20,7 +20,11 @@ export { DEFAULT_OPTIONS as firestoreOptions }
 
 interface FirestoreSubscription {
   unsub: () => void
+  // Firestore unique key eg: todos/12
   path: string
+  data: () => firestore.DocumentData
+  // // path inside the object to access the data todos.3
+  // key: string
 }
 
 function unsubscribeAll(subs: Record<string, FirestoreSubscription>) {
@@ -44,7 +48,7 @@ function updateDataFromDocumentSnapshot(
   options: Required<FirestoreOptions>
 ) {
   // TODO: maybe we should options.serialize the snapshot here
-  const [data, refs] = extractRefs(snapshot, walkGet(target, path))
+  const [data, refs] = extractRefs(snapshot, walkGet(target, path), subs)
   // NOTE use ops
   ops.set(target, path, data)
   // walkSet(target, path, data)
@@ -80,6 +84,7 @@ function subscribeToDocument(
     if (doc.exists) {
       updateDataFromDocumentSnapshot(
         {
+          // @ts-ignore FIXME:
           snapshot: options.serialize(doc),
           target,
           path,
@@ -152,6 +157,7 @@ function subscribeToRefs(
     }
 
     subs[refKey] = {
+      data: () => walkGet(target, docPath),
       unsub: subscribeToDocument(
         {
           ref,
@@ -335,6 +341,7 @@ export function bindDocument(
     if (doc.exists) {
       updateDataFromDocumentSnapshot(
         {
+          // @ts-ignore TODO: use an augmented type
           snapshot: options.serialize(doc),
           target: vm,
           path: key,

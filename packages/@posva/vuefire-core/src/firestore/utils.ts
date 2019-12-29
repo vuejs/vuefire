@@ -7,9 +7,9 @@ export type FirestoreReference =
   | firestore.CollectionReference
 
 export function createSnapshot(doc: firestore.DocumentSnapshot) {
-  // defaults everything to false, so no need to set
   // TODO: it should create a deep copy instead because otherwise we will modify internal data
-  return Object.defineProperty(doc.data(), 'id', { value: doc.id })
+  // defaults everything to false, so no need to set
+  return Object.defineProperty(doc.data() || {}, 'id', { value: doc.id })
 }
 
 export type FirestoreSerializer = typeof createSnapshot
@@ -17,6 +17,7 @@ export type FirestoreSerializer = typeof createSnapshot
 export function extractRefs(
   doc: firestore.DocumentData,
   oldDoc: firestore.DocumentData = {},
+  subs: Record<string, { path: string; data: () => firestore.DocumentData }> = {},
   path = '',
   result: [firestore.DocumentData, Record<string, firestore.DocumentReference>] = [{}, {}]
 ): [firestore.DocumentData, Record<string, firestore.DocumentReference>] {
@@ -29,23 +30,29 @@ export function extractRefs(
   if (idDescriptor && !idDescriptor.enumerable) {
     Object.defineProperty(data, 'id', idDescriptor)
   }
+
   for (const key in doc) {
     const ref = doc[key]
-    // if it's a ref
     if (isDocumentRef(ref)) {
-      data[key] = oldDoc[key] || ref.path
+      // allow values to be null (like non-existant refs)
+      // TODO: better typing since this isObject shouldn't be necessary but it doesn't work
+      data[key] = typeof oldDoc === 'object' && key in oldDoc ? oldDoc[key] : ref.path
       // TODO handle subpathes?
       refs[path + key] = ref
     } else if (Array.isArray(ref)) {
       // TODO handle array
       data[key] = Array(ref.length)
-      const oldArray = oldDoc[key] || []
       // Items that are no longer in the array aren't going to be processed
-      const newElements = oldArray.filter(
-        // @ts-ignore FIXME:
-        oldRef => ref.indexOf(oldRef) !== -1
-      )
-      extractRefs(ref, newElements, path + key + '.', [data[key], refs])
+      for (let i = 0; i < ref.length; i++) {
+        const newRef = ref[i]
+        const existingSub =
+          subs[Object.keys(subs).find(subName => subs[subName].path === newRef.path)!]
+        if (existingSub) {
+          data[key][i] = existingSub.data()
+        }
+      }
+      // the oldArray is in this case the same array with holes
+      extractRefs(ref, data[key], subs, path + key + '.', [data[key], refs])
     } else if (
       ref == null ||
       // Firestore < 4.13
@@ -56,7 +63,7 @@ export function extractRefs(
       data[key] = ref
     } else if (isObject(ref)) {
       data[key] = {}
-      extractRefs(ref, oldDoc[key], path + key + '.', [data[key], refs])
+      extractRefs(ref, oldDoc[key], subs, path + key + '.', [data[key], refs])
     } else {
       data[key] = ref
     }
