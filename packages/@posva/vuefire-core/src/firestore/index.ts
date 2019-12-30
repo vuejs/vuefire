@@ -22,6 +22,7 @@ interface FirestoreSubscription {
   unsub: () => void
   // Firestore unique key eg: items/12
   path: string
+  // TODO: can return null?
   data: () => firestore.DocumentData
   // // path inside the object to access the data items.3
   // key: string
@@ -35,6 +36,7 @@ function unsubscribeAll(subs: Record<string, FirestoreSubscription>) {
 
 interface UpdateDataFromDocumentSnapshot {
   readonly snapshot: firestore.DocumentSnapshot
+  // path in target -> FirestoreSubscription
   subs: Record<string, FirestoreSubscription>
   target: CommonBindOptionsParameter['vm']
   path: string
@@ -49,9 +51,7 @@ function updateDataFromDocumentSnapshot(
 ) {
   // TODO: maybe we should options.serialize the snapshot here
   const [data, refs] = extractRefs(snapshot, walkGet(target, path), subs)
-  // NOTE use ops
   ops.set(target, path, data)
-  // walkSet(target, path, data)
   subscribeToRefs(
     {
       subs,
@@ -228,7 +228,7 @@ export function bindCollection(
       const oldData = array[oldIndex]
       const [data, refs] = extractRefs(snapshot, oldData, subs)
       // only move things around after extracting refs
-      arraySubs.splice(oldIndex, 1)
+      // only move things around after extracting refs
       arraySubs.splice(newIndex, 0, subs)
       ops.remove(array, oldIndex)
       ops.add(array, newIndex, data)

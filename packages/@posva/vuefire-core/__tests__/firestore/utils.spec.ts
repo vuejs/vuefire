@@ -51,7 +51,7 @@ describe('Firestore utils', () => {
   })
 
   it('extract refs from document', () => {
-    const [noRefsDoc, refs] = extractRefs(doc.data())
+    const [noRefsDoc, refs] = extractRefs(doc.data(), undefined, {})
     expect(noRefsDoc.ref).toBe(docRef.path)
     expect(refs).toEqual({
       ref: docRef,
@@ -60,10 +60,14 @@ describe('Firestore utils', () => {
 
   it('leave Date objects alone when extracting refs', () => {
     const d = new Date()
-    const [doc, refs] = extractRefs({
-      foo: 1,
-      bar: d,
-    })
+    const [doc, refs] = extractRefs(
+      {
+        foo: 1,
+        bar: d,
+      },
+      undefined,
+      {}
+    )
     expect(doc.foo).toBe(1)
     expect(doc.bar).toBe(d)
     expect(refs).toEqual({})
@@ -71,10 +75,14 @@ describe('Firestore utils', () => {
 
   it('leave Timestamps objects alone when extracting refs', () => {
     const d = new Timestamp(10, 10)
-    const [doc, refs] = extractRefs({
-      foo: 1,
-      bar: d,
-    })
+    const [doc, refs] = extractRefs(
+      {
+        foo: 1,
+        bar: d,
+      },
+      undefined,
+      {}
+    )
     expect(doc.foo).toBe(1)
     expect(doc.bar).toBe(d)
     expect(refs).toEqual({})
@@ -82,21 +90,29 @@ describe('Firestore utils', () => {
 
   it('leave GeoPoint objects alone when extracting refs', () => {
     const d = new GeoPoint(2, 48)
-    const [doc, refs] = extractRefs({
-      foo: 1,
-      bar: d,
-    })
+    const [doc, refs] = extractRefs(
+      {
+        foo: 1,
+        bar: d,
+      },
+      undefined,
+      {}
+    )
     expect(doc.foo).toBe(1)
     expect(doc.bar).toBe(d)
     expect(refs).toEqual({})
   })
 
   it('extract object nested refs from document', () => {
-    const [noRefsDoc, refs] = extractRefs({
-      obj: {
-        ref: docRef,
+    const [noRefsDoc, refs] = extractRefs(
+      {
+        obj: {
+          ref: docRef,
+        },
       },
-    })
+      undefined,
+      {}
+    )
     expect(noRefsDoc.obj.ref).toBe(docRef.path)
     expect(refs).toEqual({
       'obj.ref': docRef,
@@ -104,12 +120,16 @@ describe('Firestore utils', () => {
   })
 
   it('works with null', () => {
-    const [noRefsDoc, refs] = extractRefs({
-      a: null,
-      nested: {
+    const [noRefsDoc, refs] = extractRefs(
+      {
         a: null,
+        nested: {
+          a: null,
+        },
       },
-    })
+      undefined,
+      {}
+    )
     expect(noRefsDoc).toEqual({
       a: null,
       nested: {
@@ -120,13 +140,17 @@ describe('Firestore utils', () => {
   })
 
   it('extract deep object nested refs from document', () => {
-    const [noRefsDoc, refs] = extractRefs({
-      obj: {
-        nested: {
-          ref: docRef,
+    const [noRefsDoc, refs] = extractRefs(
+      {
+        obj: {
+          nested: {
+            ref: docRef,
+          },
         },
       },
-    })
+      undefined,
+      {}
+    )
     expect(noRefsDoc.obj.nested.ref).toBe(docRef.path)
     expect(refs).toEqual({
       'obj.nested.ref': docRef,
@@ -140,9 +164,13 @@ describe('Firestore utils', () => {
       data: {},
       index: 0,
     })
-    const [noRefsDoc, refs] = extractRefs({
-      arr: [docRef, docRef2, docRef],
-    })
+    const [noRefsDoc, refs] = extractRefs(
+      {
+        arr: [docRef, docRef2, docRef],
+      },
+      undefined,
+      {}
+    )
     expect(noRefsDoc.arr[0]).toBe(docRef.path)
     expect(noRefsDoc.arr[1]).toBe(docRef2.path)
     expect(noRefsDoc.arr[2]).toBe(docRef.path)

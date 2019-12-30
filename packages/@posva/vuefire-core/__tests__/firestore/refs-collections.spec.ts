@@ -73,7 +73,7 @@ describe('refs in collections', () => {
     await c.update({ isC: true })
 
     await collection.add({ ref: c })
-    // NOTE wait for refs to update
+    // wait for refs to update
     await delay(5)
 
     expect(vm.items).toEqual([
