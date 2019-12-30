@@ -180,4 +180,20 @@ describe('Firestore utils', () => {
       'arr.2': docRef,
     })
   })
+
+  it('keeps non enumerable properties', () => {
+    const obj = {}
+    Object.defineProperty(obj, 'bar', {
+      value: 'foo',
+      enumerable: false,
+    })
+    const [noRefsDoc, refs] = extractRefs(obj, undefined, {})
+    expect(Object.getOwnPropertyDescriptor(noRefsDoc, 'bar')).toEqual({
+      value: 'foo',
+      enumerable: false,
+      configurable: false,
+      writable: false,
+    })
+    expect(refs).toEqual({})
+  })
 })
