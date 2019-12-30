@@ -135,8 +135,7 @@ export const firestorePlugin: PluginFunction<PluginOptions> = function firestore
     const options = Object.assign({}, globalOptions, userOptions)
 
     if (this._firestoreUnbinds[key]) {
-      // @ts-ignore
-      this[unbindName](
+      this[unbindName as keyof Vue](
         key,
         // if wait, allow overriding with a function or reset, otherwise, force reset to false
         // else pass the reset option
@@ -144,7 +143,7 @@ export const firestorePlugin: PluginFunction<PluginOptions> = function firestore
       )
     }
     const promise = bind(this, key, ref, ops, options)
-    // @ts-ignore
+    // @ts-ignore we are allowed to write it
     this.$firestoreRefs[key] = ref
     return promise
   }
@@ -159,8 +158,7 @@ export const firestorePlugin: PluginFunction<PluginOptions> = function firestore
       const refs = typeof firestore === 'function' ? firestore.call(this) : firestore
       if (!refs) return
       for (const key in refs) {
-        // @ts-ignore
-        this[bindName](key, refs[key], globalOptions)
+        this[bindName as keyof Vue](key, refs[key], globalOptions)
       }
     },
 
@@ -168,9 +166,9 @@ export const firestorePlugin: PluginFunction<PluginOptions> = function firestore
       for (const subKey in this._firestoreUnbinds) {
         this._firestoreUnbinds[subKey]()
       }
-      // @ts-ignore
+      // @ts-ignore we are allowed to write it
       this._firestoreUnbinds = null
-      // @ts-ignore
+      // @ts-ignore we are allowed to write it
       this.$firestoreRefs = null
     },
   })

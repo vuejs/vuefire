@@ -2,8 +2,8 @@ import { firestore } from 'firebase'
 
 export interface OperationsType {
   set: (target: Record<string, any>, key: string | number, value: any) => any
-  add: (array: TODO[], index: number, data: firebase.firestore.DocumentData) => any
-  remove: (array: TODO[], index: number) => any
+  add: (array: any[], index: number, data: firebase.firestore.DocumentData) => any
+  remove: (array: any[], index: number) => any
 }
 
 export type ResetOption = boolean | (() => any)
@@ -28,14 +28,13 @@ export function walkGet(obj: Record<string, any>, path: string): any {
  * @param value
  * @returns an array with the element that was replaced or the value that was set
  */
-export function walkSet<T>(obj: object, path: string | number, value: T): T | T[] {
+export function walkSet<T>(obj: Record<string, any>, path: string | number, value: T): T | T[] {
   // path can be a number
   const keys = ('' + path).split('.')
   const key = keys.pop() as string // split will produce at least one element array
   const target = keys.reduce(
     (target, key): any =>
       // TODO: dev errors
-      // @ts-ignore
       target[key],
     obj
   ) as Record<string | number, T> | T[]

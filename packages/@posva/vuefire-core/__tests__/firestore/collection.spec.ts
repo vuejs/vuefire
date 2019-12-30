@@ -251,8 +251,28 @@ describe('collections', () => {
     expect(vm.items).toEqual([{ a: 0 }, { b: 1 }])
   })
 
+  it('sets the value to an empty array even with no documents', async () => {
+    vm.items = 'foo'
+    await new Promise((resolve, reject) => {
+      bindCollection(
+        {
+          vm,
+          // @ts-ignore
+          collection: db.collection(),
+          key: 'items',
+          resolve,
+          reject,
+          ops,
+        },
+        { wait: true }
+      )
+    })
+    expect(vm.items).toEqual([])
+  })
+
   it('can wait until ready with empty arrays', async () => {
     expect(vm.items).toEqual([])
+    expect(resolve).toHaveBeenCalledWith([])
 
     // @ts-ignore
     const other: firestore.CollectionReference = db.collection()

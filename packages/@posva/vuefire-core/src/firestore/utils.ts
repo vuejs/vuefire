@@ -18,7 +18,7 @@ export type FirestoreSerializer = typeof createSnapshot
 export function extractRefs(
   doc: firestore.DocumentData,
   oldDoc: firestore.DocumentData | void,
-  subs: Record<string, { path: string; data: () => firestore.DocumentData }>
+  subs: Record<string, { path: string; data: () => firestore.DocumentData | null }>
 ): [firestore.DocumentData, Record<string, firestore.DocumentReference>] {
   const dataAndRefs: [firestore.DocumentData, Record<string, firestore.DocumentReference>] = [
     {},
@@ -29,7 +29,7 @@ export function extractRefs(
     const sub = subs[subKey]
     resultSubs[sub.path] = sub.data()
     return resultSubs
-  }, {} as Record<string, firestore.DocumentData>)
+  }, {} as Record<string, firestore.DocumentData | null>)
 
   function recursiveExtract(
     doc: firestore.DocumentData,

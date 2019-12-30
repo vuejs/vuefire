@@ -21,8 +21,7 @@ interface FirestoreSubscription {
   unsub: () => void
   // Firestore unique key eg: items/12
   path: string
-  // TODO: can return null?
-  data: () => firestore.DocumentData
+  data: () => firestore.DocumentData | null
   // // path inside the object to access the data items.3
   // key: string
 }
@@ -48,7 +47,6 @@ function updateDataFromDocumentSnapshot(
   { snapshot, target, path, subs, ops, depth, resolve }: UpdateDataFromDocumentSnapshot,
   options: Required<FirestoreOptions>
 ) {
-  // TODO: maybe we should options.serialize the snapshot here
   const [data, refs] = extractRefs(options.serialize(snapshot), walkGet(target, path), subs)
   ops.set(target, path, data)
   subscribeToRefs(
@@ -69,7 +67,7 @@ interface SubscribeToDocumentParamater {
   target: CommonBindOptionsParameter['vm']
   path: string
   depth: number
-  resolve: CommonBindOptionsParameter['resolve']
+  resolve: () => void
   ops: CommonBindOptionsParameter['ops']
   ref: firestore.DocumentReference
 }
@@ -95,7 +93,7 @@ function subscribeToDocument(
       )
     } else {
       ops.set(target, path, null)
-      resolve(path)
+      resolve()
     }
   })
 
@@ -175,9 +173,8 @@ function subscribeToRefs(
 interface CommonBindOptionsParameter {
   vm: Record<string, any>
   key: string
-  // TODO: the value should either be optional or not required
   // Override this property in necessary functions
-  resolve: (value?: any) => void
+  resolve: (value: any) => void
   reject: (error: any) => void
   ops: OperationsType
 }
@@ -292,7 +289,7 @@ export function bindCollection(
     // being called multiple times
     if (!docChanges.length) {
       if (options.wait) ops.set(vm, key, array)
-      resolve()
+      resolve(array)
     }
   }, reject)
 
@@ -326,8 +323,7 @@ export function bindDocument(
   const subs = Object.create(null)
   // bind here the function so it can be resolved anywhere
   // this is specially useful for refs
-  // TODO: use walkGet?
-  resolve = callOnceWithArg(resolve, () => vm[key])
+  resolve = callOnceWithArg(resolve, () => walkGet(vm, key))
   const unbind = document.onSnapshot(snapshot => {
     if (snapshot.exists) {
       updateDataFromDocumentSnapshot(
@@ -343,7 +339,8 @@ export function bindDocument(
         options
       )
     } else {
-      resolve()
+      ops.set(vm, key, null)
+      resolve(null)
     }
   }, reject)
 

@@ -27,20 +27,31 @@ describe('documents', () => {
 
   it('does not call anything if document does not exist', () => {
     expect(ops.add).not.toHaveBeenCalled()
-    expect(ops.set).not.toHaveBeenCalled()
+    expect(ops.set).toHaveBeenCalled()
+    expect(ops.set).toHaveBeenCalledWith(vm, 'item', null)
     expect(ops.remove).not.toHaveBeenCalled()
-    expect(resolve).toHaveBeenCalled()
     expect(reject).not.toHaveBeenCalled()
+  })
+
+  it('binding to a non-existant document sets the property to null', async () => {
+    vm.item = 'foo'
+    await new Promise((res, rej) => {
+      resolve = jest.fn(res)
+      reject = jest.fn(rej)
+      bindDocument({ vm, key: 'item', document: collection.doc(), resolve, reject, ops })
+    })
+    expect(vm.item).toBe(null)
+    expect(resolve).toHaveBeenCalledWith(null)
   })
 
   it('updates a document', async () => {
     await document.update({ foo: 'foo' })
     expect(ops.add).not.toHaveBeenCalled()
-    expect(ops.set).toHaveBeenCalledTimes(1)
+    expect(ops.set).toHaveBeenCalledTimes(2)
     expect(ops.set).toHaveBeenLastCalledWith(vm, 'item', { foo: 'foo' })
     expect(ops.remove).not.toHaveBeenCalled()
     await document.update({ bar: 'bar' })
-    expect(ops.set).toHaveBeenCalledTimes(2)
+    expect(ops.set).toHaveBeenCalledTimes(3)
     expect(ops.set).toHaveBeenLastCalledWith(vm, 'item', {
       bar: 'bar',
       foo: 'foo',
