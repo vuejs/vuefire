@@ -9,7 +9,6 @@ export interface FirestoreOptions {
   wait?: boolean
 }
 
-// TODO: do the opposite, use optioal<> only on one function
 const DEFAULT_OPTIONS: Required<FirestoreOptions> = {
   maxRefDepth: 2,
   reset: true,
@@ -50,7 +49,7 @@ function updateDataFromDocumentSnapshot(
   options: Required<FirestoreOptions>
 ) {
   // TODO: maybe we should options.serialize the snapshot here
-  const [data, refs] = extractRefs(snapshot, walkGet(target, path), subs)
+  const [data, refs] = extractRefs(options.serialize(snapshot), walkGet(target, path), subs)
   ops.set(target, path, data)
   subscribeToRefs(
     {
@@ -80,12 +79,11 @@ function subscribeToDocument(
   options: Required<FirestoreOptions>
 ) {
   const subs = Object.create(null)
-  const unbind = ref.onSnapshot(doc => {
-    if (doc.exists) {
+  const unbind = ref.onSnapshot(snapshot => {
+    if (snapshot.exists) {
       updateDataFromDocumentSnapshot(
         {
-          // @ts-ignore FIXME:
-          snapshot: options.serialize(doc),
+          snapshot,
           target,
           path,
           ops,
@@ -206,8 +204,7 @@ export function bindCollection(
     added: ({ newIndex, doc }: firestore.DocumentChange) => {
       arraySubs.splice(newIndex, 0, Object.create(null))
       const subs = arraySubs[newIndex]
-      const snapshot = options.serialize(doc)
-      const [data, refs] = extractRefs(snapshot, undefined, subs)
+      const [data, refs] = extractRefs(options.serialize(doc), undefined, subs)
       ops.add(array, newIndex, data)
       subscribeToRefs(
         {
@@ -223,10 +220,9 @@ export function bindCollection(
       )
     },
     modified: ({ oldIndex, newIndex, doc }: firestore.DocumentChange) => {
-      const snapshot = options.serialize(doc)
       const subs = arraySubs[oldIndex]
       const oldData = array[oldIndex]
-      const [data, refs] = extractRefs(snapshot, oldData, subs)
+      const [data, refs] = extractRefs(options.serialize(doc), oldData, subs)
       // only move things around after extracting refs
       // only move things around after extracting refs
       arraySubs.splice(newIndex, 0, subs)
@@ -251,7 +247,7 @@ export function bindCollection(
     },
   }
 
-  const unbind = collection.onSnapshot(ref => {
+  const unbind = collection.onSnapshot(snapshot => {
     // console.log('pending', metadata.hasPendingWrites)
     // docs.forEach(d => console.log('doc', d, '\n', 'data', d.data()))
     // NOTE: this will only be triggered once and it will be with all the documents
@@ -260,10 +256,10 @@ export function bindCollection(
 
     const docChanges =
       /* istanbul ignore next */
-      typeof ref.docChanges === 'function'
-        ? ref.docChanges()
+      typeof snapshot.docChanges === 'function'
+        ? snapshot.docChanges()
         : /* istanbul ignore next to support firebase < 5*/
-          ((ref.docChanges as unknown) as firestore.DocumentChange[])
+          ((snapshot.docChanges as unknown) as firestore.DocumentChange[])
 
     if (!isResolved && docChanges.length) {
       // isResolved is only meant to make sure we do the check only once
@@ -332,12 +328,11 @@ export function bindDocument(
   // this is specially useful for refs
   // TODO: use walkGet?
   resolve = callOnceWithArg(resolve, () => vm[key])
-  const unbind = document.onSnapshot(doc => {
-    if (doc.exists) {
+  const unbind = document.onSnapshot(snapshot => {
+    if (snapshot.exists) {
       updateDataFromDocumentSnapshot(
         {
-          // @ts-ignore TODO: use an augmented type
-          snapshot: options.serialize(doc),
+          snapshot,
           target: vm,
           path: key,
           subs,
