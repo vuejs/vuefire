@@ -58,6 +58,12 @@ describe('documents', () => {
     })
   })
 
+  it('sets to null when deleted', async () => {
+    await document.update({ foo: 'foo' })
+    await document.delete()
+    expect(vm.item).toBe(null)
+  })
+
   it('adds non-enumerable id', async () => {
     document = collection.doc('some-id')
     bindDocument({ vm, document, key: 'item', resolve, reject, ops })

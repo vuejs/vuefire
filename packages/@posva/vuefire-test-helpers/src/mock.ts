@@ -139,7 +139,9 @@ export class DocumentReference extends CallbacksAndErrors {
 
   async delete() {
     this.exists = false
-    return this.collection._remove(this.id)
+    const snapshot = new DocumentSnapshot(null, this.id, this.data, false)
+    this._callCallbacks(snapshot)
+    return this.collection._remove(this.id, snapshot)
   }
 
   isEqual(ref: DocumentReference) {
@@ -225,7 +227,7 @@ export class CollectionReference extends CallbacksAndErrors {
     )
   }
 
-  async _remove(id: Key) {
+  async _remove(id: Key, snapshot: DocumentSnapshot) {
     const ref = this.data[id.v]
     // not super reliant to emit a valid oldIndex
     const oldIndex = Object.keys(this.data).indexOf(id.v)
@@ -233,15 +235,17 @@ export class CollectionReference extends CallbacksAndErrors {
     this._callCallbacks({
       docChanges: () => [
         {
-          doc: new DocumentSnapshot(null, id, ref.data),
+          doc: snapshot,
           type: 'removed',
           oldIndex,
         },
       ],
     })
     // free references
-    delete ref.collection
-    delete ref.data
+    if (ref) {
+      delete ref.collection
+      delete ref.data
+    }
   }
 
   async _modify(id: Key, data: DataObject, ref: DocumentReference) {
