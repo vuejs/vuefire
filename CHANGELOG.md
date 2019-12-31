@@ -1,3 +1,5 @@
+**All _CHANGELOG.md_ files have been move to their respective package folders. This file is no longer being automatically updated**
+
 # [Vuefire 2.0.1 Vuexfire 3.0.1](https://github.com/vuejs/vuefire/compare/694123c...9699b09) (2019-05-25)
 
 ### Bug Fixes
