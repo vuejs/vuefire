@@ -1,4 +1,4 @@
-import { createSnapshot, extractRefs, FirestoreSerializer } from './utils'
+import { createSnapshot, extractRefs, FirestoreSerializer, FirestoreReference } from './utils'
 import { walkGet, callOnceWithArg, OperationsType } from '../shared'
 import { firestore } from 'firebase'
 
@@ -32,35 +32,19 @@ function unsubscribeAll(subs: Record<string, FirestoreSubscription>) {
   }
 }
 
-interface UpdateDataFromDocumentSnapshot {
-  readonly snapshot: firestore.DocumentSnapshot
-  // path in target -> FirestoreSubscription
-  subs: Record<string, FirestoreSubscription>
-  target: CommonBindOptionsParameter['vm']
-  path: string
-  depth: number
-  resolve: CommonBindOptionsParameter['resolve']
-  ops: CommonBindOptionsParameter['ops']
-}
-
 function updateDataFromDocumentSnapshot(
-  { snapshot, target, path, subs, ops, depth, resolve }: UpdateDataFromDocumentSnapshot,
-  options: Required<FirestoreOptions>
+  options: Required<FirestoreOptions>,
+  target: CommonBindOptionsParameter['vm'],
+  path: string,
+  snapshot: firestore.DocumentSnapshot,
+  subs: Record<string, FirestoreSubscription>,
+  ops: CommonBindOptionsParameter['ops'],
+  depth: number,
+  resolve: CommonBindOptionsParameter['resolve']
 ) {
   const [data, refs] = extractRefs(options.serialize(snapshot), walkGet(target, path), subs)
   ops.set(target, path, data)
-  subscribeToRefs(
-    {
-      subs,
-      refs,
-      target,
-      path,
-      ops,
-      depth,
-      resolve,
-    },
-    options
-  )
+  subscribeToRefs(options, target, path, subs, refs, ops, depth, resolve)
 }
 
 interface SubscribeToDocumentParamater {
@@ -79,18 +63,7 @@ function subscribeToDocument(
   const subs = Object.create(null)
   const unbind = ref.onSnapshot(snapshot => {
     if (snapshot.exists) {
-      updateDataFromDocumentSnapshot(
-        {
-          snapshot,
-          target,
-          path,
-          ops,
-          subs,
-          depth,
-          resolve,
-        },
-        options
-      )
+      updateDataFromDocumentSnapshot(options, target, path, snapshot, subs, ops, depth, resolve)
     } else {
       ops.set(target, path, null)
       resolve()
@@ -117,8 +90,14 @@ interface SubscribeToRefsParameter {
 // first one is calling the other on every ref and subscribeToDocument may call
 // updateDataFromDocumentSnapshot which may call subscribeToRefs as well
 function subscribeToRefs(
-  { subs, refs, target, path, depth, ops, resolve }: SubscribeToRefsParameter,
-  options: Required<FirestoreOptions>
+  options: Required<FirestoreOptions>,
+  target: CommonBindOptionsParameter['vm'],
+  path: string | number,
+  subs: Record<string, FirestoreSubscription>,
+  refs: Record<string, firestore.DocumentReference>,
+  ops: CommonBindOptionsParameter['ops'],
+  depth: number,
+  resolve: CommonBindOptionsParameter['resolve']
 ) {
   const refKeys = Object.keys(refs)
   const missingKeys = Object.keys(subs).filter(refKey => refKeys.indexOf(refKey) < 0)
@@ -183,6 +162,8 @@ interface BindCollectionParamater extends CommonBindOptionsParameter {
   collection: firestore.CollectionReference | firestore.Query
 }
 
+// TODO: refactor without using an object to improve size like the other functions
+
 export function bindCollection(
   { vm, key, collection, ops, resolve, reject }: BindCollectionParamater,
   extraOptions: FirestoreOptions = DEFAULT_OPTIONS
@@ -203,18 +184,7 @@ export function bindCollection(
       const subs = arraySubs[newIndex]
       const [data, refs] = extractRefs(options.serialize(doc), undefined, subs)
       ops.add(array, newIndex, data)
-      subscribeToRefs(
-        {
-          refs,
-          subs,
-          target: array,
-          path: newIndex,
-          depth: 0,
-          ops,
-          resolve: resolve.bind(null, doc),
-        },
-        options
-      )
+      subscribeToRefs(options, array, newIndex, subs, refs, ops, 0, resolve.bind(null, doc))
     },
     modified: ({ oldIndex, newIndex, doc }: firestore.DocumentChange) => {
       const subs = arraySubs[oldIndex]
@@ -225,18 +195,7 @@ export function bindCollection(
       arraySubs.splice(newIndex, 0, subs)
       ops.remove(array, oldIndex)
       ops.add(array, newIndex, data)
-      subscribeToRefs(
-        {
-          refs,
-          subs,
-          ops,
-          target: array,
-          path: newIndex,
-          depth: 0,
-          resolve,
-        },
-        options
-      )
+      subscribeToRefs(options, array, newIndex, subs, refs, ops, 0, resolve)
     },
     removed: ({ oldIndex }: firestore.DocumentChange) => {
       ops.remove(array, oldIndex)
@@ -326,18 +285,7 @@ export function bindDocument(
   resolve = callOnceWithArg(resolve, () => walkGet(vm, key))
   const unbind = document.onSnapshot(snapshot => {
     if (snapshot.exists) {
-      updateDataFromDocumentSnapshot(
-        {
-          snapshot,
-          target: vm,
-          path: key,
-          subs,
-          ops,
-          depth: 0,
-          resolve,
-        },
-        options
-      )
+      updateDataFromDocumentSnapshot(options, vm, key, snapshot, subs, ops, 0, resolve)
     } else {
       ops.set(vm, key, null)
       resolve(null)

@@ -24,6 +24,8 @@ interface CommonBindOptionsParameter {
   ops: OperationsType
 }
 
+// TODO: refactor using normal arguments instead of an array to improve size
+
 interface BindAsObjectParameter extends CommonBindOptionsParameter {
   document: database.Reference | database.Query
 }
