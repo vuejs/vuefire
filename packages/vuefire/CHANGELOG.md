@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.2.1](https://github.com/vuejs/vuefire/compare/vuefire@2.2.0...vuefire@2.2.1) (2019-12-31)
+
+
+### Bug Fixes
+
+* **core:** resolve non existant docs and collections ([9089291](https://github.com/vuejs/vuefire/commit/9089291a6c11551f1b6dfc33b4c3b9c73c7550d0)), closes [#539](https://github.com/vuejs/vuefire/issues/539)
+
+
+
+
+
 # [2.2.0](https://github.com/vuejs/vuefire/compare/vuefire@2.1.2...vuefire@2.2.0) (2019-10-10)
 
 
