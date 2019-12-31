@@ -1,17 +1,19 @@
 # Binding / Subscribing to changes
 
-In Vuefire, subscriptions to changes are handled transparently, that's why we always talk about _binding_, you only provide the key of the state where to bind as well as the Source (Collection, Query or Document) and Vuefire takes care of the rest!
+In Vuefire, subscriptions to changes are handled transparently. That's why we always talk about _binding_: you only provide the key of the state where to bind, and the Source (Collection, Query or Document), and Vuefire takes care of the rest!
 
-There are two ways of binding a Reference to the Database with Vuefire:
+There are two ways of binding a Reference to the database with Vuefire:
 
-- Simple "declarative" method, which you can only use when you are always binding to the same source, for example, a data structure accessible to all users. This uses the `firebase` or `firestore` option inside `export default`.
-- More flexible "programmatic" binding, which you must use when personalising what you are binding to, for example, binding a "current user" variable to the relevant user entry in a database. This uses the injected method `$rtdbBind` or `$bind`: 
+- Declarative binding, which binds to a fixed path within the database, for the lifetime of the component
+- Programmatic binding, which allows you to switch from binding to one path, to binding another, while your program is running. 
 
-Once a Reference is bound, Vuefire will keep the local version updated in line with the remote database. However, this synchronisation **is only one-way**. Do not modify the variable, because (a) it will not change the remote Database and (b) it can be overwritten at any time by Vuefire. To [write changes to the Database](./writing-data.md), you must use the Firebase JS SDK.
+Once a Reference is bound, Vuefire will keep the local version synchronized in line with the remote database. However, this synchronisation **is only one-way**. Do not modify the local variable (e.g. `this.user.name = 'John'`), because (a) it will not change the remote Database and (b) it can be overwritten at any time by Vuefire. To [write changes to the Database](./writing-data.md), use the Firebase JS SDK.
 
 ## Declarative binding
 
-Any Database Reference provided in a `firebase`/`firestore` option will be bound at creation (after Vue's `created` hook, but before the `mounted` hook). In the following example we bind a Collection of Documents to our `documents` property. The key provided in the `firebase`/`firestore` option (`documents`) matches the property declared in `data`:
+To bind a component property (e.g. `this.documents`) as an array version of what is stored at a Firebase RTDB path, requires two steps. First, create `documents` as an empty array inside `data()`. Then add a `firebase` option, containing the property `documents` whose value is the Firebase RTDB reference. For Firestore, the process is equivalent but uses the `firestore` option instead. 
+
+Binding occurs at creation, after Vue's `created` hook, but before the `mounted` hook. The two examples below show how to bind `this.documents`, either to the Firebase RTDB path "/documents", or to the Firestore Collection "/documents":
 
 <FirebaseExample>
 
