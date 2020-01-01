@@ -1,17 +1,19 @@
 # Binding / Subscribing to changes
 
-In Vuefire, subscriptions to changes are handled transparently, that's why we always talk about _binding_, you only provide the key of the state where to bind as well as the Source (Collection, Query or Document) and Vuefire takes care of the rest!
+In Vuefire, subscriptions to changes are handled transparently. That's why we always talk about _binding_: you only provide the key of the state where to bind, and the Source (Collection, Query or Document), and Vuefire takes care of the rest!
 
-There are two ways of binding a Reference to the Database with Vuefire:
+There are two ways of binding a Reference to the database with Vuefire:
 
-- Using the `firebase`/`firestore` option
-- Calling the injected methods `$bind`/`$rtdbBind`
+- Declarative binding, which binds to a fixed path within the database, for the lifetime of the component
+- Programmatic binding, which allows you to switch from binding to one path, to binding another, while your program is running. 
 
-Once a Reference is bound, Vuefire will keep the local version in sync with the remote database. However, this synchronisation **is only one-way**, the local state is always a reflection of the remote Database that you should treat as read only state. If you want to [push changes to the remote Database](./writing-data.md), you need to use Firebase JS SDK. But, more about that later.
+Once a Reference is bound, Vuefire will keep the local version synchronized in line with the remote database. However, this synchronisation **is only one-way**. Do not modify the local variable (e.g. `this.user.name = 'John'`), because (a) it will not change the remote Database and (b) it can be overwritten at any time by Vuefire. To [write changes to the Database](./writing-data.md), use the Firebase JS SDK.
 
 ## Declarative binding
 
-Any Database Reference provided in a `firebase`/`firestore` option will be bound at creation (after Vue's `created` hook). In the following example we bind a Collection of Documents to our `documents` property. The key provided in the `firebase`/`firestore` option (`documents`) matches the property declared in `data`:
+To bind a component property (e.g. `this.documents`) as an array version of what is stored at a Firebase RTDB path, requires two steps. First, create `documents` as an empty array inside `data()`. Then add a `firebase` option, containing the property `documents` whose value is the Firebase RTDB reference. For Firestore, the process is equivalent but uses the `firestore` option instead. 
+
+Binding occurs at creation, after Vue's `created` hook, but before the `mounted` hook. The two examples below show how to bind `this.documents`, either to the Firebase RTDB path "/documents", or to the Firestore Collection "/documents":
 
 <FirebaseExample>
 
@@ -52,12 +54,12 @@ export default {
 </FirebaseExample>
 
 :::warning
-It's necessary to declare properties with their initial values in `data`. **For the RTDB, using an _Array_ as the initial value will bind the Reference as an array, otherwise it is bound as an object**. For Firestore, collections and queries are bound as arrays while documents are bound as objects.
+You must declare properties with their initial values in `data`. **For the RTDB, using an _Array_ as the initial value will bind the Reference as an array, otherwise it is bound as an object**. For Firestore, collections and queries are bound as arrays while documents are bound as objects.
 :::
 
 ## Programmatic binding
 
-Declarative binding is simple and easy to write, however, you will probably need to change the reference to the database while the application is running. Changing the active document you are displaying, displaying a different user profile, etc. This can be achieved through the `$rtdbBind`/`$bind` methods added by `rtdbPlugin`/`firestorePlugin` in any Vue component.
+For most data you obtain from a database, you will want to change the reference to point to various different parts of the database at different times while the application is running, e.g. to display a different user profile, or different product detail page. This can be achieved through the `$rtdbBind`/`$bind` methods added by `rtdbPlugin`/`firestorePlugin` in any Vue component.
 
 <FirebaseExample>
 
@@ -114,7 +116,7 @@ export default {
 With the approach above, `user` will always be bound to the user defined by the prop `id`
 
 :::tip
-No need to call [`$rtdbUnbind`/`$unbind`](#unbinding-unsubscribing-to-changes) as `$rtdbBind`/`$bind` will automatically unbind any existant binding on the provided key. Upon component removal, all bindings are removed as well so no need to use `$rtdbUnbind`/`$unbind` in `destroyed` hooks.
+No need to call [`$rtdbUnbind`/`$unbind`](#unbinding-unsubscribing-to-changes) as `$rtdbBind`/`$bind` will automatically unbind any existing binding on the provided key. Upon component removal, all bindings are removed as well, so no need to use `$rtdbUnbind`/`$unbind` in `destroyed` hooks.
 :::
 
 If you need to wait for a binding to be ready before doing something, you can _await_ for the returned Promise:
