@@ -1,19 +1,17 @@
 # Binding / Subscribing to changes
 
-In Vuefire, subscriptions to changes are handled transparently. That's why we always talk about _binding_: you only provide the key of the state where to bind, and the Source (Collection, Query or Document), and Vuefire takes care of the rest!
+In Vuefire, subscriptions to changes are handled transparently. That's why we always talk about _binding_: you only provide the key of the state where to bind, and the _Source_ (Collection, Query or Document), and Vuefire takes care of the rest!
 
-There are two ways of binding a Reference to the database with Vuefire:
+There are two ways of binding a Reference to the Database with Vuefire:
 
-- Declarative binding, which binds to a fixed path within the database, for the lifetime of the component
-- Programmatic binding, which allows you to switch from binding to one path, to binding another, while your program is running. 
+- Declarative binding with the `firebase`/`firestore` option
+- Programmatic binding with the injected methods `$rtdbBind`/`$bind`
 
-Once a Reference is bound, Vuefire will keep the local version synchronized in line with the remote database. However, this synchronisation **is only one-way**. Do not modify the local variable (e.g. `this.user.name = 'John'`), because (a) it will not change the remote Database and (b) it can be overwritten at any time by Vuefire. To [write changes to the Database](./writing-data.md), use the Firebase JS SDK.
+Once a Reference is bound, Vuefire will keep the local version synchronized with the remote Database. However, this synchronisation **is only one-way**. Do not modify the local variable (e.g. doing `this.user.name = 'John'`), because (a) it will not change the remote Database and (b) it can be overwritten at any time by Vuefire. To [write changes to the Database](./writing-data.md), use the Firebase JS SDK.
 
 ## Declarative binding
 
-To bind a component property (e.g. `this.documents`) as an array version of what is stored at a Firebase RTDB path, requires two steps. First, create `documents` as an empty array inside `data()`. Then add a `firebase` option, containing the property `documents` whose value is the Firebase RTDB reference. For Firestore, the process is equivalent but uses the `firestore` option instead. 
-
-Binding occurs at creation, after Vue's `created` hook, but before the `mounted` hook. The two examples below show how to bind `this.documents`, either to the Firebase RTDB path "/documents", or to the Firestore Collection "/documents":
+Any Database Reference provided in a `firebase`/`firestore` option will be bound at creation (after Vue's `created` hook) to the specified key on the component. In the following example we bind a Collection of Documents to our `documents` property. The key provided in the `firebase`/`firestore` option (`documents`) must be initialized in the `data` of the component:
 
 <FirebaseExample>
 
@@ -59,7 +57,7 @@ You must declare properties with their initial values in `data`. **For the RTDB,
 
 ## Programmatic binding
 
-For most data you obtain from a database, you will want to change the reference to point to various different parts of the database at different times while the application is running, e.g. to display a different user profile, or different product detail page. This can be achieved through the `$rtdbBind`/`$bind` methods added by `rtdbPlugin`/`firestorePlugin` in any Vue component.
+If you need to change the bound reference while the application is running, e.g. to display a different user profile, or different product detail page, _Declarative binding_ isn't enough. This can be achieved through the `$rtdbBind`/`$bind` methods added by `rtdbPlugin`/`firestorePlugin` in any Vue component.
 
 <FirebaseExample>
 
@@ -155,7 +153,7 @@ this.$bind('documents', documents.where('creator', '==', this.id)).then(document
 
 ### `.key` / `id`
 
-Any document bound by Vuefire will retain it's _id_ in the database as a non-enumerable, read-only property. This makes it easier to [write changes](./writing-data.md#updates-to-collection-and-documents) and allows you to copy the data only using the [spread operator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax#Spread_in_object_literals) or [`Object.assign`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign).
+Any document bound by Vuefire will retain it's _id_ in the Database as a non-enumerable, read-only property. This makes it easier to [write changes](./writing-data.md#updates-to-collection-and-documents) and allows you to copy the data only using the [spread operator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax#Spread_in_object_literals) or [`Object.assign`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign).
 
 <FirebaseExample>
 
@@ -214,7 +212,7 @@ paris.location.longitude // 2.2770206
 
 </FirebaseExample>
 
-<!-- Read more about [writing Geopoints to the database](./writing-data.md#geopoints) in the [writing data](./writing-data.md) section. -->
+<!-- Read more about [writing Geopoints to the Database](./writing-data.md#geopoints) in the [writing data](./writing-data.md) section. -->
 
 ### Timestamps (Firestore only)
 
@@ -248,7 +246,7 @@ prise.toDate() // Tue Jul 14 1789
 
 </FirebaseExample>
 
-<!-- Read more about [writing Timestamps to the database](./writing-data.md#timestamps) in the [writing data](./writing-data.md) section. -->
+<!-- Read more about [writing Timestamps to the Database](./writing-data.md#timestamps) in the [writing data](./writing-data.md) section. -->
 
 ### References (Firestore only)
 
@@ -314,7 +312,7 @@ It is possible to customize this behaviour by providing a [`maxRefDepth` option]
 this.$bind('user', db.collection('users').doc('1'), { maxRefDepth: 1 })
 ```
 
-Read more about [writing References to the database](./writing-data.md#references) in the [writing data](./writing-data.md) section.
+Read more about [writing References to the Database](./writing-data.md#references) in the [writing data](./writing-data.md) section.
 
 ## Unbinding / Unsubscribing to changes
 
@@ -323,13 +321,13 @@ While Vuefire will automatically unbind any reference bound in a component whene
 <FirebaseExample>
 
 ```js
-// unsubscribe from database updates
+// unsubscribe from Database updates
 this.$rtdbUnbind('user')
 this.$rtdbUnbind('documents')
 ```
 
 ```js
-// unsubscribe from database updates
+// unsubscribe from Database updates
 this.$unbind('user')
 this.$unbind('documents')
 ```

@@ -1,8 +1,8 @@
 # Binding / Subscribing to changes
 
-In Vuexfire, subscriptions to changes are handled transparently, that's why we always talk about _binding_, you only provide the key of the state where to bind as well as the Source (Collection, Query or Document) and Vuexfire takes care of the rest!
+In Vuexfire, subscriptions to changes are handled transparently. That's why we always talk about _binding_: you only provide the key of the state where to bind, and the _Source_ (Collection, Query or Document), and Vuexfire takes care of the rest!
 
-Once a Reference is bound, Vuexfire will keep the local version in sync with the remote database. However, this synchronisation **is only one-way**, the local state is always a reflection of the remote Database that you should treat as read only state. If you want to [push changes to the remote Database](writing-data.md), you need to use Firebase JS SDK. But, more about that later.
+Once a Reference is bound, Vuexfire will keep the local version synchronized with the remote Database. However, this synchronisation **is only one-way**. Do not modify the local variable (e.g. doing `this.user.name = 'John'`), because (a) it will not change the remote Database and (b) it can be overwritten at any time by Vuexfire. To [write changes to the Database](./writing-data.md), use the Firebase JS SDK.
 
 ## Binding in actions
 

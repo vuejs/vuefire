@@ -22,7 +22,7 @@ Different Pages
 
 ## Firestore References
 
-## Querying the database
+## Querying the Database
 
 ## Manipulating data
 
