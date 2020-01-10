@@ -40,12 +40,12 @@ user.lastName = newLastName
 
 db.collection('users')
   .doc(this.user.id)
-  .set(user)
+  .add(user)
   .then(() => {
     console.log('user updated!')
   })
 // we can also use `$firestoreRefs.user` to refer to the bound user reference
-this.$firestoreRefs.user.set(user)
+this.$firestoreRefs.user.add(user)
 ```
 
 </FirebaseExample>
