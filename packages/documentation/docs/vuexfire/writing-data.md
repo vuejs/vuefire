@@ -93,7 +93,7 @@ firestoreAction(({ state }) => {
 
 ### Removing a document
 
-You can remove documents by calling `remove` on their reference:
+You can remove documents by calling `remove`/`delete` on their reference:
 
 <FirebaseExample>
 
