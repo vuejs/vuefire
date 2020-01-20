@@ -4,17 +4,17 @@ If you are prototyping a project and you don't want or cannot have a build step 
 
 ```html
 <!-- Firebase App is always required and must be first -->
-<script src="https://www.gstatic.com/firebasejs/5.7.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.7.0/firebase-app.js"></script>
 
 <!-- Add additional services that you want to use -->
 <!-- For RTDB -->
-<script src="https://www.gstatic.com/firebasejs/5.7.1/firebase-database.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.7.0/firebase-database.js"></script>
 <!-- For Cloud Firestore -->
-<script src="https://www.gstatic.com/firebasejs/5.7.1/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.7.0/firebase-firestore.js"></script>
 <!-- Others, vuefire do not interact with these packages -->
-<script src="https://www.gstatic.com/firebasejs/5.7.1/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/5.7.1/firebase-messaging.js"></script>
-<script src="https://www.gstatic.com/firebasejs/5.7.1/firebase-functions.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.7.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.7.0/firebase-messaging.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.7.0/firebase-functions.js"></script>
 ```
 
 You don't need to include all of the scripts above, only the ones you are using. Including `firedbase-app` is mandatory but most of the time, you will need one of the databases (`firebase-database.js` or `firebase-firestore.js`) and `firebase-auth.js`.
