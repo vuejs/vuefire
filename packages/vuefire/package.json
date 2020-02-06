@@ -1,28 +1,26 @@
 {
   "name": "vuefire",
-  "version": "2.0.0-alpha.20",
+  "version": "2.2.1",
   "description": "Firestore bindings for Vue.js",
   "main": "dist/vuefire.common.js",
   "module": "dist/vuefire.esm.js",
   "unpkg": "dist/vuefire.js",
   "browser": "dist/vuefire.esm.js",
-  "types": "types/index.d.ts",
+  "types": "dist/packages/vuefire/src",
   "sideEffects": false,
   "files": [
     "dist",
     "src",
-    "types/*.d.ts",
     "LICENSE"
   ],
   "scripts": {
-    "lint": "eslint --color --ext=js,html src test examples",
-    "pretest": "npm run lint",
-    "test": "npm run unit && npm run types",
-    "types": "tsc -p ./types/test/tsconfig.json",
-    "unit": "jest",
-    "dev": "npm run unit -- --watchAll",
-    "build": "node --eval 'require(\"@posva/vuefire-bundler\")(\"Vuefire\")'",
-    "postversion": "npm run build"
+    "lint": "eslint --color --ext=js,ts src __tests__",
+    "pretest": "yarn run lint",
+    "test": "yarn run build && yarn run test:unit",
+    "test:unit": "jest",
+    "dev": "yarn run test:unit --watchAll",
+    "build": "rollup -c ../../rollup.config.js",
+    "postversion": "yarn run build"
   },
   "repository": {
     "type": "git",
@@ -51,22 +49,10 @@
     "firebase": ">=4.0.0"
   },
   "devDependencies": {
-    "@posva/vuefire-bundler": "^1.1.2",
-    "@posva/vuefire-test-helpers": "^1.0.2",
-    "babel-preset-env": "^1.7.0",
-    "eslint": "^5.9.0",
-    "eslint-plugin-vue-libs": "^3.0.0",
-    "jest": "^23.6.0",
-    "typescript": "^3.2.1"
-  },
-  "jest": {
-    "collectCoverage": true,
-    "collectCoverageFrom": [
-      "<rootDir>/src/*.js"
-    ]
+    "@posva/vuefire-test-helpers": "^1.2.2"
   },
   "dependencies": {
-    "@posva/vuefire-core": "^1.0.3"
+    "@posva/vuefire-core": "^2.3.0"
   },
   "gitHead": "e3e2df3624572cec86ed861f2472df4d143f2265"
 }

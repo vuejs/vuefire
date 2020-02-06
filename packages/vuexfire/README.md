@@ -1,22 +1,15 @@
-# Vuexfire [![Build Status](https://badgen.net/circleci/github/vuejs/vuefire)](https://circleci.com/gh/vuejs/vuefire) [![npm package](https://badgen.net/npm/v/vuexfire/next)](https://www.npmjs.com/package/vuexfire) [![coverage](https://badgen.net/codecov/c/github/vuejs/vuefire)](https://codecov.io/github/vuejs/vuefire)
+# Vuexfire [![Build Status](https://badgen.net/circleci/github/vuejs/vuefire)](https://circleci.com/gh/vuejs/vuefire) [![npm package](https://badgen.net/npm/v/vuexfire)](https://www.npmjs.com/package/vuexfire) [![coverage](https://badgen.net/codecov/c/github/vuejs/vuefire)](https://codecov.io/github/vuejs/vuefire)
 
 > SSR ready Firebase binding for [Vuex](https://github.com/vuejs/vuex)
 
-Supports only Vue 2, Vuex 2 and Firebase JavaScript SDK 2/3/4.
-If you need an older version check the `v1` branch: `npm i -D vuexfire@v1`
+[Documentation](https://vuefire.vuejs.org/vuexfire)
 
 ## Installation
 
-1. Using a CDN:
-
-```html
-<script src="https://unpkg.com/vuexfire@next"></script>
-```
-
-2. In module environments, e.g CommonJS:
-
 ```bash
-npm install vue firebase vuexfire@next --save
+yarn add firebase vuexfire
+# or
+npm install firebase vuexfire
 ```
 
 ## Usage
@@ -25,7 +18,7 @@ Add the mutations to your root Store and make sure to define the property you
 want to bind in the state first:
 
 ```js
-import { firebaseMutations } from 'vuexfire'
+import { vuexfireMutations } from 'vuexfire'
 const store = new Vuex.Store({
   state: {
     todos: [], // Will be bound as an array
@@ -33,12 +26,12 @@ const store = new Vuex.Store({
   },
   mutations: {
     // your mutations
-    ...firebaseMutations,
+    ...vuexfireMutations,
   },
 })
 ```
 
-It works with modules as well, but **you don't need to add the mutations there**:
+It works with modules as well, but **you should not add the mutations there**:
 
 ```js
 const store = new Vuex.Store({
@@ -55,17 +48,17 @@ const store = new Vuex.Store({
 
 In order to use VuexFire, you have to enhance actions. This action enhancer
 takes the actual action and enhances it with two additional parameters in the
-context, `bindFirebaseRef` and `unbindFirebaseRef`:
+context, `bindFirestoreRef` and `unbindFirestoreRef`:
 
 ```js
-import { firebaseAction } from 'vuexfire'
+import { firestoreAction } from 'vuexfire'
 
-const setTodosRef = firebaseAction(
-  ({ bindFirebaseRef, unbindFirebaseRef }, { ref }) => {
+const setTodosRef = firestoreAction(
+  ({ bindFirestoreRef, unbindFirestoreRef }, { ref }) => {
     // this will unbind any previously bound ref to 'todos'
-    bindFirebaseRef('todos', ref)
+    bindFirestoreRef('todos', ref)
     // you can unbind any ref easily
-    unbindFirebaseRef('user')
+    unbindFirestoreRef('user')
   }
 )
 ```
@@ -102,52 +95,8 @@ support [here](http://kangax.github.io/compat-table/es6/#test-WeakMap).
 VuexFire uses multiple global mutations prefixed by `vuexfire/` to call the
 actual mutations to modify objects and arrays. It listens for updates to your
 firebase database and commits mutations to sync your state. Thanks to the action
-enhancer `firebaseAction`, it gets access to the local `state` and `commit` so
+enhancer `firestoreAction`, it gets access to the local `state` and `commit` so
 it works with modules too :+1:
-
-## Examples
-
-You can check out a complete example in the `/examples` directory.
-
-## API
-
-### firebaseMutations
-
-This object contains VuexFire internal mutations. They are all prefixed by
-`vuexfire/`. This object must be added in the root Store mutations object.
-
-### bindFirebaseRef(key, ref)
-
-_Only available inside of an enhanced action_
-
-Binds a firebase reference to a property in the state. If there was already
-another reference bound to the same property, it unbinds it first.
-
-```js
-bindFirebaseRef('todos', ref)
-```
-
-Returns a promise which will resolve when the data is ready, or throw an error if something goes wrong:
-
-```js
-bindFirebaseRef('todos', ref)
-  .then(() => {
-    commit('setTodosLoaded', true)
-  })
-  .catch(err => {
-    console.log(err)
-  })
-```
-
-### unbindFirebaseRef(key)
-
-_Only available inside of an enhanced action_
-
-Unbinds a bound firebase reference to a given property in the state.
-
-```js
-unbindFirebaseRef('todos')
-```
 
 ## License
 

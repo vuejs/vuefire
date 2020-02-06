@@ -1,0 +1,2 @@
+const database = {}
+export { database }

@@ -3,6 +3,7 @@
   "workspaces": [
     "packages/vuefire",
     "packages/vuexfire",
+    "packages/documentation",
     "packages/@posva/*"
   ],
   "config": {
@@ -11,13 +12,37 @@
     }
   },
   "devDependencies": {
-    "conventional-changelog-cli": "^2.0.11",
-    "cz-conventional-changelog": "^2.1.0",
-    "lerna": "^3.8.0"
+    "@rollup/plugin-alias": "^3.0.0",
+    "@rollup/plugin-replace": "^2.2.1",
+    "@types/jest": "^25.1.0",
+    "@typescript-eslint/eslint-plugin": "^2.0.0",
+    "@typescript-eslint/parser": "^2.0.0",
+    "codecov": "^3.5.0",
+    "conventional-changelog-cli": "^2.0.21",
+    "cz-conventional-changelog": "^3.0.2",
+    "eslint": "^6.1.0",
+    "eslint-config-prettier": "^6.0.0",
+    "eslint-plugin-prettier": "^3.1.0",
+    "firebase": "^7.2.3",
+    "jest": "^24.8.0",
+    "lerna": "^3.16.2",
+    "prettier": "^1.18.2",
+    "rimraf": "^3.0.0",
+    "rollup": "^1.26.3",
+    "rollup-plugin-commonjs": "^10.0.1",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-strip-banner": "^1.0.0",
+    "rollup-plugin-terser": "^5.1.1",
+    "rollup-plugin-typescript2": "^0.25.2",
+    "ts-jest": "24.0.2",
+    "typescript": "^3.5.3",
+    "vue-server-renderer": "^2.6.11"
   },
   "scripts": {
     "prerelease": "lerna version -m 'chore(release): publish'",
-    "release": "lerna publish from-git --npm-tag next",
-    "changelog": "conventional-changelog -p angular -r 2 -i CHANGELOG.md -s"
+    "release": "lerna publish from-git",
+    "prepare": "lerna run prepare",
+    "changelog": "conventional-changelog -p angular -r 2 -i CHANGELOG.md -s",
+    "test": "lerna run test"
   }
 }

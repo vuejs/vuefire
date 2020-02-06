@@ -1,17 +1,22 @@
 {
   "name": "@posva/vuefire-core",
-  "version": "1.0.3",
+  "version": "2.3.0",
   "description": "Shared code for vue + Firebase apps used by vuefire and vuexfire",
   "author": "Eduardo San Martin Morote <posva13@gmail.com>",
   "homepage": "https://github.com/vuejs/vuefire#readme",
   "license": "MIT",
-  "main": "src/index.js",
+  "sideEffects": false,
+  "main": "dist/vuefire-core.cjs.js",
+  "types": "dist/packages/@posva/vuefire-core/src",
+  "browser": "dist/vuefire-core.esm.js",
+  "module": "dist/vuefire-core.esm.js",
   "directories": {
     "lib": "src",
     "test": "test"
   },
   "files": [
     "src",
+    "dist",
     "LICENSE"
   ],
   "publishConfig": {
@@ -22,30 +27,20 @@
     "url": "git+https://github.com/vuejs/vuefire.git"
   },
   "scripts": {
-    "pretest": "npm run lint",
-    "test": "npm run unit",
-    "unit": "jest",
-    "lint": "eslint --fix src test",
-    "dev": "npm run unit -- --watchAll"
+    "pretest": "yarn run lint",
+    "test": "yarn run test:unit",
+    "build": "rollup -c ../../../rollup.config.js",
+    "prepare": "yarn run build",
+    "postversion": "yarn run build",
+    "test:unit": "jest",
+    "lint": "eslint src __tests__ --color --ext ts",
+    "dev": "yarn run test:unit --watchAll"
   },
   "bugs": {
     "url": "https://github.com/vuejs/vuefire/issues"
   },
   "devDependencies": {
-    "@posva/vuefire-test-helpers": "^1.0.2",
-    "@types/jest": "^23.3.10",
-    "babel-preset-env": "^1.7.0",
-    "eslint": "^5.9.0",
-    "eslint-plugin-vue-libs": "^3.0.0",
-    "firebase": "^5.6.0",
-    "jest": "^23.6.0",
-    "typescript": "^3.2.1"
-  },
-  "jest": {
-    "collectCoverage": true,
-    "collectCoverageFrom": [
-      "<rootDir>/src/*.js"
-    ]
+    "@posva/vuefire-test-helpers": "^1.2.2"
   },
   "gitHead": "e3e2df3624572cec86ed861f2472df4d143f2265"
 }

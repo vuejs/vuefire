@@ -1,28 +1,26 @@
 {
   "name": "vuexfire",
-  "version": "3.0.0-alpha.14",
+  "version": "3.2.1",
   "description": "Firestore binding for Vuex",
   "main": "dist/vuexfire.common.js",
   "module": "dist/vuexfire.esm.js",
   "unpkg": "dist/vuexfire.js",
   "browser": "dist/vuexfire.esm.js",
-  "types": "types/index.d.ts",
+  "types": "dist/packages/vuexfire/src",
   "sideEffects": false,
   "files": [
     "src",
     "dist",
-    "types/*.d.ts",
     "LICENSE"
   ],
   "scripts": {
-    "lint": "eslint --color --ext=js,html src test examples",
-    "pretest": "npm run lint",
-    "test": "npm run build && npm run types && npm run test:unit",
+    "lint": "eslint --color --ext=js,ts src __tests__",
+    "pretest": "yarn run lint",
+    "test": "yarn run build && yarn run test:unit",
     "test:unit": "jest",
-    "dev": "npm run test:unit -- --watchAll",
-    "types": "tsc -p ./types/test/tsconfig.json",
-    "build": "node --eval 'require(\"@posva/vuefire-bundler\")(\"Vuexfire\")'",
-    "postversion": "npm run build"
+    "dev": "yarn run test:unit --watchAll",
+    "build": "rollup -c ../../rollup.config.js",
+    "postversion": "yarn run build"
   },
   "repository": {
     "type": "git",
@@ -39,11 +37,10 @@
     "redux",
     "firestore",
     "store",
-    "bind",
-    "opinionated"
+    "bind"
   ],
   "peerDependencies": {
-    "firebase": ">= 4.0.0"
+    "firebase": ">=4.0.0"
   },
   "author": {
     "name": "Eduardo San Martin Morote"
@@ -54,24 +51,11 @@
   },
   "homepage": "https://github.com/vuejs/vuefire#readme",
   "devDependencies": {
-    "@posva/vuefire-bundler": "^1.1.2",
-    "@posva/vuefire-test-helpers": "^1.0.2",
-    "babel-preset-env": "^1.7.0",
-    "codecov": "^3.1.0",
-    "eslint": "^5.9.0",
-    "eslint-plugin-vue-libs": "^3.0.0",
-    "jest": "^23.6.0",
-    "typescript": "^3.2.1",
-    "vuex": "^3.0.1"
+    "@posva/vuefire-test-helpers": "^1.2.2",
+    "vuex": "^3.1.1"
   },
   "dependencies": {
-    "@posva/vuefire-core": "^1.0.3"
-  },
-  "jest": {
-    "collectCoverage": true,
-    "collectCoverageFrom": [
-      "<rootDir>/src/*.js"
-    ]
+    "@posva/vuefire-core": "^2.3.0"
   },
   "gitHead": "e3e2df3624572cec86ed861f2472df4d143f2265"
 }

@@ -1,21 +1,33 @@
-<p align="center"><img width="165" src="logo-vuefire.svg" alt="Vuefire Logo"></p>
-<h2 align="center">Vuefire / Vuexfire</h2>
-
-[![Build Status](https://badgen.net/circleci/github/vuejs/vuefire)](https://circleci.com/gh/vuejs/vuefire) [![coverage](https://badgen.net/codecov/c/github/vuejs/vuefire)](https://codecov.io/github/vuejs/vuefire)
+<p align="center"><img width="100" src="logo-vuefire.svg" alt="Vuefire Logo"></p>
+<h1 align="center">Vuefire & Vuexfire</h1>
+<p align="center">
+  <a href="https://circleci.com/gh/vuejs/vuefire"><img src="https://badgen.net/circleci/github/vuejs/vuefire" alt="Build Status"></a>
+  <a href="https://codecov.io/github/vuejs/vuefire"><img src="https://badgen.net/codecov/c/github/vuejs/vuefire" alt="Build Status"></a>
+</p>
 
 > Synchronize your data and Firebase Cloud Store database in real-time
 
+[**Documentation**](https://vuefire.vuejs.org)
+
 ## Introduction
 
-Firebase provides two solutions to handle real-time databases: Realtime Database and Cloud Store (which is also a realtime database).
-In order to keep all clients data in-sync with its cloud database, their [js SDK](https://firebase.google.com/docs/firestore/quickstart) provides the tools to do so. However, it quickly becomes bothersome to _bind_ multiple documents or collections to your application, keep them synchronized as well as handling [references](https://firebase.google.com/docs/firestore/manage-data/data-types) to other documents or collections, which can contain references themselves and must also be kept up to date.
-The goal of vuefire and vuexfire is to make this as simple as a function call that returns a promise so it is also easy to setup SSR and allows you to focus on developing your application.
+Firebase provides two solutions to handle real-time databases: Realtime Database
+and Cloud Store (which is also a realtime database). In order to keep all
+clients data in-sync with its cloud database, their [js
+SDK](https://firebase.google.com/docs/firestore/quickstart) provides the tools
+to do so. However, it quickly becomes bothersome to _bind_ multiple documents or
+collections to your application, keep them synchronized as well as handling
+[references](https://firebase.google.com/docs/firestore/manage-data/data-types)
+to other documents or collections, which can contain references themselves and
+must also be kept up to date. The goal of vuefire and vuexfire is to make this
+as simple as a function call that returns a promise so it is also easy to setup
+SSR and allows you to focus on developing your application.
 
-<!-- TODO compare code samples -->
+To better understand why Vuefire will make it so much easier to develop Vue apps
+with firebase, please, check [this link in the
+documentation](https://vuefire.vuejs.org/vuefire/#why)
 
 Note: _This repository contains the code for `vuefire` and `vuexfire` packages:_
-
-_Current version only supports Cloud Store. Support for both Realtime Database and Cloud Store will be added in the future. If you need to use Realtime Database, use [v1.x.x of vuefire](https://github.com/vuejs/vuefire/tree/v1) or [v2.x.x of vuexfire](https://github.com/posva/vuexfire)_
 
 ## Packages
 
@@ -32,8 +44,8 @@ _Current version only supports Cloud Store. Support for both Realtime Database a
 [\@posva/vuefire-bundler]: packages/@posva/vuefire-bundler
 [\@posva/vuefire-core]: packages/@posva/vuefire-core
 [\@posva/vuefire-test-helpers]: packages/@posva/vuefire-test-helpers
-[vuefire-status]: https://badgen.net/npm/v/vuefire/next
-[vuexfire-status]: https://badgen.net/npm/v/vuexfire/next
+[vuefire-status]: https://badgen.net/npm/v/vuefire
+[vuexfire-status]: https://badgen.net/npm/v/vuexfire
 [@posva/vuefire-bundler-status]: https://badgen.net/npm/v/@posva/vuefire-bundler
 [@posva/vuefire-core-status]: https://badgen.net/npm/v/@posva/vuefire-core
 [@posva/vuefire-test-helpers-status]: https://badgen.net/npm/v/@posva/vuefire-test-helpers

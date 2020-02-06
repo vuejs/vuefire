@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <title>VueFire Todo App Demo</title>
-    <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.7.0/firebase.js"></script>
     <script src="https://unpkg.com/vue"></script>
     <script src="https://unpkg.com/vuex"></script>
     <script src="../dist/vuexfire.js"></script>
@@ -59,20 +59,20 @@
         projectId: 'vue-fire-store',
         databaseURL: 'https://vue-fire-store.firebaseio.com',
       })
-      const db = firebase.firestore()
-      db.settings({ timestampsInSnapshots: true })
-      const todos = db.collection('todos')
-      const unFinishedTodos = todos.where('finished', '==', false)
-      const finishedTodos = todos.where('finished', '==', true)
+      var db = firebase.firestore()
+      var todos = db.collection('todos')
+      var unFinishedTodos = todos.where('finished', '==', false)
+      var finishedTodos = todos.where('finished', '==', true)
       let currentTodos = finishedTodos
-      const config = db.collection('configs').doc('jORwjIykFo2NmkdzTkhU')
+      var config = db.collection('configs').doc('jORwjIykFo2NmkdzTkhU')
 
       Vue.use(Vuex)
 
-      const { Store, mapState } = Vuex
-      const { firebaseAction, firebaseMutations } = Vuexfire
+      var { Store, mapState } = Vuex
+      var { firestoreAction, vuexfireMutations } = Vuexfire
+      Vuexfire.firestoreOptions.wait = true
 
-      const store = new Vuex.Store({
+      var store = new Vuex.Store({
         strict: true,
         state: {
           todos: [],
@@ -81,18 +81,18 @@
           config: null,
         },
 
-        mutations: firebaseMutations,
+        mutations: vuexfireMutations,
 
         actions: {
-          bindRef: firebaseAction(({ bindFirebaseRef }, { name, ref }) => {
-            bindFirebaseRef(name, ref)
+          bindRef: firestoreAction(function(context, payload) {
+            context.bindFirestoreRef(payload.name, payload.ref, payload.options)
           }),
 
-          init: firebaseAction(({ bindFirebaseRef }) => {
-            bindFirebaseRef('config', config)
-            bindFirebaseRef('todos', currentTodos)
-            bindFirebaseRef('tweets', db.collection('tweets'))
-            bindFirebaseRef('moments', db.collection('moments'))
+          init: firestoreAction(function(context) {
+            context.bindFirestoreRef('config', config)
+            context.bindFirestoreRef('todos', currentTodos)
+            context.bindFirestoreRef('tweets', db.collection('tweets'))
+            context.bindFirestoreRef('moments', db.collection('moments'))
           }),
         },
       })
@@ -123,7 +123,7 @@
           removeTodo: function(todo) {
             todos.doc(todo.id).delete()
           },
-          toggleTodos() {
+          toggleTodos: function() {
             currentTodos = currentTodos === unFinishedTodos ? finishedTodos : unFinishedTodos
             this.$store.dispatch('bindRef', {
               name: 'todos',
@@ -132,7 +132,7 @@
           },
         },
 
-        created() {
+        created: function() {
           this.$store.dispatch('init')
         },
       })
