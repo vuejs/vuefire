@@ -1,6 +1,6 @@
 ---
 home: true
-heroImage: /firebase-logo.svg
+heroImage: /vuefire-logo.svg
 actionText: Get Started →
 actionLink: /vuefire/
 footer: MIT Licensed | Copyright © 2016-present Eduardo San Martin Morote
