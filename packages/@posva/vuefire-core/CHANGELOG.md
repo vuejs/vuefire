@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.3.1](https://github.com/vuejs/vuefire/compare/@posva/vuefire-core@2.3.0...@posva/vuefire-core@2.3.1) (2020-03-17)
+
+
+### Bug Fixes
+
+* **firestore:** array with objects with references ([b50ac72](https://github.com/vuejs/vuefire/commit/b50ac72e3c4165fa20c72410e185604960b48ba4)), closes [#576](https://github.com/vuejs/vuefire/issues/576)
+
+
+
+
+
 # [2.3.0](https://github.com/vuejs/vuefire/compare/@posva/vuefire-core@2.2.0...@posva/vuefire-core@2.3.0) (2019-12-31)
 
 
