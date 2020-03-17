@@ -72,10 +72,11 @@ export function extractRefs(
         // fill existing refs into data but leave the rest empty
         for (let i = 0; i < ref.length; i++) {
           const newRef = ref[i]
+          // TODO: this only works with array of primitives but not with nested properties like objects with References
           if (newRef.path in subsByPath) data[key][i] = subsByPath[newRef.path]
         }
-        // the oldArray is in this case the same array with holes
-        recursiveExtract(ref, data[key], path + key + '.', [data[key], refs])
+        // the oldArray is in this case the same array with holes unless the array already existed
+        recursiveExtract(ref, oldDoc[key] || data[key], path + key + '.', [data[key], refs])
       } else if (isObject(ref)) {
         data[key] = {}
         recursiveExtract(ref, oldDoc[key], path + key + '.', [data[key], refs])

@@ -124,6 +124,21 @@ describe('refs in documents', () => {
     })
   })
 
+  it.only('does not lose empty references in arrays of objects when updating a property', async () => {
+    const emptyItem = collection.doc()
+    await item.update({ todos: [{ ref: emptyItem }], toggle: true })
+    await bind('item', item)
+    expect(vm.item).toEqual({
+      todos: [{ ref: null }],
+      toggle: true,
+    })
+    await item.update({ toggle: false })
+    expect(vm.item).toEqual({
+      todos: [{ ref: null }],
+      toggle: false,
+    })
+  })
+
   it('keeps array of references when updating a property', async () => {
     await item.update({ a: [a, b, c, { foo: 'bar' }], toggle: true })
     await bind('item', item)

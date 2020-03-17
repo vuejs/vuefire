@@ -1,4 +1,4 @@
-import { createSnapshot, extractRefs, FirestoreSerializer, FirestoreReference } from './utils'
+import { createSnapshot, extractRefs, FirestoreSerializer } from './utils'
 import { walkGet, callOnceWithArg, OperationsType } from '../shared'
 import { firestore } from 'firebase'
 
