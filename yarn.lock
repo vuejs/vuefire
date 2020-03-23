@@ -8809,17 +8809,10 @@ macos-release@^2.2.0:
   resolved "https://registry.yarnpkg.com/macos-release/-/macos-release-2.3.0.tgz#eb1930b036c0800adebccd5f17bc4c12de8bb71f"
   integrity sha512-OHhSbtcviqMPt7yfw5ef5aghS2jzFVKEFyCJndQt2YpSQ9qRVSEv2axSJI1paVThEu+FFGs584h/1YhxjVqajA==
 
-magic-string@0.25.4:
-  version "0.25.4"
-  resolved "https://registry.yarnpkg.com/magic-string/-/magic-string-0.25.4.tgz#325b8a0a79fc423db109b77fd5a19183b7ba5143"
-  integrity sha512-oycWO9nEVAP2RVPbIoDoA4Y7LFIJ3xRYov93gAyJhZkET1tNuB0u7uWkZS2LpBWTJUWnmau/To8ECWRC+jKNfw==
-  dependencies:
-    sourcemap-codec "^1.4.4"
-
-magic-string@^0.25.2, magic-string@^0.25.5:
-  version "0.25.6"
-  resolved "https://registry.yarnpkg.com/magic-string/-/magic-string-0.25.6.tgz#5586387d1242f919c6d223579cc938bf1420795e"
-  integrity sha512-3a5LOMSGoCTH5rbqobC2HuDNRtE2glHZ8J7pK+QZYppyWA36yuNpsX994rIY2nCuyP7CZYy7lQq/X2jygiZ89g==
+magic-string@0.25.7, magic-string@^0.25.2, magic-string@^0.25.5:
+  version "0.25.7"
+  resolved "https://registry.yarnpkg.com/magic-string/-/magic-string-0.25.7.tgz#3f497d6fd34c669c6798dcb821f2ef31f5445051"
+  integrity sha512-4CrMT5DOHTDk4HYDlzmwu4FVCcIYI8gauveasrdCu2IKIFOJ3f0v/8MDGJCDL9oD2ppz/Av1b0Nj345H9M+XIA==
   dependencies:
     sourcemap-codec "^1.4.4"
 
@@ -11501,13 +11494,13 @@ rollup-plugin-node-resolve@^5.2.0:
     resolve "^1.11.1"
     rollup-pluginutils "^2.8.1"
 
-rollup-plugin-strip-banner@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/rollup-plugin-strip-banner/-/rollup-plugin-strip-banner-1.0.0.tgz#28ddfb74e7b9c1fe3e612124fa83e571b914e893"
-  integrity sha512-hatiuCbYCM7db/JmogCn5a4/Un5dLnAIT4ixXmH9qNCbzXJqd0/jnVd/8ZDA3fF7WmmVh7D18GAzha0MMmRpSQ==
+rollup-plugin-strip-banner@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/rollup-plugin-strip-banner/-/rollup-plugin-strip-banner-2.0.0.tgz#de1a3eb4688964609ac473d75d2bed97f007ea67"
+  integrity sha512-9ipg2Wzl+6AZ+8PW65DrvuLzVrf9PjXZW39GeG9R0j0vm6DgxYli14wDpovRuKc+xEjKIE5DLAGwUem4Yvo+IA==
   dependencies:
     extract-banner "0.1.2"
-    magic-string "0.25.4"
+    magic-string "0.25.7"
     rollup-pluginutils "2.8.2"
 
 rollup-plugin-terser@^5.1.1:
