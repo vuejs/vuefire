@@ -17,7 +17,7 @@
         </li>
       </ul>
       <form @submit.prevent="addTodo">
-        <input v-model="newTodo" /> <button>Add #{{ items.length }}</button>
+        <input v-model.trim="newTodo" /> <button>Add #{{ items.length }}</button>
       </form>
     </div>
 
@@ -60,12 +60,11 @@
             itemsRef.doc(id).delete()
           },
           addTodo: function() {
-            if (this.newTodo.trim()) {
-              itemsRef.add({
-                text: this.newTodo,
-              })
-              this.newTodo = ''
-            }
+            if (this.newTodo.length < 1) return
+            itemsRef.add({
+              text: this.newTodo
+            })
+            this.newTodo = ''
           },
         },
 
