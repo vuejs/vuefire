@@ -60,11 +60,12 @@
             itemsRef.doc(id).delete()
           },
           addTodo: function() {
-            if (this.newTodo.length < 1) return
-            itemsRef.add({
-              text: this.newTodo
-            })
-            this.newTodo = ''
+            if (this.newTodo) {
+              itemsRef.add({
+                text: this.newTodo,
+              })
+              this.newTodo = ''
+            }
           },
         },
 
