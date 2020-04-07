@@ -53,11 +53,11 @@ the Vue Instance. Here is the default function that is used when no override is 
 
 ```ts
 const serialize = (snapshot: firestore.DocumentSnapshot) => {
-  // documentSnapshot.data() DOES NOT contain the `id` of the document. By
+  // snapshot.data() DOES NOT contain the `id` of the document. By
   // default, Vuefire adds it as a non enumerable property named id.
   // This allows to easily create copies when updating documents, as using
   // the spread operator won't copy it
-  return Object.defineProperty(doc.data(), 'id', { value: doc.id })
+  return Object.defineProperty(snapshot.data(), 'id', { value: snapshot.id })
 }
 
 Vue.use(firestorePlugin, { serialize })
