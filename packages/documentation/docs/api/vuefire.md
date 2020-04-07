@@ -57,7 +57,7 @@ const serialize = (snapshot: firestore.DocumentSnapshot) => {
   // default, Vuefire adds it as a non enumerable property named id.
   // This allows to easily create copies when updating documents, as using
   // the spread operator won't copy it
-  return Object.defineProperty(doc.data(), 'id', { value: doc.id })
+  return Object.defineProperty(snapshot.data(), 'id', { value: snapshot.id })
 }
 
 Vue.use(firestorePlugin, { serialize })
