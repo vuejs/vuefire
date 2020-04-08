@@ -2407,16 +2407,6 @@
     regexpp "^3.0.0"
     tsutils "^3.17.1"
 
-"@typescript-eslint/experimental-utils@2.26.0":
-  version "2.26.0"
-  resolved "https://registry.yarnpkg.com/@typescript-eslint/experimental-utils/-/experimental-utils-2.26.0.tgz#063390c404d9980767d76274df386c0aa675d91d"
-  integrity sha512-RELVoH5EYd+JlGprEyojUv9HeKcZqF7nZUGSblyAw1FwOGNnmQIU8kxJ69fttQvEwCsX5D6ECJT8GTozxrDKVQ==
-  dependencies:
-    "@types/json-schema" "^7.0.3"
-    "@typescript-eslint/typescript-estree" "2.26.0"
-    eslint-scope "^5.0.0"
-    eslint-utils "^2.0.0"
-
 "@typescript-eslint/experimental-utils@2.27.0":
   version "2.27.0"
   resolved "https://registry.yarnpkg.com/@typescript-eslint/experimental-utils/-/experimental-utils-2.27.0.tgz#801a952c10b58e486c9a0b36cf21e2aab1e9e01a"
@@ -2436,19 +2426,6 @@
     "@typescript-eslint/experimental-utils" "2.27.0"
     "@typescript-eslint/typescript-estree" "2.27.0"
     eslint-visitor-keys "^1.1.0"
-
-"@typescript-eslint/typescript-estree@2.26.0":
-  version "2.26.0"
-  resolved "https://registry.yarnpkg.com/@typescript-eslint/typescript-estree/-/typescript-estree-2.26.0.tgz#d8132cf1ee8a72234f996519a47d8a9118b57d56"
-  integrity sha512-3x4SyZCLB4zsKsjuhxDLeVJN6W29VwBnYpCsZ7vIdPel9ZqLfIZJgJXO47MNUkurGpQuIBALdPQKtsSnWpE1Yg==
-  dependencies:
-    debug "^4.1.1"
-    eslint-visitor-keys "^1.1.0"
-    glob "^7.1.6"
-    is-glob "^4.0.1"
-    lodash "^4.17.15"
-    semver "^6.3.0"
-    tsutils "^3.17.1"
 
 "@typescript-eslint/typescript-estree@2.27.0":
   version "2.27.0"
@@ -11579,9 +11556,9 @@ rollup-pluginutils@2.8.2, rollup-pluginutils@^2.8.1, rollup-pluginutils@^2.8.2:
     estree-walker "^0.6.1"
 
 rollup@^2.1.0:
-  version "2.3.3"
-  resolved "https://registry.yarnpkg.com/rollup/-/rollup-2.3.3.tgz#5982df700d7aae8907075ba68122bb57d98e9cd0"
-  integrity sha512-uJ9VNWk80mb4wDCSfd1AyHoSc9TrWbkZtnO6wbsMTp9muSWkT26Dvc99MX1yGCOTvUN1Skw/KpFzKdUDuZKTXA==
+  version "2.3.4"
+  resolved "https://registry.yarnpkg.com/rollup/-/rollup-2.3.4.tgz#979e461f8cab1a71aec2d37ce2a434052ae70223"
+  integrity sha512-8U9x54RCVhrUEV1zon4Pp8kokg1HM0fwzf5vkwe2/rOfyTClarx5e27kFlaoZ7ofJiazWkNQ+dgdG4HuZxkQ9A==
   optionalDependencies:
     fsevents "~2.1.2"
 
