@@ -1,0 +1,5 @@
+[build]
+  ignore = "git diff --quiet HEAD^ HEAD packages/documentation/"
+  publish = "packages/documentation/docs/.vuepress/dist"
+  command = "cd packages/documentation && yarn build"
+
