@@ -64,7 +64,7 @@ It's necessary to declare properties with their initial values in `state`. **For
 
 :::tip
 
-Always return or `await` the promise returned by `bindFirestoreRef`/`bindFirebaseRef` since it let you know when your state is filled with data coming from the database. This is indeed useful [when dealing with SSR](../cookbook/ssr.md)
+Always return or `await` the promise returned by `bindFirestoreRef`/`bindFirebaseRef` since it lets you know when your state is filled with data coming from the database. This is very useful [when dealing with SSR](../cookbook/ssr.md)
 
 :::
 
