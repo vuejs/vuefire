@@ -34,7 +34,7 @@
     "rollup-plugin-strip-banner": "^2.0.0",
     "rollup-plugin-terser": "^5.1.1",
     "rollup-plugin-typescript2": "^0.27.0",
-    "ts-jest": "25.4.0",
+    "ts-jest": "25.5.0",
     "typescript": "^3.5.3",
     "vue-server-renderer": "^2.6.11"
   },
