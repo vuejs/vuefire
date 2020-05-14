@@ -46,11 +46,11 @@ db.collection('documents')
 To go further, check Firebase documentation:
 
 - [RTDB: Read data once](https://firebase.google.com/docs/database/web/read-and-write#read_data_once)
-- [Cloudstore: Get a document](https://firebase.google.com/docs/firestore/query-data/get-data#get_a_document)
+- [Firestore: Get a document](https://firebase.google.com/docs/firestore/query-data/get-data#get_a_document)
 
 ## Sorting
 
-RTDB and Cloudstore do not include the same set of features regarding sorting but here is a basic example of sorting a collection of `documents` by the date of creation stored as `createdAt`:
+RTDB and Firestore do not include the same set of features regarding sorting but here is a basic example of sorting a collection of `documents` by the date of creation stored as `createdAt`:
 
 <FirebaseExample>
 
@@ -91,7 +91,7 @@ To go further, check Firebase documentation:
 
 ## Filtering
 
-Cloudstore has many more features regarding filtering than RTDB but here is a basic filtering using one field with both databases:
+Firestore has many more features regarding filtering than RTDB but here is a basic filtering using one field with both databases:
 
 <FirebaseExample>
 
