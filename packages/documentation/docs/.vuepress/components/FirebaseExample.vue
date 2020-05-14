@@ -14,12 +14,12 @@
       <button
         :id="id + '_firestore'"
         :class="selectedTab && 'is-selected'"
-        title="Cloudstore example"
+        title="Firestore example"
         @focus="selectOnFocus(1, $event)"
         @click="select(1)"
         :disabled="disable === '1'"
       >
-        <cloudstore-logo />
+        <firestore-logo />
       </button>
     </nav>
     <section>
@@ -36,7 +36,7 @@
 <script>
 import 'focus-visible'
 import RtdbLogo from './RtdbLogo'
-import CloudstoreLogo from './CloudstoreLogo'
+import FirestoreLogo from './FirestoreLogo'
 
 const sharedState = {
   selectedTab: 1, // defaults to Firestore examples
@@ -66,7 +66,7 @@ export default {
   },
 
   components: {
-    CloudstoreLogo,
+    FirestoreLogo,
     RtdbLogo,
     SlotSelector: {
       functional: true,
