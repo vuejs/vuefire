@@ -20,7 +20,7 @@ npm install vuexfire firebase
 
 ## Adding mutations
 
-In order to use Vuexfire, you must add the mutations exported by the package **at the root of your store and only there**:
+In order to use Vuexfire, you must add the mutations exported by the package **at the root of your store, and only there. Do not add them in any Vuex module**:
 
 ```js
 import { vuexfireMutations } from 'vuexfire'
