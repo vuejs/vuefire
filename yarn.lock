@@ -1074,10 +1074,10 @@
   resolved "https://registry.yarnpkg.com/@firebase/firestore-types/-/firestore-types-1.11.0.tgz#ccb734fd424b8b6c3aff3ad1921a89ee31be229b"
   integrity sha512-hD7+cmMUvT5OJeWVrcRkE87PPuj/0/Wic6bntCopJE1WIX/Dm117AUkHgKd3S7Ici6DLp4bdlx1MjjwWL5942w==
 
-"@firebase/firestore@1.15.2":
-  version "1.15.2"
-  resolved "https://registry.yarnpkg.com/@firebase/firestore/-/firestore-1.15.2.tgz#c0686a19a3ba60a608245ee108d5ed661bd7c8e4"
-  integrity sha512-JIXmrQjTFWRK91gY+6IK8wLNdAt59jBlxM9aa+rxwxZfK2tu19Gy2WBbMVrXv4DXHdlYVGODwE9Qan55B3nu3Q==
+"@firebase/firestore@1.15.3":
+  version "1.15.3"
+  resolved "https://registry.yarnpkg.com/@firebase/firestore/-/firestore-1.15.3.tgz#34446efceb9a10b0974342337bc7aa2e273ecc78"
+  integrity sha512-4OE4JsXP/7LF+6m8q6sQ8/7UuF4qdGVW/hxQGvDVZItBVUjGSFlxjmR3eQ4/JMOLCLFNeeqtwGJpbBw3ZPjPxw==
   dependencies:
     "@firebase/component" "0.1.14"
     "@firebase/firestore-types" "1.11.0"
@@ -6315,16 +6315,16 @@ firebase-mock@^2.2.10:
     rsvp "^3.6.2"
 
 firebase@^7.2.3:
-  version "7.15.2"
-  resolved "https://registry.yarnpkg.com/firebase/-/firebase-7.15.2.tgz#6d51d05fe1124253b2b466a8a61f303f82cbef47"
-  integrity sha512-JZ5GzIIQdh3BUmYr6A8ZYlYnhorFhKim5rDnz3F4ttakoYHFlD3gRVvxwJkEmemnbK2Cy+MZKImabObEuKrdrA==
+  version "7.15.3"
+  resolved "https://registry.yarnpkg.com/firebase/-/firebase-7.15.3.tgz#ba098ef90f105ad3aedd4171adc1902dd258711e"
+  integrity sha512-Ek7gyp7hxAhtp9DGK0TGyhTjJJdzupowp2FQb9WMovCgKr+tdMtfXnMwRsH0zB09K8Ca/ecwx8+Znq13NGA57Q==
   dependencies:
     "@firebase/analytics" "0.3.7"
     "@firebase/app" "0.6.6"
     "@firebase/app-types" "0.6.1"
     "@firebase/auth" "0.14.7"
     "@firebase/database" "0.6.5"
-    "@firebase/firestore" "1.15.2"
+    "@firebase/firestore" "1.15.3"
     "@firebase/functions" "0.4.46"
     "@firebase/installations" "0.4.12"
     "@firebase/messaging" "0.6.18"
