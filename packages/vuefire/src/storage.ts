@@ -5,7 +5,7 @@ import {
   firestoreOptions,
   FirestoreOptions,
   OperationsType,
-  upload
+  upload,
 } from '@posva/vuefire-core'
 import { firestore } from 'firebase'
 import Vue, { PluginFunction } from 'vue'

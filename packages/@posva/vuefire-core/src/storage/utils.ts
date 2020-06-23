@@ -6,6 +6,7 @@
  * @return uploadValue as Number
  */
 
-export function UploadValue(snapshot: any) : Number {
-    return (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+export function UploadValue(snapshot: any): number {
+  // Calculate the progress of upload.
+  return (snapshot.bytesTransferred / snapshot.totalBytes) * 100
 }
