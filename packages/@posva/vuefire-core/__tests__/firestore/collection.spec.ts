@@ -58,6 +58,12 @@ describe('collections', () => {
     expect(ops.set).toHaveBeenLastCalledWith(vm, 'items', [{ other: 'bar', text: 'foo' }])
   })
 
+  it('can bind arrays with null', async () => {
+    await collection.add({ array: [2, null] })
+    expect(ops.set).toHaveBeenCalledTimes(1)
+    expect(ops.set).toHaveBeenLastCalledWith(vm, 'items', [{ array: [2, null] }])
+  })
+
   // TODO move to vuefire
   it.skip('unbinds when the instance is destroyed', async () => {
     expect(vm._firestoreUnbinds).toBeTruthy()
