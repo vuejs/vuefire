@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.3.2](https://github.com/vuejs/vuefire/compare/@posva/vuefire-core@2.3.1...@posva/vuefire-core@2.3.2) (2020-07-06)
+
+
+### Bug Fixes
+
+* **core:** allow null values in arrays ([e5f2727](https://github.com/vuejs/vuefire/commit/e5f27278f446d18d6686a1c5f0aa44237996b9c0)), closes [#815](https://github.com/vuejs/vuefire/issues/815)
+
+
+
+
+
 ## [2.3.1](https://github.com/vuejs/vuefire/compare/@posva/vuefire-core@2.3.0...@posva/vuefire-core@2.3.1) (2020-03-17)
 
 
