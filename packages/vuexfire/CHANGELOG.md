@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.2.4](https://github.com/vuejs/vuefire/compare/vuexfire@3.2.3...vuexfire@3.2.4) (2020-07-31)
+
+**Note:** Version bump only for package vuexfire
+
+
+
+
+
 ## [3.2.3](https://github.com/vuejs/vuefire/compare/vuexfire@3.2.2...vuexfire@3.2.3) (2020-07-06)
 
 **Note:** Version bump only for package vuexfire
