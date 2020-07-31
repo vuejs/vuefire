@@ -80,6 +80,17 @@ describe('refs in documents', () => {
     expect(vm.arr).toEqual({ refs: [b.path, c.path] })
   })
 
+  it('keeps correct elements in array of references when removing in the middle', async () => {
+    const arr = collection.doc()
+    vm.arr = null
+
+    await arr.update({ refs: [a, b, c] })
+    await bind('arr', arr, { maxRefDepth: 0 })
+    await arr.update({ refs: [a, c] })
+
+    expect(vm.arr).toEqual({ refs: [a.path, c.path] })
+  })
+
   it('binds refs on documents', async () => {
     // create an empty doc and update using the ref instead of plain data
     await item.update({ ref: c })
@@ -124,7 +135,7 @@ describe('refs in documents', () => {
     })
   })
 
-  it.only('does not lose empty references in arrays of objects when updating a property', async () => {
+  it('does not lose empty references in arrays of objects when updating a property', async () => {
     const emptyItem = collection.doc()
     await item.update({ todos: [{ ref: emptyItem }], toggle: true })
     await bind('item', item)

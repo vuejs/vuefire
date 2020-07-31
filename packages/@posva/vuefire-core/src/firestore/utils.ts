@@ -64,7 +64,14 @@ export function extractRefs(
       } else if (isDocumentRef(ref)) {
         // allow values to be null (like non-existant refs)
         // TODO: better typing since this isObject shouldn't be necessary but it doesn't work
-        data[key] = typeof oldDoc === 'object' && key in oldDoc ? oldDoc[key] : ref.path
+        data[key] =
+          typeof oldDoc === 'object' &&
+          key in oldDoc &&
+          // only copy refs if they were refs before
+          // https://github.com/vuejs/vuefire/issues/831
+          typeof oldDoc[key] != 'string'
+            ? oldDoc[key]
+            : ref.path
         // TODO: handle subpathes?
         refs[path + key] = ref
       } else if (Array.isArray(ref)) {
