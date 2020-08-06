@@ -20,7 +20,7 @@
     "codecov": "^3.5.0",
     "conventional-changelog-cli": "^2.0.21",
     "cz-conventional-changelog": "^3.0.2",
-    "eslint": "^6.1.0",
+    "eslint": "^7.6.0",
     "eslint-config-prettier": "^6.0.0",
     "eslint-plugin-prettier": "^3.1.0",
     "firebase": "^7.2.3",
