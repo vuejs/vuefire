@@ -5098,9 +5098,9 @@ cz-conventional-changelog@3.0.1:
     "@commitlint/load" ">6.1.1"
 
 cz-conventional-changelog@^3.0.2:
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/cz-conventional-changelog/-/cz-conventional-changelog-3.2.0.tgz#6aef1f892d64113343d7e455529089ac9f20e477"
-  integrity sha512-yAYxeGpVi27hqIilG1nh4A9Bnx4J3Ov+eXy4koL3drrR+IO9GaWPsKjik20ht608Asqi8TQPf0mczhEeyAtMzg==
+  version "3.2.1"
+  resolved "https://registry.yarnpkg.com/cz-conventional-changelog/-/cz-conventional-changelog-3.2.1.tgz#e673dee178eed925e8f59acf5c3daf075c7ba7bb"
+  integrity sha512-MroXCfO8sahklT0KSwZ1oaNwKxZaZ2A8ONc+MH+is8QDZ2zBhGOFFiAXuWpcWFJLpxlGPvnYlhvOlYiSOAGc7w==
   dependencies:
     chalk "^2.4.1"
     commitizen "^4.0.3"
