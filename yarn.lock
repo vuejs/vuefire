@@ -1074,18 +1074,18 @@
     faye-websocket "0.11.3"
     tslib "^1.11.1"
 
-"@firebase/firestore-types@1.12.0":
-  version "1.12.0"
-  resolved "https://registry.yarnpkg.com/@firebase/firestore-types/-/firestore-types-1.12.0.tgz#511e572e946b07f5a603c90e078f0cd714923fac"
-  integrity sha512-OqNxVb63wPZdUc7YnpacAW1WNIMSKERSewCRi+unCQ0YI0KNfrDSypyGCyel+S3GdOtKMk9KnvDknaGbnaFX4g==
+"@firebase/firestore-types@1.12.1":
+  version "1.12.1"
+  resolved "https://registry.yarnpkg.com/@firebase/firestore-types/-/firestore-types-1.12.1.tgz#67e999798043d1b3156d0a2c52d4299a92345deb"
+  integrity sha512-CpWcDriYnGDoAl0D9DcSuwX0b/fXqi7qOwuuTI1M0SYxau48G8cqhVjzjqPDgEM3kDGYJTnPN3ALS0Z4cnwERQ==
 
-"@firebase/firestore@1.16.5":
-  version "1.16.5"
-  resolved "https://registry.yarnpkg.com/@firebase/firestore/-/firestore-1.16.5.tgz#b80b63f18bd70cc101f66c5e0a79dce93f036384"
-  integrity sha512-GjCL4Ngy46qSdXAg9obXBuIKG2m/7a21dQktqRPaPH9xpHnymq8LxUK7sdUfyY8FBIQp6Si6O61e9fko4FjSMw==
+"@firebase/firestore@1.16.6":
+  version "1.16.6"
+  resolved "https://registry.yarnpkg.com/@firebase/firestore/-/firestore-1.16.6.tgz#a38d02b525cb19a12b28d580403c20cc215a2330"
+  integrity sha512-w04ZS0i8xclGNvwpxt7Q3M9nhUq6pL0G73ZpDizPKB+peTuY/bcks+zrfNKZwDEaM+i0/lg9UZKREr0HtZOJsw==
   dependencies:
     "@firebase/component" "0.1.18"
-    "@firebase/firestore-types" "1.12.0"
+    "@firebase/firestore-types" "1.12.1"
     "@firebase/logger" "0.2.6"
     "@firebase/util" "0.3.1"
     "@firebase/webchannel-wrapper" "0.3.0"
@@ -6326,16 +6326,16 @@ firebase-mock@^2.2.10:
     rsvp "^3.6.2"
 
 firebase@^7.2.3:
-  version "7.19.0"
-  resolved "https://registry.yarnpkg.com/firebase/-/firebase-7.19.0.tgz#cfa64ebc56f3ef095df31d20f1de4dc5fa80f793"
-  integrity sha512-gS0nFagMfDLEucgcMD/tCfpLH+crnTurpyMsh6JEvith7GA8cRA4S3T3300xPL6dSZliI7EiGsCNBXBil6sAUw==
+  version "7.19.1"
+  resolved "https://registry.yarnpkg.com/firebase/-/firebase-7.19.1.tgz#e77c778117c92206c4806c15a0513f33b625ad05"
+  integrity sha512-kZUbxN4amrKZc2pkmAMqQtWNkb608rCZLL61NC0X/UXI1euWhIFXdCGQNBlEdOlUwDLBGwNpyTBhQtL4UYHEZw==
   dependencies:
     "@firebase/analytics" "0.4.2"
     "@firebase/app" "0.6.10"
     "@firebase/app-types" "0.6.1"
     "@firebase/auth" "0.14.9"
     "@firebase/database" "0.6.11"
-    "@firebase/firestore" "1.16.5"
+    "@firebase/firestore" "1.16.6"
     "@firebase/functions" "0.4.50"
     "@firebase/installations" "0.4.16"
     "@firebase/messaging" "0.7.0"
