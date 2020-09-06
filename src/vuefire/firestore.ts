@@ -7,7 +7,7 @@ import {
   OperationsType,
 } from '../core'
 import { firestore } from 'firebase'
-import Vue, { PluginFunction } from 'vue'
+import { ComponentPublicInstance, Plugin } from 'vue'
 
 const ops: OperationsType = {
   set: (target, key, value) => walkSet(target, key, value),
@@ -72,9 +72,15 @@ const defaultOptions: Readonly<Required<PluginOptions>> = {
   wait: firestoreOptions.wait,
 }
 
-declare module 'vue/types/vue' {
-  // TODO: export types to allow custom function names
-  interface Vue {
+declare module 'vue' {
+  export interface ComponentCustomProperties {
+    /**
+     * Binds a reference
+     *
+     * @param name
+     * @param reference
+     * @param options
+     */
     $bind(
       name: string,
       reference: firestore.Query | firestore.CollectionReference,
@@ -85,7 +91,15 @@ declare module 'vue/types/vue' {
       reference: firestore.DocumentReference,
       options?: FirestoreOptions
     ): Promise<firestore.DocumentData>
+
+    /**
+     * Unbinds a bound reference
+     */
     $unbind: (name: string, reset?: FirestoreOptions['reset']) => void
+
+    /**
+     * Bound firestore references
+     */
     $firestoreRefs: Readonly<
       Record<
         string,
@@ -95,9 +109,19 @@ declare module 'vue/types/vue' {
     // _firestoreSources: Readonly<
     //   Record<string, firestore.CollectionReference | firestore.Query | firestore.DocumentReference>
     // >
+    /**
+     * Existing unbind functions that get automatically called when the component is unmounted
+     * @internal
+     */
     _firestoreUnbinds: Readonly<
       Record<string, ReturnType<typeof bindCollection | typeof bindDocument>>
     >
+  }
+  export interface ComponentCustomOptions {
+    /**
+     * Calls `$bind` at created
+     */
+    firestore?: FirestoreOption
   }
 }
 
@@ -105,25 +129,19 @@ type VueFirestoreObject = Record<
   string,
   firestore.DocumentReference | firestore.Query | firestore.CollectionReference
 >
-type FirestoreOption<V> = VueFirestoreObject | ((this: V) => VueFirestoreObject)
+type FirestoreOption = VueFirestoreObject | (() => VueFirestoreObject)
 
-declare module 'vue/types/options' {
-  interface ComponentOptions<V extends Vue> {
-    firestore?: FirestoreOption<V>
-  }
-}
-
-export const firestorePlugin: PluginFunction<PluginOptions> = function firestorePlugin(
-  Vue,
-  pluginOptions = defaultOptions
+export const firestorePlugin: Plugin = function firestorePlugin(
+  app,
+  pluginOptions: PluginOptions = defaultOptions
 ) {
-  const strategies = Vue.config.optionMergeStrategies
+  const strategies = app.config.optionMergeStrategies
   strategies.firestore = strategies.provide
 
   const globalOptions = Object.assign({}, defaultOptions, pluginOptions)
   const { bindName, unbindName } = globalOptions
 
-  Vue.prototype[unbindName] = function firestoreUnbind(
+  app.config.globalProperties[unbindName] = function firestoreUnbind(
     key: string,
     reset?: FirestoreOptions['reset']
   ) {
@@ -132,8 +150,8 @@ export const firestorePlugin: PluginFunction<PluginOptions> = function firestore
     delete this.$firestoreRefs[key]
   }
 
-  Vue.prototype[bindName] = function firestoreBind(
-    this: Vue,
+  app.config.globalProperties[bindName] = function firestoreBind(
+    this: ComponentPublicInstance,
     key: string,
     ref:
       | firestore.Query
@@ -144,7 +162,7 @@ export const firestorePlugin: PluginFunction<PluginOptions> = function firestore
     const options = Object.assign({}, globalOptions, userOptions)
 
     if (this._firestoreUnbinds[key]) {
-      this[unbindName as keyof Vue](
+      this[unbindName as '$unbind'](
         key,
         // if wait, allow overriding with a function or reset, otherwise, force reset to false
         // else pass the reset option
@@ -161,22 +179,27 @@ export const firestorePlugin: PluginFunction<PluginOptions> = function firestore
     return promise
   }
 
-  Vue.mixin({
-    beforeCreate(this: Vue) {
+  app.mixin({
+    beforeCreate(this: ComponentPublicInstance) {
       this._firestoreUnbinds = Object.create(null)
       this.$firestoreRefs = Object.create(null)
     },
-    created(this: Vue) {
+    created(this: ComponentPublicInstance) {
       const { firestore } = this.$options
       const refs =
         typeof firestore === 'function' ? firestore.call(this) : firestore
       if (!refs) return
       for (const key in refs) {
-        this[bindName as keyof Vue](key, refs[key], globalOptions)
+        this[bindName as '$bind'](
+          key,
+          // @ts-ignore: FIXME: there is probably a wrong type in global properties
+          refs[key],
+          globalOptions
+        )
       }
     },
 
-    beforeDestroy(this: Vue) {
+    beforeDestroy(this: ComponentPublicInstance) {
       for (const subKey in this._firestoreUnbinds) {
         this._firestoreUnbinds[subKey]()
       }
