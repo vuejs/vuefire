@@ -1,13 +1,13 @@
 {
-  "name": "vue-lib",
-  "version": "0.0.0",
+  "name": "vuefire",
+  "version": "3.0.0",
   "description": "Some awesome description",
-  "main": "dist/vue-lib.cjs.js",
-  "browser": "dist/vue-lib.esm.js",
-  "unpkg": "dist/vue-lib.global.js",
-  "jsdelivr": "dist/vue-lib.global.js",
-  "module": "dist/vue-lib.esm-bundler.js",
-  "types": "dist/vue-lib.d.ts",
+  "main": "dist/vuefire.cjs.js",
+  "browser": "dist/vuefire.esm.js",
+  "unpkg": "dist/vuefire.global.js",
+  "jsdelivr": "dist/vuefire.global.js",
+  "module": "dist/vuefire.esm-bundler.js",
+  "types": "dist/vuefire.d.ts",
   "sideEffects": false,
   "author": {
     "name": "Eduardo San Martin Morote",
@@ -27,7 +27,7 @@
   },
   "files": [
     "dist/*.js",
-    "dist/vue-lib.d.ts",
+    "dist/vuefire.d.ts",
     "LICENSE",
     "README.md"
   ],
@@ -80,10 +80,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/posva/vue-lib.git"
+    "url": "git+https://github.com/posva/vuefire.git"
   },
   "bugs": {
-    "url": "https://github.com/posva/vue-lib/issues"
+    "url": "https://github.com/posva/vuefire/issues"
   },
-  "homepage": "https://github.com/posva/vue-lib#readme"
+  "homepage": "https://github.com/posva/vuefire#readme"
 }

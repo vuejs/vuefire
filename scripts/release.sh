@@ -32,7 +32,7 @@ then
 
   # commit
   # use --tag next to publish to a different tag
-  yarn publish --new-version "$VERSION" --no-commit-hooks --no-git-tag-version
+  yarn publish --tag next --new-version "$VERSION" --no-commit-hooks --no-git-tag-version
 
   # publish
   git push origin refs/tags/v$VERSION
