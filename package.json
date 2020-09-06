@@ -45,6 +45,8 @@
     "@vue/test-utils": "^2.0.0-beta.1",
     "codecov": "^3.7.2",
     "conventional-changelog-cli": "^2.0.34",
+    "firebase": "^7.19.1",
+    "firebase-mock": "^2.3.2",
     "jest": "^26.2.2",
     "lint-staged": "^10.2.11",
     "pascalcase": "^1.0.0",
