@@ -105,7 +105,7 @@ interface FirestoreActionContext<S, R> extends ActionContext<S, R> {
     ref: firestore.DocumentReference,
     options?: FirestoreOptions
   ): Promise<firestore.DocumentData>
-  unbindFirestoreRef(key: string): void
+  unbindFirestoreRef(key: string, reset?: boolean): void
 }
 
 export function firestoreAction<S, R>(
