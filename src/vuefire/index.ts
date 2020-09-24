@@ -1,2 +1,6 @@
 export * from './rtdb'
-export * from './firestore'
+export {
+  firestorePlugin,
+  bind as firestoreBind,
+  unbind as firestoreUnbind,
+} from './firestore'

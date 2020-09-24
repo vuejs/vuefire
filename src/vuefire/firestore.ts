@@ -7,15 +7,20 @@ import {
   OperationsType,
 } from '../core'
 import { firestore } from 'firebase'
-import { ComponentPublicInstance, Plugin } from 'vue'
+import { ComponentPublicInstance, onBeforeUnmount, Plugin, Ref } from 'vue'
 
-const ops: OperationsType = {
+export const ops: OperationsType = {
   set: (target, key, value) => walkSet(target, key, value),
   add: (array, index, data) => array.splice(index, 0, data),
   remove: (array, index) => array.splice(index, 1),
 }
 
-function bind(
+const firestoreUnbinds = new WeakMap<
+  object,
+  Record<string, ReturnType<typeof bindCollection | typeof bindDocument>>
+>()
+
+function internalBind(
   vm: Record<string, any>,
   key: string,
   ref:
@@ -52,8 +57,24 @@ function bind(
         options
       )
     }
-    vm._firestoreUnbinds[key] = unbind
+    if (!firestoreUnbinds.has(vm)) {
+      firestoreUnbinds.set(vm, {})
+    }
+    const unbinds = firestoreUnbinds.get(vm)!
+    unbinds[key] = unbind
   })
+}
+
+export function internalUnbind(
+  target: object,
+  key: string,
+  reset?: FirestoreOptions['reset']
+) {
+  const unbinds = firestoreUnbinds.get(target)
+  if (unbinds && unbinds[key]) {
+    unbinds[key](reset)
+    delete unbinds[key]
+  }
 }
 
 interface PluginOptions {
@@ -72,7 +93,7 @@ const defaultOptions: Readonly<Required<PluginOptions>> = {
   wait: firestoreOptions.wait,
 }
 
-declare module 'vue' {
+declare module '@vue/runtime-core' {
   export interface ComponentCustomProperties {
     /**
      * Binds a reference
@@ -113,9 +134,9 @@ declare module 'vue' {
      * Existing unbind functions that get automatically called when the component is unmounted
      * @internal
      */
-    _firestoreUnbinds: Readonly<
-      Record<string, ReturnType<typeof bindCollection | typeof bindDocument>>
-    >
+    // _firestoreUnbinds: Readonly<
+    //   Record<string, ReturnType<typeof bindCollection | typeof bindDocument>>
+    // >
   }
   export interface ComponentCustomOptions {
     /**
@@ -145,8 +166,7 @@ export const firestorePlugin: Plugin = function firestorePlugin(
     key: string,
     reset?: FirestoreOptions['reset']
   ) {
-    this._firestoreUnbinds[key](reset)
-    delete this._firestoreUnbinds[key]
+    internalUnbind(this, key, reset)
     delete this.$firestoreRefs[key]
   }
 
@@ -160,10 +180,10 @@ export const firestorePlugin: Plugin = function firestorePlugin(
     userOptions?: FirestoreOptions
   ) {
     const options = Object.assign({}, globalOptions, userOptions)
+    const unbinds = firestoreUnbinds.get(this)
 
-    if (this._firestoreUnbinds[key]) {
-      this[unbindName as '$unbind'](
-        key,
+    if (unbinds && unbinds[key]) {
+      unbinds[key](
         // if wait, allow overriding with a function or reset, otherwise, force reset to false
         // else pass the reset option
         options.wait
@@ -172,16 +192,25 @@ export const firestorePlugin: Plugin = function firestorePlugin(
             : false
           : options.reset
       )
+      // this[unbindName as '$unbind'](
+      //   key,
+      //   // if wait, allow overriding with a function or reset, otherwise, force reset to false
+      //   // else pass the reset option
+      //   options.wait
+      //     ? typeof options.reset === 'function'
+      //       ? options.reset
+      //       : false
+      //     : options.reset
+      // )
     }
-    const promise = bind(this, key, ref, ops, options)
+    const promise = internalBind(this, key, ref, ops, options)
     // @ts-ignore we are allowed to write it
     this.$firestoreRefs[key] = ref
     return promise
   }
 
   app.mixin({
-    beforeCreate(this: ComponentPublicInstance) {
-      this._firestoreUnbinds = Object.create(null)
+    beforeMount(this: ComponentPublicInstance) {
       this.$firestoreRefs = Object.create(null)
     },
     created(this: ComponentPublicInstance) {
@@ -199,14 +228,37 @@ export const firestorePlugin: Plugin = function firestorePlugin(
       }
     },
 
-    beforeDestroy(this: ComponentPublicInstance) {
-      for (const subKey in this._firestoreUnbinds) {
-        this._firestoreUnbinds[subKey]()
+    beforeUnmount(this: ComponentPublicInstance) {
+      const unbinds = firestoreUnbinds.get(this)
+      if (unbinds) {
+        for (const subKey in unbinds) {
+          unbinds[subKey]()
+        }
       }
-      // @ts-ignore we are allowed to write it
-      this._firestoreUnbinds = null
       // @ts-ignore we are allowed to write it
       this.$firestoreRefs = null
     },
   })
 }
+
+// TODO: allow binding a key of a reactive object?
+
+export function bind(
+  target: Ref,
+  ref:
+    | firestore.CollectionReference
+    | firestore.Query
+    | firestore.DocumentReference,
+  options: FirestoreOptions
+) {
+  const promise = internalBind(target, 'value', ref, ops, options)
+
+  onBeforeUnmount(() => {
+    unbind(target)
+  })
+
+  return promise
+}
+
+export const unbind = (target: Ref, reset?: FirestoreOptions['reset']) =>
+  internalUnbind(target, 'value', reset)

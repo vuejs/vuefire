@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import Vue, { nextTick } from 'vue'
 import { MockFirebase, MockedReference } from 'firebase-mock'
 import { firestore } from 'firebase'
 import { walkSet } from '../../src/core'
@@ -60,11 +60,7 @@ export function delayUpdate(ref: firestore.DocumentReference, time = 0) {
     })
 }
 
-export function tick() {
-  return new Promise((resolve) => {
-    Vue.nextTick(resolve)
-  })
-}
+export const tick = nextTick
 
 export function delay(time: number) {
   return new Promise((resolve) => setTimeout(resolve, time))
