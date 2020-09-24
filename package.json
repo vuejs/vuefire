@@ -3,7 +3,7 @@
   "version": "3.0.0",
   "description": "Some awesome description",
   "main": "dist/vuefire.cjs.js",
-  "browser": "dist/vuefire.esm.js",
+  "browser": "dist/vuefire.esm-browser.js",
   "unpkg": "dist/vuefire.global.js",
   "jsdelivr": "dist/vuefire.global.js",
   "module": "dist/vuefire.esm-bundler.js",
