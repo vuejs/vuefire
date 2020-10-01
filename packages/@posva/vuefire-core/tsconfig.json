@@ -1,7 +1,0 @@
-{
-  "extends": "../../../tsconfig.json",
-  "include": ["src", "__tests__", "../../global.d.ts"],
-  "compilerOptions": {
-    "target": "esnext"
-  }
-}

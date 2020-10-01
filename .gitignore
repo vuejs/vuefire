@@ -1,9 +1,0 @@
-.DS_Store
-node_modules
-coverage
-.nyc_output
-dist
-lerna-debug.log
-yarn-error.log
-packages/*/*.tgz
-.rpt2_cache
