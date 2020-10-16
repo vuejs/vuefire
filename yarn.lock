@@ -2724,11 +2724,11 @@
     nprogress "^0.2.0"
 
 "@vuepress/plugin-pwa@^1.3.1":
-  version "1.7.0"
-  resolved "https://registry.yarnpkg.com/@vuepress/plugin-pwa/-/plugin-pwa-1.7.0.tgz#5a23020d169eff006f8edff136f0f63c267b7d4b"
-  integrity sha512-jFAxnkvRoN9t4In8XdAQskTVErhX+mK+cHca1yvX2L0Z8KyObextLmZuCnUJzsQHgIeI8cnr50xwih2uFijSQw==
+  version "1.7.1"
+  resolved "https://registry.yarnpkg.com/@vuepress/plugin-pwa/-/plugin-pwa-1.7.1.tgz#22fb176b48a4f9cba3d69a0a8c6d1971efb7e49d"
+  integrity sha512-c3oozxPPGpraU+UnY3gp3sWnKYO3mOLcexQWXaYABWnUC3yFbHx4e8wIF8LGqp7Z75bjQuUoI+LcHqpQXyYNag==
   dependencies:
-    "@vuepress/shared-utils" "1.7.0"
+    "@vuepress/shared-utils" "1.7.1"
     register-service-worker "^1.7.0"
     workbox-build "^4.3.1"
 
@@ -2744,10 +2744,10 @@
   resolved "https://registry.yarnpkg.com/@vuepress/plugin-search/-/plugin-search-1.7.0.tgz#c59e6bf0d6b4e9bac795a0942ddc6c16d3405aed"
   integrity sha512-BayDFigG4rR5/5bO8d4iST4ffaLv4uy+KsmNd3NVGwjMMhfqx8kc+N1VrtsKrNzKAOfH6Vr8OEDa60Xk+UlHrg==
 
-"@vuepress/shared-utils@1.6.0":
-  version "1.6.0"
-  resolved "https://registry.yarnpkg.com/@vuepress/shared-utils/-/shared-utils-1.6.0.tgz#8bf0c9c4e502bc6f10e70db3b236e816d8165631"
-  integrity sha512-+TMHgW7gmVY2lRX5qpPbsLkbxTBbzRo+Ar05tvEI0bAG0c6v2gWyQr3BchdbLyRJxrAVk530PABAjM8roDJ9bw==
+"@vuepress/shared-utils@1.7.0":
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/@vuepress/shared-utils/-/shared-utils-1.7.0.tgz#e04d587076960ecf932dffd784f24695dd3ec419"
+  integrity sha512-fhMh6lWc1LhNj9X5dpRJFyUITklcV0r+bSX+iY8Q8ZpnDuqaxAmy50rHJZJ/nK1Cc7HvynBBv+YjMKvDhSrygQ==
   dependencies:
     chalk "^2.3.2"
     escape-html "^1.0.3"
@@ -2759,10 +2759,10 @@
     toml "^3.0.0"
     upath "^1.1.0"
 
-"@vuepress/shared-utils@1.7.0":
-  version "1.7.0"
-  resolved "https://registry.yarnpkg.com/@vuepress/shared-utils/-/shared-utils-1.7.0.tgz#e04d587076960ecf932dffd784f24695dd3ec419"
-  integrity sha512-fhMh6lWc1LhNj9X5dpRJFyUITklcV0r+bSX+iY8Q8ZpnDuqaxAmy50rHJZJ/nK1Cc7HvynBBv+YjMKvDhSrygQ==
+"@vuepress/shared-utils@1.7.1":
+  version "1.7.1"
+  resolved "https://registry.yarnpkg.com/@vuepress/shared-utils/-/shared-utils-1.7.1.tgz#028bc6003247bb4c60cdc96f231eecfb55e7b85d"
+  integrity sha512-ydB2ZKsFZE6hFRb9FWqzZksxAPIMJjtBawk50RP6F+YX5HbID/HlyYYZM9aDSbk6RTkjgB5UzJjggA2xM8POlw==
   dependencies:
     chalk "^2.3.2"
     escape-html "^1.0.3"
