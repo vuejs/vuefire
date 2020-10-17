@@ -33,7 +33,7 @@
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-strip-banner": "^2.0.0",
     "rollup-plugin-terser": "^7.0.0",
-    "rollup-plugin-typescript2": "^0.27.0",
+    "rollup-plugin-typescript2": "^0.28.0",
     "ts-jest": "25.5.1",
     "typescript": "^3.5.3",
     "vue-server-renderer": "^2.6.11"
