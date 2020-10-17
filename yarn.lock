@@ -2698,9 +2698,9 @@
     lodash.debounce "^4.0.8"
 
 "@vuepress/plugin-google-analytics@^1.0.2":
-  version "1.7.0"
-  resolved "https://registry.yarnpkg.com/@vuepress/plugin-google-analytics/-/plugin-google-analytics-1.7.0.tgz#79d8356ae44713b38d32abc4a4cbae054622141d"
-  integrity sha512-bw+Z/HWJZxBQsLjZSS5vrnsG/04NId2MUcSKys2bQbFlvKk78gE0CPhRsZI9AngKMuWmG4WhUpdv15t9O9GwpA==
+  version "1.7.1"
+  resolved "https://registry.yarnpkg.com/@vuepress/plugin-google-analytics/-/plugin-google-analytics-1.7.1.tgz#c337e13c8a27f6fea911a04db22a3f3596a571fb"
+  integrity sha512-27fQzRMsqGYpMf+ruyhsdfLv/n6z6b6LutFLE/pH66Itlh6ox9ew31x0pqYBbWIC/a4lBfXYUwFvi+DEvlb1EQ==
 
 "@vuepress/plugin-last-updated@1.7.1":
   version "1.7.1"
@@ -2743,21 +2743,6 @@
   version "1.7.1"
   resolved "https://registry.yarnpkg.com/@vuepress/plugin-search/-/plugin-search-1.7.1.tgz#f52b6e77af30f452213bc677741cefe8a8309be2"
   integrity sha512-OmiGM5eYg9c+uC50b6/cSxAhqxfD7AIui6JEztFGeECrlP33RLHmteXK9YBBZjp5wTNmoYs+NXI/cWggYUPW8Q==
-
-"@vuepress/shared-utils@1.7.0":
-  version "1.7.0"
-  resolved "https://registry.yarnpkg.com/@vuepress/shared-utils/-/shared-utils-1.7.0.tgz#e04d587076960ecf932dffd784f24695dd3ec419"
-  integrity sha512-fhMh6lWc1LhNj9X5dpRJFyUITklcV0r+bSX+iY8Q8ZpnDuqaxAmy50rHJZJ/nK1Cc7HvynBBv+YjMKvDhSrygQ==
-  dependencies:
-    chalk "^2.3.2"
-    escape-html "^1.0.3"
-    fs-extra "^7.0.1"
-    globby "^9.2.0"
-    gray-matter "^4.0.1"
-    hash-sum "^1.0.2"
-    semver "^6.0.0"
-    toml "^3.0.0"
-    upath "^1.1.0"
 
 "@vuepress/shared-utils@1.7.1":
   version "1.7.1"
