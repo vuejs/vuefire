@@ -2,10 +2,11 @@ import { bindCollection } from '../../../src/core'
 import { db, createOps, spyUnbind } from '../../src'
 import { firestore } from 'firebase'
 import { OperationsType } from '../../../src/core'
+import { ref, Ref } from 'vue'
 
 describe('collections', () => {
   let collection: firestore.CollectionReference,
-    vm: Record<string, any>,
+    target: Ref<Record<string, any>>,
     resolve: (data: any) => void,
     reject: (error: any) => void,
     ops: OperationsType,
@@ -14,14 +15,13 @@ describe('collections', () => {
   beforeEach(async () => {
     // @ts-ignore
     collection = db.collection()
-    vm = {}
+    target = ref({})
     ops = createOps()
     await new Promise((res, rej) => {
       resolve = jest.fn(res)
       reject = jest.fn(rej)
       unbind = bindCollection({
-        vm,
-        key: 'items',
+        target,
         collection,
         resolve,
         reject,
@@ -32,30 +32,34 @@ describe('collections', () => {
 
   it('initialise the array', () => {
     expect(ops.set).toHaveBeenCalledTimes(1)
-    expect(ops.set).toHaveBeenCalledWith(vm, 'items', [])
+    expect(ops.set).toHaveBeenCalledWith(target, 'value', [])
   })
 
   it('add elements', async () => {
     await collection.add({ text: 'foo' })
     expect(ops.add).toHaveBeenCalledTimes(1)
-    expect(ops.add).toHaveBeenLastCalledWith(vm.items, 0, { text: 'foo' })
+    expect(ops.add).toHaveBeenLastCalledWith(target.value, 0, {
+      text: 'foo',
+    })
     await collection.add({ text: 'bar' })
     expect(ops.add).toHaveBeenCalledTimes(2)
-    expect(ops.add).toHaveBeenLastCalledWith(vm.items, 1, { text: 'bar' })
+    expect(ops.add).toHaveBeenLastCalledWith(target.value, 1, {
+      text: 'bar',
+    })
   })
 
   it('deletes items', async () => {
     await collection.add({ text: 'foo' })
-    await collection.doc(vm.items[0].id).delete()
+    await collection.doc(target.value[0].id).delete()
     expect(ops.remove).toHaveBeenCalledTimes(1)
-    expect(ops.remove).toHaveBeenLastCalledWith(vm.items, 0)
+    expect(ops.remove).toHaveBeenLastCalledWith(target.value, 0)
   })
 
   it('update items', async () => {
     const doc = await collection.add({ text: 'foo', more: true })
     await doc.update({ text: 'bar' })
     expect(ops.set).toHaveBeenCalledTimes(1)
-    expect(ops.set).toHaveBeenLastCalledWith(vm, 'items', [
+    expect(ops.set).toHaveBeenLastCalledWith(target, 'value', [
       { more: true, text: 'bar' },
     ])
   })
@@ -64,7 +68,7 @@ describe('collections', () => {
     const doc = await collection.add({ text: 'foo' })
     await doc.update({ other: 'bar' })
     expect(ops.set).toHaveBeenCalledTimes(1)
-    expect(ops.set).toHaveBeenLastCalledWith(vm, 'items', [
+    expect(ops.set).toHaveBeenLastCalledWith(target, 'value', [
       { other: 'bar', text: 'foo' },
     ])
   })
@@ -72,24 +76,24 @@ describe('collections', () => {
   it('can bind arrays with null', async () => {
     await collection.add({ array: [2, null] })
     expect(ops.set).toHaveBeenCalledTimes(1)
-    expect(ops.set).toHaveBeenLastCalledWith(vm, 'items', [
+    expect(ops.set).toHaveBeenLastCalledWith(target, 'value', [
       { array: [2, null] },
     ])
   })
 
   // TODO move to vuefire
   it.skip('unbinds when the instance is destroyed', async () => {
-    expect(vm._firestoreUnbinds).toBeTruthy()
-    expect(vm.items).toEqual([])
-    const spy = jest.spyOn(vm._firestoreUnbinds, 'items')
+    expect(target.value._firestoreUnbinds).toBeTruthy()
+    expect(target.value.items).toEqual([])
+    const spy = jest.spyOn(target.value._firestoreUnbinds, 'items')
     expect(() => {
-      vm.$destroy()
+      target.value.$destroy()
     }).not.toThrow()
     expect(spy).toHaveBeenCalled()
-    expect(vm._firestoreUnbinds).toBe(null)
+    expect(target.value._firestoreUnbinds).toBe(null)
     await expect(async () => {
       await collection.add({ text: 'foo' })
-      expect(vm.items).toEqual([])
+      expect(target.value.items).toEqual([])
     }).not.toThrow()
   })
 
@@ -98,8 +102,8 @@ describe('collections', () => {
     const b = await collection.doc('u1')
     await a.update({})
     await b.update({})
-    expect(vm.items.length).toBe(2)
-    vm.items.forEach((item: Record<string, any>, i: number) => {
+    expect(target.value.length).toBe(2)
+    target.value.forEach((item: Record<string, any>, i: number) => {
       expect(Object.getOwnPropertyDescriptor(item, 'id')).toEqual({
         configurable: false,
         enumerable: false,
@@ -119,9 +123,8 @@ describe('collections', () => {
     }
     await new Promise((resolve, reject) => {
       unbind = bindCollection({
-        vm,
+        target,
         collection,
-        key: 'items',
         resolve,
         reject,
         ops,
@@ -129,15 +132,15 @@ describe('collections', () => {
     })
 
     expect(unbindSpy).not.toHaveBeenCalled()
-    expect(vm.items).toEqual([{ text: 'foo' }])
+    expect(target.value).toEqual([{ text: 'foo' }])
     unbind()
     expect(unbindSpy).toHaveBeenCalled()
 
     // reset data manually
-    const expected = vm.items
+    const expected = target.value
     await collection.add({ text: 'bar' })
     // still old version
-    expect(vm.items).toEqual(expected)
+    expect(target.value).toEqual(expected)
     unbindSpy.mockRestore()
   })
 
@@ -151,7 +154,7 @@ describe('collections', () => {
     collection.onSnapshot = jest.fn(fakeOnSnapshot)
     await expect(
       new Promise((resolve, reject) => {
-        bindCollection({ vm, collection, key: 'items', resolve, reject, ops })
+        bindCollection({ target, collection, resolve, reject, ops })
       })
     ).rejects.toThrow()
     // @ts-ignore
@@ -162,10 +165,16 @@ describe('collections', () => {
     await collection.add({ foo: 'foo' })
     await collection.add({ foo: 'foo' })
     const promise = new Promise((resolve, reject) => {
-      bindCollection({ vm, collection, key: 'items', resolve, reject, ops })
+      bindCollection({
+        target,
+        collection,
+        resolve,
+        reject,
+        ops,
+      })
     })
     await promise
-    expect(vm.items).toEqual([{ foo: 'foo' }, { foo: 'foo' }])
+    expect(target.value).toEqual([{ foo: 'foo' }, { foo: 'foo' }])
   })
 
   it('resets the value when unbinding', async () => {
@@ -175,18 +184,17 @@ describe('collections', () => {
     }
     const promise = new Promise((resolve, reject) => {
       unbind = bindCollection({
-        vm,
+        target,
         collection,
-        key: 'items',
         resolve,
         reject,
         ops,
       })
     })
     await promise
-    expect(vm.items).toEqual([{ foo: 'foo' }])
+    expect(target.value).toEqual([{ foo: 'foo' }])
     unbind()
-    expect(vm.items).toEqual([])
+    expect(target.value).toEqual([])
   })
 
   it('can be left as is with reset: false', async () => {
@@ -196,18 +204,17 @@ describe('collections', () => {
     }
     const promise = new Promise((resolve, reject) => {
       unbind = bindCollection({
-        vm,
+        target,
         collection,
-        key: 'items',
         resolve,
         reject,
         ops,
       })
     })
     await promise
-    expect(vm.items).toEqual([{ foo: 'foo' }])
+    expect(target.value).toEqual([{ foo: 'foo' }])
     unbind(false)
-    expect(vm.items).toEqual([{ foo: 'foo' }])
+    expect(target.value).toEqual([{ foo: 'foo' }])
   })
 
   it('can be reset to a specific value', async () => {
@@ -217,18 +224,17 @@ describe('collections', () => {
     }
     const promise = new Promise((resolve, reject) => {
       unbind = bindCollection({
-        vm,
+        target,
         collection,
-        key: 'items',
         resolve,
         reject,
         ops,
       })
     })
     await promise
-    expect(vm.items).toEqual([{ foo: 'foo' }])
+    expect(target.value).toEqual([{ foo: 'foo' }])
     unbind(() => [{ bar: 'bar' }, { baz: 'baz' }])
-    expect(vm.items).toEqual([{ bar: 'bar' }, { baz: 'baz' }])
+    expect(target.value).toEqual([{ bar: 'bar' }, { baz: 'baz' }])
   })
 
   it('ignores reset option in bind when calling unbind', async () => {
@@ -239,19 +245,19 @@ describe('collections', () => {
 
     await new Promise((resolve, reject) => {
       unbind = bindCollection(
-        { vm, collection: other, key: 'items', resolve, reject, ops },
+        { target, collection: other, resolve, reject, ops },
         { reset: false }
       )
     })
-    expect(vm.items).toEqual([{ a: 0 }, { b: 1 }])
+    expect(target.value).toEqual([{ a: 0 }, { b: 1 }])
     unbind()
-    expect(vm.items).toEqual([])
+    expect(target.value).toEqual([])
   })
 
   it('can wait until ready', async () => {
     await collection.add({ foo: 'foo' })
     await collection.add({ foo: 'foo' })
-    expect(vm.items).toEqual([{ foo: 'foo' }, { foo: 'foo' }])
+    expect(target.value).toEqual([{ foo: 'foo' }, { foo: 'foo' }])
 
     // @ts-ignore
     const other: firestore.CollectionReference = db.collection()
@@ -260,28 +266,27 @@ describe('collections', () => {
     unbind(false)
     const promise = new Promise((resolve, reject) => {
       bindCollection(
-        { vm, collection: other, key: 'items', resolve, reject, ops },
+        { target, collection: other, resolve, reject, ops },
         { wait: true }
       )
     })
-    expect(vm.items).toEqual([{ foo: 'foo' }, { foo: 'foo' }])
+    expect(target.value).toEqual([{ foo: 'foo' }, { foo: 'foo' }])
     await promise
-    expect(vm.items).toEqual([])
+    expect(target.value).toEqual([])
     // we can add other stuff
     await other.add({ a: 0 })
     await other.add({ b: 1 })
-    expect(vm.items).toEqual([{ a: 0 }, { b: 1 }])
+    expect(target.value).toEqual([{ a: 0 }, { b: 1 }])
   })
 
   it('sets the value to an empty array even with no documents', async () => {
-    vm.items = 'foo'
+    // @ts-ignore
+    target.value = 'foo'
     await new Promise((resolve, reject) => {
       bindCollection(
         {
-          vm,
-          // @ts-ignore
-          collection: db.collection(),
-          key: 'items',
+          target,
+          collection: db.collection() as any,
           resolve,
           reject,
           ops,
@@ -289,11 +294,11 @@ describe('collections', () => {
         { wait: true }
       )
     })
-    expect(vm.items).toEqual([])
+    expect(target.value).toEqual([])
   })
 
   it('can wait until ready with empty arrays', async () => {
-    expect(vm.items).toEqual([])
+    expect(target.value).toEqual([])
     expect(resolve).toHaveBeenCalledWith([])
 
     // @ts-ignore
@@ -305,12 +310,12 @@ describe('collections', () => {
     unbind(false)
     const promise = new Promise((resolve, reject) => {
       bindCollection(
-        { vm, collection: other, key: 'items', resolve, reject, ops },
+        { target, collection: other, resolve, reject, ops },
         { wait: true }
       )
     })
-    expect(vm.items).toEqual([])
+    expect(target.value).toEqual([])
     await promise
-    expect(vm.items).toEqual([{ a: 0 }, { b: 1 }])
+    expect(target.value).toEqual([{ a: 0 }, { b: 1 }])
   })
 })
