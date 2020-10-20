@@ -2,14 +2,22 @@ import { bindCollection, FirestoreOptions } from '../../../src/core'
 import { db, delay, spyUnbind, delayUpdate, createOps } from '../../src'
 import { OperationsType } from '../../../src/shared'
 import { firestore } from 'firebase'
+import { ref } from 'vue'
+
+const buildRefs = () => ({
+  items: ref(),
+  a: ref(),
+  b: ref(),
+  c: ref(),
+})
 
 describe('refs in collections', () => {
   let collection: firestore.CollectionReference,
     a: firestore.DocumentReference,
     b: firestore.DocumentReference,
-    vm: Record<string, any>,
+    target: ReturnType<typeof buildRefs>,
     bind: (
-      key: string,
+      key: keyof ReturnType<typeof buildRefs>,
       collection: firestore.CollectionReference,
       options?: FirestoreOptions
     ) => void,
@@ -18,18 +26,19 @@ describe('refs in collections', () => {
     first: Record<string, any>
 
   beforeEach(async () => {
-    vm = {
-      items: null,
-      a: null,
-      b: null,
-      c: null,
-    }
+    target = buildRefs()
     ops = createOps()
     bind = (key, collection, options) => {
       return new Promise(
         (resolve, reject) =>
           (unbind = bindCollection(
-            { vm, key, collection, resolve, reject, ops },
+            {
+              target: target[key],
+              collection,
+              resolve,
+              reject,
+              ops,
+            },
             options
           ))
       )
@@ -49,7 +58,10 @@ describe('refs in collections', () => {
   it('binds refs on collections', async () => {
     await bind('items', collection)
 
-    expect(vm.items).toEqual([{ ref: { isA: true } }, { ref: { isB: true } }])
+    expect(target.items.value).toEqual([
+      { ref: { isA: true } },
+      { ref: { isB: true } },
+    ])
   })
 
   it('waits for array to be fully populated', async () => {
@@ -62,8 +74,8 @@ describe('refs in collections', () => {
     delayUpdate(c)
     const data = await bind('items', collection)
 
-    expect(data).toEqual(vm.items)
-    expect(vm.items).toEqual([
+    expect(data).toEqual(target.items.value)
+    expect(target.items.value).toEqual([
       { ref: { isA: true } },
       { ref: { isB: true } },
       { ref: { isC: true } },
@@ -79,7 +91,7 @@ describe('refs in collections', () => {
     // wait for refs to update
     await delay(5)
 
-    expect(vm.items).toEqual([
+    expect(target.items.value).toEqual([
       { ref: { isA: true } },
       { ref: { isB: true } },
       { ref: { isC: true } },
@@ -127,7 +139,7 @@ describe('refs in collections', () => {
     await bind('items', collection)
     expect(spyA).toHaveBeenCalledTimes(0)
 
-    await collection.doc(vm.items[0].id).delete()
+    await collection.doc(target.items.value[0].id).delete()
     expect(spyA).toHaveBeenCalledTimes(1)
 
     spyA.mockRestore()
@@ -151,7 +163,7 @@ describe('refs in collections', () => {
     await first.update({ newThing: true })
     await delay(5)
 
-    expect(vm.items).toEqual([
+    expect(target.items.value).toEqual([
       { ref: { isA: true }, newThing: true },
       { ref: { isB: true } },
     ])
@@ -161,7 +173,7 @@ describe('refs in collections', () => {
     await bind('items', collection)
     await first.update({ newThing: true })
 
-    expect(vm.items[0]).toEqual({
+    expect(target.items.value[0]).toEqual({
       ref: { isA: true },
       newThing: true,
     })
@@ -173,14 +185,14 @@ describe('refs in collections', () => {
     const emptyItem = collection.doc()
     const item = await items.add({ o: { ref: emptyItem }, toggle: true })
     await bind('items', items)
-    expect(vm.items).toEqual([
+    expect(target.items.value).toEqual([
       {
         o: { ref: null },
         toggle: true,
       },
     ])
     await items.add({ foo: 'bar' })
-    expect(vm.items).toEqual([
+    expect(target.items.value).toEqual([
       {
         o: { ref: null },
         toggle: true,
@@ -188,7 +200,7 @@ describe('refs in collections', () => {
       { foo: 'bar' },
     ])
     await item.update({ toggle: false })
-    expect(vm.items).toEqual([
+    expect(target.items.value).toEqual([
       {
         o: { ref: null },
         toggle: false,
@@ -203,14 +215,14 @@ describe('refs in collections', () => {
     const emptyItem = collection.doc()
     const item = await items.add({ a: [emptyItem], toggle: true })
     await bind('items', items)
-    expect(vm.items).toEqual([
+    expect(target.items.value).toEqual([
       {
         a: [null],
         toggle: true,
       },
     ])
     await items.add({ foo: 'bar' })
-    expect(vm.items).toEqual([
+    expect(target.items.value).toEqual([
       {
         a: [null],
         toggle: true,
@@ -218,7 +230,7 @@ describe('refs in collections', () => {
       { foo: 'bar' },
     ])
     await item.update({ toggle: false })
-    expect(vm.items).toEqual([
+    expect(target.items.value).toEqual([
       {
         a: [null],
         toggle: false,
@@ -233,14 +245,14 @@ describe('refs in collections', () => {
     const c = collection.doc()
     const item = await items.add({ a: [a, b, c, { foo: 'bar' }], toggle: true })
     await bind('items', items)
-    expect(vm.items).toEqual([
+    expect(target.items.value).toEqual([
       {
         a: [{ isA: true }, { isB: true }, null, { foo: 'bar' }],
         toggle: true,
       },
     ])
     await items.add({ foo: 'bar' })
-    expect(vm.items).toEqual([
+    expect(target.items.value).toEqual([
       {
         a: [{ isA: true }, { isB: true }, null, { foo: 'bar' }],
         toggle: true,
@@ -248,7 +260,7 @@ describe('refs in collections', () => {
       { foo: 'bar' },
     ])
     await item.update({ toggle: false })
-    expect(vm.items).toEqual([
+    expect(target.items.value).toEqual([
       {
         a: [{ isA: true }, { isB: true }, null, { foo: 'bar' }],
         toggle: false,
@@ -271,7 +283,7 @@ describe('refs in collections', () => {
 
     // @ts-ignore
     await bind('items', collection, { maxRefDepth: 1 })
-    expect(vm.items).toEqual([
+    expect(target.items.value).toEqual([
       {
         a: {
           b: b.path,
@@ -281,7 +293,7 @@ describe('refs in collections', () => {
 
     // @ts-ignore
     await bind('items', collection, { maxRefDepth: 3 })
-    expect(vm.items).toEqual([
+    expect(target.items.value).toEqual([
       {
         a: {
           b: {
@@ -302,7 +314,7 @@ describe('refs in collections', () => {
     // @ts-ignore
     await bind('items', collection, { maxRefDepth: 5 })
 
-    expect(vm.items).toEqual([
+    expect(target.items.value).toEqual([
       {
         // it's easy to see we stop at 5 and we have 5 brackets
         item: {
