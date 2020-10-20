@@ -6,8 +6,8 @@ import {
   walkSet,
   OperationsType,
 } from '../core'
-import { database } from 'firebase'
-import Vue, { PluginFunction } from 'vue'
+import { app, database } from 'firebase'
+import { ComponentPublicInstance, Plugin } from 'vue'
 
 /**
  * Returns the original reference of a Firebase reference or query across SDK versions.
@@ -90,45 +90,64 @@ const defaultOptions: Readonly<Required<PluginOptions>> = {
   wait: rtdbOptions.wait,
 }
 
-declare module 'vue/types/vue' {
-  // TODO: export types to allow custom function names
-  interface Vue {
+declare module '@vue/runtime-core' {
+  export interface ComponentCustomProperties {
+    /**
+     * Binds a reference
+     *
+     * @param name
+     * @param reference
+     * @param options
+     */
     $rtdbBind(
       name: string,
       reference: database.Reference | database.Query,
       options?: RTDBOptions
     ): Promise<database.DataSnapshot>
+
+    /**
+     * Unbinds a bound reference
+     */
     $rtdbUnbind: (name: string, reset?: RTDBOptions['reset']) => void
+
+    /**
+     * Bound firestore references
+     */
     $firebaseRefs: Readonly<Record<string, database.Reference>>
-    _firebaseSources: Readonly<
-      Record<string, database.Reference | database.Query>
-    >
-    _firebaseUnbinds: Readonly<
-      Record<string, ReturnType<typeof bindAsArray | typeof bindAsObject>>
-    >
+    // _firebaseSources: Readonly<
+    //   Record<string, database.Reference | database.Query>
+    // >
+    /**
+     * Existing unbind functions that get automatically called when the component is unmounted
+     * @internal
+     */
+    // _firebaseUnbinds: Readonly<
+    //   Record<string, ReturnType<typeof bindAsArray | typeof bindAsObject>>
+    // >
+  }
+  export interface ComponentCustomOptions {
+    /**
+     * Calls `$bind` at created
+     */
+    firebase?: FirebaseOption
   }
 }
 
 type VueFirebaseObject = Record<string, database.Query | database.Reference>
-type FirebaseOption<V> = VueFirebaseObject | ((this: V) => VueFirebaseObject)
+type FirebaseOption = VueFirebaseObject | (() => VueFirebaseObject)
 
-declare module 'vue/types/options' {
-  interface ComponentOptions<V extends Vue> {
-    firebase?: FirebaseOption<V>
-  }
-}
-
-export const rtdbPlugin: PluginFunction<PluginOptions> = function rtdbPlugin(
-  Vue,
-  pluginOptions = defaultOptions
+export const rtdbPlugin: Plugin = function rtdbPlugin(
+  app,
+  pluginOptions: PluginOptions = defaultOptions
 ) {
-  const strategies = Vue.config.optionMergeStrategies
-  strategies.firebase = strategies.provide
+  // TODO: implement
+  // const strategies = Vue.config.optionMergeStrategies
+  // strategies.firebase = strategies.provide
 
   const globalOptions = Object.assign({}, defaultOptions, pluginOptions)
   const { bindName, unbindName } = globalOptions
 
-  Vue.prototype[unbindName] = function rtdbUnbind(
+  app.config.globalProperties[unbindName] = function rtdbUnbind(
     key: string,
     reset?: RTDBOptions['reset']
   ) {
@@ -136,8 +155,8 @@ export const rtdbPlugin: PluginFunction<PluginOptions> = function rtdbPlugin(
   }
 
   // add $rtdbBind and $rtdbUnbind methods
-  Vue.prototype[bindName] = function rtdbBind(
-    this: Vue,
+  app.config.globalProperties[bindName] = function rtdbBind(
+    this: ComponentPublicInstance,
     key: string,
     source: database.Reference | database.Query,
     userOptions?: RTDBOptions
