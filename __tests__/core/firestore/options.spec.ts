@@ -5,11 +5,12 @@ import {
 } from '../../../src/core'
 import { db, createOps } from '../../src'
 import { firestore } from 'firebase'
+import { Ref, ref } from 'vue'
 
 describe('options', () => {
   let collection: firestore.CollectionReference,
     document: firestore.DocumentReference,
-    vm: Record<string, any>,
+    target: Ref<Record<string, any>>,
     resolve: (data: any) => void,
     reject: (error: any) => void
   const ops = createOps()
@@ -19,7 +20,7 @@ describe('options', () => {
     collection = db.collection()
     // @ts-ignore
     document = collection.doc()
-    vm = {}
+    target = ref({})
     await document.update({ foo: 'foo' })
   })
 
@@ -29,7 +30,7 @@ describe('options', () => {
       resolve = jest.fn(res)
       reject = jest.fn(rej)
       bindDocument(
-        { vm, key: 'foo', document, resolve, reject, ops },
+        { target, document, resolve, reject, ops },
         { serialize: spy }
       )
     })
@@ -37,7 +38,7 @@ describe('options', () => {
     expect(spy).toBeCalledWith(
       expect.objectContaining({ data: expect.any(Function) })
     )
-    expect(vm.foo).toEqual({ bar: 'foo' })
+    expect(target.value).toEqual({ bar: 'foo' })
   })
 
   it('allows customizing serialize when calling bindCollection', async () => {
@@ -46,7 +47,7 @@ describe('options', () => {
       resolve = jest.fn(res)
       reject = jest.fn(rej)
       bindCollection(
-        { vm, key: 'foo', collection, resolve, reject, ops },
+        { target, collection, resolve, reject, ops },
         { serialize: spy }
       )
     })
@@ -54,7 +55,7 @@ describe('options', () => {
     expect(spy).toBeCalledWith(
       expect.objectContaining({ data: expect.any(Function) })
     )
-    expect(vm.foo).toEqual([{ bar: 'foo' }])
+    expect(target.value).toEqual([{ bar: 'foo' }])
   })
 
   it('can set options globally for bindDocument', async () => {
@@ -64,13 +65,13 @@ describe('options', () => {
     await new Promise((res, rej) => {
       resolve = jest.fn(res)
       reject = jest.fn(rej)
-      bindDocument({ vm, key: 'foo', document, resolve, reject, ops })
+      bindDocument({ target, document, resolve, reject, ops })
     })
     expect(spy).toHaveBeenCalledTimes(1)
     expect(spy).toBeCalledWith(
       expect.objectContaining({ data: expect.any(Function) })
     )
-    expect(vm.foo).toEqual({ bar: 'foo' })
+    expect(target.value).toEqual({ bar: 'foo' })
     // restore it
     firestoreOptions.serialize = serialize
   })
@@ -82,13 +83,13 @@ describe('options', () => {
     await new Promise((res, rej) => {
       resolve = jest.fn(res)
       reject = jest.fn(rej)
-      bindCollection({ vm, key: 'foo', collection, resolve, reject, ops })
+      bindCollection({ target, collection, resolve, reject, ops })
     })
     expect(spy).toHaveBeenCalledTimes(1)
     expect(spy).toBeCalledWith(
       expect.objectContaining({ data: expect.any(Function) })
     )
-    expect(vm.foo).toEqual([{ bar: 'foo' }])
+    expect(target.value).toEqual([{ bar: 'foo' }])
     // restore it
     firestoreOptions.serialize = serialize
   })
