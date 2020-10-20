@@ -2,11 +2,12 @@ import { bindDocument } from '../../../src/core'
 import { db, spyUnbind, createOps } from '../../src'
 import { firestore } from 'firebase'
 import { OperationsType } from '../../../src/shared'
+import { ref, Ref } from 'vue'
 
 describe('documents', () => {
   let collection: firestore.CollectionReference,
     document: firestore.DocumentReference,
-    vm: Record<string, any>,
+    target: Ref<Record<string, any>>,
     resolve: (data: any) => void,
     reject: (error: any) => void,
     ops: OperationsType
@@ -17,37 +18,38 @@ describe('documents', () => {
     // @ts-ignore
     document = collection.doc()
     ops = createOps()
-    vm = {}
+    target = ref({})
     await new Promise((res, rej) => {
       resolve = jest.fn(res)
       reject = jest.fn(rej)
-      bindDocument({ vm, key: 'item', document, resolve, reject, ops })
+      bindDocument({ target, document, resolve, reject, ops })
     })
   })
 
   it('does not call anything if document does not exist', () => {
     expect(ops.add).not.toHaveBeenCalled()
     expect(ops.set).toHaveBeenCalled()
-    expect(ops.set).toHaveBeenCalledWith(vm, 'item', null)
+    expect(ops.set).toHaveBeenCalledWith(target, 'value', null)
     expect(ops.remove).not.toHaveBeenCalled()
     expect(reject).not.toHaveBeenCalled()
   })
 
   it('binding to a non-existant document sets the property to null', async () => {
-    vm.item = 'foo'
+    // @ts-ignore
+    target.value = 'foo'
     await new Promise((res, rej) => {
       resolve = jest.fn(res)
       reject = jest.fn(rej)
       bindDocument({
-        vm,
-        key: 'item',
+        target,
+
         document: collection.doc(),
         resolve,
         reject,
         ops,
       })
     })
-    expect(vm.item).toBe(null)
+    expect(target.value).toBe(null)
     expect(resolve).toHaveBeenCalledWith(null)
   })
 
@@ -55,11 +57,11 @@ describe('documents', () => {
     await document.update({ foo: 'foo' })
     expect(ops.add).not.toHaveBeenCalled()
     expect(ops.set).toHaveBeenCalledTimes(2)
-    expect(ops.set).toHaveBeenLastCalledWith(vm, 'item', { foo: 'foo' })
+    expect(ops.set).toHaveBeenLastCalledWith(target, 'value', { foo: 'foo' })
     expect(ops.remove).not.toHaveBeenCalled()
     await document.update({ bar: 'bar' })
     expect(ops.set).toHaveBeenCalledTimes(3)
-    expect(ops.set).toHaveBeenLastCalledWith(vm, 'item', {
+    expect(ops.set).toHaveBeenLastCalledWith(target, 'value', {
       bar: 'bar',
       foo: 'foo',
     })
@@ -68,14 +70,14 @@ describe('documents', () => {
   it('sets to null when deleted', async () => {
     await document.update({ foo: 'foo' })
     await document.delete()
-    expect(vm.item).toBe(null)
+    expect(target.value).toBe(null)
   })
 
   it('adds non-enumerable id', async () => {
     document = collection.doc('some-id')
-    bindDocument({ vm, document, key: 'item', resolve, reject, ops })
+    bindDocument({ target, document, resolve, reject, ops })
     await document.update({ foo: 'foo' })
-    expect(Object.getOwnPropertyDescriptor(vm.item, 'id')).toEqual({
+    expect(Object.getOwnPropertyDescriptor(target.value, 'id')).toEqual({
       configurable: false,
       enumerable: false,
       writable: false,
@@ -91,18 +93,19 @@ describe('documents', () => {
       throw new Error('Promise was not called')
     }
     await new Promise((resolve, reject) => {
-      unbind = bindDocument({ vm, document, key: 'item', resolve, reject, ops })
+      unbind = bindDocument({ target, document, resolve, reject, ops })
     })
 
     expect(unbindSpy).not.toHaveBeenCalled()
-    expect(vm.item).toEqual({ foo: 'foo' })
+    expect(target.value).toEqual({ foo: 'foo' })
     unbind()
     expect(unbindSpy).toHaveBeenCalled()
 
     // reset data manually
-    vm.item = null
+    // @ts-ignore
+    target.value = null
     await document.update({ foo: 'foo' })
-    expect(vm.item).toEqual(null)
+    expect(target.value).toEqual(null)
     unbindSpy.mockRestore()
   })
 
@@ -115,7 +118,7 @@ describe('documents', () => {
     document.onSnapshot = jest.fn(fakeOnSnapshot)
     await expect(
       new Promise((resolve, reject) => {
-        bindDocument({ vm, document, key: 'item', resolve, reject, ops })
+        bindDocument({ target, document, resolve, reject, ops })
       })
     ).rejects.toThrow()
     // @ts-ignore
@@ -125,10 +128,10 @@ describe('documents', () => {
   it('resolves when the document is set', async () => {
     await document.update({ foo: 'foo' })
     const promise = new Promise((resolve, reject) => {
-      bindDocument({ vm, document, key: 'item', resolve, reject, ops })
+      bindDocument({ target, document, resolve, reject, ops })
     })
     await promise
-    expect(vm.item).toEqual({ foo: 'foo' })
+    expect(target.value).toEqual({ foo: 'foo' })
   })
 
   it('resets the value when unbinding', async () => {
@@ -137,12 +140,12 @@ describe('documents', () => {
       throw new Error('Promise was not called')
     }
     const promise = new Promise((resolve, reject) => {
-      unbind = bindDocument({ vm, document, key: 'item', resolve, reject, ops })
+      unbind = bindDocument({ target, document, resolve, reject, ops })
     })
     await promise
-    expect(vm.item).toEqual({ foo: 'foo' })
+    expect(target.value).toEqual({ foo: 'foo' })
     unbind()
-    expect(vm.item).toEqual(null)
+    expect(target.value).toEqual(null)
   })
 
   it('can be left as is with reset: false', async () => {
@@ -151,12 +154,12 @@ describe('documents', () => {
       throw new Error('Promise was not called')
     }
     const promise = new Promise((resolve, reject) => {
-      unbind = bindDocument({ vm, document, key: 'item', resolve, reject, ops })
+      unbind = bindDocument({ target, document, resolve, reject, ops })
     })
     await promise
-    expect(vm.item).toEqual({ foo: 'foo' })
+    expect(target.value).toEqual({ foo: 'foo' })
     unbind(false)
-    expect(vm.item).toEqual({ foo: 'foo' })
+    expect(target.value).toEqual({ foo: 'foo' })
   })
 
   it('can be reset to a specific value', async () => {
@@ -165,12 +168,12 @@ describe('documents', () => {
       throw new Error('Promise was not called')
     }
     const promise = new Promise((resolve, reject) => {
-      unbind = bindDocument({ vm, document, key: 'item', resolve, reject, ops })
+      unbind = bindDocument({ target, document, resolve, reject, ops })
     })
     await promise
-    expect(vm.item).toEqual({ foo: 'foo' })
+    expect(target.value).toEqual({ foo: 'foo' })
     unbind(() => ({ bar: 'bar' }))
-    expect(vm.item).toEqual({ bar: 'bar' })
+    expect(target.value).toEqual({ bar: 'bar' })
   })
 
   it('ignores reset option in bind when calling unbind', async () => {
@@ -180,13 +183,13 @@ describe('documents', () => {
     }
     const promise = new Promise((resolve, reject) => {
       unbind = bindDocument(
-        { vm, document, key: 'item', resolve, reject, ops },
+        { target, document, resolve, reject, ops },
         { reset: false }
       )
     })
     await promise
-    expect(vm.item).toEqual({ foo: 'foo' })
+    expect(target.value).toEqual({ foo: 'foo' })
     unbind()
-    expect(vm.item).toEqual(null)
+    expect(target.value).toEqual(null)
   })
 })
