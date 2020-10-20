@@ -46,11 +46,17 @@ describe.skip('Firestore: option merging', () => {
   }
 
   function factory(options: any) {
-    return mount(options, {
-      global: {
-        plugins: [firestorePlugin],
+    return mount(
+      {
+        template: 'no',
+        ...options,
       },
-    })
+      {
+        global: {
+          plugins: [firestorePlugin],
+        },
+      }
+    )
   }
 
   it('should merge properties', () => {
@@ -67,7 +73,7 @@ describe.skip('Firestore: option merging', () => {
 
   it('supports function syntax', () => {
     const { mWithFn } = createMixins()
-    const { vm } = factory({ mixins: [mWithObjA, mWithObjB] })
+    const { vm } = factory({ mixins: [mWithFn] })
     expect(vm.$firestoreRefs).toEqual({
       a: db.collection(5),
       c: db.collection(6),
@@ -76,7 +82,7 @@ describe.skip('Firestore: option merging', () => {
 
   it('should merge two functions', () => {
     const { mWithFn, mWithObjA, mWithObjB } = createMixins()
-    const { vm } = factory({ mixins: [mWithObjA, mWithObjB] })
+    const { vm } = factory({ mixins: [mWithObjA, mWithObjB, mWithFn] })
     expect(vm.$firestoreRefs).toEqual({
       a: db.collection(5),
       b: db.collection(2),

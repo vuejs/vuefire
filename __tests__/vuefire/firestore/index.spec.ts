@@ -35,6 +35,7 @@ describe('Firestore: firestore option', () => {
 
   it('does nothing with no firestore', () => {
     const wrapper = mount({
+      template: 'no',
       data: () => ({ items: null }),
     })
     expect(wrapper.vm.items).toEqual(null)
@@ -44,6 +45,7 @@ describe('Firestore: firestore option', () => {
     const spy = jest.fn()
     mount(
       {
+        template: 'no',
         // @ts-ignore: only care about not crashing
         firestore: () => {},
         data: () => ({ items: null }),
