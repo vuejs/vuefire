@@ -9,6 +9,16 @@ import {
 } from '../../src'
 import { firestore } from 'firebase'
 import { OperationsType } from '../../../src/shared'
+import { ref, watch } from 'vue'
+
+const buildRefs = () => ({
+  items: ref(),
+  item: ref(),
+  a: ref(),
+  b: ref(),
+  c: ref(),
+  d: ref(),
+})
 
 describe('refs in documents', () => {
   // a and c existing objects { isA: true }
@@ -22,9 +32,9 @@ describe('refs in documents', () => {
     d: firestore.DocumentReference,
     empty: firestore.DocumentReference,
     item: firestore.DocumentReference,
-    vm: Record<string, any>,
+    target: ReturnType<typeof buildRefs>,
     bind: (
-      key: string,
+      key: keyof ReturnType<typeof buildRefs>,
       document: firestore.DocumentReference,
       options?: FirestoreOptions
     ) => void,
@@ -32,12 +42,7 @@ describe('refs in documents', () => {
     ops: OperationsType
 
   beforeEach(async () => {
-    vm = {
-      item: null,
-      a: null,
-      b: null,
-      c: null,
-    }
+    target = buildRefs()
     ops = createOps()
     // @ts-ignore
     collection = db.collection()
@@ -58,7 +63,7 @@ describe('refs in documents', () => {
       return new Promise(
         (resolve, reject) =>
           (unbind = bindDocument(
-            { vm, key, document, resolve, reject, ops },
+            { target: target[key], document, resolve, reject, ops },
             options
           ))
       )
@@ -78,24 +83,24 @@ describe('refs in documents', () => {
 
   it('item should be removed from binding when theres an arrays of refs', async () => {
     const arr = collection.doc()
-    vm.arr = null
+    target.items.value = null
 
     await arr.update({ refs: [a, b, c] })
-    await bind('arr', arr, { maxRefDepth: 0 })
+    await bind('items', arr, { maxRefDepth: 0 })
     await arr.update({ refs: [b, c] })
 
-    expect(vm.arr).toEqual({ refs: [b.path, c.path] })
+    expect(target.items.value).toEqual({ refs: [b.path, c.path] })
   })
 
   it('keeps correct elements in array of references when removing in the middle', async () => {
     const arr = collection.doc()
-    vm.arr = null
+    target.items.value = null
 
     await arr.update({ refs: [a, b, c] })
-    await bind('arr', arr, { maxRefDepth: 0 })
+    await bind('items', arr, { maxRefDepth: 0 })
     await arr.update({ refs: [a, c] })
 
-    expect(vm.arr).toEqual({ refs: [a.path, c.path] })
+    expect(target.items.value).toEqual({ refs: [a.path, c.path] })
   })
 
   it('binds refs on documents', async () => {
@@ -104,10 +109,20 @@ describe('refs in documents', () => {
     await bind('item', item)
 
     expect(ops.set).toHaveBeenCalledTimes(2)
-    expect(ops.set).toHaveBeenNthCalledWith(1, vm, 'item', vm.item)
-    expect(ops.set).toHaveBeenNthCalledWith(2, vm, 'item.ref', vm.item.ref)
+    expect(ops.set).toHaveBeenNthCalledWith(
+      1,
+      target.item,
+      'value',
+      target.item.value
+    )
+    expect(ops.set).toHaveBeenNthCalledWith(
+      2,
+      target.item,
+      'value.ref',
+      target.item.value.ref
+    )
 
-    expect(vm.item).toEqual({
+    expect(target.item.value).toEqual({
       ref: { isC: true },
     })
   })
@@ -116,12 +131,12 @@ describe('refs in documents', () => {
     const emptyItem = collection.doc()
     await item.update({ o: { ref: emptyItem }, toggle: true })
     await bind('item', item)
-    expect(vm.item).toEqual({
+    expect(target.item.value).toEqual({
       o: { ref: null },
       toggle: true,
     })
     await item.update({ toggle: false })
-    expect(vm.item).toEqual({
+    expect(target.item.value).toEqual({
       o: { ref: null },
       toggle: false,
     })
@@ -131,12 +146,12 @@ describe('refs in documents', () => {
     const emptyItem = collection.doc()
     await item.update({ a: [emptyItem], toggle: true })
     await bind('item', item)
-    expect(vm.item).toEqual({
+    expect(target.item.value).toEqual({
       a: [null],
       toggle: true,
     })
     await item.update({ toggle: false })
-    expect(vm.item).toEqual({
+    expect(target.item.value).toEqual({
       a: [null],
       toggle: false,
     })
@@ -146,12 +161,12 @@ describe('refs in documents', () => {
     const emptyItem = collection.doc()
     await item.update({ todos: [{ ref: emptyItem }], toggle: true })
     await bind('item', item)
-    expect(vm.item).toEqual({
+    expect(target.item.value).toEqual({
       todos: [{ ref: null }],
       toggle: true,
     })
     await item.update({ toggle: false })
-    expect(vm.item).toEqual({
+    expect(target.item.value).toEqual({
       todos: [{ ref: null }],
       toggle: false,
     })
@@ -160,12 +175,12 @@ describe('refs in documents', () => {
   it('keeps array of references when updating a property', async () => {
     await item.update({ a: [a, b, c, { foo: 'bar' }], toggle: true })
     await bind('item', item)
-    expect(vm.item).toEqual({
+    expect(target.item.value).toEqual({
       a: [{ isA: true }, null, { isC: true }, { foo: 'bar' }],
       toggle: true,
     })
     await item.update({ toggle: false })
-    expect(vm.item).toEqual({
+    expect(target.item.value).toEqual({
       a: [{ isA: true }, null, { isC: true }, { foo: 'bar' }],
       toggle: false,
     })
@@ -180,15 +195,20 @@ describe('refs in documents', () => {
     await bind('item', item)
 
     expect(ops.set).toHaveBeenCalledTimes(2)
-    expect(ops.set).toHaveBeenNthCalledWith(1, vm, 'item', vm.item)
+    expect(ops.set).toHaveBeenNthCalledWith(
+      1,
+      target.item,
+      'value',
+      target.item.value
+    )
     expect(ops.set).toHaveBeenNthCalledWith(
       2,
-      vm,
-      'item.obj.ref',
-      vm.item.obj.ref
+      target.item,
+      'value.obj.ref',
+      target.item.value.obj.ref
     )
 
-    expect(vm.item).toEqual({
+    expect(target.item.value).toEqual({
       obj: {
         ref: { isC: true },
       },
@@ -206,15 +226,20 @@ describe('refs in documents', () => {
     await bind('item', item)
 
     expect(ops.set).toHaveBeenCalledTimes(2)
-    expect(ops.set).toHaveBeenNthCalledWith(1, vm, 'item', vm.item)
+    expect(ops.set).toHaveBeenNthCalledWith(
+      1,
+      target.item,
+      'value',
+      target.item.value
+    )
     expect(ops.set).toHaveBeenNthCalledWith(
       2,
-      vm,
-      'item.obj.nested.ref',
-      vm.item.obj.nested.ref
+      target.item,
+      'value.obj.nested.ref',
+      target.item.value.obj.nested.ref
     )
 
-    expect(vm.item).toEqual({
+    expect(target.item.value).toEqual({
       obj: {
         nested: {
           ref: {
@@ -226,7 +251,7 @@ describe('refs in documents', () => {
   })
 
   it('update inner ref', async () => {
-    expect(vm.d).toEqual({
+    expect(target.d.value).toEqual({
       ref: {
         isC: true,
       },
@@ -237,10 +262,20 @@ describe('refs in documents', () => {
     expect(ops.set).toHaveBeenCalledTimes(2)
     // the first call is pretty much irrelevant but included in case
     // one day it breaks and I need to know why
-    expect(ops.set).toHaveBeenNthCalledWith(1, vm, 'c', vm.c)
-    expect(ops.set).toHaveBeenNthCalledWith(2, vm, 'd.ref', vm.d.ref)
+    expect(ops.set).toHaveBeenNthCalledWith(
+      1,
+      target.c,
+      'value',
+      target.c.value
+    )
+    expect(ops.set).toHaveBeenNthCalledWith(
+      2,
+      target.d,
+      'value.ref',
+      target.d.value.ref
+    )
 
-    expect(vm.d).toEqual({
+    expect(target.d.value).toEqual({
       ref: {
         isC: false,
       },
@@ -253,9 +288,9 @@ describe('refs in documents', () => {
     // NOTE(1) need to wait because we updated with a ref
     await delay(5)
 
-    expect(ops.set).toHaveBeenNthCalledWith(2, vm, 'd.ref', null)
+    expect(ops.set).toHaveBeenNthCalledWith(2, target.d, 'value.ref', null)
 
-    expect(vm.d).toEqual({
+    expect(target.d.value).toEqual({
       ref: null,
     })
   })
@@ -270,7 +305,7 @@ describe('refs in documents', () => {
     expect(spy).toHaveBeenCalledTimes(1)
     await item.update({ baz: 'bar' })
     // make sure things are updating correctly
-    expect(vm.d).toEqual({
+    expect(target.d.value).toEqual({
       ref: { baz: 'bar' },
     })
     // we call update twice to make sure our mock works
@@ -279,13 +314,13 @@ describe('refs in documents', () => {
     // NOTE see #1
     await delay(5)
 
-    expect(vm.d).toEqual({
+    expect(target.d.value).toEqual({
       ref: null,
     })
     await item.update({ foo: 'bar' })
 
     expect(spy).toHaveBeenCalledTimes(2)
-    expect(vm.d).toEqual({
+    expect(target.d.value).toEqual({
       ref: null,
     })
     spy.mockRestore()
@@ -310,7 +345,7 @@ describe('refs in documents', () => {
     await item.update({ ref: a })
 
     await bind('item', item)
-    expect(vm.item).toEqual({ ref: { isA: true } })
+    expect(target.item.value).toEqual({ ref: { isA: true } })
   })
 
   it('resolves the promise when nested refs are resolved in a document', async () => {
@@ -318,7 +353,7 @@ describe('refs in documents', () => {
     await d.update({ ref: item })
 
     await bind('item', d)
-    expect(vm.item).toEqual({ ref: { ref: { isA: true } } })
+    expect(target.item.value).toEqual({ ref: { ref: { isA: true } } })
   })
 
   it('resolves the promise when nested non-existant refs are resolved in a document', async () => {
@@ -326,13 +361,13 @@ describe('refs in documents', () => {
     await d.update({ ref: item })
 
     await bind('item', d)
-    expect(vm.item).toEqual({ ref: { ref: null } })
+    expect(target.item.value).toEqual({ ref: { ref: null } })
   })
 
   it('resolves the promise when the document does not exist', async () => {
-    expect(vm.item).toEqual(null)
+    expect(target.item.value).toEqual(undefined)
     await bind('item', empty)
-    expect(vm.item).toBe(null)
+    expect(target.item.value).toBe(null)
   })
 
   it('unbinds all refs when the document is unbound', async () => {
@@ -340,7 +375,7 @@ describe('refs in documents', () => {
     const dSpy = spyUnbind(d)
     // rebind to use the spies
     await bind('d', d)
-    expect(vm.d).toEqual({
+    expect(target.d.value).toEqual({
       ref: {
         isC: true,
       },
@@ -399,7 +434,7 @@ describe('refs in documents', () => {
     const dSpy = spyUnbind(d)
 
     await bind('d', d)
-    expect(vm.d).toEqual({
+    expect(target.d.value).toEqual({
       ref: {
         isC: true,
       },
@@ -408,7 +443,7 @@ describe('refs in documents', () => {
     await d.update({ ref: a })
     // NOTE see #1
     await delay(5)
-    expect(vm.d).toEqual({
+    expect(target.d.value).toEqual({
       ref: {
         isA: true,
       },
@@ -470,16 +505,16 @@ describe('refs in documents', () => {
 
     await bind('item', item)
 
-    expect(vm.item).toEqual({
+    expect(target.item.value).toEqual({
       arr: [{ isA: true }, { isB: true }, { isA: true }],
     })
   })
 
-  it('properly updates a documen with refs', async () => {
+  it('properly updates a document with refs', async () => {
     await item.update({ a })
     await bind('item', item)
 
-    expect(vm.item).toEqual({
+    expect(target.item.value).toEqual({
       a: { isA: true },
     })
 
@@ -488,7 +523,7 @@ describe('refs in documents', () => {
     // NOTE see (1)
     await delay(5)
 
-    expect(vm.item).toEqual({
+    expect(target.item.value).toEqual({
       newThing: true,
       a: { isA: true },
     })
@@ -501,13 +536,13 @@ describe('refs in documents', () => {
 
     await bind('item', item)
 
-    expect(vm.item).toEqual({
+    expect(target.item.value).toEqual({
       arr: [{ isA: true }, null],
     })
 
     await b.update({ isB: true })
 
-    expect(vm.item).toEqual({
+    expect(target.item.value).toEqual({
       arr: [{ isA: true }, { isB: true }],
     })
 
@@ -518,7 +553,7 @@ describe('refs in documents', () => {
     // NOTE see (1)
     await delay(5)
 
-    expect(vm.item).toEqual({
+    expect(target.item.value).toEqual({
       arr: [{ isC: true }],
     })
   })
@@ -532,7 +567,7 @@ describe('refs in documents', () => {
     await bind('item', item)
 
     const spy = jest.fn()
-    vm.$watch('item.arr', spy)
+    watch(() => target.item.value && target.item.value.arr, spy)
 
     await b.update({ isB: true })
 
@@ -558,14 +593,14 @@ describe('refs in documents', () => {
     await c.set({ d })
 
     await bind('item', item, { maxRefDepth: 1 })
-    expect(vm.item).toEqual({
+    expect(target.item.value).toEqual({
       a: {
         b: b.path,
       },
     })
 
     await bind('item', item, { maxRefDepth: 3 })
-    expect(vm.item).toEqual({
+    expect(target.item.value).toEqual({
       a: {
         b: {
           c: {
@@ -580,7 +615,7 @@ describe('refs in documents', () => {
     await item.set({ item })
     await bind('item', item, { maxRefDepth: 5 })
 
-    expect(vm.item).toEqual({
+    expect(target.item.value).toEqual({
       // it's easy to see we stop at 5 and we have 5 brackets
       item: {
         item: {
