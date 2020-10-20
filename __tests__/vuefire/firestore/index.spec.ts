@@ -1,58 +1,62 @@
-import { firestorePlugin } from '../../src'
-import { db, tick, Vue } from '@posva/vuefire-test-helpers'
+import { firestorePlugin } from '../../../src'
+import { db, tick } from '../../src'
 import { firestore } from 'firebase'
-import { CombinedVueInstance } from 'vue/types/vue'
-
-Vue.use(firestorePlugin)
+import { ComponentPublicInstance } from 'vue'
+import { mount, VueWrapper } from '@vue/test-utils'
 
 describe('Firestore: firestore option', () => {
-  let collection: firestore.CollectionReference,
-    document: firestore.DocumentReference,
-    vm: CombinedVueInstance<
-      Vue,
-      { items: any[]; item: any },
-      object,
-      object,
-      Record<never, any>
-    >
+  let collection: firestore.CollectionReference
+  let document: firestore.DocumentReference
+  let vm: ComponentPublicInstance & { items: any[]; item: any }
+  let wrapper: VueWrapper<ComponentPublicInstance & { items: any[]; item: any }>
   beforeEach(async () => {
     // @ts-ignore
     collection = db.collection()
     document = collection.doc()
-    // @ts-ignore
-    vm = new Vue({
-      // purposely set items as null
-      // but it's a good practice to set it to an empty array
-      data: () => ({
-        items: null,
-        item: null,
-      }),
-      firestore: {
-        items: collection,
-        item: document,
+    wrapper = mount(
+      {
+        template: 'no',
+        // purposely set items as null
+        // but it's a good practice to set it to an empty array
+        data: () => ({
+          items: null,
+          item: null,
+        }),
+        firestore: {
+          items: collection,
+          item: document,
+        },
       },
-    })
+      { global: { plugins: [firestorePlugin] } }
+    )
     await tick()
+    vm = wrapper.vm
   })
 
   it('does nothing with no firestore', () => {
-    const vm = new Vue({
+    const wrapper = mount({
       data: () => ({ items: null }),
     })
-    expect(vm.items).toEqual(null)
+    expect(wrapper.vm.items).toEqual(null)
   })
 
-  it('setups _firestoreUnbinds', () => {
-    expect(vm._firestoreUnbinds).toBeTruthy()
-    expect(Object.keys(vm._firestoreUnbinds).sort()).toEqual(['item', 'items'])
-  })
-
-  it('setups _firestoreUnbinds with no firestore options', () => {
-    const vm = new Vue({
-      data: () => ({ items: null }),
-    })
-    expect(vm._firestoreUnbinds).toBeTruthy()
-    expect(Object.keys(vm._firestoreUnbinds)).toEqual([])
+  it('ignores no return', () => {
+    const spy = jest.fn()
+    mount(
+      {
+        // @ts-ignore: only care about not crashing
+        firestore: () => {},
+        data: () => ({ items: null }),
+      },
+      {
+        global: {
+          config: {
+            errorHandler: spy,
+          },
+        },
+      }
+    )
+    expect(spy).not.toHaveBeenCalled()
   })
 
   it('setups $firestoreRefs', () => {
@@ -62,7 +66,7 @@ describe('Firestore: firestore option', () => {
   })
 
   it('clears $firestoreRefs on $destroy', () => {
-    vm.$destroy()
+    wrapper.unmount()
     expect(vm.$firestoreRefs).toEqual(null)
   })
 })
