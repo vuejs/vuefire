@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>VueFire Todo App Demo</title>
+    <script src="https://www.gstatic.com/firebasejs/7.7.0/firebase.js"></script>
+    <script src="https://unpkg.com/vue@3"></script>
+    <script src="../dist/vuefire.global.js"></script>
+  </head>
+
+  <body>
+    <!--
+      Before running this example, make sure to:
+
+      1. cd path/to/vuefire
+      2. npm install
+      3. npm run build
+
+      Then you can open this file in your browser.
+      If you just prefer to see this example with
+      the latest published version of VueFire, you
+      play with the code in this fiddle:
+
+      https://jsfiddle.net/posva/wtyop5jy/
+    -->
+
+    <div id="app">
+      <button @click="toggleTodos">Toggle todos</button> <br />
+      <input
+        v-model.trim="newTodoText"
+        @keyup.enter="addTodo"
+        placeholder="Add new todo"
+      />
+      <ul>
+        <li v-for="todo in todos">
+          <input
+            :value="todo.text"
+            @input="updateTodoText(todo, $event.target.value)"
+          />
+          <button @click="removeTodo(todo)">X</button>
+        </li>
+      </ul>
+
+      <h4>collection with refs</h4>
+
+      <ul>
+        <li v-for="moment in moments">{{ moment }}</li>
+      </ul>
+
+      <h5>Original data</h5>
+
+      <ul>
+        <li v-for="tweet in tweets">{{ tweet }}</li>
+      </ul>
+
+      <p>config:</p>
+      <pre>{{ config }}</pre>
+    </div>
+
+    <script>
+      var db = firebase
+        .initializeApp({
+          projectId: 'vue-fire-store',
+          databaseURL: 'https://vue-fire-store.firebaseio.com',
+        })
+        .firestore()
+      firebase.firestore().enablePersistence()
+      var todosRef = db.collection('todos')
+      var unFinishedTodos = todosRef.where('finished', '==', false)
+      var finishedTodos = todosRef.where('finished', '==', true)
+      var configRef = db.collection('configs').doc('jORwjIykFo2NmkdzTkhU')
+
+      const OptionAPI = {
+        data: () => ({
+          todos: [],
+          tweets: [],
+          moments: [],
+          nested: [],
+          config: null,
+          newTodoText: '',
+        }),
+
+        firestore: {
+          todos: unFinishedTodos,
+          moments: db.collection('moments'),
+          nested: db.collection('nested'),
+          tweets: db.collection('tweets'),
+          config: configRef,
+        },
+
+        methods: {
+          addTodo: function () {
+            if (this.newTodoText) {
+              todosRef.add({
+                finished: false,
+                text: this.newTodoText,
+                created: firebase.firestore.FieldValue.serverTimestamp(),
+              })
+              this.newTodoText = ''
+            }
+          },
+          updateTodoText: function (todo, newText) {
+            todosRef.doc(todo.id).update({ text: newText })
+          },
+          removeTodo: function (todo) {
+            todosRef.doc(todo.id).delete()
+          },
+          toggleTodos: function () {
+            console.log(this.$firestoreRefs.todos === unFinishedTodos)
+            this.$bind(
+              'todos',
+              this.$firestoreRefs.todos === unFinishedTodos
+                ? finishedTodos
+                : unFinishedTodos
+            )
+          },
+        },
+      }
+
+      const CompositionAPI = {
+        setup() {
+          const todos = Vue.ref([])
+          const tweets = Vue.ref([])
+          const moments = Vue.ref([])
+          const nested = Vue.ref([])
+          const config = Vue.ref(null)
+          const newTodoText = Vue.ref('')
+          let currentRef = unFinishedTodos
+
+          function addTodo() {
+            if (newTodoText.value) {
+              todosRef.add({
+                finished: false,
+                text: newTodoText.value,
+                created: firebase.firestore.FieldValue.serverTimestamp(),
+              })
+              newTodoText.value = ''
+            }
+          }
+
+          function updateTodoText(todo, newText) {
+            todosRef.doc(todo.id).update({ text: newText })
+          }
+
+          function removeTodo(todo) {
+            todosRef.doc(todo.id).delete()
+          }
+
+          function toggleTodos() {
+            currentRef =
+              currentRef === unFinishedTodos ? finishedTodos : unFinishedTodos
+            Vuefire.firestoreBind(todos, currentRef)
+          }
+
+          Vuefire.firestoreBind(todos, currentRef)
+          Vuefire.firestoreBind(moments, db.collection('moments'))
+          Vuefire.firestoreBind(nested, db.collection('nested'))
+          Vuefire.firestoreBind(tweets, db.collection('tweets'))
+          Vuefire.firestoreBind(config, configRef)
+
+          return {
+            todos,
+            tweets,
+            moments,
+            nested,
+            config,
+            newTodoText,
+            addTodo,
+            removeTodo,
+            updateTodoText,
+            toggleTodos,
+          }
+        },
+      }
+
+      var vm = Vue.createApp(CompositionAPI)
+        .use(Vuefire.firestorePlugin, { wait: true })
+        .mount('#app')
+    </script>
+  </body>
+</html>
