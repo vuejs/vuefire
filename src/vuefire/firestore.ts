@@ -7,7 +7,14 @@ import {
   OperationsType,
 } from '../core'
 import { firestore } from 'firebase'
-import { ComponentPublicInstance, onBeforeUnmount, Plugin, Ref } from 'vue'
+import {
+  ComponentPublicInstance,
+  getCurrentInstance,
+  onBeforeUnmount,
+  Plugin,
+  Ref,
+  toRef,
+} from 'vue'
 
 export const ops: OperationsType = {
   set: (target, key, value) => walkSet(target, key, value),
@@ -21,22 +28,20 @@ const firestoreUnbinds = new WeakMap<
 >()
 
 function internalBind(
-  vm: Record<string, any>,
-  key: string,
+  target: Ref<any>,
   ref:
     | firestore.CollectionReference
     | firestore.Query
     | firestore.DocumentReference,
   ops: OperationsType,
-  options: FirestoreOptions
+  options?: FirestoreOptions
 ) {
   return new Promise((resolve, reject) => {
     let unbind
     if ('where' in ref) {
       unbind = bindCollection(
         {
-          vm,
-          key,
+          target,
           ops,
           collection: ref,
           resolve,
@@ -47,8 +52,7 @@ function internalBind(
     } else {
       unbind = bindDocument(
         {
-          vm,
-          key,
+          target,
           ops,
           document: ref,
           resolve,
@@ -57,16 +61,19 @@ function internalBind(
         options
       )
     }
-    if (!firestoreUnbinds.has(vm)) {
-      firestoreUnbinds.set(vm, {})
+    if (!firestoreUnbinds.has(target)) {
+      firestoreUnbinds.set(target, {})
     }
-    const unbinds = firestoreUnbinds.get(vm)!
+    const unbinds = firestoreUnbinds.get(target)!
+    // TODO: remove and refactor the firestoreUnbinds
+    const key = 'value'
     unbinds[key] = unbind
   })
 }
 
 export function internalUnbind(
   target: object,
+  // TODO: can go during the refactor
   key: string,
   reset?: FirestoreOptions['reset']
 ) {
@@ -156,8 +163,9 @@ export const firestorePlugin: Plugin = function firestorePlugin(
   app,
   pluginOptions: PluginOptions = defaultOptions
 ) {
-  const strategies = app.config.optionMergeStrategies
-  strategies.firestore = strategies.provide
+  // const strategies = app.config.optionMergeStrategies
+  // TODO: implement
+  // strategies.firestore =
 
   const globalOptions = Object.assign({}, defaultOptions, pluginOptions)
   const { bindName, unbindName } = globalOptions
@@ -203,14 +211,19 @@ export const firestorePlugin: Plugin = function firestorePlugin(
       //     : options.reset
       // )
     }
-    const promise = internalBind(this, key, ref, ops, options)
+    const promise = internalBind(
+      toRef(this.$data as any, key),
+      ref,
+      ops,
+      options
+    )
     // @ts-ignore we are allowed to write it
     this.$firestoreRefs[key] = ref
     return promise
   }
 
   app.mixin({
-    beforeMount(this: ComponentPublicInstance) {
+    beforeCreate(this: ComponentPublicInstance) {
       this.$firestoreRefs = Object.create(null)
     },
     created(this: ComponentPublicInstance) {
@@ -249,13 +262,21 @@ export function bind(
     | firestore.CollectionReference
     | firestore.Query
     | firestore.DocumentReference,
-  options: FirestoreOptions
+  options?: FirestoreOptions
 ) {
-  const promise = internalBind(target, 'value', ref, ops, options)
+  const promise = internalBind(target, ref, ops, options)
 
-  onBeforeUnmount(() => {
-    unbind(target)
-  })
+  // TODO: SSR serialize the values for Nuxt to expose them later and use them
+  // as initial values while specifying a wait: true to only swap objects once
+  // Firebase has done its initial sync. Also, on server, you don't need to
+  // create sync, you can read only once the whole thing so maybe internalBind
+  // should take an option like once: true to not setting up any listener
+
+  if (getCurrentInstance()) {
+    onBeforeUnmount(() => {
+      unbind(target, options && options.reset)
+    })
+  }
 
   return promise
 }

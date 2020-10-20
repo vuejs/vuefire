@@ -1,4 +1,5 @@
-export * from './rtdb'
+// TODO: add binds
+// export { rtdbPlugin } from './rtdb'
 export {
   firestorePlugin,
   bind as firestoreBind,

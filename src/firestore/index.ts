@@ -1,6 +1,7 @@
 import { createSnapshot, extractRefs, FirestoreSerializer } from './utils'
 import { walkGet, callOnceWithArg, OperationsType } from '../shared'
 import { firestore } from 'firebase'
+import { ref, Ref, unref } from 'vue'
 
 export interface FirestoreOptions {
   maxRefDepth?: number
@@ -34,7 +35,7 @@ function unsubscribeAll(subs: Record<string, FirestoreSubscription>) {
 
 function updateDataFromDocumentSnapshot(
   options: Required<FirestoreOptions>,
-  target: CommonBindOptionsParameter['vm'],
+  target: CommonBindOptionsParameter['target'],
   path: string,
   snapshot: firestore.DocumentSnapshot,
   subs: Record<string, FirestoreSubscription>,
@@ -52,7 +53,7 @@ function updateDataFromDocumentSnapshot(
 }
 
 interface SubscribeToDocumentParamater {
-  target: CommonBindOptionsParameter['vm']
+  target: CommonBindOptionsParameter['target']
   path: string
   depth: number
   resolve: () => void
@@ -104,7 +105,7 @@ function subscribeToDocument(
 // updateDataFromDocumentSnapshot which may call subscribeToRefs as well
 function subscribeToRefs(
   options: Required<FirestoreOptions>,
-  target: CommonBindOptionsParameter['vm'],
+  target: CommonBindOptionsParameter['target'],
   path: string | number,
   subs: Record<string, FirestoreSubscription>,
   refs: Record<string, firestore.DocumentReference>,
@@ -165,27 +166,29 @@ function subscribeToRefs(
 }
 
 interface CommonBindOptionsParameter {
-  vm: Record<string, any>
-  key: string
+  // vm: Record<string, any>
+  target: Ref<any>
+  // key: string
   // Override this property in necessary functions
   resolve: (value: any) => void
   reject: (error: any) => void
   ops: OperationsType
 }
 
-interface BindCollectionParamater extends CommonBindOptionsParameter {
+interface BindCollectionParameter extends CommonBindOptionsParameter {
   collection: firestore.CollectionReference | firestore.Query
 }
 
 // TODO: refactor without using an object to improve size like the other functions
 
 export function bindCollection(
-  { vm, key, collection, ops, resolve, reject }: BindCollectionParamater,
+  { target, collection, ops, resolve, reject }: BindCollectionParameter,
   extraOptions: FirestoreOptions = DEFAULT_OPTIONS
 ) {
   const options = Object.assign({}, DEFAULT_OPTIONS, extraOptions) // fill default values
-  // TODO support pathes? nested.obj.list (walkSet)
-  const array = options.wait ? [] : ops.set(vm, key, [])
+  const key = 'value'
+  if (!options.wait) ops.set(target, key, [])
+  let arrayRef = ref(options.wait ? [] : target[key])
   const originalResolve = resolve
   let isResolved: boolean
 
@@ -198,11 +201,11 @@ export function bindCollection(
       arraySubs.splice(newIndex, 0, Object.create(null))
       const subs = arraySubs[newIndex]
       const [data, refs] = extractRefs(options.serialize(doc), undefined, subs)
-      ops.add(array, newIndex, data)
+      ops.add(unref(arrayRef), newIndex, data)
       subscribeToRefs(
         options,
-        array,
-        newIndex,
+        arrayRef,
+        `${key}.${newIndex}`,
         subs,
         refs,
         ops,
@@ -211,6 +214,7 @@ export function bindCollection(
       )
     },
     modified: ({ oldIndex, newIndex, doc }: firestore.DocumentChange) => {
+      const array = unref(arrayRef)
       const subs = arraySubs[oldIndex]
       const oldData = array[oldIndex]
       const [data, refs] = extractRefs(options.serialize(doc), oldData, subs)
@@ -219,9 +223,19 @@ export function bindCollection(
       arraySubs.splice(newIndex, 0, subs)
       ops.remove(array, oldIndex)
       ops.add(array, newIndex, data)
-      subscribeToRefs(options, array, newIndex, subs, refs, ops, 0, resolve)
+      subscribeToRefs(
+        options,
+        arrayRef,
+        `${key}.${newIndex}`,
+        subs,
+        refs,
+        ops,
+        0,
+        resolve
+      )
     },
     removed: ({ oldIndex }: firestore.DocumentChange) => {
+      const array = unref(arrayRef)
       ops.remove(array, oldIndex)
       unsubscribeAll(arraySubs.splice(oldIndex, 1)[0])
     },
@@ -255,8 +269,12 @@ export function bindCollection(
         if (id in validDocs) {
           if (++count >= expectedItems) {
             // if wait is true, finally set the array
-            if (options.wait) ops.set(vm, key, array)
-            originalResolve(vm[key])
+            if (options.wait) {
+              ops.set(target, key, unref(arrayRef))
+              // use the proxy object
+              // arrayRef = target.value
+            }
+            originalResolve(unref(arrayRef))
             // reset resolve to noop
             resolve = () => {}
           }
@@ -271,8 +289,12 @@ export function bindCollection(
     // since this can only happen once, there is no need to guard against it
     // being called multiple times
     if (!docChanges.length) {
-      if (options.wait) ops.set(vm, key, array)
-      resolve(array)
+      if (options.wait) {
+        ops.set(target, key, unref(arrayRef))
+        // use the proxy object
+        // arrayRef = target.value
+      }
+      resolve(unref(arrayRef))
     }
   }, reject)
 
@@ -280,13 +302,13 @@ export function bindCollection(
     unbind()
     if (reset !== false) {
       const value = typeof reset === 'function' ? reset() : []
-      ops.set(vm, key, value)
+      ops.set(target, key, value)
     }
     arraySubs.forEach(unsubscribeAll)
   }
 }
 
-interface BindDocumentParamater extends CommonBindOptionsParameter {
+interface BindDocumentParameter extends CommonBindOptionsParameter {
   document: firestore.DocumentReference
 }
 
@@ -296,22 +318,23 @@ interface BindDocumentParamater extends CommonBindOptionsParameter {
  * @param extraOptions
  */
 export function bindDocument(
-  { vm, key, document, resolve, reject, ops }: BindDocumentParamater,
+  { target, document, resolve, reject, ops }: BindDocumentParameter,
   extraOptions: FirestoreOptions = DEFAULT_OPTIONS
 ) {
   const options = Object.assign({}, DEFAULT_OPTIONS, extraOptions) // fill default values
+  const key = 'value'
   // TODO: warning check if key exists?
   // const boundRefs = Object.create(null)
 
   const subs = Object.create(null)
   // bind here the function so it can be resolved anywhere
   // this is specially useful for refs
-  resolve = callOnceWithArg(resolve, () => walkGet(vm, key))
+  resolve = callOnceWithArg(resolve, () => walkGet(target, key))
   const unbind = document.onSnapshot((snapshot) => {
     if (snapshot.exists) {
       updateDataFromDocumentSnapshot(
         options,
-        vm,
+        target,
         key,
         snapshot,
         subs,
@@ -320,7 +343,7 @@ export function bindDocument(
         resolve
       )
     } else {
-      ops.set(vm, key, null)
+      ops.set(target, key, null)
       resolve(null)
     }
   }, reject)
@@ -329,7 +352,7 @@ export function bindDocument(
     unbind()
     if (reset !== false) {
       const value = typeof reset === 'function' ? reset() : null
-      ops.set(vm, key, value)
+      ops.set(target, key, value)
     }
     unsubscribeAll(subs)
   }
