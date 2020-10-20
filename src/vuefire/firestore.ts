@@ -22,18 +22,18 @@ export const ops: OperationsType = {
   remove: (array, index) => array.splice(index, 1),
 }
 
-const firestoreUnbinds = new WeakMap<
-  object,
-  Record<string, ReturnType<typeof bindCollection | typeof bindDocument>>
->()
-
 function internalBind(
   target: Ref<any>,
+  key: string,
   ref:
     | firestore.CollectionReference
     | firestore.Query
     | firestore.DocumentReference,
   ops: OperationsType,
+  unbinds: Record<
+    string,
+    ReturnType<typeof bindCollection | typeof bindDocument>
+  >,
   options?: FirestoreOptions
 ) {
   return new Promise((resolve, reject) => {
@@ -61,23 +61,17 @@ function internalBind(
         options
       )
     }
-    if (!firestoreUnbinds.has(target)) {
-      firestoreUnbinds.set(target, {})
-    }
-    const unbinds = firestoreUnbinds.get(target)!
-    // TODO: remove and refactor the firestoreUnbinds
-    const key = 'value'
     unbinds[key] = unbind
   })
 }
 
 export function internalUnbind(
-  target: object,
-  // TODO: can go during the refactor
   key: string,
+  unbinds:
+    | Record<string, ReturnType<typeof bindCollection | typeof bindDocument>>
+    | undefined,
   reset?: FirestoreOptions['reset']
 ) {
-  const unbinds = firestoreUnbinds.get(target)
   if (unbinds && unbinds[key]) {
     unbinds[key](reset)
     delete unbinds[key]
@@ -159,6 +153,11 @@ type VueFirestoreObject = Record<
 >
 type FirestoreOption = VueFirestoreObject | (() => VueFirestoreObject)
 
+const firestoreUnbinds = new WeakMap<
+  object,
+  Record<string, ReturnType<typeof bindCollection | typeof bindDocument>>
+>()
+
 export const firestorePlugin: Plugin = function firestorePlugin(
   app,
   pluginOptions: PluginOptions = defaultOptions
@@ -174,7 +173,7 @@ export const firestorePlugin: Plugin = function firestorePlugin(
     key: string,
     reset?: FirestoreOptions['reset']
   ) {
-    internalUnbind(this, key, reset)
+    internalUnbind(key, firestoreUnbinds.get(this), reset)
     delete this.$firestoreRefs[key]
   }
 
@@ -188,35 +187,26 @@ export const firestorePlugin: Plugin = function firestorePlugin(
     userOptions?: FirestoreOptions
   ) {
     const options = Object.assign({}, globalOptions, userOptions)
-    const unbinds = firestoreUnbinds.get(this)
+    const target = toRef(this.$data as any, key)
+    let unbinds = firestoreUnbinds.get(this)
 
-    if (unbinds && unbinds[key]) {
-      unbinds[key](
-        // if wait, allow overriding with a function or reset, otherwise, force reset to false
-        // else pass the reset option
-        options.wait
-          ? typeof options.reset === 'function'
-            ? options.reset
-            : false
-          : options.reset
-      )
-      // this[unbindName as '$unbind'](
-      //   key,
-      //   // if wait, allow overriding with a function or reset, otherwise, force reset to false
-      //   // else pass the reset option
-      //   options.wait
-      //     ? typeof options.reset === 'function'
-      //       ? options.reset
-      //       : false
-      //     : options.reset
-      // )
+    if (unbinds) {
+      if (unbinds[key]) {
+        unbinds[key](
+          // if wait, allow overriding with a function or reset, otherwise, force reset to false
+          // else pass the reset option
+          options.wait
+            ? typeof options.reset === 'function'
+              ? options.reset
+              : false
+            : options.reset
+        )
+      }
+    } else {
+      firestoreUnbinds.set(this, (unbinds = {}))
     }
-    const promise = internalBind(
-      toRef(this.$data as any, key),
-      ref,
-      ops,
-      options
-    )
+
+    const promise = internalBind(target, key, ref, ops, unbinds!, options)
     // @ts-ignore we are allowed to write it
     this.$firestoreRefs[key] = ref
     return promise
@@ -264,7 +254,9 @@ export function bind(
     | firestore.DocumentReference,
   options?: FirestoreOptions
 ) {
-  const promise = internalBind(target, ref, ops, options)
+  const unbinds = {}
+  firestoreUnbinds.set(target, unbinds)
+  const promise = internalBind(target, '', ref, ops, unbinds, options)
 
   // TODO: SSR serialize the values for Nuxt to expose them later and use them
   // as initial values while specifying a wait: true to only swap objects once
@@ -282,4 +274,4 @@ export function bind(
 }
 
 export const unbind = (target: Ref, reset?: FirestoreOptions['reset']) =>
-  internalUnbind(target, 'value', reset)
+  internalUnbind('', firestoreUnbinds.get(target), reset)

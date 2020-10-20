@@ -31,7 +31,7 @@ describe('Firestore: binding', () => {
     vm = wrapper.vm
   })
 
-  it.only('manually binds a collection', async () => {
+  it('manually binds a collection', async () => {
     expect(vm.items).toEqual(null)
     await vm.$bind('items', collection)
     expect(vm.items).toEqual([])
