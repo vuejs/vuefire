@@ -7,7 +7,15 @@ import {
   OperationsType,
 } from '../core'
 import { database } from 'firebase'
-import { ComponentPublicInstance, App } from 'vue'
+import {
+  ComponentPublicInstance,
+  App,
+  Ref,
+  toRef,
+  getCurrentInstance,
+  onBeforeUnmount,
+} from 'vue'
+import { rtdbBindAsObject } from 'src/rtdb'
 
 /**
  * Returns the original reference of a Firebase reference or query across SDK versions.
@@ -27,19 +35,19 @@ const ops: OperationsType = {
   remove: (array, index) => array.splice(index, 1),
 }
 
-function bind(
-  vm: Record<string, any>,
+function internalBind(
+  target: Ref<any>,
   key: string,
   source: database.Query | database.Reference,
-  options: RTDBOptions
+  unbinds: Record<string, ReturnType<typeof bindAsArray | typeof bindAsObject>>,
+  options?: RTDBOptions
 ) {
   return new Promise((resolve, reject) => {
     let unbind
-    if (Array.isArray(vm[key])) {
+    if (Array.isArray(target.value)) {
       unbind = bindAsArray(
         {
-          vm,
-          key,
+          target,
           collection: source,
           resolve,
           reject,
@@ -50,8 +58,7 @@ function bind(
     } else {
       unbind = bindAsObject(
         {
-          vm,
-          key,
+          target,
           document: source,
           resolve,
           reject,
@@ -60,18 +67,24 @@ function bind(
         options
       )
     }
-    vm._firebaseUnbinds[key] = unbind
+    unbinds[key] = unbind
   })
 }
 
-function unbind(
-  vm: Record<string, any>,
+function internalUnbind(
   key: string,
+  unbinds:
+    | Record<string, ReturnType<typeof bindAsArray | typeof bindAsObject>>
+    | undefined,
   reset?: RTDBOptions['reset']
 ) {
-  vm._firebaseUnbinds[key](reset)
-  delete vm._firebaseSources[key]
-  delete vm._firebaseUnbinds[key]
+  if (unbinds && unbinds[key]) {
+    unbinds[key](reset)
+    delete unbinds[key]
+  }
+  // TODO: move to $unbind
+  // delete vm._firebaseSources[key]
+  // delete vm._firebaseUnbinds[key]
 }
 
 interface PluginOptions {
@@ -136,6 +149,11 @@ declare module '@vue/runtime-core' {
 type VueFirebaseObject = Record<string, database.Query | database.Reference>
 type FirebaseOption = VueFirebaseObject | (() => VueFirebaseObject)
 
+const rtdbUnbinds = new WeakMap<
+  object,
+  Record<string, ReturnType<typeof bindAsArray | typeof bindAsObject>>
+>()
+
 /**
  * Install this plugin if you want to add `$bind` and `$unbind` functions. Note
  * this plugin is not necessary if you exclusively use the Composition API.
@@ -158,7 +176,9 @@ export const rtdbPlugin = function rtdbPlugin(
     key: string,
     reset?: RTDBOptions['reset']
   ) {
-    unbind(this, key, reset)
+    internalUnbind(key, rtdbUnbinds.get(this), reset)
+    // TODO:
+    // delete this.$firestoreRefs[key]
   }
 
   // add $rtdbBind and $rtdbUnbind methods
@@ -169,25 +189,32 @@ export const rtdbPlugin = function rtdbPlugin(
     userOptions?: RTDBOptions
   ) {
     const options = Object.assign({}, globalOptions, userOptions)
-    if (this._firebaseUnbinds[key]) {
-      // @ts-ignore
-      this[unbindName](
-        key,
-        // if wait, allow overriding with a function or reset, otherwise, force reset to false
-        // else pass the reset option
-        options.wait
-          ? typeof options.reset === 'function'
-            ? options.reset
-            : false
-          : options.reset
-      )
+    const target = toRef(this.$data as any, key)
+    let unbinds = rtdbUnbinds.get(this)
+
+    if (unbinds) {
+      if (unbinds[key]) {
+        unbinds[key](
+          // if wait, allow overriding with a function or reset, otherwise, force reset to false
+          // else pass the reset option
+          options.wait
+            ? typeof options.reset === 'function'
+              ? options.reset
+              : false
+            : options.reset
+        )
+      }
+    } else {
+      rtdbUnbinds.set(this, (unbinds = {}))
     }
 
-    const promise = bind(this, key, source, options)
+    const promise = internalBind(target, key, source, unbinds!, options)
+
+    // TODO:
     // @ts-ignore
-    this._firebaseSources[key] = source
+    // this._firebaseSources[key] = source
     // @ts-ignore
-    this.$firebaseRefs[key] = getRef(source)
+    // this.$firebaseRefs[key] = getRef(source)
 
     return promise
   }
@@ -195,9 +222,10 @@ export const rtdbPlugin = function rtdbPlugin(
   // handle firebase option
   app.mixin({
     beforeCreate(this: ComponentPublicInstance) {
-      this.$firebaseRefs = Object.create(null)
-      this._firebaseSources = Object.create(null)
-      this._firebaseUnbinds = Object.create(null)
+      // TODO:
+      // this.$firebaseRefs = Object.create(null)
+      // this._firebaseSources = Object.create(null)
+      // this._firebaseUnbinds = Object.create(null)
     },
     created(this: ComponentPublicInstance) {
       let bindings = this.$options.firebase
@@ -214,15 +242,46 @@ export const rtdbPlugin = function rtdbPlugin(
     },
 
     beforeDestroy(this: ComponentPublicInstance) {
-      for (const key in this._firebaseUnbinds) {
-        this._firebaseUnbinds[key]()
+      const unbinds = rtdbUnbinds.get(this)
+      if (unbinds) {
+        for (const key in unbinds) {
+          unbinds[key]()
+        }
       }
-      // @ts-ignore
-      this._firebaseSources = null
-      // @ts-ignore
-      this._firebaseUnbinds = null
-      // @ts-ignore
-      this.$firebaseRefs = null
+      // TODO:
+      // // @ts-ignore
+      // this._firebaseSources = null
+      // // @ts-ignore
+      // this._firebaseUnbinds = null
+      // // @ts-ignore
+      // this.$firebaseRefs = null
     },
   })
 }
+
+export function bind(
+  target: Ref,
+  reference: database.Reference | database.Query,
+  options?: RTDBOptions
+) {
+  const unbinds = {}
+  rtdbUnbinds.set(target, unbinds)
+  const promise = internalBind(target, '', reference, unbinds, options)
+
+  // TODO: SSR serialize the values for Nuxt to expose them later and use them
+  // as initial values while specifying a wait: true to only swap objects once
+  // Firebase has done its initial sync. Also, on server, you don't need to
+  // create sync, you can read only once the whole thing so maybe internalBind
+  // should take an option like once: true to not setting up any listener
+
+  if (getCurrentInstance()) {
+    onBeforeUnmount(() => {
+      unbind(target, options && options.reset)
+    })
+  }
+
+  return promise
+}
+
+export const unbind = (target: Ref, reset?: RTDBOptions['reset']) =>
+  internalUnbind('', rtdbUnbinds.get(target), reset)
