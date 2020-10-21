@@ -32,13 +32,11 @@ describe('refs in collections', () => {
       return new Promise(
         (resolve, reject) =>
           (unbind = bindCollection(
-            {
-              target: target[key],
-              collection,
-              resolve,
-              reject,
-              ops,
-            },
+            target[key],
+            collection,
+            ops,
+            resolve,
+            reject,
             options
           ))
       )

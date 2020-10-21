@@ -182,7 +182,11 @@ interface BindCollectionParameter extends CommonBindOptionsParameter {
 // TODO: refactor without using an object to improve size like the other functions
 
 export function bindCollection(
-  { target, collection, ops, resolve, reject }: BindCollectionParameter,
+  target: BindCollectionParameter['target'],
+  collection: BindCollectionParameter['collection'],
+  ops: BindCollectionParameter['ops'],
+  resolve: BindCollectionParameter['resolve'],
+  reject: BindCollectionParameter['reject'],
   extraOptions: FirestoreOptions = DEFAULT_OPTIONS
 ) {
   const options = Object.assign({}, DEFAULT_OPTIONS, extraOptions) // fill default values
@@ -318,7 +322,11 @@ interface BindDocumentParameter extends CommonBindOptionsParameter {
  * @param extraOptions
  */
 export function bindDocument(
-  { target, document, resolve, reject, ops }: BindDocumentParameter,
+  target: BindDocumentParameter['target'],
+  document: BindDocumentParameter['document'],
+  ops: BindDocumentParameter['ops'],
+  resolve: BindDocumentParameter['resolve'],
+  reject: BindDocumentParameter['reject'],
   extraOptions: FirestoreOptions = DEFAULT_OPTIONS
 ) {
   const options = Object.assign({}, DEFAULT_OPTIONS, extraOptions) // fill default values

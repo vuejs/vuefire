@@ -63,7 +63,11 @@ describe('refs in documents', () => {
       return new Promise(
         (resolve, reject) =>
           (unbind = bindDocument(
-            { target: target[key], document, resolve, reject, ops },
+            target[key],
+            document,
+            ops,
+            resolve,
+            reject,
             options
           ))
       )

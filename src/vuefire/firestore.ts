@@ -12,6 +12,8 @@ import {
   ComponentPublicInstance,
   getCurrentInstance,
   onBeforeUnmount,
+  onUnmounted,
+  ref,
   Ref,
   toRef,
 } from 'vue'
@@ -22,47 +24,40 @@ export const ops: OperationsType = {
   remove: (array, index) => array.splice(index, 1),
 }
 
-function internalBind(
-  target: Ref<any>,
-  key: string,
-  ref:
-    | firestore.CollectionReference
-    | firestore.Query
-    | firestore.DocumentReference,
-  ops: OperationsType,
-  unbinds: Record<
-    string,
-    ReturnType<typeof bindCollection | typeof bindDocument>
-  >,
+type UnbindType = ReturnType<typeof bindCollection | typeof bindDocument>
+
+function internalBind<T>(
+  target: Ref<T | null>,
+  docRef: firestore.DocumentReference<T>,
+  options?: FirestoreOptions
+): [Promise<T | null>, UnbindType]
+function internalBind<T>(
+  target: Ref<T[]>,
+  collectionRef: firestore.CollectionReference<T> | firestore.Query<T>,
+  options?: FirestoreOptions
+): [Promise<T[]>, UnbindType]
+function internalBind<T>(
+  target: Ref<T | null> | Ref<T[]>,
+  docOrCollectionRef:
+    | firestore.CollectionReference<T>
+    | firestore.Query<T>
+    | firestore.DocumentReference<T>,
   options?: FirestoreOptions
 ) {
-  return new Promise((resolve, reject) => {
-    let unbind
-    if ('where' in ref) {
-      unbind = bindCollection(
-        {
-          target,
-          ops,
-          collection: ref,
-          resolve,
-          reject,
-        },
-        options
-      )
-    } else {
-      unbind = bindDocument(
-        {
-          target,
-          ops,
-          document: ref,
-          resolve,
-          reject,
-        },
-        options
-      )
-    }
-    unbinds[key] = unbind
+  let unbind: UnbindType
+  const promise = new Promise((resolve, reject) => {
+    unbind = ('where' in docOrCollectionRef ? bindCollection : bindDocument)(
+      target,
+      // the type is good because of the ternary
+      docOrCollectionRef as any,
+      ops,
+      resolve,
+      reject,
+      options
+    )
   })
+
+  return [promise, unbind!]
 }
 
 export function internalUnbind(
@@ -187,7 +182,7 @@ export const firestorePlugin = function firestorePlugin(
   app.config.globalProperties[bindName] = function firestoreBind(
     this: ComponentPublicInstance,
     key: string,
-    ref:
+    docOrCollectionRef:
       | firestore.Query
       | firestore.CollectionReference
       | firestore.DocumentReference,
@@ -213,9 +208,14 @@ export const firestorePlugin = function firestorePlugin(
       firestoreUnbinds.set(this, (unbinds = {}))
     }
 
-    const promise = internalBind(target, key, ref, ops, unbinds!, options)
+    const [promise, unbind] = internalBind(
+      target,
+      docOrCollectionRef as any,
+      options
+    )
+    unbinds[key] = unbind
     // @ts-ignore we are allowed to write it
-    this.$firestoreRefs[key] = ref
+    this.$firestoreRefs[key] = docOrCollectionRef
     return promise
   }
 
@@ -255,7 +255,7 @@ export const firestorePlugin = function firestorePlugin(
 
 export function bind(
   target: Ref,
-  ref:
+  docOrCollectionRef:
     | firestore.CollectionReference
     | firestore.Query
     | firestore.DocumentReference,
@@ -263,7 +263,11 @@ export function bind(
 ) {
   const unbinds = {}
   firestoreUnbinds.set(target, unbinds)
-  const promise = internalBind(target, '', ref, ops, unbinds, options)
+  const [promise, unbind] = internalBind(
+    target,
+    docOrCollectionRef as any,
+    options
+  )
 
   // TODO: SSR serialize the values for Nuxt to expose them later and use them
   // as initial values while specifying a wait: true to only swap objects once
@@ -273,11 +277,49 @@ export function bind(
 
   if (getCurrentInstance()) {
     onBeforeUnmount(() => {
-      unbind(target, options && options.reset)
+      unbind(options && options.reset)
     })
   }
 
   return promise
+}
+
+export function useFirestore<T>(
+  docRef: firestore.DocumentReference<T>,
+  options?: FirestoreOptions
+): [Ref<T | null>, Promise<T | null>, UnbindType]
+export function useFirestore<T>(
+  collectionRef: firestore.Query<T> | firestore.CollectionReference<T>,
+  options?: FirestoreOptions
+): [Ref<T[]>, Promise<T[]>, UnbindType]
+export function useFirestore<T>(
+  docOrCollectionRef:
+    | firestore.CollectionReference<T>
+    | firestore.Query<T>
+    | firestore.DocumentReference<T>,
+  options?: FirestoreOptions
+) {
+  const target =
+    'where' in docOrCollectionRef ? ref<T | null>(null) : ref<T[]>([])
+
+  let unbind: ReturnType<typeof bindCollection | typeof bindDocument>
+  const promise = new Promise((resolve, reject) => {
+    unbind = ('where' in docOrCollectionRef ? bindCollection : bindDocument)(
+      target,
+      // the type is good because of the ternary
+      docOrCollectionRef as any,
+      ops,
+      resolve,
+      reject,
+      options
+    )
+  })
+
+  if (getCurrentInstance()) {
+    onUnmounted(() => unbind())
+  }
+
+  return [target, promise, unbind!]
 }
 
 export const unbind = (target: Ref, reset?: FirestoreOptions['reset']) =>

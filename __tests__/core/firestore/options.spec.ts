@@ -29,10 +29,7 @@ describe('options', () => {
     await new Promise((res, rej) => {
       resolve = jest.fn(res)
       reject = jest.fn(rej)
-      bindDocument(
-        { target, document, resolve, reject, ops },
-        { serialize: spy }
-      )
+      bindDocument(target, document, ops, resolve, reject, { serialize: spy })
     })
     expect(spy).toHaveBeenCalledTimes(1)
     expect(spy).toBeCalledWith(
@@ -46,10 +43,9 @@ describe('options', () => {
     await new Promise((res, rej) => {
       resolve = jest.fn(res)
       reject = jest.fn(rej)
-      bindCollection(
-        { target, collection, resolve, reject, ops },
-        { serialize: spy }
-      )
+      bindCollection(target, collection, ops, resolve, reject, {
+        serialize: spy,
+      })
     })
     expect(spy).toHaveBeenCalledTimes(1)
     expect(spy).toBeCalledWith(
@@ -65,7 +61,7 @@ describe('options', () => {
     await new Promise((res, rej) => {
       resolve = jest.fn(res)
       reject = jest.fn(rej)
-      bindDocument({ target, document, resolve, reject, ops })
+      bindDocument(target, document, ops, resolve, reject)
     })
     expect(spy).toHaveBeenCalledTimes(1)
     expect(spy).toBeCalledWith(
@@ -83,7 +79,7 @@ describe('options', () => {
     await new Promise((res, rej) => {
       resolve = jest.fn(res)
       reject = jest.fn(rej)
-      bindCollection({ target, collection, resolve, reject, ops })
+      bindCollection(target, collection, ops, resolve, reject)
     })
     expect(spy).toHaveBeenCalledTimes(1)
     expect(spy).toBeCalledWith(

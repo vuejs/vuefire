@@ -20,13 +20,7 @@ describe('collections', () => {
     await new Promise((res, rej) => {
       resolve = jest.fn(res)
       reject = jest.fn(rej)
-      unbind = bindCollection({
-        target,
-        collection,
-        resolve,
-        reject,
-        ops,
-      })
+      unbind = bindCollection(target, collection, ops, resolve, reject)
     })
   })
 
@@ -122,13 +116,7 @@ describe('collections', () => {
       throw new Error('Promise was not called')
     }
     await new Promise((resolve, reject) => {
-      unbind = bindCollection({
-        target,
-        collection,
-        resolve,
-        reject,
-        ops,
-      })
+      unbind = bindCollection(target, collection, ops, resolve, reject)
     })
 
     expect(unbindSpy).not.toHaveBeenCalled()
@@ -154,7 +142,7 @@ describe('collections', () => {
     collection.onSnapshot = jest.fn(fakeOnSnapshot)
     await expect(
       new Promise((resolve, reject) => {
-        bindCollection({ target, collection, resolve, reject, ops })
+        bindCollection(target, collection, ops, resolve, reject)
       })
     ).rejects.toThrow()
     // @ts-ignore
@@ -165,13 +153,7 @@ describe('collections', () => {
     await collection.add({ foo: 'foo' })
     await collection.add({ foo: 'foo' })
     const promise = new Promise((resolve, reject) => {
-      bindCollection({
-        target,
-        collection,
-        resolve,
-        reject,
-        ops,
-      })
+      bindCollection(target, collection, ops, resolve, reject)
     })
     await promise
     expect(target.value).toEqual([{ foo: 'foo' }, { foo: 'foo' }])
@@ -183,13 +165,7 @@ describe('collections', () => {
       throw new Error('Promise was not called')
     }
     const promise = new Promise((resolve, reject) => {
-      unbind = bindCollection({
-        target,
-        collection,
-        resolve,
-        reject,
-        ops,
-      })
+      unbind = bindCollection(target, collection, ops, resolve, reject)
     })
     await promise
     expect(target.value).toEqual([{ foo: 'foo' }])
@@ -203,13 +179,7 @@ describe('collections', () => {
       throw new Error('Promise was not called')
     }
     const promise = new Promise((resolve, reject) => {
-      unbind = bindCollection({
-        target,
-        collection,
-        resolve,
-        reject,
-        ops,
-      })
+      unbind = bindCollection(target, collection, ops, resolve, reject)
     })
     await promise
     expect(target.value).toEqual([{ foo: 'foo' }])
@@ -223,13 +193,7 @@ describe('collections', () => {
       throw new Error('Promise was not called')
     }
     const promise = new Promise((resolve, reject) => {
-      unbind = bindCollection({
-        target,
-        collection,
-        resolve,
-        reject,
-        ops,
-      })
+      unbind = bindCollection(target, collection, ops, resolve, reject)
     })
     await promise
     expect(target.value).toEqual([{ foo: 'foo' }])
@@ -244,10 +208,9 @@ describe('collections', () => {
     await other.add({ b: 1 })
 
     await new Promise((resolve, reject) => {
-      unbind = bindCollection(
-        { target, collection: other, resolve, reject, ops },
-        { reset: false }
-      )
+      unbind = bindCollection(target, other, ops, resolve, reject, {
+        reset: false,
+      })
     })
     expect(target.value).toEqual([{ a: 0 }, { b: 1 }])
     unbind()
@@ -265,10 +228,7 @@ describe('collections', () => {
     // force the unbind without resetting the value
     unbind(false)
     const promise = new Promise((resolve, reject) => {
-      bindCollection(
-        { target, collection: other, resolve, reject, ops },
-        { wait: true }
-      )
+      bindCollection(target, other, ops, resolve, reject, { wait: true })
     })
     expect(target.value).toEqual([{ foo: 'foo' }, { foo: 'foo' }])
     await promise
@@ -283,16 +243,9 @@ describe('collections', () => {
     // @ts-ignore
     target.value = 'foo'
     await new Promise((resolve, reject) => {
-      bindCollection(
-        {
-          target,
-          collection: db.collection() as any,
-          resolve,
-          reject,
-          ops,
-        },
-        { wait: true }
-      )
+      bindCollection(target, db.collection() as any, ops, resolve, reject, {
+        wait: true,
+      })
     })
     expect(target.value).toEqual([])
   })
@@ -309,10 +262,7 @@ describe('collections', () => {
     // force the unbind without resetting the value
     unbind(false)
     const promise = new Promise((resolve, reject) => {
-      bindCollection(
-        { target, collection: other, resolve, reject, ops },
-        { wait: true }
-      )
+      bindCollection(target, other, ops, resolve, reject, { wait: true })
     })
     expect(target.value).toEqual([])
     await promise

@@ -22,7 +22,7 @@ describe('documents', () => {
     await new Promise((res, rej) => {
       resolve = jest.fn(res)
       reject = jest.fn(rej)
-      bindDocument({ target, document, resolve, reject, ops })
+      bindDocument(target, document, ops, resolve, reject)
     })
   })
 
@@ -40,14 +40,7 @@ describe('documents', () => {
     await new Promise((res, rej) => {
       resolve = jest.fn(res)
       reject = jest.fn(rej)
-      bindDocument({
-        target,
-
-        document: collection.doc(),
-        resolve,
-        reject,
-        ops,
-      })
+      bindDocument(target, collection.doc(), ops, resolve, reject)
     })
     expect(target.value).toBe(null)
     expect(resolve).toHaveBeenCalledWith(null)
@@ -75,7 +68,7 @@ describe('documents', () => {
 
   it('adds non-enumerable id', async () => {
     document = collection.doc('some-id')
-    bindDocument({ target, document, resolve, reject, ops })
+    bindDocument(target, document, ops, resolve, reject)
     await document.update({ foo: 'foo' })
     expect(Object.getOwnPropertyDescriptor(target.value, 'id')).toEqual({
       configurable: false,
@@ -93,7 +86,7 @@ describe('documents', () => {
       throw new Error('Promise was not called')
     }
     await new Promise((resolve, reject) => {
-      unbind = bindDocument({ target, document, resolve, reject, ops })
+      unbind = bindDocument(target, document, ops, resolve, reject)
     })
 
     expect(unbindSpy).not.toHaveBeenCalled()
@@ -118,7 +111,7 @@ describe('documents', () => {
     document.onSnapshot = jest.fn(fakeOnSnapshot)
     await expect(
       new Promise((resolve, reject) => {
-        bindDocument({ target, document, resolve, reject, ops })
+        bindDocument(target, document, ops, resolve, reject)
       })
     ).rejects.toThrow()
     // @ts-ignore
@@ -128,7 +121,7 @@ describe('documents', () => {
   it('resolves when the document is set', async () => {
     await document.update({ foo: 'foo' })
     const promise = new Promise((resolve, reject) => {
-      bindDocument({ target, document, resolve, reject, ops })
+      bindDocument(target, document, ops, resolve, reject)
     })
     await promise
     expect(target.value).toEqual({ foo: 'foo' })
@@ -140,7 +133,7 @@ describe('documents', () => {
       throw new Error('Promise was not called')
     }
     const promise = new Promise((resolve, reject) => {
-      unbind = bindDocument({ target, document, resolve, reject, ops })
+      unbind = bindDocument(target, document, ops, resolve, reject)
     })
     await promise
     expect(target.value).toEqual({ foo: 'foo' })
@@ -154,7 +147,7 @@ describe('documents', () => {
       throw new Error('Promise was not called')
     }
     const promise = new Promise((resolve, reject) => {
-      unbind = bindDocument({ target, document, resolve, reject, ops })
+      unbind = bindDocument(target, document, ops, resolve, reject)
     })
     await promise
     expect(target.value).toEqual({ foo: 'foo' })
@@ -168,7 +161,7 @@ describe('documents', () => {
       throw new Error('Promise was not called')
     }
     const promise = new Promise((resolve, reject) => {
-      unbind = bindDocument({ target, document, resolve, reject, ops })
+      unbind = bindDocument(target, document, ops, resolve, reject)
     })
     await promise
     expect(target.value).toEqual({ foo: 'foo' })
@@ -182,10 +175,9 @@ describe('documents', () => {
       throw new Error('Promise was not called')
     }
     const promise = new Promise((resolve, reject) => {
-      unbind = bindDocument(
-        { target, document, resolve, reject, ops },
-        { reset: false }
-      )
+      unbind = bindDocument(target, document, ops, resolve, reject, {
+        reset: false,
+      })
     })
     await promise
     expect(target.value).toEqual({ foo: 'foo' })
