@@ -74,7 +74,13 @@
   },
   "size-limit": [
     {
-      "path": "size-checks/basic.js"
+      "path": "size-checks/vuefire-firestore.js"
+    },
+    {
+      "path": "size-checks/vuefire-rtdb.js"
+    },
+    {
+      "path": "size-checks/vuefire-full.js"
     }
   ],
   "peerDependencies": {
