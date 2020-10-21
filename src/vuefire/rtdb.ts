@@ -15,7 +15,6 @@ import {
   getCurrentInstance,
   onBeforeUnmount,
 } from 'vue'
-import { rtdbBindAsObject } from 'src/rtdb'
 
 /**
  * Returns the original reference of a Firebase reference or query across SDK versions.
@@ -177,8 +176,7 @@ export const rtdbPlugin = function rtdbPlugin(
     reset?: RTDBOptions['reset']
   ) {
     internalUnbind(key, rtdbUnbinds.get(this), reset)
-    // TODO:
-    // delete this.$firestoreRefs[key]
+    delete this.$firebaseRefs[key]
   }
 
   // add $rtdbBind and $rtdbUnbind methods
@@ -213,8 +211,7 @@ export const rtdbPlugin = function rtdbPlugin(
     // TODO:
     // @ts-ignore
     // this._firebaseSources[key] = source
-    // @ts-ignore
-    // this.$firebaseRefs[key] = getRef(source)
+    this.$firebaseRefs[key] = getRef(source)
 
     return promise
   }
@@ -222,10 +219,7 @@ export const rtdbPlugin = function rtdbPlugin(
   // handle firebase option
   app.mixin({
     beforeCreate(this: ComponentPublicInstance) {
-      // TODO:
-      // this.$firebaseRefs = Object.create(null)
-      // this._firebaseSources = Object.create(null)
-      // this._firebaseUnbinds = Object.create(null)
+      this.$firebaseRefs = Object.create(null)
     },
     created(this: ComponentPublicInstance) {
       let bindings = this.$options.firebase
@@ -241,20 +235,15 @@ export const rtdbPlugin = function rtdbPlugin(
       }
     },
 
-    beforeDestroy(this: ComponentPublicInstance) {
+    beforeUnmount(this: ComponentPublicInstance) {
       const unbinds = rtdbUnbinds.get(this)
       if (unbinds) {
         for (const key in unbinds) {
           unbinds[key]()
         }
       }
-      // TODO:
-      // // @ts-ignore
-      // this._firebaseSources = null
-      // // @ts-ignore
-      // this._firebaseUnbinds = null
-      // // @ts-ignore
-      // this.$firebaseRefs = null
+      // @ts-ignore
+      this.$firebaseRefs = null
     },
   })
 }

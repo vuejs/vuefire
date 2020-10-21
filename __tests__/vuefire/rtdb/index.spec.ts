@@ -1,47 +1,56 @@
-import { rtdbPlugin } from '../../src'
-import { tick, Vue, MockFirebase } from '@posva/vuefire-test-helpers'
-
-Vue.use(rtdbPlugin)
+import { mount } from '@vue/test-utils'
+import { rtdbPlugin } from '../../../src'
+import { tick, MockFirebase } from '../../src'
 
 describe('RTDB: firebase option', () => {
   async function createVm() {
     const source = new MockFirebase().child('data')
-    const vm = new Vue({
-      // purposely set items as null
-      // but it's a good practice to set it to an empty array
-      data: () => ({
-        items: [],
-        item: null,
-      }),
-      firebase: {
-        items: source,
-        item: source,
+    const wrapper = mount(
+      {
+        template: 'no',
+        data: () => ({
+          items: [],
+          item: null,
+        }),
+        firebase: {
+          items: source,
+          item: source,
+        },
       },
-    })
+      {
+        global: {
+          plugins: [rtdbPlugin],
+        },
+      }
+    )
     await tick()
 
-    return { vm, source }
+    return { vm: wrapper.vm, source, wrapper }
   }
 
   it('does nothing with no firebase', () => {
-    const vm = new Vue({
-      data: () => ({ items: null }),
-    })
-    expect(vm.items).toEqual(null)
+    const wrapper = mount(
+      {
+        template: 'no',
+        data: () => ({ items: null }),
+      },
+      { global: { plugins: [rtdbPlugin] } }
+    )
+    expect(wrapper.vm.items).toEqual(null)
   })
 
-  it('setups _firebaseUnbinds', async () => {
-    const { vm } = await createVm()
-    expect(vm._firebaseUnbinds).toBeTruthy()
-    expect(Object.keys(vm._firebaseUnbinds).sort()).toEqual(['item', 'items'])
-  })
-
-  it('setups _firebaseUnbinds with no firebase options', () => {
-    const vm = new Vue({
-      data: () => ({ items: null }),
-    })
-    expect(vm._firebaseUnbinds).toBeTruthy()
-    expect(Object.keys(vm._firebaseUnbinds)).toEqual([])
+  it('does nothing with empty firebase return', () => {
+    const wrapper = mount(
+      {
+        template: 'no',
+        data: () => ({ items: null }),
+        // @ts-ignore
+        firebase: () => {},
+      },
+      { global: { plugins: [rtdbPlugin] } }
+    )
+    // @ts-ignore
+    expect(wrapper.vm.items).toEqual(null)
   })
 
   it('setups $firebaseRefs', async () => {
@@ -52,10 +61,8 @@ describe('RTDB: firebase option', () => {
   })
 
   it('clears $firebaseRefs on $destroy', async () => {
-    const { vm } = await createVm()
-    vm.$destroy()
+    const { vm, wrapper } = await createVm()
+    wrapper.unmount()
     expect(vm.$firebaseRefs).toEqual(null)
-    expect(vm._firebaseUnbinds).toEqual(null)
-    expect(vm._firebaseSources).toEqual(null)
   })
 })
