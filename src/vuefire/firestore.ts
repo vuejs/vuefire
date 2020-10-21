@@ -8,10 +8,10 @@ import {
 } from '../core'
 import { firestore } from 'firebase'
 import {
+  App,
   ComponentPublicInstance,
   getCurrentInstance,
   onBeforeUnmount,
-  Plugin,
   Ref,
   toRef,
 } from 'vue'
@@ -158,8 +158,15 @@ const firestoreUnbinds = new WeakMap<
   Record<string, ReturnType<typeof bindCollection | typeof bindDocument>>
 >()
 
-export const firestorePlugin: Plugin = function firestorePlugin(
-  app,
+/**
+ * Install this plugin to add `$bind` and `$unbind` functions. Note this plugin
+ * is not necessary if you exclusively use the Composition API
+ *
+ * @param app
+ * @param pluginOptions
+ */
+export const firestorePlugin = function firestorePlugin(
+  app: App,
   pluginOptions: PluginOptions = defaultOptions
 ) {
   // const strategies = app.config.optionMergeStrategies

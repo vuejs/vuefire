@@ -1,3 +1,4 @@
+import { ref, Ref } from 'vue'
 import {
   rtdbBindAsObject,
   rtdbBindAsArray,
@@ -8,13 +9,13 @@ import { MockFirebase, createOps, MockedReference } from '../../src'
 describe('RTDB options', () => {
   let collection: MockedReference,
     document: MockedReference,
-    vm: Record<string, any>,
+    target: Ref<Record<string, any>>,
     unbind: () => void
   const ops = createOps()
   beforeEach(async () => {
     collection = new MockFirebase().child('data')
     document = new MockFirebase().child('data')
-    vm = {}
+    target = ref({})
   })
 
   afterEach(() => {
@@ -26,8 +27,7 @@ describe('RTDB options', () => {
     await new Promise((resolve, reject) => {
       unbind = rtdbBindAsObject(
         {
-          vm,
-          key: 'item',
+          target,
           document,
           resolve,
           reject,
@@ -43,7 +43,7 @@ describe('RTDB options', () => {
     expect(spy).toHaveBeenLastCalledWith(
       expect.objectContaining({ val: expect.any(Function) })
     )
-    expect(vm.item).toEqual({ bar: 'foo' })
+    expect(target.value).toEqual({ bar: 'foo' })
   })
 
   it('allows customizing serialize when calling bindCollection', async () => {
@@ -52,8 +52,7 @@ describe('RTDB options', () => {
     await new Promise((resolve, reject) => {
       unbind = rtdbBindAsArray(
         {
-          vm,
-          key: 'items',
+          target,
           collection,
           resolve,
           reject,
@@ -69,7 +68,7 @@ describe('RTDB options', () => {
     expect(spy).toBeCalledWith(
       expect.objectContaining({ val: expect.any(Function) })
     )
-    expect(vm.items).toEqual([{ bar: 'foo' }])
+    expect(target.value).toEqual([{ bar: 'foo' }])
   })
 
   it('can set options globally for bindDocument', async () => {
@@ -80,8 +79,7 @@ describe('RTDB options', () => {
     await new Promise((resolve, reject) => {
       unbind = rtdbBindAsObject(
         {
-          vm,
-          key: 'item',
+          target,
           document,
           resolve,
           reject,
@@ -97,7 +95,7 @@ describe('RTDB options', () => {
     expect(spy).toBeCalledWith(
       expect.objectContaining({ val: expect.any(Function) })
     )
-    expect(vm.item).toEqual({ bar: 'foo' })
+    expect(target.value).toEqual({ bar: 'foo' })
     // restore it
     rtdbOptions.serialize = serialize
   })
@@ -110,8 +108,7 @@ describe('RTDB options', () => {
     await new Promise((resolve, reject) => {
       unbind = rtdbBindAsArray(
         {
-          vm,
-          key: 'items',
+          target,
           collection,
           resolve,
           reject,
@@ -127,7 +124,7 @@ describe('RTDB options', () => {
     expect(spy).toBeCalledWith(
       expect.objectContaining({ val: expect.any(Function) })
     )
-    expect(vm.items).toEqual([{ bar: 'foo' }])
+    expect(target.value).toEqual([{ bar: 'foo' }])
     // restore it
     rtdbOptions.serialize = serialize
   })

@@ -6,8 +6,8 @@ import {
   walkSet,
   OperationsType,
 } from '../core'
-import { app, database } from 'firebase'
-import { ComponentPublicInstance, Plugin } from 'vue'
+import { database } from 'firebase'
+import { ComponentPublicInstance, App } from 'vue'
 
 /**
  * Returns the original reference of a Firebase reference or query across SDK versions.
@@ -136,8 +136,15 @@ declare module '@vue/runtime-core' {
 type VueFirebaseObject = Record<string, database.Query | database.Reference>
 type FirebaseOption = VueFirebaseObject | (() => VueFirebaseObject)
 
-export const rtdbPlugin: Plugin = function rtdbPlugin(
-  app,
+/**
+ * Install this plugin if you want to add `$bind` and `$unbind` functions. Note
+ * this plugin is not necessary if you exclusively use the Composition API.
+ *
+ * @param app
+ * @param pluginOptions
+ */
+export const rtdbPlugin = function rtdbPlugin(
+  app: App,
   pluginOptions: PluginOptions = defaultOptions
 ) {
   // TODO: implement
@@ -186,13 +193,13 @@ export const rtdbPlugin: Plugin = function rtdbPlugin(
   }
 
   // handle firebase option
-  Vue.mixin({
-    beforeCreate(this: Vue) {
+  app.mixin({
+    beforeCreate(this: ComponentPublicInstance) {
       this.$firebaseRefs = Object.create(null)
       this._firebaseSources = Object.create(null)
       this._firebaseUnbinds = Object.create(null)
     },
-    created(this: Vue) {
+    created(this: ComponentPublicInstance) {
       let bindings = this.$options.firebase
       if (typeof bindings === 'function')
         bindings =
@@ -206,7 +213,7 @@ export const rtdbPlugin: Plugin = function rtdbPlugin(
       }
     },
 
-    beforeDestroy(this: Vue) {
+    beforeDestroy(this: ComponentPublicInstance) {
       for (const key in this._firebaseUnbinds) {
         this._firebaseUnbinds[key]()
       }

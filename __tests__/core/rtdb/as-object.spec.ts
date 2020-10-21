@@ -1,6 +1,7 @@
 import { rtdbBindAsObject } from '../../../src/core'
 import { MockFirebase, MockedReference, createOps } from '../../src'
 import { ResetOption } from '../../../src/shared'
+import { ref, Ref } from 'vue'
 
 function createSnapshotFromPrimitive(value: any, key: string) {
   const data = {}
@@ -11,7 +12,7 @@ function createSnapshotFromPrimitive(value: any, key: string) {
 
 describe('RTDB document', () => {
   let document: MockedReference,
-    vm: Record<string, any>,
+    target: Ref<Record<string, any>>,
     resolve: (data: any) => void,
     reject: (error: any) => void,
     unbind: () => void
@@ -19,13 +20,12 @@ describe('RTDB document', () => {
 
   beforeEach(async () => {
     document = new MockFirebase().child('data')
-    vm = {}
+    target = ref({})
     await new Promise((res, rej) => {
       resolve = jest.fn(res)
       reject = jest.fn(rej)
       unbind = rtdbBindAsObject({
-        vm,
-        key: 'item',
+        target,
         document,
         resolve,
         reject,
@@ -41,69 +41,72 @@ describe('RTDB document', () => {
     expect(resolve).toHaveBeenCalled()
     expect(reject).not.toHaveBeenCalled()
 
-    expect(ops.set).toHaveBeenLastCalledWith(vm, 'item', {})
+    expect(ops.set).toHaveBeenLastCalledWith(target, 'value', {})
     document.set({ foo: 'foo' })
     document.flush()
-    expect(ops.set).toHaveBeenLastCalledWith(vm, 'item', { foo: 'foo' })
+    expect(ops.set).toHaveBeenLastCalledWith(target, 'value', { foo: 'foo' })
   })
 
   it('creates non-enumerable fields with primitive values', () => {
     document.set('foo')
     document.flush()
     expect(ops.set).toHaveBeenLastCalledWith(
-      vm,
-      'item',
+      target,
+      'value',
       createSnapshotFromPrimitive('foo', 'data')
     )
     document.set(2)
     document.flush()
     expect(ops.set).toHaveBeenLastCalledWith(
-      vm,
-      'item',
+      target,
+      'value',
       createSnapshotFromPrimitive(2, 'data')
     )
   })
 
   it('rejects when errors', async () => {
     const error = new Error()
-    document.forceCancel(error)
-    expect(reject).toHaveBeenCalledWith(error)
+    const document = new MockFirebase().child('data')
+    document.failNext('once', error)
+    const target = ref({})
+    await expect(
+      new Promise((resolve, reject) => {
+        unbind = rtdbBindAsObject({
+          target,
+          document,
+          resolve,
+          reject,
+          ops,
+        })
+        document.flush()
+      })
+    ).rejects.toBe(error)
   })
 
   it('resolves when the document is set', async () => {
     document.set({ foo: 'foo' })
     document.flush()
     const promise = new Promise((resolve, reject) => {
-      rtdbBindAsObject({ vm, document, key: 'other', resolve, reject, ops })
+      rtdbBindAsObject({
+        target,
+        document,
+        resolve,
+        reject,
+        ops,
+      })
     })
-    expect(vm).not.toHaveProperty('other')
+    expect(target).not.toHaveProperty('other')
     document.flush()
     await promise
-    expect(vm.other).toEqual({ foo: 'foo' })
-  })
-
-  it('works with nested paths', async () => {
-    document.set({ foo: 'foo' })
-    document.flush()
-    vm.a = {
-      b: {
-        c: null,
-      },
-    }
-    const promise = new Promise((resolve, reject) => {
-      rtdbBindAsObject({ vm, document, key: 'a.b.c', resolve, reject, ops })
-    })
-    document.flush()
-    await promise
-    expect(vm.a.b.c).toEqual({ foo: 'foo' })
+    expect(target.value).toEqual({ foo: 'foo' })
   })
 
   it('resets the value when unbinding', () => {
-    expect(vm.item).toEqual({})
+    expect(target.value).toEqual({})
     unbind()
     document.set({ foo: 'foo' })
     document.flush()
-    expect(vm.item).toEqual(null)
+    expect(target.value).toEqual(null)
   })
 
   it('can be left as is with reset: false', async () => {
@@ -113,9 +116,8 @@ describe('RTDB document', () => {
     }
     const promise = new Promise((resolve, reject) => {
       unbind = rtdbBindAsObject({
-        vm,
+        target,
         document,
-        key: 'item',
         resolve,
         reject,
         ops,
@@ -123,9 +125,9 @@ describe('RTDB document', () => {
       document.flush()
     })
     await promise
-    expect(vm.item).toEqual({ foo: 'foo' })
+    expect(target.value).toEqual({ foo: 'foo' })
     unbind(false)
-    expect(vm.item).toEqual({ foo: 'foo' })
+    expect(target.value).toEqual({ foo: 'foo' })
   })
 
   it('can be reset to a specific value', async () => {
@@ -135,9 +137,8 @@ describe('RTDB document', () => {
     }
     const promise = new Promise((resolve, reject) => {
       unbind = rtdbBindAsObject({
-        vm,
+        target,
         document,
-        key: 'item',
         resolve,
         reject,
         ops,
@@ -145,10 +146,10 @@ describe('RTDB document', () => {
       document.flush()
     })
     await promise
-    expect(vm.item).toEqual({ foo: 'foo' })
+    expect(target.value).toEqual({ foo: 'foo' })
     // not passing anything
     unbind(() => ({ bar: 'bar' }))
-    expect(vm.item).toEqual({ bar: 'bar' })
+    expect(target.value).toEqual({ bar: 'bar' })
   })
 
   it('ignores reset option in bind when calling unbind', async () => {
@@ -158,15 +159,15 @@ describe('RTDB document', () => {
     }
     const promise = new Promise((resolve, reject) => {
       unbind = rtdbBindAsObject(
-        { vm, document, key: 'item', resolve, reject, ops },
+        { target, document, resolve, reject, ops },
         // this will have no effect when unbinding
         { reset: () => 'foo' }
       )
       document.flush()
     })
     await promise
-    expect(vm.item).toEqual({ foo: 'foo' })
+    expect(target.value).toEqual({ foo: 'foo' })
     unbind()
-    expect(vm.item).toEqual(null)
+    expect(target.value).toEqual(null)
   })
 })

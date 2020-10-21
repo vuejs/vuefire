@@ -1,10 +1,11 @@
 import { rtdbBindAsArray } from '../../../src/core'
 import { MockFirebase, createOps, MockedReference } from '../../src'
 import { ResetOption } from '../../../src/shared'
+import { ref, Ref } from 'vue'
 
 describe('RTDB collection', () => {
   let collection: MockedReference,
-    vm: Record<string, any>,
+    target: Ref<Record<string, any>>,
     resolve: (data: any) => void,
     reject: (error: any) => void,
     unbind: ReturnType<typeof rtdbBindAsArray>
@@ -12,13 +13,12 @@ describe('RTDB collection', () => {
 
   beforeEach(async () => {
     collection = new MockFirebase().child('data')
-    vm = {}
+    target = ref([])
     await new Promise((res, rej) => {
       resolve = jest.fn(res)
       reject = jest.fn(rej)
       unbind = rtdbBindAsArray({
-        vm,
-        key: 'items',
+        target,
         collection,
         resolve,
         reject,
@@ -33,7 +33,7 @@ describe('RTDB collection', () => {
     collection.push({ name: 'two' })
     collection.push({ name: 'three' })
     collection.flush()
-    expect(vm.items).toEqual([
+    expect(target.value).toEqual([
       { name: 'one' },
       { name: 'two' },
       { name: 'three' },
@@ -45,9 +45,9 @@ describe('RTDB collection', () => {
     collection.push({ name: 'two' })
     collection.push({ name: 'three' })
     collection.flush()
-    collection.child(vm.items[1]['.key']).remove()
+    collection.child(target.value[1]['.key']).remove()
     collection.flush()
-    expect(vm.items).toEqual([{ name: 'one' }, { name: 'three' }])
+    expect(target.value).toEqual([{ name: 'one' }, { name: 'three' }])
   })
 
   it('stops listening to events when unbound', async () => {
@@ -64,8 +64,7 @@ describe('RTDB collection', () => {
     unbind()
     await new Promise((resolve, reject) => {
       rtdbBindAsArray({
-        vm,
-        key: 'items',
+        target,
         collection: items,
         resolve,
         reject,
@@ -74,7 +73,7 @@ describe('RTDB collection', () => {
       items.flush()
     })
 
-    expect(vm.items).toEqual([
+    expect(target.value).toEqual([
       { other: 'one' },
       { other: 'two' },
       { other: 'three' },
@@ -105,8 +104,7 @@ describe('RTDB collection', () => {
       resolve = jest.fn(res)
       reject = jest.fn(rej)
       rtdbBindAsArray({
-        vm,
-        key: 'items',
+        target,
         collection,
         resolve,
         reject,
@@ -115,26 +113,26 @@ describe('RTDB collection', () => {
       collection.flush()
     })
 
-    expect(vm.items).toEqual([{ value: 3 }, { value: 1 }, { value: 2 }])
+    expect(target.value).toEqual([{ value: 3 }, { value: 1 }, { value: 2 }])
 
     childChangedCb(
       {
-        key: vm.items[0]['.key'],
+        key: target.value[0]['.key'],
       },
-      vm.items[2]['.key']
+      target.value[2]['.key']
     )
 
-    expect(vm.items).toEqual([{ value: 1 }, { value: 2 }, { value: 3 }])
+    expect(target.value).toEqual([{ value: 1 }, { value: 2 }, { value: 3 }])
 
     // move to beginning
     childChangedCb(
       {
-        key: vm.items[1]['.key'],
+        key: target.value[1]['.key'],
       },
       null
     )
 
-    expect(vm.items).toEqual([{ value: 2 }, { value: 1 }, { value: 3 }])
+    expect(target.value).toEqual([{ value: 2 }, { value: 1 }, { value: 3 }])
 
     mock.mockClear()
   })
@@ -142,17 +140,17 @@ describe('RTDB collection', () => {
   it('updates an item', () => {
     collection.push({ name: 'foo' })
     collection.flush()
-    collection.child(vm.items[0]['.key']).set({ name: 'bar' })
+    collection.child(target.value[0]['.key']).set({ name: 'bar' })
     collection.flush()
-    expect(vm.items).toEqual([{ name: 'bar' }])
+    expect(target.value).toEqual([{ name: 'bar' }])
   })
 
   it('resets the value when unbinding', () => {
     collection.push({ name: 'foo' })
     collection.flush()
-    expect(vm.items).toEqual([{ name: 'foo' }])
+    expect(target.value).toEqual([{ name: 'foo' }])
     unbind()
-    expect(vm.items).toEqual([])
+    expect(target.value).toEqual([])
   })
 
   it('can be left as is reset: false', async () => {
@@ -161,9 +159,8 @@ describe('RTDB collection', () => {
     }
     const promise = new Promise((resolve, reject) => {
       unbind = rtdbBindAsArray({
-        vm,
+        target,
         collection,
-        key: 'itemsReset',
         resolve,
         reject,
         ops,
@@ -173,9 +170,9 @@ describe('RTDB collection', () => {
     await promise
     collection.push({ foo: 'foo' })
     collection.flush()
-    expect(vm.itemsReset).toEqual([{ foo: 'foo' }])
+    expect(target.value).toEqual([{ foo: 'foo' }])
     unbind(false)
-    expect(vm.itemsReset).toEqual([{ foo: 'foo' }])
+    expect(target.value).toEqual([{ foo: 'foo' }])
   })
 
   it('can be reset to a specific value', async () => {
@@ -184,9 +181,8 @@ describe('RTDB collection', () => {
     }
     const promise = new Promise((resolve, reject) => {
       unbind = rtdbBindAsArray({
-        vm,
+        target,
         collection,
-        key: 'itemsReset',
         resolve,
         reject,
         ops,
@@ -196,9 +192,9 @@ describe('RTDB collection', () => {
     await promise
     collection.push({ foo: 'foo' })
     collection.flush()
-    expect(vm.itemsReset).toEqual([{ foo: 'foo' }])
+    expect(target.value).toEqual([{ foo: 'foo' }])
     unbind(() => [{ bar: 'bar' }])
-    expect(vm.itemsReset).toEqual([{ bar: 'bar' }])
+    expect(target.value).toEqual([{ bar: 'bar' }])
   })
 
   it('ignores reset option in bind when calling unbind', async () => {
@@ -207,7 +203,7 @@ describe('RTDB collection', () => {
     }
     const promise = new Promise((resolve, reject) => {
       unbind = rtdbBindAsArray(
-        { vm, collection, key: 'itemsReset', resolve, reject, ops },
+        { target, collection, resolve, reject, ops },
         // will have no effect when unbinding
         { reset: () => ['Foo'] }
       )
@@ -217,7 +213,7 @@ describe('RTDB collection', () => {
     collection.push({ foo: 'foo' })
     collection.flush()
     unbind()
-    expect(vm.itemsReset).toEqual([])
+    expect(target.value).toEqual([])
   })
 
   it('can wait until ready', async () => {
@@ -227,15 +223,14 @@ describe('RTDB collection', () => {
 
     const other = new MockFirebase().child('other')
 
-    expect(vm.items).toEqual([{ name: 'one' }, { name: 'two' }])
+    expect(target.value).toEqual([{ name: 'one' }, { name: 'two' }])
 
     // force the unbind without resetting the value
     unbind(false)
     const promise = new Promise((resolve, reject) => {
       rtdbBindAsArray(
         {
-          vm,
-          key: 'items',
+          target,
           collection: other,
           resolve,
           reject,
@@ -245,20 +240,20 @@ describe('RTDB collection', () => {
       )
     })
 
-    expect(vm.items).toEqual([{ name: 'one' }, { name: 'two' }])
+    expect(target.value).toEqual([{ name: 'one' }, { name: 'two' }])
     other.flush()
     await promise
-    expect(vm.items).toEqual([])
+    expect(target.value).toEqual([])
 
     other.push({ other: 'one' })
     other.push({ other: 'two' })
     other.flush()
 
-    expect(vm.items).toEqual([{ other: 'one' }, { other: 'two' }])
+    expect(target.value).toEqual([{ other: 'one' }, { other: 'two' }])
   })
 
   it('can wait until ready with empty arrays', async () => {
-    expect(vm.items).toEqual([])
+    expect(target.value).toEqual([])
 
     const other = new MockFirebase().child('other')
     other.push({ a: 0 })
@@ -269,8 +264,7 @@ describe('RTDB collection', () => {
     const promise = new Promise((resolve, reject) => {
       rtdbBindAsArray(
         {
-          vm,
-          key: 'items',
+          target,
           collection: other,
           resolve,
           reject,
@@ -280,9 +274,28 @@ describe('RTDB collection', () => {
       )
     })
 
-    expect(vm.items).toEqual([])
+    expect(target.value).toEqual([])
     other.flush()
     await promise
-    expect(vm.items).toEqual([{ a: 0 }, { b: 1 }])
+    expect(target.value).toEqual([{ a: 0 }, { b: 1 }])
+  })
+
+  it('rejects when errors', async () => {
+    const error = new Error()
+    const collection = new MockFirebase().child('data')
+    collection.failNext('once', error)
+    const target = ref([])
+    await expect(
+      new Promise((resolve, reject) => {
+        unbind = rtdbBindAsArray({
+          target,
+          collection,
+          resolve,
+          reject,
+          ops,
+        })
+        collection.flush()
+      })
+    ).rejects.toBe(error)
   })
 })
