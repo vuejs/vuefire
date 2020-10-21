@@ -4,8 +4,8 @@
     <meta charset="utf-8" />
     <title>VueFire Todo App Demo</title>
     <script src="https://www.gstatic.com/firebasejs/7.7.0/firebase.js"></script>
-    <script src="https://unpkg.com/vue/dist/vue.js"></script>
-    <script src="../dist/vuefire.js"></script>
+    <script src="https://unpkg.com/vue@3"></script>
+    <script src="../dist/vuefire.global.js"></script>
   </head>
   <body>
     <!--
@@ -24,18 +24,23 @@
     -->
 
     <div id="app">
-      <input v-model.trim="newTodoText" @keyup.enter="addTodo" placeholder="Add new todo" />
+      <input
+        v-model.trim="newTodoText"
+        @keyup.enter="addTodo"
+        placeholder="Add new todo"
+      />
       <ul>
         <li v-for="todo in todos">
-          <input :value="todo.text" @input="updateTodoText(todo, $event.target.value)" />
+          <input
+            :value="todo.text"
+            @input="updateTodoText(todo, $event.target.value)"
+          />
           <button @click="removeTodo(todo)">X</button>
         </li>
       </ul>
     </div>
 
     <script>
-      /* global Vue, firebase */
-      Vue.use(Vuefire.rtdbPlugin, { wait: true })
       var db = firebase
         .initializeApp({
           databaseURL: 'https://vuefiredemo.firebaseio.com',
@@ -43,17 +48,16 @@
         .database()
       var todosRef = db.ref('todos')
 
-      new Vue({
-        el: '#app',
-        data: {
+      const OptionsAPI = {
+        data: () => ({
           newTodoText: '',
           todos: [],
-        },
+        }),
         firebase: {
           todos: todosRef.limitToLast(25),
         },
         methods: {
-          addTodo: function() {
+          addTodo: function () {
             if (this.newTodoText) {
               todosRef.push({
                 text: this.newTodoText,
@@ -61,17 +65,45 @@
               this.newTodoText = ''
             }
           },
-          updateTodoText: function(todo, newText) {
-            todosRef
-              .child(todo['.key'])
-              .child('text')
-              .set(newText)
+          updateTodoText: function (todo, newText) {
+            todosRef.child(todo['.key']).child('text').set(newText)
           },
-          removeTodo: function(todo) {
+          removeTodo: function (todo) {
             todosRef.child(todo['.key']).remove()
           },
         },
-      })
+      }
+
+      const CompositionAPI = {
+        setup() {
+          const newTodoText = Vue.ref('')
+          const todos = Vue.ref([])
+
+          Vuefire.rtdbBind(todos, todosRef.limitToLast(25))
+
+          function addTodo() {
+            if (newTodoText.value) {
+              todosRef.push({
+                text: newTodoText.value,
+              })
+              newTodoText.value = ''
+            }
+          }
+          function updateTodoText(todo, newText) {
+            todosRef.child(todo['.key']).child('text').set(newText)
+          }
+
+          function removeTodo(todo) {
+            todosRef.child(todo['.key']).remove()
+          }
+
+          return { newTodoText, todos, addTodo, updateTodoText, removeTodo }
+        },
+      }
+
+      let app = Vue.createApp(CompositionAPI)
+        .use(Vuefire.rtdbPlugin, { wait: true })
+        .mount('#app')
     </script>
   </body>
 </html>
