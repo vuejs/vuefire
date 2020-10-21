@@ -1,7 +1,6 @@
-import { rtdbPlugin } from '../../src'
-import { MockFirebase, Vue } from '@posva/vuefire-test-helpers'
-
-Vue.use(rtdbPlugin)
+import { mount } from '@vue/test-utils'
+import { rtdbPlugin } from '../../../src'
+import { MockFirebase } from '../../src'
 
 function createMixins() {
   const db = new MockFirebase().child('data')
@@ -46,12 +45,21 @@ function createMixins() {
   return { mWithFn, mWithObjA, mWithObjB, docs }
 }
 
+const global = {
+  plugins: [rtdbPlugin],
+}
+
 describe('RTDB: merging', () => {
   it.skip('should merge properties', () => {
     const { mWithObjA, mWithObjB, docs } = createMixins()
-    const vm = new Vue({
-      mixins: [mWithObjA, mWithObjB],
-    })
+    const { vm } = mount(
+      {
+        template: 'no',
+        // @ts-ignore
+        mixins: [mWithObjA, mWithObjB],
+      },
+      { global }
+    )
     expect(Object.keys(vm.$firebaseRefs)).toEqual(['a', 'b', 'c'])
     expect(vm.$firebaseRefs).toEqual({
       a: docs[2],
@@ -62,9 +70,13 @@ describe('RTDB: merging', () => {
 
   it('supports function syntax', () => {
     const { docs, mWithFn } = createMixins()
-    const vm = new Vue({
-      mixins: [mWithFn],
-    })
+    const { vm } = mount(
+      {
+        template: 'no',
+        mixins: [mWithFn],
+      },
+      { global }
+    )
     expect(vm.$firebaseRefs).toEqual({
       a: docs[4],
       c: docs[5],
@@ -73,24 +85,18 @@ describe('RTDB: merging', () => {
 
   it.skip('should merge two functions', () => {
     const { docs, mWithFn, mWithObjA, mWithObjB } = createMixins()
-    const vm = new Vue({
-      mixins: [mWithObjA, mWithObjB, mWithFn],
-    })
+    const { vm } = mount(
+      {
+        template: 'no',
+        // @ts-ignore
+        mixins: [mWithObjA, mWithObjB, mWithFn],
+      },
+      { global }
+    )
     expect(vm.$firebaseRefs).toEqual({
       a: docs[4],
       b: docs[1],
       c: docs[5],
     })
-  })
-
-  it('ignores no return', () => {
-    const spy = (Vue.config.errorHandler = jest.fn())
-    // @ts-ignore this line is invalid in ts
-    new Vue({
-      // @ts-ignore this line is invalid in ts
-      // firebase: () => {},
-    })
-    expect(spy).not.toHaveBeenCalled()
-    spy.mockRestore()
   })
 })
