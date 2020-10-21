@@ -45,8 +45,10 @@ function createMixins() {
   return { mWithFn, mWithObjA, mWithObjB, docs }
 }
 
-const global = {
-  plugins: [rtdbPlugin],
+const globalMountingOptions = {
+  global: {
+    plugins: [rtdbPlugin],
+  },
 }
 
 describe('RTDB: merging', () => {
@@ -58,7 +60,7 @@ describe('RTDB: merging', () => {
         // @ts-ignore
         mixins: [mWithObjA, mWithObjB],
       },
-      { global }
+      globalMountingOptions
     )
     expect(Object.keys(vm.$firebaseRefs)).toEqual(['a', 'b', 'c'])
     expect(vm.$firebaseRefs).toEqual({
@@ -75,7 +77,7 @@ describe('RTDB: merging', () => {
         template: 'no',
         mixins: [mWithFn],
       },
-      { global }
+      globalMountingOptions
     )
     expect(vm.$firebaseRefs).toEqual({
       a: docs[4],
@@ -91,7 +93,7 @@ describe('RTDB: merging', () => {
         // @ts-ignore
         mixins: [mWithObjA, mWithObjB, mWithFn],
       },
-      { global }
+      globalMountingOptions
     )
     expect(vm.$firebaseRefs).toEqual({
       a: docs[4],
