@@ -26,7 +26,7 @@
     "firebase": "^7.2.3",
     "jest": "^25.1.0",
     "lerna": "^3.16.2",
-    "prettier": "^1.18.2",
+    "prettier": "^2.1.2",
     "rimraf": "^3.0.0",
     "rollup": "^2.1.0",
     "rollup-plugin-commonjs": "^10.0.1",
