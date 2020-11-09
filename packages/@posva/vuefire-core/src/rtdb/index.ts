@@ -43,7 +43,7 @@ export function rtdbBindAsObject(
   const options = Object.assign({}, DEFAULT_OPTIONS, extraOptions)
   const listener = document.on(
     'value',
-    (snapshot) => {
+    snapshot => {
       ops.set(vm, key, options.serialize(snapshot))
     },
     reject
@@ -88,7 +88,7 @@ export function rtdbBindAsArray(
 
   const childRemoved = collection.on(
     'child_removed',
-    (snapshot) => {
+    snapshot => {
       ops.remove(array, indexForKey(array, snapshot.key))
     },
     reject
@@ -96,7 +96,7 @@ export function rtdbBindAsArray(
 
   const childChanged = collection.on(
     'child_changed',
-    (snapshot) => {
+    snapshot => {
       ops.set(array, indexForKey(array, snapshot.key), options.serialize(snapshot))
     },
     reject
@@ -113,7 +113,7 @@ export function rtdbBindAsArray(
     reject
   )
 
-  collection.once('value', (data) => {
+  collection.once('value', data => {
     if (options.wait) ops.set(vm, key, array)
     resolve(data)
   })

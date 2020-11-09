@@ -42,7 +42,7 @@ export function extractRefs(
     const [data, refs] = result
     // Add all properties that are not enumerable (not visible in the for loop)
     // getOwnPropertyDescriptors does not exist on IE
-    Object.getOwnPropertyNames(doc).forEach((propertyName) => {
+    Object.getOwnPropertyNames(doc).forEach(propertyName => {
       const descriptor = Object.getOwnPropertyDescriptor(doc, propertyName)
       if (descriptor && !descriptor.enumerable) {
         Object.defineProperty(data, propertyName, descriptor)
