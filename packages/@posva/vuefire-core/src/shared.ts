@@ -1,4 +1,4 @@
-import { firestore } from 'firebase'
+import firebase from 'firebase/app'
 
 export interface OperationsType {
   set: (target: Record<string, any>, key: string | number, value: any) => any
@@ -62,7 +62,7 @@ export function isTimestamp(o: any): o is Date {
  * Checks if a variable is a Firestore Document Reference
  * @param o
  */
-export function isDocumentRef(o: any): o is firestore.DocumentReference {
+export function isDocumentRef(o: any): o is firebase.firestore.DocumentReference {
   return o && o.onSnapshot
 }
 

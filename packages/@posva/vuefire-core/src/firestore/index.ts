@@ -1,6 +1,6 @@
 import { createSnapshot, extractRefs, FirestoreSerializer } from './utils'
 import { walkGet, callOnceWithArg, OperationsType } from '../shared'
-import { firestore } from 'firebase'
+import firebase from 'firebase/app'
 
 export interface FirestoreOptions {
   maxRefDepth?: number
@@ -21,7 +21,7 @@ interface FirestoreSubscription {
   unsub: () => void
   // Firestore unique key eg: items/12
   path: string
-  data: () => firestore.DocumentData | null
+  data: () => firebase.firestore.DocumentData | null
   // // path inside the object to access the data items.3
   // key: string
 }
@@ -36,7 +36,7 @@ function updateDataFromDocumentSnapshot(
   options: Required<FirestoreOptions>,
   target: CommonBindOptionsParameter['vm'],
   path: string,
-  snapshot: firestore.DocumentSnapshot,
+  snapshot: firebase.firestore.DocumentSnapshot,
   subs: Record<string, FirestoreSubscription>,
   ops: CommonBindOptionsParameter['ops'],
   depth: number,
@@ -53,7 +53,7 @@ interface SubscribeToDocumentParamater {
   depth: number
   resolve: () => void
   ops: CommonBindOptionsParameter['ops']
-  ref: firestore.DocumentReference
+  ref: firebase.firestore.DocumentReference
 }
 
 function subscribeToDocument(
@@ -79,7 +79,7 @@ function subscribeToDocument(
 interface SubscribeToRefsParameter {
   subs: Record<string, FirestoreSubscription>
   target: CommonBindOptionsParameter['vm']
-  refs: Record<string, firestore.DocumentReference>
+  refs: Record<string, firebase.firestore.DocumentReference>
   path: string | number
   depth: number
   resolve: CommonBindOptionsParameter['resolve']
@@ -94,7 +94,7 @@ function subscribeToRefs(
   target: CommonBindOptionsParameter['vm'],
   path: string | number,
   subs: Record<string, FirestoreSubscription>,
-  refs: Record<string, firestore.DocumentReference>,
+  refs: Record<string, firebase.firestore.DocumentReference>,
   ops: CommonBindOptionsParameter['ops'],
   depth: number,
   resolve: CommonBindOptionsParameter['resolve']
@@ -159,7 +159,7 @@ interface CommonBindOptionsParameter {
 }
 
 interface BindCollectionParamater extends CommonBindOptionsParameter {
-  collection: firestore.CollectionReference | firestore.Query
+  collection: firebase.firestore.CollectionReference | firebase.firestore.Query
 }
 
 // TODO: refactor without using an object to improve size like the other functions
@@ -179,14 +179,14 @@ export function bindCollection(
   const arraySubs: Record<string, FirestoreSubscription>[] = []
 
   const change = {
-    added: ({ newIndex, doc }: firestore.DocumentChange) => {
+    added: ({ newIndex, doc }: firebase.firestore.DocumentChange) => {
       arraySubs.splice(newIndex, 0, Object.create(null))
       const subs = arraySubs[newIndex]
       const [data, refs] = extractRefs(options.serialize(doc), undefined, subs)
       ops.add(array, newIndex, data)
       subscribeToRefs(options, array, newIndex, subs, refs, ops, 0, resolve.bind(null, doc))
     },
-    modified: ({ oldIndex, newIndex, doc }: firestore.DocumentChange) => {
+    modified: ({ oldIndex, newIndex, doc }: firebase.firestore.DocumentChange) => {
       const subs = arraySubs[oldIndex]
       const oldData = array[oldIndex]
       const [data, refs] = extractRefs(options.serialize(doc), oldData, subs)
@@ -197,7 +197,7 @@ export function bindCollection(
       ops.add(array, newIndex, data)
       subscribeToRefs(options, array, newIndex, subs, refs, ops, 0, resolve)
     },
-    removed: ({ oldIndex }: firestore.DocumentChange) => {
+    removed: ({ oldIndex }: firebase.firestore.DocumentChange) => {
       ops.remove(array, oldIndex)
       unsubscribeAll(arraySubs.splice(oldIndex, 1)[0])
     },
@@ -215,7 +215,7 @@ export function bindCollection(
       typeof snapshot.docChanges === 'function'
         ? snapshot.docChanges()
         : /* istanbul ignore next to support firebase < 5*/
-          ((snapshot.docChanges as unknown) as firestore.DocumentChange[])
+          ((snapshot.docChanges as unknown) as firebase.firestore.DocumentChange[])
 
     if (!isResolved && docChanges.length) {
       // isResolved is only meant to make sure we do the check only once
@@ -263,7 +263,7 @@ export function bindCollection(
 }
 
 interface BindDocumentParamater extends CommonBindOptionsParameter {
-  document: firestore.DocumentReference
+  document: firebase.firestore.DocumentReference
 }
 
 /**
