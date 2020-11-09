@@ -163,9 +163,10 @@ export const firestorePlugin: PluginFunction<PluginOptions> = function firestore
     },
     created(this: Vue) {
       const { firestore } = this.$options
-      const refs = typeof firestore === 'function' ? firebase.firestore.call(this) : firestore
+      const refs = typeof firestore === 'function' ? firestore.call(this) : firestore
       if (!refs) return
       for (const key in refs) {
+        // @ts-ignore
         this[bindName as keyof Vue](key, refs[key], globalOptions)
       }
     },

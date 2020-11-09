@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import { MockFirebase, MockedReference } from 'firebase-mock'
-import { firestore } from '../../../../node_modules/firebase/index'
+import firebase from '../../../../node_modules/firebase/index'
 import { walkSet } from '@posva/vuefire-core'
 
 Vue.config.productionTip = false
@@ -10,9 +10,9 @@ export { Vue, MockFirebase, MockedReference }
 export * from './mock'
 
 type FirestoreReference =
-  | firestore.CollectionReference
-  | firestore.DocumentReference
-  | firestore.Query
+  | firebase.firestore.CollectionReference
+  | firebase.firestore.DocumentReference
+  | firebase.firestore.Query
 
 export function spyUnbind(ref: FirestoreReference) {
   const unbindSpy = jest.fn()
@@ -49,7 +49,7 @@ export function spyOnSnapshotCallback(ref: FirestoreReference) {
 }
 
 // This makes sure some tests fail by delaying callbacks
-export function delayUpdate(ref: firestore.DocumentReference, time = 0) {
+export function delayUpdate(ref: firebase.firestore.DocumentReference, time = 0) {
   const onSnapshot = ref.onSnapshot.bind(ref)
   // @ts-ignore
   ref.onSnapshot = fn =>
