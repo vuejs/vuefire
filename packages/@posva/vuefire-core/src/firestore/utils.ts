@@ -20,10 +20,10 @@ export function extractRefs(
   oldDoc: firebase.firestore.DocumentData | void,
   subs: Record<string, { path: string; data: () => firebase.firestore.DocumentData | null }>
 ): [firebase.firestore.DocumentData, Record<string, firebase.firestore.DocumentReference>] {
-  const dataAndRefs: [firebase.firestore.DocumentData, Record<string, firebase.firestore.DocumentReference>] = [
-    {},
-    {},
-  ]
+  const dataAndRefs: [
+    firebase.firestore.DocumentData,
+    Record<string, firebase.firestore.DocumentReference>
+  ] = [{}, {}]
 
   const subsByPath = Object.keys(subs).reduce((resultSubs, subKey) => {
     const sub = subs[subKey]
@@ -42,7 +42,7 @@ export function extractRefs(
     const [data, refs] = result
     // Add all properties that are not enumerable (not visible in the for loop)
     // getOwnPropertyDescriptors does not exist on IE
-    Object.getOwnPropertyNames(doc).forEach(propertyName => {
+    Object.getOwnPropertyNames(doc).forEach((propertyName) => {
       const descriptor = Object.getOwnPropertyDescriptor(doc, propertyName)
       if (descriptor && !descriptor.enumerable) {
         Object.defineProperty(data, propertyName, descriptor)

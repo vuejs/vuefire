@@ -61,7 +61,7 @@ function subscribeToDocument(
   options: Required<FirestoreOptions>
 ) {
   const subs = Object.create(null)
-  const unbind = ref.onSnapshot(snapshot => {
+  const unbind = ref.onSnapshot((snapshot) => {
     if (snapshot.exists) {
       updateDataFromDocumentSnapshot(options, target, path, snapshot, subs, ops, depth, resolve)
     } else {
@@ -100,9 +100,9 @@ function subscribeToRefs(
   resolve: CommonBindOptionsParameter['resolve']
 ) {
   const refKeys = Object.keys(refs)
-  const missingKeys = Object.keys(subs).filter(refKey => refKeys.indexOf(refKey) < 0)
+  const missingKeys = Object.keys(subs).filter((refKey) => refKeys.indexOf(refKey) < 0)
   // unbind keys that are no longer there
-  missingKeys.forEach(refKey => {
+  missingKeys.forEach((refKey) => {
     subs[refKey].unsub()
     delete subs[refKey]
   })
@@ -117,7 +117,7 @@ function subscribeToRefs(
     }
   }
 
-  refKeys.forEach(refKey => {
+  refKeys.forEach((refKey) => {
     const sub = subs[refKey]
     const ref = refs[refKey]
     const docPath = `${path}.${refKey}`
@@ -203,7 +203,7 @@ export function bindCollection(
     },
   }
 
-  const unbind = collection.onSnapshot(snapshot => {
+  const unbind = collection.onSnapshot((snapshot) => {
     // console.log('pending', metadata.hasPendingWrites)
     // docs.forEach(d => console.log('doc', d, '\n', 'data', d.data()))
     // NOTE: this will only be triggered once and it will be with all the documents
@@ -239,7 +239,7 @@ export function bindCollection(
         }
       }
     }
-    docChanges.forEach(c => {
+    docChanges.forEach((c) => {
       change[c.type](c)
     })
 
@@ -283,7 +283,7 @@ export function bindDocument(
   // bind here the function so it can be resolved anywhere
   // this is specially useful for refs
   resolve = callOnceWithArg(resolve, () => walkGet(vm, key))
-  const unbind = document.onSnapshot(snapshot => {
+  const unbind = document.onSnapshot((snapshot) => {
     if (snapshot.exists) {
       updateDataFromDocumentSnapshot(options, vm, key, snapshot, subs, ops, 0, resolve)
     } else {
