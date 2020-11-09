@@ -18,7 +18,10 @@ const ops: OperationsType = {
 function bind(
   vm: Record<string, any>,
   key: string,
-  ref: firebase.firestore.CollectionReference | firebase.firestore.Query | firebase.firestore.DocumentReference,
+  ref:
+    | firebase.firestore.CollectionReference
+    | firebase.firestore.Query
+    | firebase.firestore.DocumentReference,
   ops: OperationsType,
   options: FirestoreOptions
 ) {
@@ -97,7 +100,9 @@ declare module 'vue/types/vue' {
 
 type VueFirestoreObject = Record<
   string,
-  firebase.firestore.DocumentReference | firebase.firestore.Query | firebase.firestore.CollectionReference
+  | firebase.firestore.DocumentReference
+  | firebase.firestore.Query
+  | firebase.firestore.CollectionReference
 >
 type FirestoreOption<V> = VueFirestoreObject | ((this: V) => VueFirestoreObject)
 
@@ -129,7 +134,10 @@ export const firestorePlugin: PluginFunction<PluginOptions> = function firestore
   Vue.prototype[bindName] = function firestoreBind(
     this: Vue,
     key: string,
-    ref: firebase.firestore.Query | firebase.firestore.CollectionReference | firebase.firestore.DocumentReference,
+    ref:
+      | firebase.firestore.Query
+      | firebase.firestore.CollectionReference
+      | firebase.firestore.DocumentReference,
     userOptions?: FirestoreOptions
   ) {
     const options = Object.assign({}, globalOptions, userOptions)

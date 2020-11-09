@@ -15,7 +15,9 @@ import Vue, { PluginFunction } from 'vue'
  * @param {firebase.firebase.database.Reference|firebase.firebase.database.Query} refOrQuery
  * @return {firebase.firebase.database.Reference}
  */
-function getRef(refOrQuery: firebase.database.Reference | firebase.database.Query): firebase.database.Reference {
+function getRef(
+  refOrQuery: firebase.database.Reference | firebase.database.Query
+): firebase.database.Reference {
   return refOrQuery.ref
 }
 
@@ -94,7 +96,9 @@ declare module 'vue/types/vue' {
     ): Promise<firebase.database.DataSnapshot>
     $rtdbUnbind: (name: string, reset?: RTDBOptions['reset']) => void
     $firebaseRefs: Readonly<Record<string, firebase.database.Reference>>
-    _firebaseSources: Readonly<Record<string, firebase.database.Reference | firebase.database.Query>>
+    _firebaseSources: Readonly<
+      Record<string, firebase.database.Reference | firebase.database.Query>
+    >
     _firebaseUnbinds: Readonly<Record<string, ReturnType<typeof bindAsArray | typeof bindAsObject>>>
   }
 }
