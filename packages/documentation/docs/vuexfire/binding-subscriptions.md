@@ -296,7 +296,7 @@ await db.collection('events').add({
 const prise = store.state.events[this.events.length - 1]
 prise.date.seconds // -5694969600
 prise.date.nanoseconds // 0
-prise.toDate() // Tue Jul 14 1789
+prise.date.toDate() // Tue Jul 14 1789
 ```
 
 </FirebaseExample>
