@@ -1,13 +1,12 @@
 declare module 'firebase-mock' {
-  import { database } from 'firebase'
-
+  import firebase from 'firebase/app'
   type TODO = any
 
   interface MockFirebaseConstructor {
     new (): MockFirebaseI
   }
 
-  export interface MockedReference extends database.Reference {
+  export interface MockedReference extends firebase.database.Reference {
     flush: () => void
     forceCancel: (error: any) => void
     autoFlush: () => void

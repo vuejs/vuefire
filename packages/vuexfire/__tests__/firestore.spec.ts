@@ -1,7 +1,7 @@
 import Vuex from 'vuex'
 import { vuexfireMutations, firestoreAction } from '../src'
 import { db, tick, Vue, delayUpdate } from '@posva/vuefire-test-helpers'
-import { firestore } from 'firebase'
+import firebase from 'firebase/app'
 import { FirestoreOptions } from '@posva/vuefire-core/dist/packages/@posva/vuefire-core/src'
 
 Vue.use(Vuex)
@@ -36,18 +36,19 @@ describe('firestoreAction', () => {
   })
 
   const setItems = (
-    collection: firestore.CollectionReference | firestore.Query,
+    collection: firebase.firestore.CollectionReference | firebase.firestore.Query,
     options?: FirestoreOptions
   ) =>
     // @ts-ignore
     store.dispatch('action', ({ bindFirestoreRef }) =>
       bindFirestoreRef('items', collection, options)
     )
-  const setItem = (document: firestore.DocumentReference) =>
+  const setItem = (document: firebase.firestore.DocumentReference) =>
     // @ts-ignore
     store.dispatch('action', ({ bindFirestoreRef }) => bindFirestoreRef('item', document))
 
-  let collection: firestore.CollectionReference, document: firestore.DocumentReference
+  let collection: firebase.firestore.CollectionReference,
+    document: firebase.firestore.DocumentReference
   beforeEach(async () => {
     store.replaceState({
       // @ts-ignore

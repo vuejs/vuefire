@@ -7,7 +7,7 @@ import {
   spyOnSnapshotCallback,
   createOps,
 } from '@posva/vuefire-test-helpers'
-import { firestore } from 'firebase'
+import firebase from 'firebase/app'
 import { OperationsType } from '../../src/shared'
 
 describe('refs in documents', () => {
@@ -15,15 +15,19 @@ describe('refs in documents', () => {
   // item is an empty ready to use object
   // empty is an empty object that is left empty
   // d has a ref to c
-  let collection: firestore.CollectionReference,
-    a: firestore.DocumentReference,
-    b: firestore.DocumentReference,
-    c: firestore.DocumentReference,
-    d: firestore.DocumentReference,
-    empty: firestore.DocumentReference,
-    item: firestore.DocumentReference,
+  let collection: firebase.firestore.CollectionReference,
+    a: firebase.firestore.DocumentReference,
+    b: firebase.firestore.DocumentReference,
+    c: firebase.firestore.DocumentReference,
+    d: firebase.firestore.DocumentReference,
+    empty: firebase.firestore.DocumentReference,
+    item: firebase.firestore.DocumentReference,
     vm: Record<string, any>,
-    bind: (key: string, document: firestore.DocumentReference, options?: FirestoreOptions) => void,
+    bind: (
+      key: string,
+      document: firebase.firestore.DocumentReference,
+      options?: FirestoreOptions
+    ) => void,
     unbind: () => void,
     ops: OperationsType
 
