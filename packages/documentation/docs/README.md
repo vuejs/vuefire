@@ -21,4 +21,6 @@ footer: MIT Licensed | Copyright © 2016-present Eduardo San Martin Morote
   </div>
 </div>
 
+Note: This version currently supports Vue 2 and Firebase 7. Support for Vue 3 / Composition API and Firebase 8 is on the way.
+
 <!-- TODO: Example here -->

@@ -8,6 +8,8 @@
 
 > Synchronize your data and Firebase Cloud Store database in real-time
 
+Note: This version currently supports Vue 2 and Firebase 7. Support for Vue 3 / Composition API and Firebase 8 is on the way.
+
 [**Documentation**](https://vuefire.vuejs.org)
 
 ## Introduction
