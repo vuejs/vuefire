@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <title>VueFire Todo App Demo</title>
-    <script src="https://www.gstatic.com/firebasejs/7.7.0/firebase.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.24.0/firebase.js"></script>
     <script src="https://unpkg.com/vue@3"></script>
     <script src="../dist/vuefire.global.js"></script>
   </head>
@@ -41,12 +41,12 @@
     </div>
 
     <script>
-      var db = firebase
+      let db = firebase
         .initializeApp({
           databaseURL: 'https://vuefiredemo.firebaseio.com',
         })
         .database()
-      var todosRef = db.ref('todos')
+      let todosRef = db.ref('todos')
 
       const OptionsAPI = {
         data: () => ({
@@ -101,7 +101,9 @@
         },
       }
 
-      let app = Vue.createApp(CompositionAPI)
+      let vm = Vue.createApp(
+        params.get('composition') != null ? CompositionAPI : OptionAPI
+      )
         .use(Vuefire.rtdbPlugin, { wait: true })
         .mount('#app')
     </script>

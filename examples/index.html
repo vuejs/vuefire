@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <title>VueFire Todo App Demo</title>
-    <script src="https://www.gstatic.com/firebasejs/7.7.0/firebase.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.24.0/firebase.js"></script>
     <script src="https://unpkg.com/vue@3"></script>
     <script src="../dist/vuefire.global.js"></script>
   </head>
@@ -58,17 +58,17 @@
     </div>
 
     <script>
-      var db = firebase
+      let db = firebase
         .initializeApp({
           projectId: 'vue-fire-store',
           databaseURL: 'https://vue-fire-store.firebaseio.com',
         })
         .firestore()
       firebase.firestore().enablePersistence()
-      var todosRef = db.collection('todos')
-      var unFinishedTodos = todosRef.where('finished', '==', false)
-      var finishedTodos = todosRef.where('finished', '==', true)
-      var configRef = db.collection('configs').doc('jORwjIykFo2NmkdzTkhU')
+      let todosRef = db.collection('todos')
+      let unFinishedTodos = todosRef.where('finished', '==', false)
+      let finishedTodos = todosRef.where('finished', '==', true)
+      let configRef = db.collection('configs').doc('jORwjIykFo2NmkdzTkhU')
 
       const OptionAPI = {
         data: () => ({
@@ -86,6 +86,10 @@
           nested: db.collection('nested'),
           tweets: db.collection('tweets'),
           config: configRef,
+        },
+
+        beforeCreate() {
+          console.log('Using Options API version')
         },
 
         methods: {
@@ -119,6 +123,8 @@
 
       const CompositionAPI = {
         setup() {
+          console.log('Using Composition API version')
+
           const todos = Vue.ref([])
           const tweets = Vue.ref([])
           const moments = Vue.ref([])
@@ -173,7 +179,11 @@
         },
       }
 
-      var vm = Vue.createApp(CompositionAPI)
+      let params = new URLSearchParams(location.search)
+
+      let vm = Vue.createApp(
+        params.get('composition') != null ? CompositionAPI : OptionAPI
+      )
         .use(Vuefire.firestorePlugin, { wait: true })
         .mount('#app')
     </script>
