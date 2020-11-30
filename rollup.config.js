@@ -41,13 +41,13 @@ const outputConfigs = {
     file: pkg.main,
     format: `cjs`,
   },
-  global: {
-    file: pkg.unpkg,
+  'global-vue-3': {
+    file: pkg.unpkg.replace('2', '3'),
     format: `iife`,
   },
-  esm: {
-    file: pkg.browser,
-    format: `es`,
+  'global-vue-2': {
+    file: pkg.unpkg,
+    format: `iife`,
   },
 }
 
@@ -61,7 +61,7 @@ const packageConfigs = packageFormats.map((format) =>
 packageFormats.forEach((format) => {
   if (format === 'cjs') {
     packageConfigs.push(createProductionConfig(format))
-  } else if (format === 'global') {
+  } else if (format.startsWith('global')) {
     packageConfigs.push(createMinifiedConfig(format))
   }
 })
@@ -77,10 +77,10 @@ function createConfig(format, output, plugins = []) {
   output.sourcemap = !!process.env.SOURCE_MAP
   output.banner = banner
   output.externalLiveBindings = false
-  output.globals = { vue: 'Vue' }
+  output.globals = { 'vue-demi': 'VueDemi' }
 
   const isProductionBuild = /\.prod\.js$/.test(output.file)
-  const isGlobalBuild = format === 'global'
+  const isGlobalBuild = format.startsWith('global')
   const isRawESMBuild = format === 'esm'
   const isNodeBuild = format === 'cjs'
   const isBundlerESMBuild = /esm-bundler/.test(format)
@@ -107,7 +107,7 @@ function createConfig(format, output, plugins = []) {
   // during a single build.
   hasTSChecked = true
 
-  const external = ['vue']
+  const external = ['vue-demi']
 
   const nodePlugins = [resolve(), commonjs()]
 

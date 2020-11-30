@@ -16,7 +16,7 @@ import {
   ref,
   Ref,
   toRef,
-} from 'vue'
+} from 'vue-demi'
 
 export const ops: OperationsType = {
   set: (target, key, value) => walkSet(target, key, value),

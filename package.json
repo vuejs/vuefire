@@ -3,9 +3,8 @@
   "version": "3.0.0",
   "description": "Some awesome description",
   "main": "dist/vuefire.cjs.js",
-  "browser": "dist/vuefire.esm-browser.js",
-  "unpkg": "dist/vuefire.global.js",
-  "jsdelivr": "dist/vuefire.global.js",
+  "unpkg": "dist/vuefire.global-vue-2.js",
+  "jsdelivr": "dist/vuefire.global-vue-2.js",
   "module": "dist/vuefire.esm-bundler.js",
   "types": "dist/vuefire.d.ts",
   "sideEffects": false,
@@ -84,7 +83,8 @@
     }
   ],
   "peerDependencies": {
-    "vue": "^3.0.0-beta.20"
+    "@vue/composition-api": "^1.0.0-beta.1",
+    "vue": "^2.0.0 || >=3.0.0-rc.0"
   },
   "repository": {
     "type": "git",
@@ -93,5 +93,8 @@
   "bugs": {
     "url": "https://github.com/posva/vuefire/issues"
   },
-  "homepage": "https://github.com/posva/vuefire#readme"
+  "homepage": "https://github.com/posva/vuefire#readme",
+  "dependencies": {
+    "vue-demi": "^0.4.5"
+  }
 }

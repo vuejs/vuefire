@@ -5,7 +5,7 @@ import {
   RTDBSerializer,
 } from './utils'
 import { OperationsType, ResetOption } from '../shared'
-import { ref, Ref, unref } from 'vue'
+import { ref, Ref, unref } from 'vue-demi'
 
 export interface RTDBOptions {
   reset?: ResetOption

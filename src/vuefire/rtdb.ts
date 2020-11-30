@@ -14,7 +14,7 @@ import {
   toRef,
   getCurrentInstance,
   onBeforeUnmount,
-} from 'vue'
+} from 'vue-demi'
 
 /**
  * Returns the original reference of a Firebase reference or query across SDK versions.

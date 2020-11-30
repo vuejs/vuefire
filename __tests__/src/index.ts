@@ -1,11 +1,11 @@
-import Vue, { nextTick } from 'vue'
+import { nextTick } from 'vue-demi'
 import { MockFirebase, MockedReference } from 'firebase-mock'
 import { firestore } from 'firebase'
 import { walkSet } from '../../src/core'
 
 // Vue.config.productionTip = false
 // Vue.config.devtools = false
-export { Vue, MockFirebase, MockedReference }
+export { MockFirebase, MockedReference }
 
 export * from './mock'
 
