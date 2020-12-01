@@ -14,6 +14,7 @@ import {
   toRef,
   getCurrentInstance,
   onBeforeUnmount,
+  isVue3,
 } from 'vue-demi'
 
 /**
@@ -171,7 +172,11 @@ export const rtdbPlugin = function rtdbPlugin(
   const globalOptions = Object.assign({}, defaultOptions, pluginOptions)
   const { bindName, unbindName } = globalOptions
 
-  app.config.globalProperties[unbindName] = function rtdbUnbind(
+  const GlobalTarget = isVue3
+    ? app.config.globalProperties
+    : (app as any).prototype
+
+  GlobalTarget[unbindName] = function rtdbUnbind(
     key: string,
     reset?: RTDBOptions['reset']
   ) {
@@ -180,7 +185,7 @@ export const rtdbPlugin = function rtdbPlugin(
   }
 
   // add $rtdbBind and $rtdbUnbind methods
-  app.config.globalProperties[bindName] = function rtdbBind(
+  GlobalTarget[bindName] = function rtdbBind(
     this: ComponentPublicInstance,
     key: string,
     source: database.Reference | database.Query,
