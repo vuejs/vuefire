@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>VueFire Todo App Demo</title>
+    <script src="https://www.gstatic.com/firebasejs/7.24.0/firebase.js"></script>
+    <script src="https://unpkg.com/vue@2"></script>
+    <script src="https://unpkg.com/@vue/composition-api"></script>
+    <script src="https://unpkg.com/vue-demi@0.4.5/lib/index.iife.js"></script>
+    <script src="../../dist/vuefire.global-vue-2.js"></script>
+  </head>
+  <body>
+    <!--
+    Before running this example, make sure to:
+
+    1. cd path/to/vuefire
+    2. npm install
+    3. npm run build
+
+    Then you can open this file in your browser.
+    If you just prefer to see this example with
+    the latest published version of VueFire, you
+    play with the code in this fiddle:
+
+    https://jsfiddle.net/posva/wtyop5jy/
+    -->
+
+    <div id="app">
+      <input
+        v-model.trim="newTodoText"
+        @keyup.enter="addTodo"
+        placeholder="Add new todo"
+      />
+      <ul>
+        <li v-for="todo in todos">
+          <input
+            :value="todo.text"
+            @input="updateTodoText(todo, $event.target.value)"
+          />
+          <button @click="removeTodo(todo)">X</button>
+        </li>
+      </ul>
+    </div>
+
+    <script>
+      let db = firebase
+        .initializeApp({
+          databaseURL: 'https://vuefiredemo.firebaseio.com',
+        })
+        .database()
+      let todosRef = db.ref('todos')
+
+      const OptionsAPI = {
+        data: () => ({
+          newTodoText: '',
+          todos: [],
+        }),
+        firebase: {
+          todos: todosRef.limitToLast(25),
+        },
+        methods: {
+          addTodo: function () {
+            if (this.newTodoText) {
+              todosRef.push({
+                text: this.newTodoText,
+              })
+              this.newTodoText = ''
+            }
+          },
+          updateTodoText: function (todo, newText) {
+            todosRef.child(todo['.key']).child('text').set(newText)
+          },
+          removeTodo: function (todo) {
+            todosRef.child(todo['.key']).remove()
+          },
+        },
+      }
+
+      const CompositionAPI = {
+        setup() {
+          const newTodoText = VueDemi.ref('')
+          const todos = VueDemi.ref([])
+
+          Vuefire.rtdbBind(todos, todosRef.limitToLast(25))
+
+          function addTodo() {
+            if (newTodoText.value) {
+              todosRef.push({
+                text: newTodoText.value,
+              })
+              newTodoText.value = ''
+            }
+          }
+          function updateTodoText(todo, newText) {
+            todosRef.child(todo['.key']).child('text').set(newText)
+          }
+
+          function removeTodo(todo) {
+            todosRef.child(todo['.key']).remove()
+          }
+
+          return { newTodoText, todos, addTodo, updateTodoText, removeTodo }
+        },
+      }
+
+      const OptionAPI = {
+        data: () => ({
+          newTodoText: '',
+          todos: [],
+        }),
+
+        firebase() {
+          return {
+            todos: todosRef.limitToLast(25),
+          }
+        },
+
+        methods: {
+          addTodo() {
+            if (this.newTodoText) {
+              todosRef.push({
+                text: this.newTodoText,
+              })
+              this.newTodoText = ''
+            }
+          },
+
+          updateTodoText(todo, newText) {
+            todosRef.child(todo['.key']).child('text').set(newText)
+          },
+
+          removeTodo(todo) {
+            todosRef.child(todo['.key']).remove()
+          },
+        },
+      }
+
+      let params = new URLSearchParams(location.search)
+
+      Vue.use(Vuefire.rtdbPlugin, { wait: true })
+
+      let vm = VueDemi.createApp(
+        params.get('composition') != null ? CompositionAPI : OptionAPI
+      ).mount('#app')
+    </script>
+  </body>
+</html>
