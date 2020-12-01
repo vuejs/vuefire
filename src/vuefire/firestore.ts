@@ -11,6 +11,7 @@ import {
   App,
   ComponentPublicInstance,
   getCurrentInstance,
+  isVue3,
   onBeforeUnmount,
   onUnmounted,
   ref,
@@ -171,7 +172,11 @@ export const firestorePlugin = function firestorePlugin(
   const globalOptions = Object.assign({}, defaultOptions, pluginOptions)
   const { bindName, unbindName } = globalOptions
 
-  app.config.globalProperties[unbindName] = function firestoreUnbind(
+  const GlobalTarget = isVue3
+    ? app.config.globalProperties
+    : (app as any).prototype
+
+  GlobalTarget[unbindName] = function firestoreUnbind(
     key: string,
     reset?: FirestoreOptions['reset']
   ) {
@@ -179,7 +184,7 @@ export const firestorePlugin = function firestorePlugin(
     delete this.$firestoreRefs[key]
   }
 
-  app.config.globalProperties[bindName] = function firestoreBind(
+  GlobalTarget[bindName] = function firestoreBind(
     this: ComponentPublicInstance,
     key: string,
     docOrCollectionRef:
