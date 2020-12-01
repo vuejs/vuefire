@@ -1,6 +1,6 @@
 {
   "name": "vuefire",
-  "version": "3.0.0-alpha.0",
+  "version": "3.0.0-alpha.1",
   "description": "Some awesome description",
   "main": "dist/vuefire.cjs.js",
   "unpkg": "dist/vuefire.global-vue-2.js",

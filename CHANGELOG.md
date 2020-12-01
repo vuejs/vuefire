@@ -1,3 +1,10 @@
+# [3.0.0-alpha.1](https://github.com/posva/vuefire/compare/v3.0.0-alpha.0...v3.0.0-alpha.1) (2020-12-01)
+
+### Bug Fixes
+
+- **firestore:** fix plugin for Vue 2 ([8e775dd](https://github.com/posva/vuefire/commit/8e775ddc70a068dee65374a48184812e5882f744))
+- **rtdb:** fix global vue 2 ([8dcf8ef](https://github.com/posva/vuefire/commit/8dcf8ef4d9db22a388a3996a166607011f0f9214))
+
 # [3.0.0-alpha.0](https://github.com/posva/vuefire/compare/v2.0.0-alpha.11...v3.0.0-alpha.0) (2020-11-30)
 
 Initial release, existing API from [docs](https://vuefire.vuejs.org/vuefire/getting-started.html#installation) should be the same. Added composition API functions:
