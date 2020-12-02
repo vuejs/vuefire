@@ -13,6 +13,8 @@
     "email": "posva13@gmail.com"
   },
   "scripts": {
+    "docs": "vitepress dev docs",
+    "build:docs": "vitepress build docs",
     "build": "rollup -c rollup.config.js",
     "build:dts": "api-extractor run --local --verbose",
     "release": "bash scripts/release.sh",
@@ -41,6 +43,8 @@
   ],
   "license": "MIT",
   "devDependencies": {
+    "@docsearch/css": "^1.0.0-alpha.22",
+    "@docsearch/js": "^1.0.0-alpha.22",
     "@microsoft/api-extractor": "7.8.1",
     "@rollup/plugin-alias": "^3.1.1",
     "@rollup/plugin-commonjs": "^15.0.0",
@@ -50,10 +54,12 @@
     "@types/jest": "^26.0.8",
     "@types/jsdom": "^16.2.3",
     "@vue/test-utils": "^2.0.0-beta.1",
+    "algoliasearch": "^4.8.2",
     "codecov": "^3.7.2",
     "conventional-changelog-cli": "^2.0.34",
     "firebase": "^7.19.1",
     "firebase-mock": "^2.3.2",
+    "focus-visible": "^5.2.0",
     "jest": "^26.2.2",
     "lint-staged": "^10.2.11",
     "pascalcase": "^1.0.0",
@@ -64,6 +70,7 @@
     "size-limit": "^4.5.5",
     "ts-jest": "^26.1.4",
     "typescript": "^4.0.2",
+    "vitepress": "^0.9.0",
     "vue": "^3.0.0-rc.5",
     "yorkie": "^2.0.0"
   },
