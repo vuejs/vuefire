@@ -17,8 +17,7 @@ if (process.env.NODE_ENV === 'production') {
 const config = {
   lang: 'en-US',
   title: 'Vuefire',
-  description: 'Realtime bindings between Vue/Vuex and Firebase',
-  description: 'The official router for Vue.js.',
+  description: 'Official realtime bindings between Vue/Vuex and Firebase',
 
   head,
 
@@ -109,6 +108,26 @@ const config = {
       apiKey: '0d5c32429ddf401270cbc9b4e24c4532',
       indexName: 'vuefire',
       // algoliaOptions: { facetFilters: ['tags:guide,api'] },
+    },
+  },
+
+  markdown: {
+    extendMarkdown: (md) => {
+      md.use(container, 'miniwarn', {
+        render(tokens, idx) {
+          const token = tokens[idx]
+          // 8 === 'miniwarn'.length
+          const info = token.info.trim().slice(8).trim()
+
+          if (token.nesting === 1) {
+            // opening tag
+            return '<blockquote class="warning">' + info
+          } else {
+            // closing tag
+            return '</blockquote>\n'
+          }
+        },
+      })
     },
   },
 }

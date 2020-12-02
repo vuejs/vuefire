@@ -26,7 +26,7 @@
       <!-- the key forces recreation of the slot child instead of reusing it -->
       <keep-alive>
         <div class="tab-content" :key="selectedTab">
-          {{ selectedTab }}
+          <component :is="$slots.default()[selectedTab]" />
           <!-- <SlotSelector :slot="$slots.default[selectedTab]" /> -->
         </div>
       </keep-alive>
@@ -77,104 +77,115 @@ export default {
 }
 </script>
 
-<style scoped>
-/* $bgColor = #fff;
-$lightGray = #ddd; */
-
-::root {
+<style>
+:root {
   --bgColor: #fff;
   --lightGray: #ddd;
+
+  --code-bg-color-lighter: #3a404c;
+  --code-bg-color-lightest: #5f687b;
+}
+</style>
+
+<style>
+.tab-container > nav {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  height: 2.5rem;
 }
 
-.tab-container {
-  & > nav {
-    display: flex;
-    align-items: flex-end;
-    justify-content: flex-end;
-    height: 2.5rem;
+.tab-content [class^='language-'] {
+  margin-top: 0;
+}
 
-    @media (max-width: 419px) {
-      & {
-        margin: 0 -1.5rem -0.85rem;
-      }
-    }
-
-    & > button {
-      display: flex;
-      align-items: center;
-      height: 100%;
-      /* padding: 4.6rem 0.7rem 0; */
-      padding: 0 0.7rem;
-      margin: 0;
-      border: solid 1px $codeBgColor;
-      border-bottom: none;
-      background-color: lighten($codeBgColor, 10%);
-
-      &:not(:first-child) {
-        border-left: none;
-      }
-
-      &:not(:last-child) {
-        border-right: none;
-      }
-
-      &:first-child {
-        border-radius: 6px 0 0;
-      }
-
-      &:last-child {
-        border-radius: 0 6px 0 0;
-      }
-
-      & /deep/ svg {
-        width: 32px;
-        height: 32px;
-        /* margin-top: -3.5rem; */
-        fill: darken($bgColor, 10%);
-      }
-
-      &:not([disabled]):hover {
-        cursor: pointer;
-        background-color: lighten($codeBgColor, 30%);
-
-        & /deep/ svg {
-          fill: $bgColor;
-        }
-      }
-
-      &.is-selected:hover {
-        background-color: $codeBgColor;
-      }
-
-      &[disabled] {
-        border-color: lighten($codeBgColor, 60%);
-
-        & svg {
-          fill: lighten($codeBgColor, 60%);
-        }
-      }
-
-      &.is-selected {
-        background-color: $codeBgColor;
-
-        & svg {
-          fill: $bgColor;
-        }
-      }
-    }
+@media (max-width: 419px) {
+  .tab-container > nav {
+    margin: 0 -1.5rem 0;
   }
+}
 
-  .tab-content {
-    @media (min-width: 420px) {
-      & >>> div[class^='language-'] {
-        border-radius: 6px 0 6px 6px;
-      }
-    }
+.tab-container > nav > button {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  /* padding: 4.6rem 0.7rem 0; */
+  padding: 0 0.7rem;
+  margin: 0;
+  border: solid 1px var(--code-bg-color);
+  border-bottom: none;
+  /* filter: brightness(1.1); */
+  /* background-color: lighten(var(--code-bg-color), 10%); */
+  background-color: var(--code-bg-color-lighter);
+}
 
-    & >>> pre[class^='language'] {
-      margin-top: 0;
-      border-radius: 6px 0 6px 6px;
-    }
+.tab-container > nav > button svg {
+  width: 32px;
+  height: 32px;
+  /* margin-top: -3.5rem; */
+  fill: var(--bgColor);
+  /* filter: brightness(0.8); */
+}
+
+.tab-container > nav > button:not(:first-child) {
+  border-left: none;
+}
+
+.tab-container > nav > button:not(:last-child) {
+  border-right: none;
+}
+
+.tab-container > nav > button:first-child {
+  border-radius: 6px 0 0;
+}
+
+.tab-container > nav > button:last-child {
+  border-radius: 0 6px 0 0;
+}
+
+.tab-container > nav > button:not([disabled]):hover {
+  cursor: pointer;
+  /* background-color: lighten(var(--code-bg-color), 30%); */
+  background-color: var(--code-bg-color-lightest);
+  /* filter: brightness(1.3); */
+}
+
+.tab-container > nav > button:not([disabled]):hover svg {
+  fill: var(--bgColor);
+}
+
+.tab-container > nav > button.is-selected:hover {
+  filter: brightness(1);
+  background-color: var(--code-bg-color);
+}
+
+.tab-container>nav>button: [disabled] {
+  /* border-color: lighten(var(--code-bg-color), 60%); */
+  border-color: var(--code-bg-color);
+  /* filter: brightness(1.6); */
+}
+
+.tab-container > nav > button [disabled] svg {
+  fill: var(--code-bg-color);
+  /* filter: brightness(1.6); */
+}
+
+.tab-container > nav > button.is-selected {
+  background-color: var(--code-bg-color);
+}
+
+.tab-container > nav > button.is-selected svg {
+  fill: var(--bgColor);
+}
+
+@media (min-width: 420px) {
+  .tab-container .tab-content div[class^='language-'] {
+    border-radius: 6px 0 6px 6px;
   }
+}
+
+.tab-container .tab-content [class^='language'] {
+  margin-top: 0;
+  border-radius: 6px 0 6px 6px;
 }
 </style>
