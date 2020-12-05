@@ -2,7 +2,7 @@ import Vuex from 'vuex'
 import { vuexfireMutations, firestoreAction } from '../src'
 import { db, tick, Vue } from '@posva/vuefire-test-helpers'
 import { firestore } from 'firebase'
-import { FirestoreOptions } from '@posva/vuefire-core/dist/packages/@posva/vuefire-core/src'
+import { FirestoreOptions } from '@posva/vuefire-core'
 
 Vue.use(Vuex)
 
