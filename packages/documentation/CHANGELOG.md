@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.1.4](https://github.com/vuejs/vuefire/compare/documentation@2.1.3...documentation@2.1.4) (2020-12-07)
+
+**Note:** Version bump only for package documentation
+
+
+
+
+
 ## [2.1.3](https://github.com/vuejs/vuefire/compare/documentation@2.1.2...documentation@2.1.3) (2020-07-06)
 
 **Note:** Version bump only for package documentation

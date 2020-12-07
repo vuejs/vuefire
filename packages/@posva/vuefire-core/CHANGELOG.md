@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.3.4](https://github.com/vuejs/vuefire/compare/@posva/vuefire-core@2.3.3...@posva/vuefire-core@2.3.4) (2020-12-07)
+
+**Note:** Version bump only for package @posva/vuefire-core
+
+
+
+
+
 ## [2.3.3](https://github.com/vuejs/vuefire/compare/@posva/vuefire-core@2.3.2...@posva/vuefire-core@2.3.3) (2020-07-31)
 
 

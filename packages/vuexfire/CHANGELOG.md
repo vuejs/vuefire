@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.2.5](https://github.com/vuejs/vuefire/compare/vuexfire@3.2.4...vuexfire@3.2.5) (2020-12-07)
+
+
+### Bug Fixes
+
+* **types:** unbindFirestoreRef type ([#882](https://github.com/vuejs/vuefire/issues/882)) ([9178156](https://github.com/vuejs/vuefire/commit/91781569a0321b21238e317cdc3cca2faf29ec4e))
+
+
+
+
+
 ## [3.2.4](https://github.com/vuejs/vuefire/compare/vuexfire@3.2.3...vuexfire@3.2.4) (2020-07-31)
 
 **Note:** Version bump only for package vuexfire

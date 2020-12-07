@@ -1,6 +1,6 @@
 {
   "name": "@posva/vuefire-test-helpers",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "test helpers related to vue + firebase used by vuefire and vuexfire",
   "author": "Eduardo San Martin Morote <posva13@gmail.com>",
   "homepage": "https://github.com/vuejs/vuefire#readme",

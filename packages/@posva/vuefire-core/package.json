@@ -1,6 +1,6 @@
 {
   "name": "@posva/vuefire-core",
-  "version": "2.3.3",
+  "version": "2.3.4",
   "description": "Shared code for vue + Firebase apps used by vuefire and vuexfire",
   "author": "Eduardo San Martin Morote <posva13@gmail.com>",
   "homepage": "https://github.com/vuejs/vuefire#readme",
@@ -40,7 +40,7 @@
     "url": "https://github.com/vuejs/vuefire/issues"
   },
   "devDependencies": {
-    "@posva/vuefire-test-helpers": "^1.2.2"
+    "@posva/vuefire-test-helpers": "^1.2.3"
   },
   "gitHead": "e3e2df3624572cec86ed861f2472df4d143f2265"
 }
