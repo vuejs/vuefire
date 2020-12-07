@@ -6,7 +6,7 @@ import {
   RTDBOptions,
   rtdbOptions,
 } from '@posva/vuefire-core'
-import { database } from 'firebase'
+import firebase from 'firebase/app'
 import { CommitFunction } from './shared'
 
 import { Action, ActionContext } from 'vuex'
@@ -20,9 +20,9 @@ const subscriptions = new WeakMap()
 interface FirebaseActionContext<S, R> extends ActionContext<S, R> {
   bindFirebaseRef(
     key: string,
-    reference: database.Reference | database.Query,
+    reference: firebase.database.Reference | firebase.database.Query,
     options?: RTDBOptions
-  ): Promise<database.DataSnapshot>
+  ): Promise<firebase.database.DataSnapshot>
   unbindFirebaseRef(key: string, reset?: RTDBOptions['reset']): void
 }
 
@@ -30,10 +30,10 @@ function bind(
   state: Record<string, any>,
   commit: CommitFunction,
   key: string,
-  ref: database.Reference | database.Query,
+  ref: firebase.database.Reference | firebase.database.Query,
   ops: OperationsType,
   options: RTDBOptions
-): Promise<database.DataSnapshot> {
+): Promise<firebase.database.DataSnapshot> {
   // TODO check ref is valid
   // TODO check defined in state
   let sub = subscriptions.get(commit)
@@ -116,7 +116,7 @@ export function firebaseAction<S, R>(
         ...context,
         bindFirebaseRef: (
           key: string,
-          ref: database.Reference | database.Query,
+          ref: firebase.database.Reference | firebase.database.Query,
           options?: RTDBOptions
         ) => bind(state, commit, key, ref, ops, Object.assign({}, rtdbOptions, options)),
         unbindFirebaseRef: (key: string, reset?: RTDBOptions['reset']) =>

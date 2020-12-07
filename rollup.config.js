@@ -51,7 +51,7 @@ function createEntry(
       }),
       alias({
         resolve: ['.ts', '.js'],
-        entries: [{ find: 'firebase', replacement: path.join(__dirname, './stub') }],
+        entries: [{ find: 'firebase/app', replacement: path.join(__dirname, './stub') }],
       }),
     ],
     output: {

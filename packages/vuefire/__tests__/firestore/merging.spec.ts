@@ -1,6 +1,5 @@
 import { firestorePlugin } from '../../src'
 import { db, Vue } from '@posva/vuefire-test-helpers'
-import { firestore } from 'firebase'
 
 Vue.use(firestorePlugin)
 

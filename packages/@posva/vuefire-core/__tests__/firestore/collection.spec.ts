@@ -1,10 +1,10 @@
 import { bindCollection } from '../../src'
 import { db, createOps, spyUnbind } from '@posva/vuefire-test-helpers'
-import { firestore } from 'firebase'
+import firebase from 'firebase/app'
 import { OperationsType } from '../../src/shared'
 
 describe('collections', () => {
-  let collection: firestore.CollectionReference,
+  let collection: firebase.firestore.CollectionReference,
     vm: Record<string, any>,
     resolve: (data: any) => void,
     reject: (error: any) => void,

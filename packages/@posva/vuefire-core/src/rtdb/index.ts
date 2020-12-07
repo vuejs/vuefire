@@ -1,4 +1,4 @@
-import { database } from 'firebase'
+import firebase from 'firebase/app'
 import { createRecordFromRTDBSnapshot, indexForKey, RTDBSerializer } from './utils'
 import { OperationsType, ResetOption } from '../shared'
 
@@ -27,7 +27,7 @@ interface CommonBindOptionsParameter {
 // TODO: refactor using normal arguments instead of an array to improve size
 
 interface BindAsObjectParameter extends CommonBindOptionsParameter {
-  document: database.Reference | database.Query
+  document: firebase.database.Reference | firebase.database.Query
 }
 
 /**
@@ -60,7 +60,7 @@ export function rtdbBindAsObject(
 }
 
 interface BindAsArrayParameter extends CommonBindOptionsParameter {
-  collection: database.Reference | database.Query
+  collection: firebase.database.Reference | firebase.database.Query
 }
 
 /**

@@ -1,7 +1,8 @@
 import Vuex from 'vuex'
 import { firebaseAction, vuexfireMutations } from '../src'
 import { MockFirebase, tick, Vue } from '@posva/vuefire-test-helpers'
-import { database } from 'firebase'
+import firebase from 'firebase/app'
+
 import { RTDBOptions } from '@posva/vuefire-core/dist/packages/@posva/vuefire-core/src'
 
 Vue.use(Vuex)
@@ -37,14 +38,14 @@ describe('RTDB: firebaseAction', () => {
     },
   })
 
-  const setItems = (query: database.Query, options?: RTDBOptions) =>
+  const setItems = (query: firebase.database.Query, options?: RTDBOptions) =>
     // @ts-ignore
     store.dispatch('action', ({ bindFirebaseRef }) => bindFirebaseRef('items', query, options))
-  const setItem = (ref: database.Reference, options?: RTDBOptions) =>
+  const setItem = (ref: firebase.database.Reference, options?: RTDBOptions) =>
     // @ts-ignore
     store.dispatch('action', ({ bindFirebaseRef }) => bindFirebaseRef('item', ref, options))
 
-  let collection: database.Reference, document: database.Reference
+  let collection: firebase.database.Reference, document: firebase.database.Reference
   beforeEach(async () => {
     store.replaceState({
       items: [],

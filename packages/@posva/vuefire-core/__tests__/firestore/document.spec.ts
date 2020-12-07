@@ -1,11 +1,11 @@
 import { bindDocument } from '../../src'
 import { db, spyUnbind, createOps } from '@posva/vuefire-test-helpers'
-import { firestore } from 'firebase'
+import firebase from 'firebase/app'
 import { OperationsType } from '../../src/shared'
 
 describe('documents', () => {
-  let collection: firestore.CollectionReference,
-    document: firestore.DocumentReference,
+  let collection: firebase.firestore.CollectionReference,
+    document: firebase.firestore.DocumentReference,
     vm: Record<string, any>,
     resolve: (data: any) => void,
     reject: (error: any) => void,

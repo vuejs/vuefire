@@ -6,7 +6,7 @@ import {
   FirestoreOptions,
   OperationsType,
 } from '@posva/vuefire-core'
-import { firestore } from 'firebase'
+import firebase from 'firebase/app'
 import Vue, { PluginFunction } from 'vue'
 
 const ops: OperationsType = {
@@ -18,7 +18,10 @@ const ops: OperationsType = {
 function bind(
   vm: Record<string, any>,
   key: string,
-  ref: firestore.CollectionReference | firestore.Query | firestore.DocumentReference,
+  ref:
+    | firebase.firestore.CollectionReference
+    | firebase.firestore.Query
+    | firebase.firestore.DocumentReference,
   ops: OperationsType,
   options: FirestoreOptions
 ) {
@@ -74,20 +77,20 @@ declare module 'vue/types/vue' {
   interface Vue {
     $bind(
       name: string,
-      reference: firestore.Query | firestore.CollectionReference,
+      reference: firebase.firestore.Query | firebase.firestore.CollectionReference,
       options?: FirestoreOptions
-    ): Promise<firestore.DocumentData[]>
+    ): Promise<firebase.firestore.DocumentData[]>
     $bind(
       name: string,
-      reference: firestore.DocumentReference,
+      reference: firebase.firestore.DocumentReference,
       options?: FirestoreOptions
-    ): Promise<firestore.DocumentData>
+    ): Promise<firebase.firestore.DocumentData>
     $unbind: (name: string, reset?: FirestoreOptions['reset']) => void
     $firestoreRefs: Readonly<
-      Record<string, firestore.DocumentReference | firestore.CollectionReference>
+      Record<string, firebase.firestore.DocumentReference | firebase.firestore.CollectionReference>
     >
     // _firestoreSources: Readonly<
-    //   Record<string, firestore.CollectionReference | firestore.Query | firestore.DocumentReference>
+    //   Record<string, firebase.firestore.CollectionReference | firebase.firestore.Query | firebase.firestore.DocumentReference>
     // >
     _firestoreUnbinds: Readonly<
       Record<string, ReturnType<typeof bindCollection | typeof bindDocument>>
@@ -97,7 +100,9 @@ declare module 'vue/types/vue' {
 
 type VueFirestoreObject = Record<
   string,
-  firestore.DocumentReference | firestore.Query | firestore.CollectionReference
+  | firebase.firestore.DocumentReference
+  | firebase.firestore.Query
+  | firebase.firestore.CollectionReference
 >
 type FirestoreOption<V> = VueFirestoreObject | ((this: V) => VueFirestoreObject)
 
@@ -129,7 +134,10 @@ export const firestorePlugin: PluginFunction<PluginOptions> = function firestore
   Vue.prototype[bindName] = function firestoreBind(
     this: Vue,
     key: string,
-    ref: firestore.Query | firestore.CollectionReference | firestore.DocumentReference,
+    ref:
+      | firebase.firestore.Query
+      | firebase.firestore.CollectionReference
+      | firebase.firestore.DocumentReference,
     userOptions?: FirestoreOptions
   ) {
     const options = Object.assign({}, globalOptions, userOptions)
@@ -158,6 +166,7 @@ export const firestorePlugin: PluginFunction<PluginOptions> = function firestore
       const refs = typeof firestore === 'function' ? firestore.call(this) : firestore
       if (!refs) return
       for (const key in refs) {
+        // @ts-ignore
         this[bindName as keyof Vue](key, refs[key], globalOptions)
       }
     },

@@ -6,16 +6,18 @@ import {
   walkSet,
   OperationsType,
 } from '@posva/vuefire-core'
-import { database } from 'firebase'
+import firebase from 'firebase/app'
 import Vue, { PluginFunction } from 'vue'
 
 /**
  * Returns the original reference of a Firebase reference or query across SDK versions.
  *
- * @param {firebase.database.Reference|firebase.database.Query} refOrQuery
- * @return {firebase.database.Reference}
+ * @param {firebase.firebase.database.Reference|firebase.firebase.database.Query} refOrQuery
+ * @return {firebase.firebase.database.Reference}
  */
-function getRef(refOrQuery: database.Reference | database.Query): database.Reference {
+function getRef(
+  refOrQuery: firebase.database.Reference | firebase.database.Query
+): firebase.database.Reference {
   return refOrQuery.ref
 }
 
@@ -28,7 +30,7 @@ const ops: OperationsType = {
 function bind(
   vm: Record<string, any>,
   key: string,
-  source: database.Query | database.Reference,
+  source: firebase.database.Query | firebase.database.Reference,
   options: RTDBOptions
 ) {
   return new Promise((resolve, reject) => {
@@ -89,17 +91,19 @@ declare module 'vue/types/vue' {
   interface Vue {
     $rtdbBind(
       name: string,
-      reference: database.Reference | database.Query,
+      reference: firebase.database.Reference | firebase.database.Query,
       options?: RTDBOptions
-    ): Promise<database.DataSnapshot>
+    ): Promise<firebase.database.DataSnapshot>
     $rtdbUnbind: (name: string, reset?: RTDBOptions['reset']) => void
-    $firebaseRefs: Readonly<Record<string, database.Reference>>
-    _firebaseSources: Readonly<Record<string, database.Reference | database.Query>>
+    $firebaseRefs: Readonly<Record<string, firebase.database.Reference>>
+    _firebaseSources: Readonly<
+      Record<string, firebase.database.Reference | firebase.database.Query>
+    >
     _firebaseUnbinds: Readonly<Record<string, ReturnType<typeof bindAsArray | typeof bindAsObject>>>
   }
 }
 
-type VueFirebaseObject = Record<string, database.Query | database.Reference>
+type VueFirebaseObject = Record<string, firebase.database.Query | firebase.database.Reference>
 type FirebaseOption<V> = VueFirebaseObject | ((this: V) => VueFirebaseObject)
 
 declare module 'vue/types/options' {
@@ -126,7 +130,7 @@ export const rtdbPlugin: PluginFunction<PluginOptions> = function rtdbPlugin(
   Vue.prototype[bindName] = function rtdbBind(
     this: Vue,
     key: string,
-    source: database.Reference | database.Query,
+    source: firebase.database.Reference | firebase.database.Query,
     userOptions?: RTDBOptions
   ) {
     const options = Object.assign({}, globalOptions, userOptions)

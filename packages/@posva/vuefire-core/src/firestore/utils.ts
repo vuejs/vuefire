@@ -1,13 +1,13 @@
-import { firestore } from 'firebase'
+import firebase from 'firebase/app'
 import { isTimestamp, isObject, isDocumentRef, TODO } from '../shared'
 
 export type FirestoreReference =
-  | firestore.Query
-  | firestore.DocumentReference
-  | firestore.CollectionReference
+  | firebase.firestore.Query
+  | firebase.firestore.DocumentReference
+  | firebase.firestore.CollectionReference
 
 // TODO: fix type not to be any
-export function createSnapshot(doc: firestore.DocumentSnapshot): TODO {
+export function createSnapshot(doc: firebase.firestore.DocumentSnapshot): TODO {
   // TODO: it should create a deep copy instead because otherwise we will modify internal data
   // defaults everything to false, so no need to set
   return Object.defineProperty(doc.data() || {}, 'id', { value: doc.id })
@@ -16,26 +16,26 @@ export function createSnapshot(doc: firestore.DocumentSnapshot): TODO {
 export type FirestoreSerializer = typeof createSnapshot
 
 export function extractRefs(
-  doc: firestore.DocumentData,
-  oldDoc: firestore.DocumentData | void,
-  subs: Record<string, { path: string; data: () => firestore.DocumentData | null }>
-): [firestore.DocumentData, Record<string, firestore.DocumentReference>] {
-  const dataAndRefs: [firestore.DocumentData, Record<string, firestore.DocumentReference>] = [
-    {},
-    {},
-  ]
+  doc: firebase.firestore.DocumentData,
+  oldDoc: firebase.firestore.DocumentData | void,
+  subs: Record<string, { path: string; data: () => firebase.firestore.DocumentData | null }>
+): [firebase.firestore.DocumentData, Record<string, firebase.firestore.DocumentReference>] {
+  const dataAndRefs: [
+    firebase.firestore.DocumentData,
+    Record<string, firebase.firestore.DocumentReference>
+  ] = [{}, {}]
 
   const subsByPath = Object.keys(subs).reduce((resultSubs, subKey) => {
     const sub = subs[subKey]
     resultSubs[sub.path] = sub.data()
     return resultSubs
-  }, {} as Record<string, firestore.DocumentData | null>)
+  }, {} as Record<string, firebase.firestore.DocumentData | null>)
 
   function recursiveExtract(
-    doc: firestore.DocumentData,
-    oldDoc: firestore.DocumentData | void,
+    doc: firebase.firestore.DocumentData,
+    oldDoc: firebase.firestore.DocumentData | void,
     path: string,
-    result: [firestore.DocumentData, Record<string, firestore.DocumentReference>]
+    result: [firebase.firestore.DocumentData, Record<string, firebase.firestore.DocumentReference>]
   ): void {
     // make it easier to later on access the value
     oldDoc = oldDoc || {}

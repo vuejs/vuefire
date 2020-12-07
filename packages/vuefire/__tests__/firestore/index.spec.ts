@@ -1,13 +1,13 @@
 import { firestorePlugin } from '../../src'
 import { db, tick, Vue } from '@posva/vuefire-test-helpers'
-import { firestore } from 'firebase'
+import firebase from 'firebase/app'
 import { CombinedVueInstance } from 'vue/types/vue'
 
 Vue.use(firestorePlugin)
 
 describe('Firestore: firestore option', () => {
-  let collection: firestore.CollectionReference,
-    document: firestore.DocumentReference,
+  let collection: firebase.firestore.CollectionReference,
+    document: firebase.firestore.DocumentReference,
     vm: CombinedVueInstance<Vue, { items: any[]; item: any }, object, object, Record<never, any>>
   beforeEach(async () => {
     // @ts-ignore

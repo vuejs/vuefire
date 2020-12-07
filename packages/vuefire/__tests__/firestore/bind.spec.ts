@@ -1,13 +1,13 @@
 import { firestorePlugin } from '../../src'
 import { db, tick, delayUpdate, Vue } from '@posva/vuefire-test-helpers'
-import { firestore } from 'firebase'
+import firebase from 'firebase/app'
 import { CombinedVueInstance } from 'vue/types/vue'
 
 Vue.use(firestorePlugin)
 
 describe('Firestore: binding', () => {
-  let collection: firestore.CollectionReference,
-    document: firestore.DocumentReference,
+  let collection: firebase.firestore.CollectionReference,
+    document: firebase.firestore.DocumentReference,
     vm: CombinedVueInstance<Vue, { items: any[]; item: any }, object, object, Record<never, any>>
   beforeEach(async () => {
     // @ts-ignore
@@ -59,7 +59,7 @@ describe('Firestore: binding', () => {
   it('unbinds previously bound refs', async () => {
     await document.update({ foo: 'foo' })
     // @ts-ignore
-    const doc2: firestore.DocumentReference = db.collection().doc()
+    const doc2: firebase.firestore.DocumentReference = db.collection().doc()
     await doc2.update({ bar: 'bar' })
     await vm.$bind('item', document)
     expect(vm.$firestoreRefs.item).toBe(document)
@@ -74,7 +74,7 @@ describe('Firestore: binding', () => {
   it('waits for all refs in document', async () => {
     const a = db.collection().doc()
     // @ts-ignore
-    const b: firestore.DocumentReference = db.collection().doc()
+    const b: firebase.firestore.DocumentReference = db.collection().doc()
     delayUpdate(b)
     await document.update({ a, b })
 
@@ -89,7 +89,7 @@ describe('Firestore: binding', () => {
   test('waits for all refs in document with interrupting by new ref', async () => {
     const a = db.collection().doc()
     // @ts-ignore
-    const b: firestore.DocumentReference = db.collection().doc()
+    const b: firebase.firestore.DocumentReference = db.collection().doc()
     const c = db.collection().doc()
     delayUpdate(b)
     await document.update({ a, b })
@@ -110,7 +110,7 @@ describe('Firestore: binding', () => {
   it('waits for all refs in collection', async () => {
     const a = db.collection().doc()
     // @ts-ignore
-    const b: firestore.DocumentReference = db.collection().doc()
+    const b: firebase.firestore.DocumentReference = db.collection().doc()
     delayUpdate(b)
     await collection.add({ a })
     await collection.add({ b })
@@ -123,9 +123,9 @@ describe('Firestore: binding', () => {
   it('waits for nested refs in document', async () => {
     const a = db.collection().doc()
     // @ts-ignore
-    const b: firestore.DocumentReference = db.collection().doc()
+    const b: firebase.firestore.DocumentReference = db.collection().doc()
     // @ts-ignore
-    const c: firestore.DocumentReference = db.collection().doc()
+    const c: firebase.firestore.DocumentReference = db.collection().doc()
     await b.update({ c })
     delayUpdate(b)
     delayUpdate(c, 5)
@@ -142,9 +142,9 @@ describe('Firestore: binding', () => {
   it('waits for nested refs with data in document', async () => {
     const a = db.collection().doc()
     // @ts-ignore
-    const b: firestore.DocumentReference = db.collection().doc()
+    const b: firebase.firestore.DocumentReference = db.collection().doc()
     // @ts-ignore
-    const c: firestore.DocumentReference = db.collection().doc()
+    const c: firebase.firestore.DocumentReference = db.collection().doc()
     await a.update({ isA: true })
     await c.update({ isC: true })
     await b.update({ c })
@@ -163,9 +163,9 @@ describe('Firestore: binding', () => {
   it('waits for nested refs in collections', async () => {
     const a = db.collection().doc()
     // @ts-ignore
-    const b: firestore.DocumentReference = db.collection().doc()
+    const b: firebase.firestore.DocumentReference = db.collection().doc()
     // @ts-ignore
-    const c: firestore.DocumentReference = db.collection().doc()
+    const c: firebase.firestore.DocumentReference = db.collection().doc()
     await b.update({ c })
     delayUpdate(b)
     delayUpdate(c, 5)
@@ -180,9 +180,9 @@ describe('Firestore: binding', () => {
   it('waits for nested refs with data in collections', async () => {
     const a = db.collection().doc()
     // @ts-ignore
-    const b: firestore.DocumentReference = db.collection().doc()
+    const b: firebase.firestore.DocumentReference = db.collection().doc()
     // @ts-ignore
-    const c: firestore.DocumentReference = db.collection().doc()
+    const c: firebase.firestore.DocumentReference = db.collection().doc()
     await a.update({ isA: true })
     await c.update({ isC: true })
     await b.update({ c })
@@ -199,7 +199,7 @@ describe('Firestore: binding', () => {
   it('can customize the reset option through $bind', async () => {
     await document.update({ foo: 'foo' })
     // @ts-ignore
-    const doc2: firestore.DocumentReference = db.collection().doc()
+    const doc2: firebase.firestore.DocumentReference = db.collection().doc()
     await doc2.update({ bar: 'bar' })
     await vm.$bind('item', document)
     expect(vm.item).toEqual({ foo: 'foo' })
@@ -214,7 +214,7 @@ describe('Firestore: binding', () => {
   it('can customize the reset option through $unbind', async () => {
     await document.update({ foo: 'foo' })
     // @ts-ignore
-    const doc2: firestore.DocumentReference = db.collection().doc()
+    const doc2: firebase.firestore.DocumentReference = db.collection().doc()
     await doc2.update({ bar: 'bar' })
     await vm.$bind('item', document)
     vm.$unbind('item', false)
@@ -229,7 +229,7 @@ describe('Firestore: binding', () => {
     await collection.add({ foo: 'foo' })
     await vm.$bind('items', collection)
     // @ts-ignore
-    const col2: firestore.CollectionReference = db.collection()
+    const col2: firebase.firestore.CollectionReference = db.collection()
     await col2.add({ bar: 'bar' })
     const p = vm.$bind('items', col2, { wait: true, reset: true })
     expect(vm.items).toEqual([{ foo: 'foo' }])
@@ -241,7 +241,7 @@ describe('Firestore: binding', () => {
     await collection.add({ foo: 'foo' })
     await vm.$bind('items', collection)
     // @ts-ignore
-    const col2: firestore.CollectionReference = db.collection()
+    const col2: firebase.firestore.CollectionReference = db.collection()
     await col2.add({ bar: 'bar' })
     const p = vm.$bind('items', col2, { wait: true, reset: () => ['foo'] })
     expect(vm.items).toEqual(['foo'])

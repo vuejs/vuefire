@@ -7,7 +7,7 @@ import {
   firestoreOptions,
 } from '@posva/vuefire-core'
 import { CommitFunction } from './shared'
-import { firestore } from 'firebase'
+import firebase from 'firebase/app'
 import { ActionContext, Action } from 'vuex'
 
 const commitOptions = { root: true }
@@ -21,26 +21,29 @@ function bind(
   state: Record<string, any>,
   commit: CommitFunction,
   key: string,
-  ref: firestore.Query | firestore.CollectionReference,
+  ref: firebase.firestore.Query | firebase.firestore.CollectionReference,
   ops: OperationsType,
   options: FirestoreOptions
-): Promise<firestore.DocumentData[]>
+): Promise<firebase.firestore.DocumentData[]>
 function bind(
   state: Record<string, any>,
   commit: CommitFunction,
   key: string,
-  ref: firestore.DocumentReference,
+  ref: firebase.firestore.DocumentReference,
   ops: OperationsType,
   options: FirestoreOptions
-): Promise<firestore.DocumentData>
+): Promise<firebase.firestore.DocumentData>
 function bind(
   state: Record<string, any>,
   commit: CommitFunction,
   key: string,
-  ref: firestore.DocumentReference | firestore.Query | firestore.CollectionReference,
+  ref:
+    | firebase.firestore.DocumentReference
+    | firebase.firestore.Query
+    | firebase.firestore.CollectionReference,
   ops: OperationsType,
   options: FirestoreOptions
-): Promise<firestore.DocumentData> | Promise<firestore.DocumentData[]> {
+): Promise<firebase.firestore.DocumentData> | Promise<firebase.firestore.DocumentData[]> {
   // TODO: check ref is valid warning
   // TODO: check defined in state warning
   let sub = subscriptions.get(commit)
@@ -97,14 +100,14 @@ function unbind(commit: CommitFunction, key: string, reset?: FirestoreOptions['r
 interface FirestoreActionContext<S, R> extends ActionContext<S, R> {
   bindFirestoreRef(
     key: string,
-    ref: firestore.Query | firestore.CollectionReference,
+    ref: firebase.firestore.Query | firebase.firestore.CollectionReference,
     options?: FirestoreOptions
-  ): Promise<firestore.DocumentData[]>
+  ): Promise<firebase.firestore.DocumentData[]>
   bindFirestoreRef(
     key: string,
-    ref: firestore.DocumentReference,
+    ref: firebase.firestore.DocumentReference,
     options?: FirestoreOptions
-  ): Promise<firestore.DocumentData>
+  ): Promise<firebase.firestore.DocumentData>
   unbindFirestoreRef(key: string, reset?: FirestoreOptions['reset']): void
 }
 
@@ -142,7 +145,10 @@ export function firestoreAction<S, R>(
         ...context,
         bindFirestoreRef: (
           key: string,
-          ref: firestore.DocumentReference | firestore.Query | firestore.CollectionReference,
+          ref:
+            | firebase.firestore.DocumentReference
+            | firebase.firestore.Query
+            | firebase.firestore.CollectionReference,
           options?: FirestoreOptions
         ) =>
           bind(
