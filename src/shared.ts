@@ -1,12 +1,8 @@
-import { firestore } from 'firebase'
+import * as firestore from '@firebase/firestore-types'
 
 export interface OperationsType {
   set: (target: Record<string, any>, key: string | number, value: any) => any
-  add: (
-    array: any[],
-    index: number,
-    data: firebase.firestore.DocumentData
-  ) => any
+  add: (array: any[], index: number, data: firestore.DocumentData) => any
   remove: (array: any[], index: number) => any
 }
 

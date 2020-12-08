@@ -4,7 +4,7 @@ import {
   bindCollection,
 } from '../../../src/core'
 import { db, createOps } from '../../src'
-import { firestore } from 'firebase'
+import * as firestore from '@firebase/firestore-types'
 import { Ref, ref } from 'vue'
 
 describe('options', () => {
@@ -32,7 +32,8 @@ describe('options', () => {
       bindDocument(target, document, ops, resolve, reject, { serialize: spy })
     })
     expect(spy).toHaveBeenCalledTimes(1)
-    expect(spy).toBeCalledWith(
+    expect(spy).toHaveBeenCalledWith(
+      // @ts-ignore WTF TS?????
       expect.objectContaining({ data: expect.any(Function) })
     )
     expect(target.value).toEqual({ bar: 'foo' })
@@ -49,6 +50,7 @@ describe('options', () => {
     })
     expect(spy).toHaveBeenCalledTimes(1)
     expect(spy).toBeCalledWith(
+      // @ts-ignore WTF TS?????
       expect.objectContaining({ data: expect.any(Function) })
     )
     expect(target.value).toEqual([{ bar: 'foo' }])
@@ -65,6 +67,7 @@ describe('options', () => {
     })
     expect(spy).toHaveBeenCalledTimes(1)
     expect(spy).toBeCalledWith(
+      // @ts-ignore WTF TS?????
       expect.objectContaining({ data: expect.any(Function) })
     )
     expect(target.value).toEqual({ bar: 'foo' })
@@ -83,6 +86,7 @@ describe('options', () => {
     })
     expect(spy).toHaveBeenCalledTimes(1)
     expect(spy).toBeCalledWith(
+      // @ts-ignore WTF TS?????
       expect.objectContaining({ data: expect.any(Function) })
     )
     expect(target.value).toEqual([{ bar: 'foo' }])

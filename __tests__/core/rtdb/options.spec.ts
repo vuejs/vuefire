@@ -41,6 +41,7 @@ describe('RTDB options', () => {
 
     expect(spy).toHaveBeenCalledTimes(2)
     expect(spy).toHaveBeenLastCalledWith(
+      // @ts-ignore WTF TS?????
       expect.objectContaining({ val: expect.any(Function) })
     )
     expect(target.value).toEqual({ bar: 'foo' })
@@ -66,6 +67,7 @@ describe('RTDB options', () => {
 
     expect(spy).toHaveBeenCalledTimes(1)
     expect(spy).toBeCalledWith(
+      // @ts-ignore WTF TS?????
       expect.objectContaining({ val: expect.any(Function) })
     )
     expect(target.value).toEqual([{ bar: 'foo' }])
@@ -93,6 +95,7 @@ describe('RTDB options', () => {
 
     expect(spy).toHaveBeenCalledTimes(2)
     expect(spy).toBeCalledWith(
+      // @ts-ignore WTF TS?????
       expect.objectContaining({ val: expect.any(Function) })
     )
     expect(target.value).toEqual({ bar: 'foo' })
@@ -122,6 +125,7 @@ describe('RTDB options', () => {
 
     expect(spy).toHaveBeenCalledTimes(1)
     expect(spy).toBeCalledWith(
+      // @ts-ignore WTF TS?????
       expect.objectContaining({ val: expect.any(Function) })
     )
     expect(target.value).toEqual([{ bar: 'foo' }])

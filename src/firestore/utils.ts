@@ -1,4 +1,4 @@
-import { firestore } from 'firebase'
+import * as firestore from '@firebase/firestore-types'
 import { isTimestamp, isObject, isDocumentRef, TODO } from '../shared'
 
 export type FirestoreReference =

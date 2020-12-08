@@ -50,6 +50,7 @@ describe('RTDB: plugin options', () => {
 
     expect(pluginOptions.serialize).toHaveBeenCalledTimes(1)
     expect(pluginOptions.serialize).toHaveBeenCalledWith(
+      // @ts-ignore WTF TS?????
       expect.objectContaining({ val: expect.any(Function) })
     )
     expect(vm.items).toEqual([{ foo: 'bar' }])
@@ -84,6 +85,7 @@ describe('RTDB: plugin options', () => {
     expect(pluginOptions.serialize).not.toHaveBeenCalled()
     expect(spy).toHaveBeenCalledTimes(1)
     expect(spy).toHaveBeenCalledWith(
+      // @ts-ignore WTF TS?????
       expect.objectContaining({ val: expect.any(Function) })
     )
     expect(vm.items).toEqual([{ bar: 'bar' }])

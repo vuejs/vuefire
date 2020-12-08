@@ -6,7 +6,7 @@ import {
   FirestoreOptions,
   OperationsType,
 } from '../core'
-import { firestore } from 'firebase'
+import * as firestore from '@firebase/firestore-types'
 import {
   App,
   ComponentPublicInstance,

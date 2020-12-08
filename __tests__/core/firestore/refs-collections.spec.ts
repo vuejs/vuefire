@@ -1,7 +1,7 @@
 import { bindCollection, FirestoreOptions } from '../../../src/core'
 import { db, delay, spyUnbind, delayUpdate, createOps } from '../../src'
 import { OperationsType } from '../../../src/shared'
-import { firestore } from 'firebase'
+import * as firestore from '@firebase/firestore-types'
 import { ref } from 'vue'
 
 const buildRefs = () => ({

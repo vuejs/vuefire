@@ -4,7 +4,7 @@ declare var __BROWSER__: boolean
 declare var __CI__: boolean
 
 declare module 'firebase-mock' {
-  import { database } from 'firebase'
+  import * as database from '@firebase/database-types'
 
   type TODO = any
 

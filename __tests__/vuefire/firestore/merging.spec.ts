@@ -1,6 +1,6 @@
 import { firestorePlugin } from '../../../src'
 import { db } from '../../src'
-import { firestore } from 'firebase'
+import * as firestore from '@firebase/firestore-types'
 import { mount } from '@vue/test-utils'
 
 // FIXME: implement merging strategies

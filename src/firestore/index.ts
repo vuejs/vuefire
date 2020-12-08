@@ -1,6 +1,6 @@
 import { createSnapshot, extractRefs, FirestoreSerializer } from './utils'
 import { walkGet, callOnceWithArg, OperationsType } from '../shared'
-import { firestore } from 'firebase'
+import * as firestore from '@firebase/firestore-types'
 import { ref, Ref, unref } from 'vue-demi'
 
 export interface FirestoreOptions {

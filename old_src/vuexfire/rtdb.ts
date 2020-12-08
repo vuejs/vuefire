@@ -10,7 +10,7 @@ import {
   RTDBOptions,
   rtdbOptions,
 } from '../core'
-import { database } from 'firebase'
+import * as database from '@firebase/database-types'
 import { CommitFunction } from './shared'
 
 import { Action, ActionContext } from 'vuex'

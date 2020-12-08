@@ -1,4 +1,4 @@
-import { database } from 'firebase'
+import * as database from '@firebase/database-types'
 import {
   createRecordFromRTDBSnapshot,
   indexForKey,

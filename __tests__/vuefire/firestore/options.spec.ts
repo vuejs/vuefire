@@ -1,7 +1,7 @@
 import { firestorePlugin } from '../../../src'
 import { db } from '../../src'
 import { mount } from '@vue/test-utils'
-import { firestore } from 'firebase'
+import * as firestore from '@firebase/firestore-types'
 import { defineComponent } from 'vue'
 
 const component = defineComponent({ template: 'no' })
@@ -49,6 +49,7 @@ describe('Firestore: plugin options', () => {
 
     expect(pluginOptions.serialize).toHaveBeenCalledTimes(1)
     expect(pluginOptions.serialize).toHaveBeenCalledWith(
+      // @ts-ignore WTF TS?????
       expect.objectContaining({ data: expect.any(Function) })
     )
     expect(wrapper.vm.items).toEqual([{ foo: 'bar' }])
@@ -81,6 +82,7 @@ describe('Firestore: plugin options', () => {
     expect(pluginOptions.serialize).not.toHaveBeenCalled()
     expect(spy).toHaveBeenCalledTimes(1)
     expect(spy).toHaveBeenCalledWith(
+      // @ts-ignore WTF TS?????
       expect.objectContaining({ data: expect.any(Function) })
     )
     expect(wrapper.vm.items).toEqual([{ bar: 'bar' }])

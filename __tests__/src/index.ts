@@ -1,6 +1,6 @@
 import { nextTick } from 'vue-demi'
 import { MockFirebase, MockedReference } from 'firebase-mock'
-import { firestore } from 'firebase'
+import * as firestore from '@firebase/firestore-types'
 import { walkSet } from '../../src/core'
 
 // Vue.config.productionTip = false

@@ -6,7 +6,7 @@ import {
   walkSet,
   OperationsType,
 } from '../core'
-import { database } from 'firebase'
+import * as database from '@firebase/database-types'
 import {
   ComponentPublicInstance,
   App,

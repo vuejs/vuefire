@@ -1,6 +1,6 @@
 import { bindCollection } from '../../../src/core'
 import { db, createOps, spyUnbind } from '../../src'
-import { firestore } from 'firebase'
+import * as firestore from '@firebase/firestore-types'
 import { OperationsType } from '../../../src/core'
 import { ref, Ref } from 'vue'
 

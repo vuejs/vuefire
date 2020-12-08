@@ -1,6 +1,6 @@
 import { bindDocument } from '../../../src/core'
 import { db, spyUnbind, createOps } from '../../src'
-import { firestore } from 'firebase'
+import * as firestore from '@firebase/firestore-types'
 import { OperationsType } from '../../../src/shared'
 import { ref, Ref } from 'vue'
 

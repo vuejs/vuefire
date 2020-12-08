@@ -1,6 +1,6 @@
 import { firestorePlugin } from '../../../src'
 import { db, tick, delayUpdate } from '../../src'
-import { firestore } from 'firebase'
+import * as firestore from '@firebase/firestore-types'
 import { ComponentPublicInstance } from 'vue'
 import { mount, VueWrapper } from '@vue/test-utils'
 
