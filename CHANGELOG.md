@@ -1,3 +1,7 @@
+# [3.0.0-alpha.2](https://github.com/posva/vuefire/compare/v3.0.0-alpha.1...v3.0.0-alpha.2) (2020-12-08)
+
+- Support for Firebase 8
+
 # [3.0.0-alpha.1](https://github.com/posva/vuefire/compare/v3.0.0-alpha.0...v3.0.0-alpha.1) (2020-12-01)
 
 ### Bug Fixes
