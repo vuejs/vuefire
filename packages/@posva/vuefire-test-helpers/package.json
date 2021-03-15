@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "firebase-mock": "^2.2.10",
-    "vue": "^2.6.11"
+    "vue": "3.0.7"
   },
   "gitHead": "e3e2df3624572cec86ed861f2472df4d143f2265"
 }
