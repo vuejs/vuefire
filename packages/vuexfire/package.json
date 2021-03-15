@@ -1,7 +1,7 @@
 {
-  "name": "vuexfire",
+  "name": "@xquick-code/vuexfire",
   "version": "3.2.5",
-  "description": "Firestore binding for Vuex",
+  "description": "Fork of vuexfire package - supports vuex@4 and vue@3",
   "main": "dist/vuexfire.common.js",
   "module": "dist/vuexfire.esm.js",
   "unpkg": "dist/vuexfire.js",
@@ -11,6 +11,7 @@
   "files": [
     "src",
     "dist",
+    "package.json",
     "LICENSE"
   ],
   "scripts": {
