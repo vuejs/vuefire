@@ -266,13 +266,15 @@ export function bind(
     | firestore.DocumentReference,
   options?: FirestoreOptions
 ) {
-  const unbinds = {}
-  firestoreUnbinds.set(target, unbinds)
   const [promise, unbind] = internalBind(
     target,
     docOrCollectionRef as any,
     options
   )
+  const unbinds = {
+    '': unbind,
+  }
+  firestoreUnbinds.set(target, unbinds)
 
   // TODO: SSR serialize the values for Nuxt to expose them later and use them
   // as initial values while specifying a wait: true to only swap objects once
