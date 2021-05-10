@@ -226,6 +226,24 @@ const serialize = (snapshot: database.DataSnapshot) => {
 Vue.use(rtdbPlugin, { serialize })
 ```
 
+:::miniwarn
+Note that if the returned object doesn't have a `.key` property, this will break deletion from bound arrays as the deletion relies on it.
+:::
+
+To avoid issues, it is recommended to call the default function and add your own customization:
+
+```ts
+import { rtdbOptions } from 'vuexfire'
+
+const serialize = (snapshot: firebase.database.DataSnapshot) => {
+  // Call the default implementation to ensure we have a '.key' set
+  const val = rtdbOptions.serialize(snapshot)
+  // Add your own behavior here
+  val.myCustomId = snapshot.key
+  return val
+}
+```
+
 ## `firebase` option
 
 :::miniwarn
