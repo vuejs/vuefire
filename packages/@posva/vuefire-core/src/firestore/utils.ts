@@ -69,7 +69,7 @@ export function extractRefs(
           key in oldDoc &&
           // only copy refs if they were refs before
           // https://github.com/vuejs/vuefire/issues/831
-          typeof oldDoc[key] === 'string' || oldDoc[key] === null
+          (typeof oldDoc[key] === 'string' || oldDoc[key] === null)
             ? ref.path
             : oldDoc[key]
         // TODO: handle subpathes?
