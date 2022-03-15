@@ -19,7 +19,7 @@ footer: MIT Licensed | Copyright © 2016-present Eduardo San Martin Morote
   </div>
   <div class="feature">
     <h2>Simple</h2>
-    <p>Vuefire/Vuexfire only handles the binding for you so your state is always up to date with the server. You still be able to use Firebase JS SDK to its full potential!</p>
+    <p>Vuefire/Vuexfire only handles the binding for you so your state is always up to date with the server. You are still able to use Firebase JS SDK to its full potential!</p>
   </div>
 </div>
 
