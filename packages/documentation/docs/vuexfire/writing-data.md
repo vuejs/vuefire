@@ -47,7 +47,7 @@ firestoreAction(({ state }) => {
   // return the promise so we can await this action
   return db
     .collection('users')
-    .doc(this.user.id)
+    .doc(state.user.id)
     .set(user)
     .then(() => {
       console.log('user updated!')
