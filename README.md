@@ -58,6 +58,27 @@ Note: _This repository contains the code for `vuefire` and `vuexfire` packages:_
 [\@posva/vuefire-core-package]: https://npmjs.com/package/@posva/vuefire-core
 [\@posva/vuefire-test-helpers-package]: https://npmjs.com/package/@posva/vuefire-test-helpers
 
+## Getting Started
+
+
+In order to get started make sure to install the latest version of `vuefire` as well as `firebase`:
+
+``yarn add vuefire firebase``
+
+or
+
+``npm install vuefire firebase``
+
+## Plugin
+
+Vuefire must be installed as a Vue plugin. Make sure to install the right one:
+
+* Install `firestorePlugin` if you need to use Cloud Firestore (often abreviated *Firestore*)
+* Install `rtdbPlugin` if you need to use the original *RTDB* (Real Time Database)
+* If you need to use both, check [Using RTDB and Firestore together](https://vuefire.vuejs.org/cookbook/rtdb-and-firestore.html)
+
+For more details on usage visit https://vuefire.vuejs.org/vuefire/getting-started.html#installation
+
 ## Related
 
 - [Firebase Web Docs](https://firebase.google.com/docs/web/setup)
