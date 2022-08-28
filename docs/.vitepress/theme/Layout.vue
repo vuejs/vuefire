@@ -11,14 +11,14 @@
         :placement="$site.themeConfig.carbonAds.placement"
       />
     </template>
-    <template #page-bottom>
+    <!-- <template #page-bottom>
       <BuySellAds
         v-if="$site.themeConfig.carbonAds"
         :key="'custom' + $page.path"
         :code="$site.themeConfig.carbonAds.custom"
         :placement="$site.themeConfig.carbonAds.placement"
       />
-    </template>
+    </template> -->
   </ParentLayout>
 </template>
 
@@ -44,6 +44,14 @@ export default {
 form {
   margin-block-end: 0;
 }
+.custom-blocks {
+  overflow-x: auto;
+}
+.reset-button {
+
+form {
+  margin-block-end: 0;
+}
 
 .custom-blocks {
   overflow-x: auto;
@@ -65,6 +73,24 @@ form {
   outline: none;
 }
 
+blockquote.warning {
+  background-color: rgba(255, 229, 100, 0.3);
+  border-color: #e7c000;
+  color: #6b5900;
+}
+
+  border: none;
+  padding: 0;
+  margin: 0;
+  width: auto;
+  overflow: visible;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+}
+.js-focus-visible :focus:not(.focus-visible) {
+  outline: none;
+}
 blockquote.warning {
   background-color: rgba(255, 229, 100, 0.3);
   border-color: #e7c000;

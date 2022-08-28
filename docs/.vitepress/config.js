@@ -99,9 +99,9 @@ const config = {
     ],
 
     carbonAds: {
-      carbon: 'CEBICK3I',
-      custom: 'CEBICK3M',
-      placement: 'routervuejsorg',
+      carbon: 'CK7DL23N',
+      custom: 'CK7DL23N',
+      placement: 'vuefirevuejsorg',
     },
 
     algolia: {
