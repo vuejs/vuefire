@@ -10,7 +10,7 @@ export default {
     script.setAttribute('type', 'text/javascript')
     script.setAttribute(
       'src',
-      '//cdn.carbonads.com/carbon.js??serve=CEBICK3I&placement=routervuejsorg'
+      '//cdn.carbonads.com/carbon.js?serve=CK7DL23N&placement=vuefirevuejsorg'
     )
 
     script.setAttribute('id', '_carbonads_js')
