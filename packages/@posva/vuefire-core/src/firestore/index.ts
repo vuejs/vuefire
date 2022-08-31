@@ -170,7 +170,7 @@ export function bindCollection(
 ) {
   const options = Object.assign({}, DEFAULT_OPTIONS, extraOptions) // fill default values
   // TODO support pathes? nested.obj.list (walkSet)
-  const array = options.wait ? [] : ops.set(vm, key, [])
+  const array = vm[key]
   const originalResolve = resolve
   let isResolved: boolean
 
