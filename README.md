@@ -14,21 +14,12 @@ Note: This version currently supports Vue 2 and Firebase 7. Support for Vue 3 / 
 
 ## Introduction
 
-Firebase provides two solutions to handle real-time databases: Realtime Database
-and Cloud Store (which is also a realtime database). In order to keep all
-clients data in-sync with its cloud database, their [js
-SDK](https://firebase.google.com/docs/firestore/quickstart) provides the tools
-to do so. However, it quickly becomes bothersome to _bind_ multiple documents or
-collections to your application, keep them synchronized as well as handling
-[references](https://firebase.google.com/docs/firestore/manage-data/data-types)
-to other documents or collections, which can contain references themselves and
-must also be kept up to date. The goal of vuefire and vuexfire is to make this
-as simple as a function call that returns a promise so it is also easy to setup
-SSR and allows you to focus on developing your application.
+Firebase provides two solutions to handle real-time databases: Realtime Database and Cloud Firestore (which is also a real-time database). Firebase provides a [JavaScript SDK](https://firebase.google.com/docs/firestore/quickstart) that implements client-side libraries used by applications using Firebase services to keep client data in sync with its respective cloud database. However, it quickly becomes bothersome to _bind_ multiple documents or collections to your application, keep them synchronized, and handle [references](https://firebase.google.com/docs/firestore/manage-data/data-types) to other documents or collections -- collections that can contain references themselves and must also be kept up to date. The goal of Vuefire and Vuexfire is to make this as simple as a function call that returns a promise 
+which easily enables SSR and allows you to focus on developing your application. 
 
-To better understand why Vuefire will make it so much easier to develop Vue apps
-with firebase, please, check [this link in the
-documentation](https://vuefire.vuejs.org/vuefire/#why)
+To better understand why Vuefire makes it so much easier to develop Vue apps with Firebase, please
+visit [this link in the
+documentation](https://vuefire.vuejs.org/vuefire/#why) 
 
 Note: _This repository contains the code for `vuefire` and `vuexfire` packages:_
 
