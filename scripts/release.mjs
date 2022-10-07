@@ -21,14 +21,17 @@ let {
   skipCleanCheck: skipCleanGitCheck,
 } = args
 
+// NOTE: while in dev
+optionTag = optionTag || 'edge'
+
 // const preId =
 //   args.preid ||
 //   (semver.prerelease(currentVersion) && semver.prerelease(currentVersion)[0])
 const EXPECTED_BRANCH = 'main'
 
-const incrementVersion = (increment) =>
+const incrementVersion = increment =>
   semver.inc(currentVersion, increment, preId)
-const bin = (name) => resolve(__dirname, '../node_modules/.bin/' + name)
+const bin = name => resolve(__dirname, '../node_modules/.bin/' + name)
 /**
  * @param bin {string}
  * @param args {string}
@@ -40,7 +43,7 @@ const run = (bin, args, opts = {}) =>
 const dryRun = (bin, args, opts = {}) =>
   console.log(chalk.blue(`[dryrun] ${bin} ${args.join(' ')}`), opts)
 const runIfNotDry = isDryRun ? dryRun : run
-const step = (msg) => console.log(chalk.cyan(msg))
+const step = msg => console.log(chalk.cyan(msg))
 
 async function main() {
   if (!skipCleanGitCheck) {
@@ -133,7 +136,7 @@ async function main() {
         name: 'release',
         message: `Select release type for ${chalk.bold.white(name)}`,
         choices: versionIncrements
-          .map((i) => `${i}: ${name} (${semver.inc(version, i, preId)})`)
+          .map(i => `${i}: ${name} (${semver.inc(version, i, preId)})`)
           .concat(['custom']),
       })
 
@@ -263,8 +266,8 @@ function updateDeps(pkg, depType, updatedPackages) {
   const deps = pkg[depType]
   if (!deps) return
   step(`Updating ${chalk.bold(depType)} for ${chalk.bold.white(pkg.name)}...`)
-  Object.keys(deps).forEach((dep) => {
-    const updatedDep = updatedPackages.find((pkg) => pkg.name === dep)
+  Object.keys(deps).forEach(dep => {
+    const updatedDep = updatedPackages.find(pkg => pkg.name === dep)
     // avoid updated peer deps that are external like @vue/devtools-api
     if (dep && updatedDep) {
       console.log(
@@ -338,7 +341,7 @@ async function getChangedPackages() {
   const folders = ['./']
 
   const pkgs = await Promise.all(
-    folders.map(async (folder) => {
+    folders.map(async folder => {
       if (!(await fs.lstat(folder)).isDirectory()) return null
 
       const pkg = JSON.parse(await fs.readFile(join(folder, 'package.json')))
@@ -372,10 +375,10 @@ async function getChangedPackages() {
     })
   )
 
-  return pkgs.filter((p) => p)
+  return pkgs.filter(p => p)
 }
 
-main().catch((error) => {
+main().catch(error => {
   console.error(error)
   process.exit(1)
 })
