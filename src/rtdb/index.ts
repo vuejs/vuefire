@@ -1,4 +1,3 @@
-import * as database from '@firebase/database-types'
 import {
   createRecordFromRTDBSnapshot,
   indexForKey,
@@ -6,6 +5,15 @@ import {
 } from './utils'
 import { OperationsType, ResetOption } from '../shared'
 import { ref, Ref, unref } from 'vue-demi'
+import type { Query, DatabaseReference as Reference } from 'firebase/database'
+import {
+  onValue,
+  off,
+  onChildAdded,
+  onChildChanged,
+  onChildMoved,
+  onChildRemoved,
+} from 'firebase/database'
 
 export interface RTDBOptions {
   reset?: ResetOption
@@ -31,7 +39,7 @@ interface CommonBindOptionsParameter {
 // TODO: refactor using normal arguments instead of an array to improve size
 
 interface BindAsObjectParameter extends CommonBindOptionsParameter {
-  document: database.Reference | database.Query
+  document: Reference | Query
 }
 
 /**
@@ -46,18 +54,25 @@ export function rtdbBindAsObject(
 ) {
   const key = 'value'
   const options = Object.assign({}, DEFAULT_OPTIONS, extraOptions)
-  const listener = document.on(
-    'value',
-    (snapshot) => {
+  const listener = onValue(
+    document,
+    snapshot => {
       ops.set(target, key, options.serialize(snapshot))
     }
     // TODO: allow passing a cancel callback
     // cancelCallback
   )
-  document.once('value', resolve, reject)
+  const unsub = onValue(
+    document,
+    snapshot => {
+      resolve(snapshot)
+      unsub()
+    },
+    reject
+  )
 
   return (reset?: ResetOption) => {
-    document.off('value', listener)
+    off(document, 'value', listener)
     if (reset !== false) {
       const value = typeof reset === 'function' ? reset() : null
       ops.set(target, key, value)
@@ -66,7 +81,7 @@ export function rtdbBindAsObject(
 }
 
 interface BindAsArrayParameter extends CommonBindOptionsParameter {
-  collection: database.Reference | database.Query
+  collection: Reference | Query
 }
 
 /**
@@ -85,8 +100,8 @@ export function rtdbBindAsArray(
   if (!options.wait) ops.set(target, key, [])
   let arrayRef = ref(options.wait ? [] : target[key])
 
-  const childAdded = collection.on(
-    'child_added',
+  const childAdded = onChildAdded(
+    collection,
     (snapshot, prevKey) => {
       const array = unref(arrayRef)
       const index = prevKey ? indexForKey(array, prevKey) + 1 : 0
@@ -95,18 +110,19 @@ export function rtdbBindAsArray(
     // TODO: cancelcallback
   )
 
-  const childRemoved = collection.on(
-    'child_removed',
-    (snapshot) => {
+  const childRemoved = onChildRemoved(
+    collection,
+
+    snapshot => {
       const array = unref(arrayRef)
       ops.remove(array, indexForKey(array, snapshot.key))
     }
     // TODO: cancelcallback
   )
 
-  const childChanged = collection.on(
-    'child_changed',
-    (snapshot) => {
+  const childChanged = onChildChanged(
+    collection,
+    snapshot => {
       const array = unref(arrayRef)
       ops.set(
         array,
@@ -117,8 +133,8 @@ export function rtdbBindAsArray(
     // TODO: cancelcallback
   )
 
-  const childMoved = collection.on(
-    'child_moved',
+  const childMoved = onChildMoved(
+    collection,
     (snapshot, prevKey) => {
       const array = unref(arrayRef)
       const index = indexForKey(array, snapshot.key)
@@ -129,21 +145,22 @@ export function rtdbBindAsArray(
     // TODO: cancelcallback
   )
 
-  collection.once(
-    'value',
-    (data) => {
+  const unsub = onValue(
+    collection,
+    data => {
       const array = unref(arrayRef)
       if (options.wait) ops.set(target, key, array)
       resolve(data)
+      unsub()
     },
     reject
   )
 
   return (reset?: ResetOption) => {
-    collection.off('child_added', childAdded)
-    collection.off('child_changed', childChanged)
-    collection.off('child_removed', childRemoved)
-    collection.off('child_moved', childMoved)
+    off(collection, 'child_added', childAdded)
+    off(collection, 'child_removed', childRemoved)
+    off(collection, 'child_changed', childChanged)
+    off(collection, 'child_moved', childMoved)
     if (reset !== false) {
       const value = typeof reset === 'function' ? reset() : []
       ops.set(target, key, value)

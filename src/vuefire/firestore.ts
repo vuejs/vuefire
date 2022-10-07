@@ -6,7 +6,12 @@ import {
   FirestoreOptions,
   OperationsType,
 } from '../core'
-import * as firestore from '@firebase/firestore-types'
+import type {
+  CollectionReference,
+  DocumentData,
+  DocumentReference,
+  Query,
+} from 'firebase/firestore'
 import {
   App,
   ComponentPublicInstance,
@@ -29,20 +34,17 @@ type UnbindType = ReturnType<typeof bindCollection | typeof bindDocument>
 
 function internalBind<T>(
   target: Ref<T | null>,
-  docRef: firestore.DocumentReference<T>,
+  docRef: DocumentReference<T>,
   options?: FirestoreOptions
 ): [Promise<T | null>, UnbindType]
 function internalBind<T>(
   target: Ref<T[]>,
-  collectionRef: firestore.CollectionReference<T> | firestore.Query<T>,
+  collectionRef: CollectionReference<T> | Query<T>,
   options?: FirestoreOptions
 ): [Promise<T[]>, UnbindType]
 function internalBind<T>(
   target: Ref<T | null> | Ref<T[]>,
-  docOrCollectionRef:
-    | firestore.CollectionReference<T>
-    | firestore.Query<T>
-    | firestore.DocumentReference<T>,
+  docOrCollectionRef: CollectionReference<T> | Query<T> | DocumentReference<T>,
   options?: FirestoreOptions
 ) {
   let unbind: UnbindType
@@ -101,14 +103,14 @@ declare module '@vue/runtime-core' {
      */
     $bind(
       name: string,
-      reference: firestore.Query | firestore.CollectionReference,
+      reference: Query | CollectionReference,
       options?: FirestoreOptions
-    ): Promise<firestore.DocumentData[]>
+    ): Promise<DocumentData[]>
     $bind(
       name: string,
-      reference: firestore.DocumentReference,
+      reference: DocumentReference,
       options?: FirestoreOptions
-    ): Promise<firestore.DocumentData>
+    ): Promise<DocumentData>
 
     /**
      * Unbinds a bound reference
@@ -119,13 +121,10 @@ declare module '@vue/runtime-core' {
      * Bound firestore references
      */
     $firestoreRefs: Readonly<
-      Record<
-        string,
-        firestore.DocumentReference | firestore.CollectionReference
-      >
+      Record<string, DocumentReference | CollectionReference>
     >
     // _firestoreSources: Readonly<
-    //   Record<string, firestore.CollectionReference | firestore.Query | firestore.DocumentReference>
+    //   Record<string, CollectionReference | Query | DocumentReference>
     // >
     /**
      * Existing unbind functions that get automatically called when the component is unmounted
@@ -145,7 +144,7 @@ declare module '@vue/runtime-core' {
 
 type VueFirestoreObject = Record<
   string,
-  firestore.DocumentReference | firestore.Query | firestore.CollectionReference
+  DocumentReference | Query | CollectionReference
 >
 type FirestoreOption = VueFirestoreObject | (() => VueFirestoreObject)
 
@@ -187,10 +186,7 @@ export const firestorePlugin = function firestorePlugin(
   GlobalTarget[bindName] = function firestoreBind(
     this: ComponentPublicInstance,
     key: string,
-    docOrCollectionRef:
-      | firestore.Query
-      | firestore.CollectionReference
-      | firestore.DocumentReference,
+    docOrCollectionRef: Query | CollectionReference | DocumentReference,
     userOptions?: FirestoreOptions
   ) {
     const options = Object.assign({}, globalOptions, userOptions)
@@ -260,10 +256,7 @@ export const firestorePlugin = function firestorePlugin(
 
 export function bind(
   target: Ref,
-  docOrCollectionRef:
-    | firestore.CollectionReference
-    | firestore.Query
-    | firestore.DocumentReference,
+  docOrCollectionRef: CollectionReference | Query | DocumentReference,
   options?: FirestoreOptions
 ) {
   const unbinds = {}
@@ -290,18 +283,15 @@ export function bind(
 }
 
 export function useFirestore<T>(
-  docRef: firestore.DocumentReference<T>,
+  docRef: DocumentReference<T>,
   options?: FirestoreOptions
 ): [Ref<T | null>, Promise<T | null>, UnbindType]
 export function useFirestore<T>(
-  collectionRef: firestore.Query<T> | firestore.CollectionReference<T>,
+  collectionRef: Query<T> | CollectionReference<T>,
   options?: FirestoreOptions
 ): [Ref<T[]>, Promise<T[]>, UnbindType]
 export function useFirestore<T>(
-  docOrCollectionRef:
-    | firestore.CollectionReference<T>
-    | firestore.Query<T>
-    | firestore.DocumentReference<T>,
+  docOrCollectionRef: CollectionReference<T> | Query<T> | DocumentReference<T>,
   options?: FirestoreOptions
 ) {
   const target =

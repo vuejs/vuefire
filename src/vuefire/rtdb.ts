@@ -6,7 +6,6 @@ import {
   walkSet,
   OperationsType,
 } from '../core'
-import * as database from '@firebase/database-types'
 import {
   ComponentPublicInstance,
   App,
@@ -16,16 +15,19 @@ import {
   onBeforeUnmount,
   isVue3,
 } from 'vue-demi'
+// TODO: Rename
+import type {
+  DatabaseReference as Reference,
+  DataSnapshot,
+  Query,
+} from 'firebase/database'
 
 /**
  * Returns the original reference of a Firebase reference or query across SDK versions.
  *
- * @param {firebase.database.Reference|firebase.database.Query} refOrQuery
- * @return {firebase.database.Reference}
+ * @param refOrQuery
  */
-function getRef(
-  refOrQuery: database.Reference | database.Query
-): database.Reference {
+function getRef(refOrQuery: Reference | Query): Reference {
   return refOrQuery.ref
 }
 
@@ -38,7 +40,7 @@ const ops: OperationsType = {
 function internalBind(
   target: Ref<any>,
   key: string,
-  source: database.Query | database.Reference,
+  source: Query | Reference,
   unbinds: Record<string, ReturnType<typeof bindAsArray | typeof bindAsObject>>,
   options?: RTDBOptions
 ) {
@@ -114,9 +116,9 @@ declare module '@vue/runtime-core' {
      */
     $rtdbBind(
       name: string,
-      reference: database.Reference | database.Query,
+      reference: Reference | Query,
       options?: RTDBOptions
-    ): Promise<database.DataSnapshot>
+    ): Promise<DataSnapshot>
 
     /**
      * Unbinds a bound reference
@@ -126,9 +128,9 @@ declare module '@vue/runtime-core' {
     /**
      * Bound firestore references
      */
-    $firebaseRefs: Readonly<Record<string, database.Reference>>
+    $firebaseRefs: Readonly<Record<string, Reference>>
     // _firebaseSources: Readonly<
-    //   Record<string, database.Reference | database.Query>
+    //   Record<string, Reference | Query>
     // >
     /**
      * Existing unbind functions that get automatically called when the component is unmounted
@@ -146,7 +148,7 @@ declare module '@vue/runtime-core' {
   }
 }
 
-type VueFirebaseObject = Record<string, database.Query | database.Reference>
+type VueFirebaseObject = Record<string, Query | Reference>
 type FirebaseOption = VueFirebaseObject | (() => VueFirebaseObject)
 
 const rtdbUnbinds = new WeakMap<
@@ -188,7 +190,7 @@ export const rtdbPlugin = function rtdbPlugin(
   GlobalTarget[bindName] = function rtdbBind(
     this: ComponentPublicInstance,
     key: string,
-    source: database.Reference | database.Query,
+    source: Reference | Query,
     userOptions?: RTDBOptions
   ) {
     const options = Object.assign({}, globalOptions, userOptions)
@@ -255,7 +257,7 @@ export const rtdbPlugin = function rtdbPlugin(
 
 export function bind(
   target: Ref,
-  reference: database.Reference | database.Query,
+  reference: Reference | Query,
   options?: RTDBOptions
 ) {
   const unbinds = {}

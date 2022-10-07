@@ -1,13 +1,16 @@
-import * as firestore from '@firebase/firestore-types'
+import type {
+  Query,
+  DocumentReference,
+  CollectionReference,
+  DocumentSnapshot,
+  DocumentData,
+} from 'firebase/firestore'
 import { isTimestamp, isObject, isDocumentRef, TODO } from '../shared'
 
-export type FirestoreReference =
-  | firestore.Query
-  | firestore.DocumentReference
-  | firestore.CollectionReference
+export type FirestoreReference = Query | DocumentReference | CollectionReference
 
 // TODO: fix type not to be any
-export function createSnapshot(doc: firestore.DocumentSnapshot): TODO {
+export function createSnapshot(doc: DocumentSnapshot): TODO {
   // TODO: it should create a deep copy instead because otherwise we will modify internal data
   // defaults everything to false, so no need to set
   return Object.defineProperty(doc.data() || {}, 'id', { value: doc.id })
@@ -16,39 +19,33 @@ export function createSnapshot(doc: firestore.DocumentSnapshot): TODO {
 export type FirestoreSerializer = typeof createSnapshot
 
 export function extractRefs(
-  doc: firestore.DocumentData,
-  oldDoc: firestore.DocumentData | void,
-  subs: Record<
-    string,
-    { path: string; data: () => firestore.DocumentData | null }
-  >
-): [firestore.DocumentData, Record<string, firestore.DocumentReference>] {
-  const dataAndRefs: [
-    firestore.DocumentData,
-    Record<string, firestore.DocumentReference>
-  ] = [{}, {}]
+  doc: DocumentData,
+  oldDoc: DocumentData | void,
+  subs: Record<string, { path: string; data: () => DocumentData | null }>
+): [DocumentData, Record<string, DocumentReference>] {
+  const dataAndRefs: [DocumentData, Record<string, DocumentReference>] = [
+    {},
+    {},
+  ]
 
   const subsByPath = Object.keys(subs).reduce((resultSubs, subKey) => {
     const sub = subs[subKey]
     resultSubs[sub.path] = sub.data()
     return resultSubs
-  }, {} as Record<string, firestore.DocumentData | null>)
+  }, {} as Record<string, DocumentData | null>)
 
   function recursiveExtract(
-    doc: firestore.DocumentData,
-    oldDoc: firestore.DocumentData | void,
+    doc: DocumentData,
+    oldDoc: DocumentData | void,
     path: string,
-    result: [
-      firestore.DocumentData,
-      Record<string, firestore.DocumentReference>
-    ]
+    result: [DocumentData, Record<string, DocumentReference>]
   ): void {
     // make it easier to later on access the value
     oldDoc = oldDoc || {}
     const [data, refs] = result
     // Add all properties that are not enumerable (not visible in the for loop)
     // getOwnPropertyDescriptors does not exist on IE
-    Object.getOwnPropertyNames(doc).forEach((propertyName) => {
+    Object.getOwnPropertyNames(doc).forEach(propertyName => {
       const descriptor = Object.getOwnPropertyDescriptor(doc, propertyName)
       if (descriptor && !descriptor.enumerable) {
         Object.defineProperty(data, propertyName, descriptor)
@@ -57,7 +54,7 @@ export function extractRefs(
 
     // recursively traverse doc to copy values and extract references
     for (const key in doc) {
-      const ref = doc[key]
+      const ref: TODO = doc[key]
       if (
         // primitives
         ref == null ||
@@ -84,7 +81,7 @@ export function extractRefs(
         data[key] = Array(ref.length)
         // fill existing refs into data but leave the rest empty
         for (let i = 0; i < ref.length; i++) {
-          const newRef = ref[i]
+          const newRef: TODO = ref[i]
           // TODO: this only works with array of primitives but not with nested properties like objects with References
           if (newRef && newRef.path in subsByPath)
             data[key][i] = subsByPath[newRef.path]

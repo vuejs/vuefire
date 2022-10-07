@@ -1,8 +1,8 @@
-import * as firestore from '@firebase/firestore-types'
+import type { DocumentData, DocumentReference } from 'firebase/firestore'
 
 export interface OperationsType {
   set: (target: Record<string, any>, key: string | number, value: any) => any
-  add: (array: any[], index: number, data: firestore.DocumentData) => any
+  add: (array: any[], index: number, data: DocumentData) => any
   remove: (array: any[], index: number) => any
 }
 
@@ -68,7 +68,7 @@ export function isTimestamp(o: any): o is Date {
  * Checks if a variable is a Firestore Document Reference
  * @param o
  */
-export function isDocumentRef(o: any): o is firestore.DocumentReference {
+export function isDocumentRef(o: any): o is DocumentReference {
   return o && o.onSnapshot
 }
 

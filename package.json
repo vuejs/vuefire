@@ -64,7 +64,7 @@
   "devDependencies": {
     "@vue/runtime-core": "^3.2.40",
     "conventional-changelog-cli": "^2.0.34",
-    "firebase": "^8.1.2",
+    "firebase": "^9.11.0",
     "lint-staged": "^13.0.3",
     "prettier": "^2.0.5",
     "typescript": "~4.8.4",

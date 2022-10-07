@@ -1,4 +1,4 @@
-import * as database from '@firebase/database-types'
+import type { DataSnapshot } from 'firebase/database'
 import { isObject } from '../shared'
 
 /**
@@ -7,9 +7,7 @@ import { isObject } from '../shared'
  * @param snapshot
  * @return
  */
-export function createRecordFromRTDBSnapshot(
-  snapshot: database.DataSnapshot
-): any {
+export function createRecordFromRTDBSnapshot(snapshot: DataSnapshot): any {
   const value = snapshot.val()
   const res = isObject(value)
     ? value
