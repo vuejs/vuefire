@@ -49,7 +49,9 @@ function internalBind<T>(
 ) {
   let unbind: UnbindType
   const promise = new Promise((resolve, reject) => {
-    unbind = ('where' in docOrCollectionRef ? bindCollection : bindDocument)(
+    unbind = (
+      docOrCollectionRef.type === 'document' ? bindDocument : bindCollection
+    )(
       target,
       // the type is good because of the ternary
       docOrCollectionRef as any,
