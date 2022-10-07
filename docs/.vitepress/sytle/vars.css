@@ -30,13 +30,13 @@
   --vp-home-hero-name-color: transparent;
   --vp-home-hero-name-background: -webkit-linear-gradient(
     120deg,
-    var(--vp-c-accent) 30%,
-    var(--vp-c-brand)
+    var(--vp-c-brand) 25%,
+    var(--vp-c-accent)
   );
   --vp-home-hero-image-background-image: linear-gradient(
     -45deg,
-    /* var(--vp-c-brand) 30%, */ #3ab98260 30%,
-    /* var(--vp-c-accent) */ #f7820060
+    /* var(--vp-c-brand) 30%, */ #3ab98260 25%,
+    /* var(--vp-c-accent) */ #f7820090
   );
   --vp-home-hero-image-filter: blur(30px);
 }
