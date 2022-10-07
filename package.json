@@ -73,6 +73,7 @@
     "enquirer": "^2.3.6",
     "execa": "^6.1.0",
     "firebase": "^9.11.0",
+    "focus-visible": "^5.2.0",
     "lint-staged": "^13.0.3",
     "minimist": "^1.2.6",
     "p-series": "^3.0.0",

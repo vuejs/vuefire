@@ -11,6 +11,7 @@ importers:
       enquirer: ^2.3.6
       execa: ^6.1.0
       firebase: ^9.11.0
+      focus-visible: ^5.2.0
       lint-staged: ^13.0.3
       minimist: ^1.2.6
       p-series: ^3.0.0
@@ -33,6 +34,7 @@ importers:
       enquirer: 2.3.6
       execa: 6.1.0
       firebase: 9.11.0
+      focus-visible: 5.2.0
       lint-staged: 13.0.3_enquirer@2.3.6
       minimist: 1.2.6
       p-series: 3.0.0
@@ -2639,6 +2641,10 @@ packages:
       - bufferutil
       - encoding
       - utf-8-validate
+    dev: true
+
+  /focus-visible/5.2.0:
+    resolution: {integrity: sha512-Rwix9pBtC1Nuy5wysTmKy+UjbDJpIfg8eHjw0rjZ1mX4GNLz1Bmd16uDpI3Gk1i70Fgcs8Csg2lPm8HULFg9DQ==}
     dev: true
 
   /foreground-child/2.0.0:

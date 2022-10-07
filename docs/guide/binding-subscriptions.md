@@ -305,7 +305,7 @@ Given some _users_ with _documents_ that are being viewed by other _users_. This
 
 `documents.sharedWith.documents` end up as arrays of strings. Those strings can be passed to `db.doc()` as in `db.doc('documents/robin-book')` to get the actual reference to the document. By being a string instead of a Reference, it is possibe to display a bound document with Vuefire as plain text.
 
-It is possible to customize this behaviour by providing a [`maxRefDepth` option](../api/vuefire.md#options-2) when invoking `$bind`:
+It is possible to customize this behaviour by providing a [`maxRefDepth` option](#TODO:) when invoking `$bind`:
 
 ```js
 // override the default value of 2 for maxRefDepth
@@ -378,7 +378,7 @@ this.$unbind('documents')
 
 </FirebaseExample>
 
-It's also possible to customize this behavior when _binding_ by using the [`reset` option](../api/vuefire.md#options-2):
+It's also possible to customize this behavior when _binding_ by using the [`reset` option](#TODO:):
 
 <FirebaseExample>
 
