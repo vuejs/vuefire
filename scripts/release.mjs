@@ -224,9 +224,7 @@ async function main() {
   let versionsToPush = []
   for (const pkg of pkgWithVersions) {
     const tagName =
-      pkg.name === 'unplugin-vue-router'
-        ? `v${pkg.version}`
-        : `${pkg.name}@${pkg.version}`
+      pkg.name === 'vuefire' ? `v${pkg.version}` : `${pkg.name}@${pkg.version}`
     versionsToPush.push(`refs/tags/${tagName}`)
     await runIfNotDry('git', ['tag', `${tagName}`])
   }
