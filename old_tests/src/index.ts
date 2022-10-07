@@ -19,7 +19,7 @@ export function spyUnbind(ref: FirestoreReference) {
   const onSnapshot = ref.onSnapshot.bind(ref)
   ref.onSnapshot =
     // @ts-ignore
-    (fn) => {
+    fn => {
       // @ts-ignore
       const unbind = onSnapshot(fn)
       return () => {
@@ -51,7 +51,7 @@ export function spyOnSnapshotCallback(ref: FirestoreReference) {
 // This makes sure some tests fail by delaying callbacks
 export function delayUpdate(ref: firestore.DocumentReference, time = 0) {
   const onSnapshot = ref.onSnapshot.bind(ref)
-  ref.onSnapshot = (fn) =>
+  ref.onSnapshot = fn =>
     onSnapshot(async (...args) => {
       await delay(time)
       if (typeof fn !== 'function') {
@@ -64,7 +64,7 @@ export function delayUpdate(ref: firestore.DocumentReference, time = 0) {
 export const tick = nextTick
 
 export function delay(time: number) {
-  return new Promise((resolve) => setTimeout(resolve, time))
+  return new Promise(resolve => setTimeout(resolve, time))
 }
 
 type WalkSet = typeof walkSet

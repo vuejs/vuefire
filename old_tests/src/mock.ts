@@ -101,7 +101,7 @@ class CallbacksAndErrors {
   }
 
   _callCallbacks(data: DataObject) {
-    Object.values(this.cbs).forEach((cb) => cb(data))
+    Object.values(this.cbs).forEach(cb => cb(data))
   }
 }
 
