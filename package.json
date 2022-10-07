@@ -54,9 +54,13 @@
   },
   "peerDependencies": {
     "@vue/composition-api": "^1.4.0",
+    "firebase": "^9.0.0",
     "vue": "^2.6.0 || >=3.2.0"
   },
   "peerDependenciesMeta": {
+    "firebase": {
+      "optional": true
+    },
     "@vue/composition-api": {
       "optional": true
     }
