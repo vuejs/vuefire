@@ -10,6 +10,7 @@
     "strict": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
+    "noEmit": true,
     "jsx": "preserve",
     "lib": [
       "ESNext",
