@@ -1,3 +1,17 @@
+# [3.0.0-alpha.3](https://github.com/vuejs/vuefire/compare/v3.0.0-alpha.2...v3.0.0-alpha.3) (2022-10-07)
+
+### Bug Fixes
+
+- make @vue/composition-api optional ([#1068](https://github.com/vuejs/vuefire/issues/1068)) ([33eee5e](https://github.com/vuejs/vuefire/commit/33eee5e47a6b0cd3522d4cd44ec7387c9075fcee))
+
+### Features
+
+- use Firebase 9 ([81701bb](https://github.com/vuejs/vuefire/commit/81701bba36776a2bb75d3581a66d2060f9144591))
+
+### BREAKING CHANGES
+
+- vuefire now requires firebase 9
+
 # [3.0.0-alpha.2](https://github.com/posva/vuefire/compare/v3.0.0-alpha.1...v3.0.0-alpha.2) (2020-12-08)
 
 - Support for Firebase 8

@@ -1,6 +1,6 @@
 {
   "name": "vuefire",
-  "version": "3.0.0-alpha.2",
+  "version": "3.0.0-alpha.3",
   "description": "Official Firebase bindings for Vue.js",
   "packageManager": "pnpm@7.12.2",
   "unpkg": "dist/vuefire.global-vue-2.js",
