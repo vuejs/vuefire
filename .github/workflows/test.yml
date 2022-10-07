@@ -30,8 +30,8 @@ jobs:
       - name: Lint
         run: pnpm run lint
 
-      - name: test
-        run: pnpm run test
+      - name: Test
+        run: pnpm run test:unit
 
       - name: Build
         run: pnpm run build
