@@ -2,12 +2,25 @@
   "name": "vuefire",
   "version": "3.0.0-alpha.2",
   "description": "Official Firebase bindings for Vue.js",
-  "main": "dist/vuefire.cjs.js",
+  "packageManager": "pnpm@7.12.2",
   "unpkg": "dist/vuefire.global-vue-2.js",
   "jsdelivr": "dist/vuefire.global-vue-2.js",
-  "module": "dist/vuefire.esm-bundler.js",
-  "types": "dist/vuefire.d.ts",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
   "sideEffects": false,
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
   "author": {
     "name": "Eduardo San Martin Morote",
     "email": "posva13@gmail.com"
@@ -16,8 +29,7 @@
   "scripts": {
     "docs": "vitepress dev docs",
     "build:docs": "vitepress build docs",
-    "build": "rollup -c rollup.config.js",
-    "build:dts": "api-extractor run --local --verbose",
+    "build": "unbuild",
     "release": "bash scripts/release.sh",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 1",
     "size": "size-limit",
@@ -27,12 +39,6 @@
     "test:unit": "jest --coverage",
     "test": "yarn run test:types && yarn run test:unit && yarn run build && yarn run build:dts"
   },
-  "files": [
-    "dist/*.js",
-    "dist/vuefire.d.ts",
-    "LICENSE",
-    "README.md"
-  ],
   "keywords": [
     "vue",
     "firebase",
@@ -56,18 +62,19 @@
     }
   },
   "devDependencies": {
+    "@vue/runtime-core": "^3.2.40",
     "conventional-changelog-cli": "^2.0.34",
     "firebase": "^8.1.2",
-    "firebase-mock": "^2.3.2",
-    "lint-staged": "^11.0.0",
+    "lint-staged": "^13.0.3",
     "prettier": "^2.0.5",
-    "typescript": "~4.3.4",
+    "typescript": "~4.8.4",
+    "unbuild": "^0.8.11",
     "vue": "^3.0.0",
     "yorkie": "^2.0.0"
   },
   "gitHooks": {
     "pre-commit": "lint-staged",
-    "commit-msg": "node scripts/verifyCommit.js"
+    "commit-msg": "node scripts/verifyCommit.mjs"
   },
   "lint-staged": {
     "*.js": [
