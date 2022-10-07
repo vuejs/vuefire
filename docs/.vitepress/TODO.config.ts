@@ -112,7 +112,7 @@ const config = {
   },
 
   markdown: {
-    extendMarkdown: (md) => {
+    extendMarkdown: md => {
       md.use(container, 'miniwarn', {
         render(tokens, idx) {
           const token = tokens[idx]

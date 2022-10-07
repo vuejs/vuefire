@@ -1,26 +1,29 @@
 ---
-home: true
-heroImage: /vuefire-logo.svg
-actionText: Get Started →
-actionLink: /guide/
+layout: 'home'
+
+title: VueFire
+titleTemplate: Official Firebase bindings for Vue.js
+
+hero:
+  name: VueFire
+  text: Official Firebase bindings for Vue.js
+  tagline: Performant and feature-rich Firebase bindings for Vue.js
+  image:
+    src: /vuefire-logo.svg
+    alt: VueFire logo
+  actions:
+    - theme: brand
+      text: Get Started
+      link: /guide/
+    - theme: alt
+      text: View on GitHub
+      link: https://github.com/vuejs/vuefire
+
+features:
+  - title: "Flexible"
+    details: Use Firebase <strong>Database</strong> and <strong>Firestore</strong>. You can use both at the same time or just use one of them.
+  - title: Simple
+    details: VueFire only handles the binding for you so your state is always up to date with the server. You still be able to use Firebase JS SDK to its full potential!
+
 footer: MIT Licensed | Copyright © 2016-present Eduardo San Martin Morote
 ---
-
-**Note**: This version currently supports Vue 2 and 3 and Firebase 7. Support for Firebase 8 is on the way.
-
-<div class="features">
-  <div class="feature">
-    <h2>Light</h2>
-    <p>Both Vuefire and Vuexfire are under 2kb gzipped.</p>
-  </div>
-  <div class="feature">
-    <h2>Flexible</h2>
-    <p>Use the original <strong>RTDB</strong> and the more recent <strong>Cloud Firestore</strong>. You can use both at the same time or just use one of them.</p>
-  </div>
-  <div class="feature">
-    <h2>Simple</h2>
-    <p>Vuefire/Vuexfire only handles the binding for you so your state is always up to date with the server. You still be able to use Firebase JS SDK to its full potential!</p>
-  </div>
-</div>
-
-<!-- TODO: Example here -->

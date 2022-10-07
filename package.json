@@ -27,8 +27,8 @@
   },
   "funding": "https://github.com/sponsors/posva",
   "scripts": {
-    "docs": "vitepress dev docs",
-    "build:docs": "vitepress build docs",
+    "docs": "vitepress dev docs --port 3000",
+    "docs:build": "vitepress build docs",
     "build": "unbuild",
     "release": "node scripts/release.mjs",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 1",
@@ -80,6 +80,7 @@
     "semver": "^7.3.8",
     "typescript": "~4.8.4",
     "unbuild": "^0.8.11",
+    "vitepress": "1.0.0-alpha.19",
     "vitest": "^0.23.4",
     "vue": "^3.0.0",
     "yorkie": "^2.0.0"
