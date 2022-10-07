@@ -3,12 +3,12 @@ name: test
 on:
   push:
     paths-ignore:
-      - 'packages/docs/**'
-      - 'packages/playground/**'
+      - 'docs/**'
+      - 'playground/**'
   pull_request:
     paths-ignore:
-      - 'packages/docs/**'
-      - 'packages/playground/**'
+      - 'docs/**'
+      - 'playground/**'
 
 jobs:
   build:
