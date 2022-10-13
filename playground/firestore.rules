@@ -1,0 +1,41 @@
+service cloud.firestore {
+  match /databases/{database}/documents {
+  	match /todos/{todoId} {
+    	allow read, write;
+    }
+    match /demo-todos/{todoId} {
+    	allow read, write;
+    }
+    match /vuexfireItems1/{id} {
+    	allow read, write;
+    }
+    match /vuexfireItems2/{id} {
+    	allow read, write;
+    }
+    match /configs/jORwjIykFo2NmkdzTkhU {
+    	allow read, write;
+    }
+    match /empty/{emptyId} {
+    	allow read;
+    }
+    match /none/{noneId} {
+    	allow read;
+    }
+    match /comentedTodos/{id} {
+    	allow read, write;
+    }
+    match /configs/jORwjIykFo2NmkdzTkhU {
+    	allow read, write;
+    }
+    match /bug-reports/{issue}/demo-files/{id} {
+    	allow read, write;
+    }
+    match /bug-reports/{issue}/demo/{id} {
+    	allow read, write;
+    }
+    match /{document=**} {
+    	allow read;
+      allow write: if false;
+    }
+  }
+}
