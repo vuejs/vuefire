@@ -4,6 +4,11 @@ Contributions are welcome and will be fully credited!
 
 We accept contributions via Pull Requests on [Github](https://github.com/{{ githubAccount }}/{{ name }}).
 
+## Setup
+
+- Use `pnpm@7`
+- Install `firebase-tools` globally: `npm install -g firebase-tools`
+
 ## Pull Requests
 
 Here are some guidelines to make the process smoother:
