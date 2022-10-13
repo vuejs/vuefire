@@ -23,7 +23,9 @@ jobs:
         with:
           node-version: '16'
           cache: 'pnpm'
-        - run: npm i -g firebase-tools
+
+      - name: Install firebase-tools
+        run: npm i -g firebase-tools
 
       - name: Install
         run: pnpm install
