@@ -23,6 +23,7 @@ jobs:
         with:
           node-version: '16'
           cache: 'pnpm'
+        - run: npm i -g firebase-tools
 
       - name: Install
         run: pnpm install
@@ -31,7 +32,7 @@ jobs:
         run: pnpm run lint
 
       - name: Test
-        run: pnpm run test:unit
+        run: firebase emulators:exec --only firestore 'pnpm run test:unit'
 
       - name: Build
         run: pnpm run build

@@ -37,6 +37,8 @@
     "lint:fix": "pnpm run lint --write",
     "test:types": "tsc --build tsconfig.json",
     "test:unit": "vitest --coverage",
+    "firebase:emulators": "firebase emulators:start --only firestore",
+    "test:dev": "vitest",
     "test": "pnpm run lint && pnpm run test:unit run && pnpm run build"
   },
   "keywords": [
@@ -68,12 +70,14 @@
   "devDependencies": {
     "@vitest/coverage-c8": "^0.24.1",
     "@vue/runtime-core": "^3.2.40",
+    "@vue/test-utils": "^2.1.0",
     "chalk": "^5.1.2",
     "conventional-changelog-cli": "^2.0.34",
     "enquirer": "^2.3.6",
     "execa": "^6.1.0",
     "firebase": "^9.12.1",
     "focus-visible": "^5.2.0",
+    "happy-dom": "^7.5.10",
     "lint-staged": "^13.0.3",
     "minimist": "^1.2.7",
     "p-series": "^3.0.0",

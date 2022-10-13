@@ -17,6 +17,7 @@
     "vuefire": "workspace:*"
   },
   "devDependencies": {
+    "@firebase/app-types": "^0.8.0",
     "@types/node": "^16.11.65",
     "@vitejs/plugin-vue": "^3.0.3",
     "@vue/tsconfig": "^0.1.3",

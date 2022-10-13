@@ -5,6 +5,7 @@ export default defineConfig({
     exclude: ['vue-demi'],
   },
   test: {
+    environment: 'happy-dom',
     // include:
     include: ['tests/**/*.spec.ts'],
     coverage: {

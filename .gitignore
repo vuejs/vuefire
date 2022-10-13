@@ -9,3 +9,4 @@ package-lock.json
 .DS_Store
 temp
 roadmap.md
+*-debug.log
