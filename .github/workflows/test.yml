@@ -24,11 +24,24 @@ jobs:
           node-version: '16'
           cache: 'pnpm'
 
-      - name: Install firebase-tools
-        run: npm i -g firebase-tools
+      - name: Cache firebase tools
+        id: cache-firebase-tools
+        uses: actions/cache@v3
+        env:
+          cache-name: cache-firebase-tools
+        with:
+          path: ~/.cache/firebase/emulators
+          key: ${{ runner.os }}-build-${{ env.cache-name }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
 
       - name: Install
         run: pnpm install
+
+      - name: Install firebase-tools
+        run: pnpm add -g firebase-tools
 
       - name: Lint
         run: pnpm run lint
