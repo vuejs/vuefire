@@ -2,7 +2,7 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import { firestorePlugin } from 'vuefire'
 import App from './App.vue'
-import { createFirebaseApp, VueFirePlugin } from './firestore'
+import { createFirebaseApp, VueFirePlugin } from './firebase'
 import { createWebHistory, createRouter } from 'vue-router/auto'
 
 const router = createRouter({

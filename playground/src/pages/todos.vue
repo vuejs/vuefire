@@ -1,8 +1,16 @@
 <script setup lang="ts">
-import { addDoc, collection, doc, query, serverTimestamp, updateDoc, where } from 'firebase/firestore';
+import {
+  addDoc,
+  collection,
+  doc,
+  query,
+  serverTimestamp,
+  updateDoc,
+  where,
+} from 'firebase/firestore'
 import { ref } from 'vue'
-import { firestoreBind } from 'vuefire';
-import { useFirestore } from '@/firestore';
+import { firestoreBind } from 'vuefire'
+import { useFirestore } from '@/firebase'
 
 interface Todo {
   created: Date
@@ -10,14 +18,14 @@ interface Todo {
   text: string
 }
 
-const db = useFirestore();
+const db = useFirestore()
 const todosRef = collection(db, 'todos')
 const finishedTodos = query(todosRef, where('finished', '==', true))
 const unfinishedTodos = query(todosRef, where('finished', '==', false))
 
-const todos = ref<Todo[]>([]);
+const todos = ref<Todo[]>([])
 // TODO: return an augmented typed ref
-firestoreBind(todos, todosRef);
+firestoreBind(todos, todosRef)
 
 const newTodoText = ref('')
 
@@ -26,7 +34,7 @@ function addTodo() {
     addDoc(todosRef, {
       text: newTodoText.value,
       finished: false,
-      created: serverTimestamp()
+      created: serverTimestamp(),
     })
     newTodoText.value = ''
   }
@@ -36,12 +44,11 @@ function updateTodoText(todo: any, newText: string) {
   console.log('update', todo)
   return
   updateDoc(doc(db, 'todos', todo.id), {
-    text: newText
+    text: newText,
   })
-
 }
 
-function removeTodo() { }
+function removeTodo() {}
 
 function toggleTodos() {
   // TODO:
@@ -56,7 +63,10 @@ function toggleTodos() {
   </form>
   <ul>
     <li v-for="todo in todos">
-      <input :value="todo.text" @input="updateTodoText(todo, $event.target.value)" />
+      <input
+        :value="todo.text"
+        @input="updateTodoText(todo, $event.target.value)"
+      />
       <button @click="removeTodo(todo)">X</button>
     </li>
   </ul>

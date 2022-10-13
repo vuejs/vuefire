@@ -2,7 +2,7 @@
 import { doc } from 'firebase/firestore';
 import { ref } from 'vue'
 import { firestoreBind } from 'vuefire';
-import { useFirestore } from '@/firestore';
+import { useFirestore } from '@/firebase;
 
 
 const db = useFirestore();
