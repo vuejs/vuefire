@@ -1,4 +1,8 @@
-import type { DocumentData, DocumentReference } from 'firebase/firestore'
+import type {
+  CollectionReference,
+  DocumentData,
+  DocumentReference,
+} from 'firebase/firestore'
 
 // FIXME: replace any with unknown or T generics
 
@@ -77,6 +81,14 @@ export function isTimestamp(o: any): o is Date {
  */
 export function isDocumentRef(o: any): o is DocumentReference {
   return isObject(o) && o.type === 'document'
+}
+
+/**
+ * Checks if a variable is a Firestore Collection Reference
+ * @param o
+ */
+export function isCollectionRef(o: any): o is CollectionReference {
+  return isObject(o) && o.type === 'collection'
 }
 
 type ReferenceType = 'collection' | 'document' | 'query'

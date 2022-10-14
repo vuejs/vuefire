@@ -16,12 +16,15 @@ import {
   App,
   ComponentPublicInstance,
   getCurrentInstance,
+  getCurrentScope,
   isVue3,
   onBeforeUnmount,
+  onScopeDispose,
   onUnmounted,
   ref,
   Ref,
   toRef,
+  InjectionKey,
 } from 'vue-demi'
 
 export const ops: OperationsType = {
@@ -234,7 +237,7 @@ export const firestorePlugin = function firestorePlugin(
       for (const key in refs) {
         this[bindName as '$bind'](
           key,
-          // @ts-ignore: FIXME: there is probably a wrong type in global properties
+          // @ts-expect-error: FIXME: there is probably a wrong type in global properties
           refs[key],
           globalOptions
         )
@@ -284,39 +287,43 @@ export function bind(
   return promise
 }
 
-export function useFirestore<T>(
-  docRef: DocumentReference<T>,
-  options?: FirestoreOptions
-): [Ref<T | null>, Promise<T | null>, UnbindType]
-export function useFirestore<T>(
-  collectionRef: Query<T> | CollectionReference<T>,
-  options?: FirestoreOptions
-): [Ref<T[]>, Promise<T[]>, UnbindType]
-export function useFirestore<T>(
-  docOrCollectionRef: CollectionReference<T> | Query<T> | DocumentReference<T>,
-  options?: FirestoreOptions
-) {
-  const target =
-    'where' in docOrCollectionRef ? ref<T | null>(null) : ref<T[]>([])
+const pendingPromises = new Set<Promise<any>>()
 
-  let unbind: ReturnType<typeof bindCollection | typeof bindDocument>
+// TODO: should be usable in different contexts, use inject, provide
+export function usePendingPromises() {
+  return Promise.all(pendingPromises)
+}
+
+export interface UseCollectionOptions {}
+
+/**
+ * Creates a reactive array of documents from a collection ref or a query from Firestore.
+ *
+ * @param collectionRef - query or collection
+ * @param options - optional options
+ * @returns
+ */
+export function useCollection<T>(
+  collectionRef: CollectionReference<T> | Query<T>,
+  options?: UseCollectionOptions
+) {
+  const data = ref<T[]>()
+
+  let unbind!: ReturnType<typeof bindCollection>
   const promise = new Promise((resolve, reject) => {
-    unbind = ('where' in docOrCollectionRef ? bindCollection : bindDocument)(
-      target,
-      // the type is good because of the ternary
-      docOrCollectionRef as any,
-      ops,
-      resolve,
-      reject,
-      options
-    )
+    unbind = bindCollection(data, collectionRef, ops, resolve, reject, options)
   })
 
-  if (getCurrentInstance()) {
-    onUnmounted(() => unbind())
+  // TODO: warning
+  if (getCurrentScope()) {
+    pendingPromises.add(promise)
+    onScopeDispose(() => {
+      pendingPromises.delete(promise)
+      unbind()
+    })
   }
 
-  return [target, promise, unbind!]
+  return data
 }
 
 export const unbind = (target: Ref, reset?: FirestoreOptions['reset']) =>

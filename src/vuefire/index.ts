@@ -3,4 +3,7 @@ export {
   firestorePlugin,
   bind as firestoreBind,
   unbind as firestoreUnbind,
+  useCollection,
 } from './firestore'
+
+export type { UseCollectionOptions } from './firestore'

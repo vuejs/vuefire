@@ -41,11 +41,11 @@ function unsubscribeAll(subs: Record<string, FirestoreSubscription>) {
   }
 }
 
-function updateDataFromDocumentSnapshot(
+function updateDataFromDocumentSnapshot<T>(
   options: Required<FirestoreOptions>,
-  target: CommonBindOptionsParameter['target'],
+  target: Ref<T>,
   path: string,
-  snapshot: DocumentSnapshot,
+  snapshot: DocumentSnapshot<T>,
   subs: Record<string, FirestoreSubscription>,
   ops: CommonBindOptionsParameter['ops'],
   depth: number,
@@ -189,9 +189,9 @@ interface BindCollectionParameter extends CommonBindOptionsParameter {
 
 // TODO: refactor without using an object to improve size like the other functions
 
-export function bindCollection(
+export function bindCollection<T>(
   target: BindCollectionParameter['target'],
-  collection: BindCollectionParameter['collection'],
+  collection: CollectionReference<T> | Query<T>,
   ops: BindCollectionParameter['ops'],
   resolve: BindCollectionParameter['resolve'],
   reject: BindCollectionParameter['reject'],
@@ -209,7 +209,7 @@ export function bindCollection(
   const arraySubs: Record<string, FirestoreSubscription>[] = []
 
   const change = {
-    added: ({ newIndex, doc }: DocumentChange) => {
+    added: ({ newIndex, doc }: DocumentChange<T>) => {
       arraySubs.splice(newIndex, 0, Object.create(null))
       const subs = arraySubs[newIndex]
       const [data, refs] = extractRefs(options.serialize(doc), undefined, subs)
@@ -225,7 +225,7 @@ export function bindCollection(
         resolve.bind(null, doc)
       )
     },
-    modified: ({ oldIndex, newIndex, doc }: DocumentChange) => {
+    modified: ({ oldIndex, newIndex, doc }: DocumentChange<T>) => {
       const array = unref(arrayRef)
       const subs = arraySubs[oldIndex]
       const oldData = array[oldIndex]
@@ -246,7 +246,7 @@ export function bindCollection(
         resolve
       )
     },
-    removed: ({ oldIndex }: DocumentChange) => {
+    removed: ({ oldIndex }: DocumentChange<T>) => {
       const array = unref(arrayRef)
       ops.remove(array, oldIndex)
       unsubscribeAll(arraySubs.splice(oldIndex, 1)[0])
@@ -262,12 +262,7 @@ export function bindCollection(
       // from the query appearing as added
       // (https://firebase.google.com/docs/firestore/query-data/listen#view_changes_between_snapshots)
 
-      const docChanges =
-        /* istanbul ignore next */
-        typeof snapshot.docChanges === 'function'
-          ? snapshot.docChanges()
-          : /* istanbul ignore next to support firebase < 5*/
-            (snapshot.docChanges as unknown as DocumentChange[])
+      const docChanges = snapshot.docChanges()
 
       if (!isResolved && docChanges.length) {
         // isResolved is only meant to make sure we do the check only once
@@ -333,9 +328,9 @@ interface BindDocumentParameter extends CommonBindOptionsParameter {
  * @param param0
  * @param extraOptions
  */
-export function bindDocument(
+export function bindDocument<T>(
   target: BindDocumentParameter['target'],
-  document: BindDocumentParameter['document'],
+  document: DocumentReference<T>,
   ops: BindDocumentParameter['ops'],
   resolve: BindDocumentParameter['resolve'],
   reject: BindDocumentParameter['reject'],
