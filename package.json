@@ -37,7 +37,7 @@
     "lint:fix": "pnpm run lint --write",
     "test:types": "tsc --build tsconfig.json",
     "test:unit": "vitest --coverage",
-    "firebase:emulators": "firebase emulators:start --only firestore",
+    "firebase:emulators": "firebase emulators:start",
     "test:dev": "vitest",
     "test": "pnpm run lint && pnpm run test:unit run && pnpm run build"
   },

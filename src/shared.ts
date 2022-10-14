@@ -1,9 +1,16 @@
 import type { DocumentData, DocumentReference } from 'firebase/firestore'
 
+// FIXME: replace any with unknown or T generics
+
 export interface OperationsType {
-  set: (target: Record<string, any>, key: string | number, value: any) => any
-  add: (array: any[], index: number, data: DocumentData) => any
-  remove: (array: any[], index: number) => any
+  set<T extends object = Record<any, unknown>>(
+    target: T,
+    // accepts a dot delimited path
+    path: string | number,
+    value: T[any]
+  ): T[any] | T[any][]
+  add<T extends unknown = unknown>(array: T[], index: number, data: T): T[]
+  remove<T extends unknown = unknown>(array: T[], index: number): T[]
 }
 
 export type ResetOption = boolean | (() => any)
@@ -28,13 +35,13 @@ export function walkGet(obj: Record<string, any>, path: string): any {
  * @param value
  * @returns an array with the element that was replaced or the value that was set
  */
-export function walkSet<T>(
-  obj: Record<string, any>,
+export function walkSet<T extends object = Record<any, unknown>>(
+  obj: T,
   path: string | number,
-  value: T
-): T | T[] {
+  value: T[any]
+): T[any] | T[any][] {
   // path can be a number
-  const keys = ('' + path).split('.')
+  const keys = ('' + path).split('.') as Array<keyof T>
   const key = keys.pop() as string // split will produce at least one element array
   const target = keys.reduce(
     (target, key): any =>
