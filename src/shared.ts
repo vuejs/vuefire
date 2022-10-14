@@ -52,7 +52,7 @@ export function walkSet<T>(
  * Checks if a variable is an object
  * @param o
  */
-export function isObject(o: any): o is object {
+export function isObject(o: any): o is Record<any, unknown> {
   return o && typeof o === 'object'
 }
 
@@ -69,8 +69,10 @@ export function isTimestamp(o: any): o is Date {
  * @param o
  */
 export function isDocumentRef(o: any): o is DocumentReference {
-  return o && o.onSnapshot
+  return isObject(o) && o.type === 'document'
 }
+
+type ReferenceType = 'collection' | 'document' | 'query'
 
 /**
  * Wraps a function so it gets called only once
@@ -81,8 +83,7 @@ export function callOnceWithArg<T, K>(
   fn: (arg: T) => K,
   argFn: () => T
 ): () => K | undefined {
-  /** @type {boolean | undefined} */
-  let called = false
+  let called: boolean | undefined
 
   return (): K | undefined => {
     if (!called) {

@@ -4,15 +4,20 @@ import type {
   CollectionReference,
   DocumentSnapshot,
   DocumentData,
+  GeoPoint,
 } from 'firebase/firestore'
 import { isTimestamp, isObject, isDocumentRef, TODO } from '../shared'
 
 export type FirestoreReference = Query | DocumentReference | CollectionReference
 
 // TODO: fix type not to be any
-export function createSnapshot(doc: DocumentSnapshot): TODO {
+export function createSnapshot<T = DocumentData>(
+  doc: DocumentSnapshot<T>
+): { id: string } & T {
   // TODO: it should create a deep copy instead because otherwise we will modify internal data
   // defaults everything to false, so no need to set
+  // FIXME: can this be called when the document doesn't exist?
+  // @ts-expect-error
   return Object.defineProperty(doc.data() || {}, 'id', { value: doc.id })
 }
 
@@ -54,18 +59,18 @@ export function extractRefs(
 
     // recursively traverse doc to copy values and extract references
     for (const key in doc) {
-      const ref: TODO = doc[key]
+      const ref: unknown = doc[key]
       if (
         // primitives
         ref == null ||
         // Firestore < 4.13
         ref instanceof Date ||
         isTimestamp(ref) ||
-        (ref.longitude && ref.latitude) // GeoPoint
+        isGeoPoint(ref)
       ) {
         data[key] = ref
       } else if (isDocumentRef(ref)) {
-        // allow values to be null (like non-existant refs)
+        // allow values to be null (like non-existent refs)
         // TODO: better typing since this isObject shouldn't be necessary but it doesn't work
         data[key] =
           typeof oldDoc === 'object' &&
@@ -103,4 +108,8 @@ export function extractRefs(
   recursiveExtract(doc, oldDoc, '', dataAndRefs)
 
   return dataAndRefs
+}
+
+function isGeoPoint(value: unknown): value is GeoPoint {
+  return isObject(value) && 'latitude' in value && 'longitude' in value
 }

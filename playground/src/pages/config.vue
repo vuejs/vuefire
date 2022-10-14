@@ -6,11 +6,11 @@ import { useFirestore } from '@/firebase'
 
 const db = useFirestore()
 const configRef = doc(db, 'configs', 'jORwjIykFo2NmkdzTkhU')
-const itemRef = doc(db, 'tests', 'item')
+// const itemRef = doc(db, 'tests', 'item')
 
 const config = ref()
-firestoreBind(config, itemRef)
-// firestoreBind(config, configRef)
+// firestoreBind(config, itemRef)
+firestoreBind(config, configRef)
 </script>
 
 <template>

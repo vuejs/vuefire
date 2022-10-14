@@ -22,7 +22,7 @@ export function createFirebaseApp() {
   const firestore = getFirestore(firebaseApp)
   const analytics = getAnalytics(firebaseApp)
 
-  connectFirestoreEmulator(firestore, 'localhost', 8080)
+  // connectFirestoreEmulator(firestore, 'localhost', 8080)
 
   return { firebaseApp, firestore, analytics }
 }
