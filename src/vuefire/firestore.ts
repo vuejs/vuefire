@@ -26,6 +26,7 @@ import {
   toRef,
   InjectionKey,
 } from 'vue-demi'
+import { _RefWithState } from '../shared'
 
 export const ops: OperationsType = {
   set: (target, key, value) => walkSet(target, key, value),
@@ -426,20 +427,6 @@ export function useDocument<T>(
 
   // no unwrapRef to have a simpler type
   return data as _RefWithState<T>
-}
-
-/**
- * @internal
- */
-export interface _RefWithState<T> extends Ref<T> {
-  get data(): Ref<T>
-  get error(): Ref<Error | undefined>
-  get pending(): Ref<boolean>
-
-  // TODO: is it really void?
-  promise: Promise<void>
-  // TODO: extract type from bindDocument and bindCollection
-  unbind: () => void
 }
 
 export const unbind = (target: Ref, reset?: FirestoreOptions['reset']) =>

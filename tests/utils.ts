@@ -1,34 +1,47 @@
 import { initializeApp } from 'firebase/app'
 import {
+  connectDatabaseEmulator,
+  getDatabase,
+  ref,
+  query as databaseQuery,
+  orderByChild,
+  remove,
+} from 'firebase/database'
+import {
   getFirestore,
   connectFirestoreEmulator,
   collection,
   doc,
-  query,
+  query as firestoreQuery,
   orderBy,
   CollectionReference,
   getDocsFromServer,
   QueryDocumentSnapshot,
   deleteDoc,
 } from 'firebase/firestore'
-import { afterAll } from 'vitest'
+import { beforeAll } from 'vitest'
 import { isCollectionRef, isDocumentRef } from '../src/shared'
 
 export const firebaseApp = initializeApp({ projectId: 'vue-fire-store' })
 export const firestore = getFirestore(firebaseApp)
+export const database = getDatabase(firebaseApp)
+
 connectFirestoreEmulator(firestore, 'localhost', 8080)
+connectDatabaseEmulator(database, 'localhost', 8081)
 
 let _id = 0
-export function setupRefs() {
+
+// Firestore
+export function setupFirestoreRefs() {
   const testId = _id++
   const testsCollection = collection(firestore, `__tests`)
   const itemRef = doc(testsCollection, `item:${testId}`)
   const forItemsRef = doc(testsCollection, `forItems:${testId}`)
 
   const listRef = collection(forItemsRef, 'list')
-  const orderedListRef = query(listRef, orderBy('name'))
+  const orderedListRef = firestoreQuery(listRef, orderBy('name'))
 
-  afterAll(async () => {
+  beforeAll(async () => {
     // clean up the tests data
     await Promise.all([
       deleteDoc(itemRef),
@@ -40,7 +53,7 @@ export function setupRefs() {
   return { itemRef, listRef, orderedListRef, testId, col: forItemsRef }
 }
 
-export async function clearCollection(collection: CollectionReference) {
+async function clearCollection(collection: CollectionReference) {
   const { docs } = await getDocsFromServer(collection)
   await Promise.all(
     docs.map(doc => {
@@ -49,7 +62,7 @@ export async function clearCollection(collection: CollectionReference) {
   )
 }
 
-export async function recursiveDeleteDoc(doc: QueryDocumentSnapshot) {
+async function recursiveDeleteDoc(doc: QueryDocumentSnapshot) {
   const docData = doc.data()
   const promises: Promise<any>[] = []
   if (docData) {
@@ -65,6 +78,28 @@ export async function recursiveDeleteDoc(doc: QueryDocumentSnapshot) {
   return Promise.all(promises)
 }
 
+// Database
+export function setupDatabaseRefs() {
+  const testId = _id++
+  const testsCollection = ref(database, `__tests_${testId}`)
+
+  const itemRef = ref(database, testsCollection.key + `/item`)
+  const listRef = ref(database, testsCollection.key + `/items`)
+  const orderedListRef = databaseQuery(listRef, orderByChild('name'))
+
+  beforeAll(async () => {
+    // clean up the tests data
+    await remove(testsCollection)
+  })
+
+  function databaseRef(path: string) {
+    return ref(database, testsCollection.key + '/' + path)
+  }
+
+  return { itemRef, listRef, orderedListRef, testId, databaseRef }
+}
+
+// General utils
 export const sleep = (ms: number) =>
   new Promise(resolve => setTimeout(resolve, ms))
 

@@ -9,12 +9,12 @@ import {
   setDoc,
   updateDoc,
 } from 'firebase/firestore'
-import { expectType, setupRefs, tds, firestore } from '../utils'
+import { expectType, setupFirestoreRefs, tds, firestore } from '../utils'
 import { usePendingPromises } from '../../src/vuefire/firestore'
 import { type Ref } from 'vue'
 
 describe('Firestore collections', () => {
-  const { itemRef, listRef, orderedListRef } = setupRefs()
+  const { itemRef, listRef, orderedListRef } = setupFirestoreRefs()
 
   it('binds a collection as an array', async () => {
     const wrapper = mount(

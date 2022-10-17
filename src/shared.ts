@@ -3,6 +3,7 @@ import type {
   DocumentData,
   DocumentReference,
 } from 'firebase/firestore'
+import type { Ref } from 'vue-demi'
 
 // FIXME: replace any with unknown or T generics
 
@@ -110,4 +111,18 @@ export function callOnceWithArg<T, K>(
       return fn(argFn())
     }
   }
+}
+
+/**
+ * @internal
+ */
+export interface _RefWithState<T> extends Ref<T> {
+  get data(): Ref<T>
+  get error(): Ref<Error | undefined>
+  get pending(): Ref<boolean>
+
+  // TODO: is it really void?
+  get promise(): Promise<void>
+  // TODO: extract type from bindDocument and bindCollection
+  unbind: () => void
 }

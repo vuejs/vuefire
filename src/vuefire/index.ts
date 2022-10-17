@@ -1,4 +1,9 @@
-export { rtdbPlugin, bind as rtdbBind, unbind as rtdbUnbind } from './rtdb'
+export {
+  rtdbPlugin,
+  bind as rtdbBind,
+  unbind as rtdbUnbind,
+  useList,
+} from './rtdb'
 export {
   firestorePlugin,
   bind as firestoreBind,
