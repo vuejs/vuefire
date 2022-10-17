@@ -405,6 +405,8 @@ export const unbind = (target: Ref, reset?: FirestoreOptions['reset']) =>
 
 /**
  * Infers the type from a firestore reference. If it is not a reference, it returns the type as is.
+ *
+ * @internal
  */
 export type _InferReferenceType<R> = R extends
   | CollectionReference<infer T>

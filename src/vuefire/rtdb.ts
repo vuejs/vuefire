@@ -15,19 +15,14 @@ import {
   onBeforeUnmount,
   isVue3,
 } from 'vue-demi'
-// TODO: Rename
-import type {
-  DatabaseReference as Reference,
-  DataSnapshot,
-  Query,
-} from 'firebase/database'
+import type { DatabaseReference, DataSnapshot, Query } from 'firebase/database'
 
 /**
  * Returns the original reference of a Firebase reference or query across SDK versions.
  *
  * @param refOrQuery
  */
-function getRef(refOrQuery: Reference | Query): Reference {
+function getRef(refOrQuery: DatabaseReference | Query): DatabaseReference {
   return refOrQuery.ref
 }
 
@@ -40,7 +35,7 @@ const ops: OperationsType = {
 function internalBind(
   target: Ref<any>,
   key: string,
-  source: Query | Reference,
+  source: Query | DatabaseReference,
   unbinds: Record<string, ReturnType<typeof bindAsArray | typeof bindAsObject>>,
   options?: RTDBOptions
 ) {
@@ -116,7 +111,7 @@ declare module '@vue/runtime-core' {
      */
     $rtdbBind(
       name: string,
-      reference: Reference | Query,
+      reference: DatabaseReference | Query,
       options?: RTDBOptions
     ): Promise<DataSnapshot>
 
@@ -128,7 +123,7 @@ declare module '@vue/runtime-core' {
     /**
      * Bound firestore references
      */
-    $firebaseRefs: Readonly<Record<string, Reference>>
+    $firebaseRefs: Readonly<Record<string, DatabaseReference>>
     // _firebaseSources: Readonly<
     //   Record<string, Reference | Query>
     // >
@@ -148,7 +143,7 @@ declare module '@vue/runtime-core' {
   }
 }
 
-type VueFirebaseObject = Record<string, Query | Reference>
+type VueFirebaseObject = Record<string, Query | DatabaseReference>
 type FirebaseOption = VueFirebaseObject | (() => VueFirebaseObject)
 
 const rtdbUnbinds = new WeakMap<
@@ -190,7 +185,7 @@ export const rtdbPlugin = function rtdbPlugin(
   GlobalTarget[bindName] = function rtdbBind(
     this: ComponentPublicInstance,
     key: string,
-    source: Reference | Query,
+    source: DatabaseReference | Query,
     userOptions?: RTDBOptions
   ) {
     const options = Object.assign({}, globalOptions, userOptions)
@@ -257,7 +252,7 @@ export const rtdbPlugin = function rtdbPlugin(
 
 export function bind(
   target: Ref,
-  reference: Reference | Query,
+  reference: DatabaseReference | Query,
   options?: RTDBOptions
 ) {
   const unbinds = {}

@@ -5,7 +5,7 @@ import {
 } from './utils'
 import { OperationsType, ResetOption } from '../shared'
 import { ref, Ref, unref } from 'vue-demi'
-import type { Query, DatabaseReference as Reference } from 'firebase/database'
+import type { Query, DatabaseReference } from 'firebase/database'
 import {
   onValue,
   off,
@@ -39,7 +39,7 @@ interface CommonBindOptionsParameter {
 // TODO: refactor using normal arguments instead of an array to improve size
 
 interface BindAsObjectParameter extends CommonBindOptionsParameter {
-  document: Reference | Query
+  document: DatabaseReference | Query
 }
 
 /**
@@ -81,7 +81,7 @@ export function rtdbBindAsObject(
 }
 
 interface BindAsArrayParameter extends CommonBindOptionsParameter {
-  collection: Reference | Query
+  collection: DatabaseReference | Query
 }
 
 /**

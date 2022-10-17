@@ -1,16 +1,14 @@
 <script setup lang="ts">
 import { doc } from 'firebase/firestore'
-import { ref } from 'vue'
-import { firestoreBind } from 'vuefire'
+import { useDocument } from 'vuefire'
 import { useFirestore } from '@/firebase'
 
 const db = useFirestore()
 const configRef = doc(db, 'configs', 'jORwjIykFo2NmkdzTkhU')
 // const itemRef = doc(db, 'tests', 'item')
 
-const config = ref()
-// firestoreBind(config, itemRef)
-firestoreBind(config, configRef)
+const config = useDocument(configRef)
+const { data: hey } = useDocument(configRef)
 </script>
 
 <template>
