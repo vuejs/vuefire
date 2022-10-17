@@ -298,7 +298,7 @@ export function useList<T = unknown>(
   rtdbUnbinds.set(data, unbinds)
   const promise = internalBind(data, '', reference, unbinds, options)
   promise
-    .catch(reason => {
+    .catch((reason) => {
       error.value = reason
     })
     .finally(() => {
@@ -319,6 +319,49 @@ export function useList<T = unknown>(
 
   return Object.defineProperties<_RefWithState<T[]>>(
     data as _RefWithState<T[]>,
+    {
+      data: { get: () => data },
+      error: { get: () => error },
+      pending: { get: () => error },
+
+      promise: { get: () => promise },
+    }
+  )
+}
+
+export function useObject<T = unknown>(
+  reference: DatabaseReference,
+  options?: RTDBOptions
+): _RefWithState<T | undefined> {
+  const unbinds = {}
+  const data = ref<T>() as Ref<T | undefined>
+  const error = ref<Error>()
+  const pending = ref(true)
+
+  rtdbUnbinds.set(data, unbinds)
+  const promise = internalBind(data, '', reference, unbinds, options)
+  promise
+    .catch((reason) => {
+      error.value = reason
+    })
+    .finally(() => {
+      pending.value = false
+    })
+
+  // TODO: SSR serialize the values for Nuxt to expose them later and use them
+  // as initial values while specifying a wait: true to only swap objects once
+  // Firebase has done its initial sync. Also, on server, you don't need to
+  // create sync, you can read only once the whole thing so maybe internalBind
+  // should take an option like once: true to not setting up any listener
+
+  if (getCurrentScope()) {
+    onScopeDispose(() => {
+      unbind(data, options && options.reset)
+    })
+  }
+
+  return Object.defineProperties<_RefWithState<T | undefined>>(
+    data as _RefWithState<T | undefined>,
     {
       data: { get: () => data },
       error: { get: () => error },

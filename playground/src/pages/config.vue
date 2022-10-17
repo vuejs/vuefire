@@ -8,7 +8,7 @@ const configRef = doc(db, 'configs', 'jORwjIykFo2NmkdzTkhU')
 // const itemRef = doc(db, 'tests', 'item')
 
 const config = useDocument(configRef)
-const { data: hey } = useDocument(configRef)
+// const { data: hey } = useDocument(configRef)
 </script>
 
 <template>

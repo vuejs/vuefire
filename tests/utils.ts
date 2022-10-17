@@ -19,7 +19,7 @@ import {
   QueryDocumentSnapshot,
   deleteDoc,
 } from 'firebase/firestore'
-import { beforeAll } from 'vitest'
+import { afterAll, beforeAll } from 'vitest'
 import { isCollectionRef, isDocumentRef } from '../src/shared'
 
 export const firebaseApp = initializeApp({ projectId: 'vue-fire-store' })
@@ -56,7 +56,7 @@ export function setupFirestoreRefs() {
 async function clearCollection(collection: CollectionReference) {
   const { docs } = await getDocsFromServer(collection)
   await Promise.all(
-    docs.map(doc => {
+    docs.map((doc) => {
       return recursiveDeleteDoc(doc)
     })
   )
@@ -101,7 +101,7 @@ export function setupDatabaseRefs() {
 
 // General utils
 export const sleep = (ms: number) =>
-  new Promise(resolve => setTimeout(resolve, ms))
+  new Promise((resolve) => setTimeout(resolve, ms))
 
 // type testing utils
 

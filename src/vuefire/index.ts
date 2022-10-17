@@ -3,6 +3,7 @@ export {
   bind as rtdbBind,
   unbind as rtdbUnbind,
   useList,
+  useObject,
 } from './rtdb'
 export {
   firestorePlugin,

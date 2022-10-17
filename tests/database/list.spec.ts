@@ -6,7 +6,7 @@ import { type Ref } from 'vue'
 import { push, ref as _databaseRef, remove } from 'firebase/database'
 
 describe('Database lists', () => {
-  const { itemRef, listRef, orderedListRef, databaseRef } = setupDatabaseRefs()
+  const { listRef, orderedListRef, databaseRef } = setupDatabaseRefs()
 
   it('binds a list', async () => {
     const wrapper = mount(
