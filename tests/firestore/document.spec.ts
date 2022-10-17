@@ -62,5 +62,10 @@ describe('Firestore collections', () => {
     expectType<Ref<number | null>>(useDocument(refWithConverter))
     // @ts-expect-error
     expectType<Ref<string | null>>(useDocument(refWithConverter))
+
+    // destructuring
+    expectType<Ref<DocumentData | null>>(useDocument(itemRef).data)
+    expectType<Ref<Error | undefined>>(useDocument(itemRef).error)
+    expectType<Ref<boolean>>(useDocument(itemRef).pending)
   })
 })

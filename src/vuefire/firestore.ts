@@ -361,7 +361,7 @@ export function useDocument<
 >(
   documentRef: R,
   options?: UseDocumentOptions
-): Ref<_InferReferenceType<R> | null>
+): _RefWithState<_InferReferenceType<R> | null>
 
 /**
  * Creates a reactive collection (usually an array) of documents from a collection ref or a query from Firestore.
@@ -374,18 +374,28 @@ export function useDocument<
 export function useDocument<T>(
   documentRef: DocumentReference,
   options?: UseDocumentOptions
-): Ref<T | null>
+): _RefWithState<T | null>
 
 export function useDocument<T>(
   documentRef: DocumentReference<unknown>,
   options?: UseDocumentOptions
-): Ref<_InferReferenceType<T> | null> | Ref<T | null> {
-  const data = ref<T | null>(null)
+): _RefWithState<_InferReferenceType<T> | null> | _RefWithState<T | null> {
+  const data = ref<T | null>(null) as Ref<T>
+  const pending = ref(true)
+  // TODO: can this error type come from firebase?
+  const error = ref<Error>()
 
   let unbind!: ReturnType<typeof bindDocument>
   const promise = new Promise((resolve, reject) => {
     unbind = bindDocument(data, documentRef, ops, resolve, reject, options)
   })
+  promise
+    .catch(reason => {
+      error.value = reason
+    })
+    .finally(() => {
+      pending.value = false
+    })
 
   // TODO: refactor in a function
   if (getCurrentScope()) {
@@ -396,8 +406,40 @@ export function useDocument<T>(
     })
   }
 
+  Object.defineProperties(data, {
+    error: {
+      get: () => error,
+    },
+    data: {
+      get: () => data,
+    },
+    pending: {
+      get: () => pending,
+    },
+    promise: {
+      get: () => promise,
+    },
+    unbind: {
+      get: () => unbind,
+    },
+  })
+
   // no unwrapRef to have a simpler type
-  return data as Ref<T | null>
+  return data as _RefWithState<T>
+}
+
+/**
+ * @internal
+ */
+export interface _RefWithState<T> extends Ref<T> {
+  get data(): Ref<T>
+  get error(): Ref<Error | undefined>
+  get pending(): Ref<boolean>
+
+  // TODO: is it really void?
+  promise: Promise<void>
+  // TODO: extract type from bindDocument and bindCollection
+  unbind: () => void
 }
 
 export const unbind = (target: Ref, reset?: FirestoreOptions['reset']) =>
