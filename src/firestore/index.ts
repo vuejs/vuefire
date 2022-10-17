@@ -74,7 +74,7 @@ function subscribeToDocument(
   options: Required<FirestoreOptions>
 ) {
   const subs = Object.create(null)
-  const unbind = onSnapshot(ref, snapshot => {
+  const unbind = onSnapshot(ref, (snapshot) => {
     if (snapshot.exists()) {
       updateDataFromDocumentSnapshot(
         options,
@@ -123,10 +123,10 @@ function subscribeToRefs(
 ) {
   const refKeys = Object.keys(refs)
   const missingKeys = Object.keys(subs).filter(
-    refKey => refKeys.indexOf(refKey) < 0
+    (refKey) => refKeys.indexOf(refKey) < 0
   )
   // unbind keys that are no longer there
-  missingKeys.forEach(refKey => {
+  missingKeys.forEach((refKey) => {
     subs[refKey].unsub()
     delete subs[refKey]
   })
@@ -141,7 +141,7 @@ function subscribeToRefs(
     }
   }
 
-  refKeys.forEach(refKey => {
+  refKeys.forEach((refKey) => {
     const sub = subs[refKey]
     const ref = refs[refKey]
     const docPath = `${path}.${refKey}`
@@ -199,7 +199,7 @@ export function bindCollection<T>(
   // a custom converter means we don't need a serializer
   if (collection.converter) {
     // @ts-expect-error: FIXME: remove this serialize option
-    options.serialize = v => v.data()
+    options.serialize = (v) => v.data()
   }
   const key = 'value'
   if (!options.wait) ops.set(target, key, [])
@@ -258,7 +258,7 @@ export function bindCollection<T>(
 
   const unbind = onSnapshot(
     collection,
-    snapshot => {
+    (snapshot) => {
       // console.log('pending', metadata.hasPendingWrites)
       // docs.forEach(d => console.log('doc', d, '\n', 'data', d.data()))
       // NOTE: this will only be triggered once and it will be with all the documents
@@ -293,7 +293,7 @@ export function bindCollection<T>(
           }
         }
       }
-      docChanges.forEach(c => {
+      docChanges.forEach((c) => {
         change[c.type](c)
       })
 
@@ -350,7 +350,7 @@ export function bindDocument<T>(
   resolve = callOnceWithArg(resolve, () => walkGet(target, key))
   const unbind = onSnapshot(
     document,
-    snapshot => {
+    (snapshot) => {
       if (snapshot.exists()) {
         updateDataFromDocumentSnapshot(
           options,

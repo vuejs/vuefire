@@ -391,7 +391,7 @@ export function useDocument<T>(
     unbind = bindDocument(data, documentRef, ops, resolve, reject, options)
   })
   promise
-    .catch(reason => {
+    .catch((reason) => {
       error.value = reason
     })
     .finally(() => {

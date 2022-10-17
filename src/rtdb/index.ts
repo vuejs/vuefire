@@ -56,7 +56,7 @@ export function rtdbBindAsObject(
   const options = Object.assign({}, DEFAULT_OPTIONS, extraOptions)
   const listener = onValue(
     document,
-    snapshot => {
+    (snapshot) => {
       ops.set(target, key, options.serialize(snapshot))
     }
     // TODO: allow passing a cancel callback
@@ -64,7 +64,7 @@ export function rtdbBindAsObject(
   )
   const unsub = onValue(
     document,
-    snapshot => {
+    (snapshot) => {
       resolve(snapshot)
       unsub()
     },
@@ -113,7 +113,7 @@ export function rtdbBindAsArray(
   const childRemoved = onChildRemoved(
     collection,
 
-    snapshot => {
+    (snapshot) => {
       const array = unref(arrayRef)
       ops.remove(array, indexForKey(array, snapshot.key))
     }
@@ -122,7 +122,7 @@ export function rtdbBindAsArray(
 
   const childChanged = onChildChanged(
     collection,
-    snapshot => {
+    (snapshot) => {
       const array = unref(arrayRef)
       ops.set(
         array,
@@ -147,7 +147,7 @@ export function rtdbBindAsArray(
 
   const unsub = onValue(
     collection,
-    data => {
+    (data) => {
       const array = unref(arrayRef)
       if (options.wait) ops.set(target, key, array)
       resolve(data)
