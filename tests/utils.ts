@@ -14,8 +14,8 @@ import {
 import { afterAll } from 'vitest'
 import { isCollectionRef, isDocumentRef } from '../src/shared'
 
-const firebaseApp = initializeApp({ projectId: 'vue-fire-store' })
-const firestore = getFirestore(firebaseApp)
+export const firebaseApp = initializeApp({ projectId: 'vue-fire-store' })
+export const firestore = getFirestore(firebaseApp)
 connectFirestoreEmulator(firestore, 'localhost', 8080)
 
 let _id = 0
@@ -67,3 +67,10 @@ export async function recursiveDeleteDoc(doc: QueryDocumentSnapshot) {
 
 export const sleep = (ms: number) =>
   new Promise(resolve => setTimeout(resolve, ms))
+
+// type testing utils
+
+export function tds(_fn: () => any) {}
+export function expectType<T>(_value: T): void {}
+export function expectError<T>(_value: T): void {}
+export function expectAssignable<T, T2 extends T = T>(_value: T2): void {}

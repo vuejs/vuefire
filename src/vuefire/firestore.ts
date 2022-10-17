@@ -303,11 +303,23 @@ export interface UseCollectionOptions {}
  * @param options - optional options
  * @returns
  */
-export function useCollection<T>(
-  collectionRef: CollectionReference<T> | Query<T>,
+export function useCollection<
+  // explicit generic as unknown to allow arbitrary types
+  // TODO: check if it's actually possible to use something like `number` as the generic, if not, remove these constrains
+  R extends CollectionReference<unknown> | Query<unknown>
+>(
+  collectionRef: R,
   options?: UseCollectionOptions
-) {
-  const data = ref<T[]>()
+): Ref<_InferReferenceType<R>[]>
+export function useCollection<T>(
+  collectionRef: CollectionReference | Query,
+  options?: UseCollectionOptions
+): Ref<T[]>
+export function useCollection<T>(
+  collectionRef: CollectionReference<unknown> | Query<unknown>,
+  options?: UseCollectionOptions
+): Ref<_InferReferenceType<T>[]> | Ref<T[]> {
+  const data = ref<T[]>([])
 
   let unbind!: ReturnType<typeof bindCollection>
   const promise = new Promise((resolve, reject) => {
@@ -323,8 +335,19 @@ export function useCollection<T>(
     })
   }
 
-  return data
+  // no unwrapRef to have a simpler type
+  return data as Ref<T[]>
 }
 
 export const unbind = (target: Ref, reset?: FirestoreOptions['reset']) =>
   internalUnbind('', firestoreUnbinds.get(target), reset)
+
+/**
+ * Infers the type from a firestore reference.
+ */
+export type _InferReferenceType<R> = R extends
+  | CollectionReference<infer T>
+  | Query<infer T>
+  | DocumentReference<infer T>
+  ? T
+  : R

@@ -1,9 +1,10 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { useCollection } from '../../src'
-import { addDoc } from 'firebase/firestore'
-import { setupRefs } from '../utils'
+import { addDoc, collection, DocumentData } from 'firebase/firestore'
+import { expectType, setupRefs, tds, firestore } from '../utils'
 import { usePendingPromises } from '../../src/vuefire/firestore'
+import { type Ref } from 'vue'
 
 describe('Firestore collections', () => {
   const { itemRef, listRef, orderedListRef } = setupRefs()
@@ -34,5 +35,24 @@ describe('Firestore collections', () => {
       { name: 'b' },
       { name: 'c' },
     ])
+  })
+
+  tds(() => {
+    const db = firestore
+    expectType<Ref<DocumentData[]>>(useCollection(collection(db, 'todos')))
+    // @ts-expect-error
+    expectType<Ref<number[]>>(useCollection(collection(db, 'todos')))
+
+    expectType<Ref<number[]>>(useCollection<number>(collection(db, 'todos')))
+    // @ts-expect-error
+    expectType<Ref<string[]>>(useCollection<number>(collection(db, 'todos')))
+
+    const refWithConverter = collection(db, 'todos').withConverter<number>({
+      toFirestore: data => ({ n: data }),
+      fromFirestore: (snap, options) => snap.data(options).n as number,
+    })
+    expectType<Ref<number[]>>(useCollection(refWithConverter))
+    // @ts-expect-error
+    expectType<Ref<string[]>>(useCollection(refWithConverter))
   })
 })
