@@ -2,6 +2,7 @@
 import {
   addDoc,
   collection,
+  deleteDoc,
   doc,
   query,
   serverTimestamp,
@@ -9,7 +10,7 @@ import {
   where,
 } from 'firebase/firestore'
 import { ref } from 'vue'
-import { firestoreBind } from 'vuefire'
+import { useCollection } from 'vuefire'
 import { useFirestore } from '@/firebase'
 
 interface Todo {
@@ -20,12 +21,24 @@ interface Todo {
 
 const db = useFirestore()
 const todosRef = collection(db, 'todos')
+const todosWithConverterRef = collection(db, 'todos').withConverter<Todo>({
+  toFirestore(todoModel) {
+    const { id, ...todo } = todoModel
+    return todo
+  },
+  fromFirestore(snapshot, options) {
+    const todoData = snapshot.data(options) as Omit<Todo, 'id'>
+    return {
+      id: snapshot.id,
+      ...todoData,
+    }
+  },
+})
 const finishedTodos = query(todosRef, where('finished', '==', true))
 const unfinishedTodos = query(todosRef, where('finished', '==', false))
 
-const todos = ref<Todo[]>([])
-// TODO: return an augmented typed ref
-firestoreBind(todos, todosRef)
+const todos = useCollection<Todo>(todosRef)
+const todosConverted = useCollection(todosWithConverterRef)
 
 const newTodoText = ref('')
 
@@ -40,15 +53,15 @@ function addTodo() {
   }
 }
 
-function updateTodoText(todo: any, newText: string) {
-  console.log('update', todo)
-  return
+function updateTodoText(todo: Todo, newText: string) {
   updateDoc(doc(db, 'todos', todo.id), {
     text: newText,
   })
 }
 
-function removeTodo() {}
+function removeTodo(todo: Todo) {
+  deleteDoc(doc(db, 'todos', todo.id))
+}
 
 function toggleTodos() {
   // TODO:
