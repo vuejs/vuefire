@@ -304,8 +304,7 @@ export interface UseCollectionOptions {}
  * @returns
  */
 export function useCollection<
-  // explicit generic as unknown to allow arbitrary types
-  // TODO: check if it's actually possible to use something like `number` as the generic, if not, remove these constrains
+  // explicit generic as unknown to allow arbitrary types like numbers or strings
   R extends CollectionReference<unknown> | Query<unknown>
 >(
   collectionRef: R,

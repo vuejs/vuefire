@@ -187,8 +187,6 @@ interface BindCollectionParameter extends CommonBindOptionsParameter {
   collection: CollectionReference | Query
 }
 
-// TODO: refactor without using an object to improve size like the other functions
-
 export function bindCollection<T>(
   target: BindCollectionParameter['target'],
   collection: CollectionReference<T> | Query<T>,
