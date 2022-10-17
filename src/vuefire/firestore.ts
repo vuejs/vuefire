@@ -297,11 +297,11 @@ export function usePendingPromises() {
 export interface UseCollectionOptions {}
 
 /**
- * Creates a reactive array of documents from a collection ref or a query from Firestore.
+ * Creates a reactive collection (usually an array) of documents from a collection ref or a query from Firestore. Extracts the the type of the
+ * query or converter.
  *
  * @param collectionRef - query or collection
  * @param options - optional options
- * @returns
  */
 export function useCollection<
   // explicit generic as unknown to allow arbitrary types like numbers or strings
@@ -310,10 +310,20 @@ export function useCollection<
   collectionRef: R,
   options?: UseCollectionOptions
 ): Ref<_InferReferenceType<R>[]>
+
+/**
+ * Creates a reactive collection (usually an array) of documents from a collection ref or a query from Firestore.
+ * Accepts a generic to **enforce the type** of the returned Ref. Note you can (and probably should) use
+ * `.withConverter()` to have stricter type safe version of a collection reference.
+ *
+ * @param collectionRef - query or collection
+ * @param options - optional options
+ */
 export function useCollection<T>(
   collectionRef: CollectionReference | Query,
   options?: UseCollectionOptions
 ): Ref<T[]>
+
 export function useCollection<T>(
   collectionRef: CollectionReference<unknown> | Query<unknown>,
   options?: UseCollectionOptions
@@ -338,11 +348,63 @@ export function useCollection<T>(
   return data as Ref<T[]>
 }
 
+export interface UseDocumentOptions {}
+
+/**
+ * Creates a reactive document from a document ref from Firestore. Extracts the the type of the converter
+ * @param documentRef - document reference
+ * @param options - optional options
+ */
+export function useDocument<
+  // explicit generic as unknown to allow arbitrary types like numbers or strings
+  R extends DocumentReference<unknown>
+>(
+  documentRef: R,
+  options?: UseDocumentOptions
+): Ref<_InferReferenceType<R> | null>
+
+/**
+ * Creates a reactive collection (usually an array) of documents from a collection ref or a query from Firestore.
+ * Accepts a generic to **enforce the type** of the returned Ref. Note you can (and probably should) use
+ * `.withConverter()` to have stricter type safe version of a collection reference.
+ *
+ * @param collectionRef - query or collection
+ * @param options - optional options
+ */
+export function useDocument<T>(
+  documentRef: DocumentReference,
+  options?: UseDocumentOptions
+): Ref<T | null>
+
+export function useDocument<T>(
+  documentRef: DocumentReference<unknown>,
+  options?: UseDocumentOptions
+): Ref<_InferReferenceType<T> | null> | Ref<T | null> {
+  const data = ref<T | null>(null)
+
+  let unbind!: ReturnType<typeof bindDocument>
+  const promise = new Promise((resolve, reject) => {
+    unbind = bindDocument(data, documentRef, ops, resolve, reject, options)
+  })
+
+  // TODO: refactor in a function
+  if (getCurrentScope()) {
+    pendingPromises.add(promise)
+    onScopeDispose(() => {
+      pendingPromises.delete(promise)
+      unbind()
+    })
+  }
+
+  // no unwrapRef to have a simpler type
+  return data as Ref<T | null>
+}
+
 export const unbind = (target: Ref, reset?: FirestoreOptions['reset']) =>
   internalUnbind('', firestoreUnbinds.get(target), reset)
 
 /**
- * Infers the type from a firestore reference.
+ * Infers the type from a firestore reference. If it is not a reference, it returns the type as is.
  */
 export type _InferReferenceType<R> = R extends
   | CollectionReference<infer T>
