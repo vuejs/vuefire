@@ -24,10 +24,13 @@ export function createSnapshot<T = DocumentData>(
 export type FirestoreSerializer = typeof createSnapshot
 
 export function extractRefs(
+  // FIXME: unknown
   doc: DocumentData,
   oldDoc: DocumentData | void,
   subs: Record<string, { path: string; data: () => DocumentData | null }>
 ): [DocumentData, Record<string, DocumentReference>] {
+  if (!isObject(doc)) return [doc, {}]
+
   const dataAndRefs: [DocumentData, Record<string, DocumentReference>] = [
     {},
     {},

@@ -198,6 +198,11 @@ export function bindCollection<T>(
   extraOptions: FirestoreOptions = DEFAULT_OPTIONS
 ) {
   const options = Object.assign({}, DEFAULT_OPTIONS, extraOptions) // fill default values
+  // a custom converter means we don't need a serializer
+  if (collection.converter) {
+    // @ts-expect-error: FIXME: remove this serialize option
+    options.serialize = v => v.data()
+  }
   const key = 'value'
   if (!options.wait) ops.set(target, key, [])
   let arrayRef = ref(options.wait ? [] : target[key])

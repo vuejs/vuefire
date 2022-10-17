@@ -42,6 +42,12 @@ declare module 'vue-router/auto/routes' {
       Record<never, never>,
       Record<never, never>
     >
+    '/converter-with-number': RouteRecordInfo<
+      '/converter-with-number',
+      '/converter-with-number',
+      Record<never, never>,
+      Record<never, never>
+    >
     '/nested-collections': RouteRecordInfo<
       '/nested-collections',
       '/nested-collections',
