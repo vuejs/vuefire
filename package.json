@@ -68,8 +68,8 @@
     }
   },
   "devDependencies": {
-    "@vitest/coverage-c8": "^0.24.1",
-    "@vue/runtime-core": "^3.2.40",
+    "@vitest/coverage-c8": "^0.24.3",
+    "@vue/runtime-core": "^3.2.41",
     "@vue/test-utils": "^2.1.0",
     "chalk": "^5.1.2",
     "conventional-changelog-cli": "^2.0.34",
@@ -77,17 +77,17 @@
     "execa": "^6.1.0",
     "firebase": "^9.12.1",
     "focus-visible": "^5.2.0",
-    "happy-dom": "^7.5.10",
+    "happy-dom": "^7.5.13",
     "lint-staged": "^13.0.3",
     "minimist": "^1.2.7",
     "p-series": "^3.0.0",
     "prettier": "^2.0.5",
     "semver": "^7.3.8",
     "typescript": "~4.8.4",
-    "unbuild": "^0.8.11",
-    "vitepress": "1.0.0-alpha.20",
-    "vitest": "^0.24.1",
-    "vue": "^3.0.0",
+    "unbuild": "^0.9.4",
+    "vitepress": "1.0.0-alpha.21",
+    "vitest": "^0.24.3",
+    "vue": "^3.2.41",
     "yorkie": "^2.0.0"
   },
   "gitHooks": {
