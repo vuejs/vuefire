@@ -6,7 +6,6 @@ export {
   useObject,
 } from './rtdb'
 export {
-  firestorePlugin,
   bind as firestoreBind,
   unbind as firestoreUnbind,
   useCollection,

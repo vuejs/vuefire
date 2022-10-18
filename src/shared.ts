@@ -116,9 +116,9 @@ export function callOnceWithArg<T, K>(
 /**
  * @internal
  */
-export interface _RefWithState<T> extends Ref<T> {
+export interface _RefWithState<T, E = Error> extends Ref<T> {
   get data(): Ref<T>
-  get error(): Ref<Error | undefined>
+  get error(): Ref<E | undefined>
   get pending(): Ref<boolean>
 
   // TODO: is it really void?

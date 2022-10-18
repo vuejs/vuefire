@@ -6,6 +6,7 @@ import {
   collection,
   doc,
   DocumentData,
+  FirestoreError,
   setDoc,
   updateDoc,
 } from 'firebase/firestore'
@@ -13,10 +14,10 @@ import { expectType, setupFirestoreRefs, tds, firestore } from '../utils'
 import { usePendingPromises } from '../../src/vuefire/firestore'
 import { type Ref } from 'vue'
 
-describe('Firestore collections', () => {
+describe('Firestore documents', () => {
   const { itemRef, listRef, orderedListRef } = setupFirestoreRefs()
 
-  it('binds a collection as an array', async () => {
+  it('binds a document', async () => {
     const wrapper = mount(
       {
         template: 'no',
@@ -29,10 +30,6 @@ describe('Firestore collections', () => {
       // should work without the plugin
       // { global: { plugins: [firestorePlugin] } }
     )
-
-    expect(wrapper.vm.item).toEqual(null)
-    await usePendingPromises()
-    expect(wrapper.vm.item).toEqual(null)
 
     await setDoc(itemRef, { name: 'a' })
     expect(wrapper.vm.item).toMatchObject({
@@ -56,7 +53,7 @@ describe('Firestore collections', () => {
     expectType<Ref<string | null>>(useDocument<number>(itemRef))
 
     const refWithConverter = itemRef.withConverter<number>({
-      toFirestore: data => ({ n: data }),
+      toFirestore: (data) => ({ n: data }),
       fromFirestore: (snap, options) => snap.data(options).n as number,
     })
     expectType<Ref<number | null>>(useDocument(refWithConverter))
@@ -65,7 +62,7 @@ describe('Firestore collections', () => {
 
     // destructuring
     expectType<Ref<DocumentData | null>>(useDocument(itemRef).data)
-    expectType<Ref<Error | undefined>>(useDocument(itemRef).error)
+    expectType<Ref<FirestoreError | undefined>>(useDocument(itemRef).error)
     expectType<Ref<boolean>>(useDocument(itemRef).pending)
   })
 })
