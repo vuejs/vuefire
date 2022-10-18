@@ -1,12 +1,24 @@
 <template>
   <div class="tab-container" :id="id">
     <nav ref="nav">
-      <button :id="id + '_rtdb'" :class="!selectedTab && 'is-selected'" title="Realtime Database example"
-        @focus="selectOnFocus(0, $event)" @click="select(0)" :disabled="disable === '0'">
+      <button
+        :id="id + '_rtdb'"
+        :class="!selectedTab && 'is-selected'"
+        title="Realtime Database example"
+        @focus="selectOnFocus(0, $event)"
+        @click="select(0)"
+        :disabled="disable === '0'"
+      >
         <rtdb-logo />
       </button>
-      <button :id="id + '_firestore'" :class="selectedTab && 'is-selected'" title="Firestore example"
-        @focus="selectOnFocus(1, $event)" @click="select(1)" :disabled="disable === '1'">
+      <button
+        :id="id + '_firestore'"
+        :class="selectedTab && 'is-selected'"
+        title="Firestore example"
+        @focus="selectOnFocus(1, $event)"
+        @click="select(1)"
+        :disabled="disable === '1'"
+      >
         <firestore-logo />
       </button>
     </nav>
@@ -31,8 +43,18 @@ const sharedState = {
   selectedTab: 1, // defaults to Firestore examples
 }
 
+let id = 0
+
 export default {
-  props: ['id', 'disable'],
+  props: {
+    id: {
+      type: String,
+      default: () => `code-example-${id++}`,
+    },
+    disable: {
+      type: String,
+    },
+  },
   data() {
     return sharedState
   },
@@ -73,7 +95,7 @@ export default {
 </style>
 
 <style>
-.tab-container>nav {
+.tab-container > nav {
   display: flex;
   align-items: flex-end;
   justify-content: flex-end;
@@ -85,12 +107,12 @@ export default {
 }
 
 @media (max-width: 419px) {
-  .tab-container>nav {
+  .tab-container > nav {
     margin: 0 -1.5rem 0;
   }
 }
 
-.tab-container>nav>button {
+.tab-container > nav > button {
   display: flex;
   align-items: center;
   height: 100%;
@@ -104,7 +126,7 @@ export default {
   background-color: var(--code-bg-color-lighter);
 }
 
-.tab-container>nav>button svg {
+.tab-container > nav > button svg {
   width: 32px;
   height: 32px;
   /* margin-top: -3.5rem; */
@@ -112,56 +134,56 @@ export default {
   /* filter: brightness(0.8); */
 }
 
-.tab-container>nav>button:not(:first-child) {
+.tab-container > nav > button:not(:first-child) {
   border-left: none;
 }
 
-.tab-container>nav>button:not(:last-child) {
+.tab-container > nav > button:not(:last-child) {
   border-right: none;
 }
 
-.tab-container>nav>button:first-child {
+.tab-container > nav > button:first-child {
   border-radius: 6px 0 0;
 }
 
-.tab-container>nav>button:last-child {
+.tab-container > nav > button:last-child {
   border-radius: 0 6px 0 0;
 }
 
-.tab-container>nav>button:not([disabled]):hover {
+.tab-container > nav > button:not([disabled]):hover {
   cursor: pointer;
   /* background-color: lighten(var(--code-bg-color), 30%); */
   background-color: var(--code-bg-color-lightest);
   /* filter: brightness(1.3); */
 }
 
-.tab-container>nav>button:not([disabled]):hover svg {
+.tab-container > nav > button:not([disabled]):hover svg {
   fill: var(--vp-code-block-color);
 }
 
-.tab-container>nav>button.is-selected:hover {
+.tab-container > nav > button.is-selected:hover {
   filter: brightness(1);
   background-color: var(--vp-code-block-bg);
 
   /* var(--vp-code-block-bg); */
 }
 
-.tab-container>nav>button[disabled] {
+.tab-container > nav > button[disabled] {
   /* border-color: lighten(var(--vp-code-block-bg), 60%); */
   border-color: var(--vp-code-block-bg);
   /* filter: brightness(1.6); */
 }
 
-.tab-container>nav>button[disabled] svg {
+.tab-container > nav > button[disabled] svg {
   fill: var(--vp-code-block-bg);
   /* filter: brightness(1.6); */
 }
 
-.tab-container>nav>button.is-selected {
+.tab-container > nav > button.is-selected {
   background-color: var(--vp-code-block-bg);
 }
 
-.tab-container>nav>button.is-selected svg {
+.tab-container > nav > button.is-selected svg {
   fill: var(--vp-code-block-color);
 }
 

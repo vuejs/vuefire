@@ -9,7 +9,7 @@ hero:
   text: Official Firebase bindings for Vue.js
   tagline: Performant and feature-rich Firebase bindings for Vue.js
   image:
-    src: /vuefire-logo.svg
+    src: /logo.svg
     alt: VueFire logo
   actions:
     - theme: brand
@@ -21,7 +21,7 @@ hero:
 
 features:
   - title: "Flexible"
-    details: Use Firebase <strong>Database</strong> and <strong>Firestore</strong>. You can use both at the same time or just use one of them.
+    details: Use Firebase Database and Firestore. You can use both at the same time or just use one of them.
   - title: Simple
     details: VueFire only handles the binding for you so your state is always up to date with the server. You still be able to use Firebase JS SDK to its full potential!
 

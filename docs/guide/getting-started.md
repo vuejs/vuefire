@@ -1,6 +1,6 @@
 # Getting Started
 
-Before using Vuefire, make sure you have a Firebase account and a project setup by following the instructions at _[Create a Cloud Firestore project](https://firebase.google.com/docs/firestore/quickstart)_. Keep in mind there are two different databases: _RTDB_ and _Cloud Firestore_ (often referenced as _Firestore_). If you have never read about them, you should first read _[Choose a Database](https://firebase.google.com/docs/database/rtdb-vs-firestore)_ in Firebase documentation. Vuefire supports both versions although you probably will only use one of them in a given project. Throughout the docs you will often find snippets showing both, _RTDB_(<RtdbLogo width="24"/>) and _Firestore_ (<FirestoreLogo height="24"/>) examples. Click on them to switch code samples.
+Before using Vuefire, make sure you have a Firebase account and a project setup by following the instructions at _[Create a Cloud Firestore project](https://firebase.google.com/docs/firestore/quickstart)_. Keep in mind there are two different databases: _RTDB_ and _Cloud Firestore_ (often referenced as _Firestore_). If you have never read about them, you should first read _[Choose a Database](https://firebase.google.com/docs/database/rtdb-vs-firestore)_ in Firebase documentation. Vuefire supports both versions although you probably will only use one of them in a given project. Throughout the docs you will often find snippets showing both, _RTDB_(<RtdbLogo width="24" style="display: inline; fill: currentColor;" />) and _Firestore_ (<FirestoreLogo height="24" style="display: inline; fill: currentColor;" />) examples. Click on them to switch code samples.
 
 ## Installation
 
@@ -14,11 +14,22 @@ npm install vuefire firebase
 
 :::warning
 
-- Vuefire requires Firebase JS SDK >= 4.
+- Vuefire requires Firebase JS SDK >= 9 but **is compatible with Vue 2 and Vue 3**.
 
 :::
 
+## Composition API
+
+TODO:
+usage with `useCollection()`, `useDocument()`, `useList()` and `useObject()`
+
+## Option API
+
+TODO: usage with plugin and option API
+
 ## Plugin
+
+<!-- TODO: update to Vue 3 -->
 
 Vuefire must be installed as a Vue plugin. Make sure to install the right one:
 

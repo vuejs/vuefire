@@ -2,7 +2,7 @@
 
 Vuefire is a small and pragmatic solution to create realtime bindings between a Firebase RTDB or a Firebase Cloud Firestore and your Vue application. Making it straightforward to **always keep your local data in sync** with remotes databases.
 
-## Why
+## Why VueFire
 
 While Firebase SDK does provide an API to keep your local data in sync with any changes happening in the remote database, it is more tedious than you can imagine, and it involves many edge cases. Here is the code you need to write to keep your local state in sync with Firebase **without using Vuefire**. Let's take the example of binding a collection as an array, both with the RTDB and with Cloud Firestore:
 
@@ -10,14 +10,14 @@ While Firebase SDK does provide an API to keep your local data in sync with any 
 
 ```js
 // get RTDB the database instance
-import firebase from 'firebase/app'
-import 'firebase/database'
+import { initializeApp } from 'firebase/app'
+import { getDatabase } from 'firebase/database'
+import { createApp } from 'vue'
 
-const db = firebase
-  .initializeApp({ databaseURL: 'https://MY-DATABASE.firebaseio.com' })
-  .database()
+const firebase = initializeApp({ databaseURL: 'https://MY-DATABASE.firebaseio.com' })
+const db = getDatabase(firebase)
 
-new Vue({
+createApp({
   // setup the reactive todos property
   data: () => ({ todos: [] }),
 
@@ -91,12 +91,14 @@ new Vue({
 
 ```js
 // get Firestore database instance
-import firebase from 'firebase/app'
-import 'firebase/firestore'
+import { initializeApp } from 'firebase/app'
+import { getFirestore } from 'firebase/firestore'
+import { createApp } from 'vue'
 
-const db = firebase.initializeApp({ projectId: 'MY PROJECT ID' }).firestore()
+const firebase = initializeApp({ projectId: 'MY PROJECT ID' })
+const db = getFirestore(firebase)
 
-new Vue({
+createApp({
   // setup the reactive todos property
   data: () => ({ todos: [] }),
 
@@ -130,7 +132,7 @@ new Vue({
 :::warning
 
 - In the [**RTDB** example](#original_rtdb), we are omitting the unsubscribe part because it requires to save the return of every listener created to later on call `this.todosRef.off` with _every single_ one of them.
-- In the [**Firestore** example](#original_firestore), the code above is not taking into account [Firestore references](https://firebase.google.com/docs/firestore/data-model#references) which **considerably** increases the complexity of binding and [is handled transparently](binding-subscriptions.md#references-firestore-only) by Vuefire
+- In the [**Firestore** example](#original_firestore), the code above is not taking into account [Firestore references](https://firebase.google.com/docs/firestore/data-model#references) which **considerably** increases the complexity of binding and [is handled transparently](./binding-subscriptions.md#references-firestore-only) by Vuefire
 
 :::
 
@@ -139,39 +141,44 @@ Now let's look at the equivalent code with vuefire:
 <FirebaseExample id="getting-started">
 
 ```js
-import firebase from 'firebase/app'
-import 'firebase/database'
+import { initializeApp } from 'firebase/app'
+import { getDatabase, ref as dbRef } from 'firebase/firebase'
+import { createApp } from 'vue'
+import { useList } from 'vuefire'
 
-const db = firebase
-  .initializeApp({ databaseURL: 'https://MY-DATABASE.firebaseio.com' })
-  .database()
+const firebase = initializeApp({ databaseURL: 'https://MY-DATABASE.firebaseio.com' })
+const db = getDatabase(firebase)
 
-new Vue({
+createApp({
   // setup the reactive todos property
-  data: () => ({ todos: [] }),
+  setup() {
+    const todosRef = dbRef(db, 'todos')
+    const todos = useList(todosRef)
 
-  firebase: {
-    todos: db.ref('todos'),
+    return { todos }
   },
 })
 ```
 
 ```js
-import firebase from 'firebase/app'
-import 'firebase/firestore'
+import { initializeApp } from 'firebase/app'
+import { getFirestore, collection } from 'firebase/firestore'
+import { createApp } from 'vue'
+import { useCollection } from 'vuefire'
 
-const db = firebase.initializeApp({ projectId: 'MY PROJECT ID' }).firestore()
+const firebase = initializeApp({ projectId: 'MY PROJECT ID' })
+const db = getFirestore(firebase)
 
-new Vue({
-  // setup the reactive todos property
-  data: () => ({ todos: [] }),
+createApp({
+  setup() {
+    const todosRef = collection(db, 'todos')
+    const todos = useCollection(todosRef)
 
-  firestore: {
-    todos: db.collection('todos'),
-  },
+    return { todos }
+  }
 })
 ```
 
 </FirebaseExample>
 
-And that's it! You can use `todos` anywhere, it will be always in sync with your remote database. Let's dive deeper and learn about all the features added by Vuefire: [Getting started](getting-started.md)
+And that's it! You can use `todos` anywhere, it will be always in sync with your remote database. Let's dive deeper and learn about all the features added by Vuefire: [Getting started](./getting-started.md)
