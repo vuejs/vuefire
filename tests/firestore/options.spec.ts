@@ -35,6 +35,7 @@ describe('Firestore: Options API', () => {
 
   it('calls custom serialize function with collection', async () => {
     const pluginOptions: PluginOptions = {
+      // @ts-expect-error: FIXME:
       serialize: vi.fn(() => ({ foo: 'bar' })),
     }
     const wrapper = mount(
@@ -82,6 +83,7 @@ describe('Firestore: Options API', () => {
 
     const spy = vi.fn(() => ({ bar: 'bar' }))
 
+    // @ts-expect-error: FIXME:
     await wrapper.vm.$bind('items', itemsRef, { serialize: spy })
 
     expect(pluginOptions.serialize).not.toHaveBeenCalled()
