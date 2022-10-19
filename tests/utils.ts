@@ -36,24 +36,28 @@ let _id = 0
 export function setupFirestoreRefs() {
   const testId = _id++
   const testsCollection = collection(firestore, `__tests`)
-  const itemRef = doc(testsCollection, `item:${testId}`)
-  const forItemsRef = doc(testsCollection, `forItems:${testId}`)
+  const itemRef = doc(testsCollection)
+  // let firestore generate the id
+  const forItemsRef = doc(testsCollection)
 
   const listRef = collection(forItemsRef, 'list')
   const orderedListRef = firestoreQuery(listRef, orderBy('name'))
 
-  beforeAll(async () => {
+  afterAll(async () => {
     // clean up the tests data
     await Promise.all([
       deleteDoc(itemRef),
       ...[...docsToClean].map((doc) => deleteDoc(doc)),
-      deleteDoc(forItemsRef),
-      ...[...collectionsToClean].map((collection) =>
-        clearCollection(collection)
-      ),
-      clearCollection(listRef),
-      clearCollection(testsCollection),
     ])
+    await Promise.all(
+      [...collectionsToClean].map((collection) => clearCollection(collection))
+    )
+    // must be done after the cleanup of its docs
+    await deleteDoc(forItemsRef),
+      await Promise.all([
+        clearCollection(listRef),
+        clearCollection(testsCollection),
+      ])
   })
 
   // for automatically generated collections

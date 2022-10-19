@@ -9,9 +9,8 @@ import { type Ref } from 'vue'
 
 const component = defineComponent({ template: 'no' })
 
-describe.skip('Firestore: Options API', () => {
-  const { itemRef, listRef, orderedListRef, collection, doc } =
-    setupFirestoreRefs()
+describe('Firestore: Options API', () => {
+  const { collection, doc } = setupFirestoreRefs()
 
   it('allows customizing $rtdbBind', () => {
     const wrapper = mount(component, {
@@ -50,14 +49,13 @@ describe.skip('Firestore: Options API', () => {
       }
     )
 
-    const items = collection()
-    await items.add({})
+    const itemsRef = collection()
+    await addDoc(itemsRef, {})
 
-    await wrapper.vm.$bind('items', items)
+    await wrapper.vm.$bind('items', itemsRef)
 
     expect(pluginOptions.serialize).toHaveBeenCalledTimes(1)
     expect(pluginOptions.serialize).toHaveBeenCalledWith(
-      // @ts-ignore WTF TS?????
       expect.objectContaining({ data: expect.any(Function) })
     )
     expect(wrapper.vm.items).toEqual([{ foo: 'bar' }])
@@ -79,18 +77,16 @@ describe.skip('Firestore: Options API', () => {
       }
     )
 
-    // @ts-ignore
-    const items: firestore.CollectionReference = db.collection()
-    await items.add({})
+    const itemsRef = collection()
+    await addDoc(itemsRef, {})
 
     const spy = vi.fn(() => ({ bar: 'bar' }))
 
-    await wrapper.vm.$bind('items', items, { serialize: spy })
+    await wrapper.vm.$bind('items', itemsRef, { serialize: spy })
 
     expect(pluginOptions.serialize).not.toHaveBeenCalled()
     expect(spy).toHaveBeenCalledTimes(1)
     expect(spy).toHaveBeenCalledWith(
-      // @ts-ignore WTF TS?????
       expect.objectContaining({ data: expect.any(Function) })
     )
     expect(wrapper.vm.items).toEqual([{ bar: 'bar' }])

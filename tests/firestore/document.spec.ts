@@ -2,20 +2,18 @@ import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { useDocument } from '../../src'
 import {
-  addDoc,
-  collection,
-  doc,
+  doc as originalDoc,
   DocumentData,
   FirestoreError,
   setDoc,
   updateDoc,
 } from 'firebase/firestore'
 import { expectType, setupFirestoreRefs, tds, firestore } from '../utils'
-import { usePendingPromises } from '../../src/vuefire/firestore'
 import { type Ref } from 'vue'
 
 describe('Firestore documents', () => {
-  const { itemRef, listRef, orderedListRef } = setupFirestoreRefs()
+  const { doc } = setupFirestoreRefs()
+  const itemRef = doc()
 
   it('binds a document', async () => {
     const wrapper = mount(
@@ -43,6 +41,7 @@ describe('Firestore documents', () => {
 
   tds(() => {
     const db = firestore
+    const doc = originalDoc
     const itemRef = doc(db, 'todos', '1')
     expectType<Ref<DocumentData | null>>(useDocument(itemRef))
     // @ts-expect-error
