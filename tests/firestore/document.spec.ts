@@ -48,6 +48,7 @@ describe('Firestore documents', () => {
     expectType<Ref<number | null>>(useDocument(itemRef))
 
     expectType<Ref<number | null>>(useDocument<number>(itemRef))
+    expectType<Ref<number | null>>(useDocument<number>(itemRef).data)
     // @ts-expect-error
     expectType<Ref<string | null>>(useDocument<number>(itemRef))
 
@@ -55,9 +56,14 @@ describe('Firestore documents', () => {
       toFirestore: (data) => ({ n: data }),
       fromFirestore: (snap, options) => snap.data(options).n as number,
     })
-    expectType<Ref<number | null>>(useDocument(refWithConverter))
-    // @ts-expect-error
-    expectType<Ref<string | null>>(useDocument(refWithConverter))
+    expectType<Ref<number>>(useDocument(refWithConverter))
+    expectType<Ref<number>>(useDocument(refWithConverter).data)
+    // should not be null
+    useDocument(refWithConverter).value.toFixed(14)
+    // @ts-expect-error: string is not assignable to number
+    expectType<Ref<string>>(useDocument(refWithConverter))
+    // @ts-expect-error: no id when a custom converter is used
+    useDocument(refWithConverter).value.id
 
     // destructuring
     expectType<Ref<DocumentData | null>>(useDocument(itemRef).data)

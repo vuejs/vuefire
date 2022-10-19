@@ -1,10 +1,12 @@
-import type {
+import {
   Query,
   DocumentReference,
   CollectionReference,
   DocumentSnapshot,
   DocumentData,
   GeoPoint,
+  doc,
+  FirestoreDataConverter,
 } from 'firebase/firestore'
 import { isTimestamp, isObject, isDocumentRef, TODO } from '../shared'
 
@@ -19,6 +21,28 @@ export function createSnapshot<T = DocumentData>(
   // FIXME: can this be called when the document doesn't exist?
   // @ts-expect-error
   return Object.defineProperty(doc.data() || {}, 'id', { value: doc.id })
+}
+
+export const firestoreDefaultConverter: FirestoreDataConverter<unknown> = {
+  toFirestore(data) {
+    // this is okay because we declare other properties as non-enumerable
+    return data as DocumentData
+  },
+  fromFirestore(snapshot, options) {
+    return snapshot.exists()
+      ? Object.defineProperties(snapshot.data(options)!, {
+          id: {
+            // TODO: can the `id` change? If so this should be a get
+            value: () => snapshot.id,
+          },
+          // TODO: check if worth adding or should be through an option
+          // $meta: {
+          //   value: snapshot.metadata,
+          // },
+          // $ref: { get: () => snapshot.ref },
+        })
+      : null
+  },
 }
 
 export type FirestoreSerializer = typeof createSnapshot
@@ -66,6 +90,7 @@ export function extractRefs(
       if (
         // primitives
         ref == null ||
+        // TODO: check and remove
         // Firestore < 4.13
         ref instanceof Date ||
         isTimestamp(ref) ||

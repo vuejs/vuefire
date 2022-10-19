@@ -46,21 +46,36 @@ describe('Firestore collections', () => {
   })
 
   tds(() => {
+    interface TodoI {
+      text: string
+      finished: boolean
+    }
+
     const db = firestore
     const collection = originalCollection
     expectType<Ref<DocumentData[]>>(useCollection(collection(db, 'todos')))
-    // @ts-expect-error
+    // @ts-expect-error: document data by default
     expectType<Ref<number[]>>(useCollection(collection(db, 'todos')))
 
-    expectType<Ref<number[]>>(useCollection<number>(collection(db, 'todos')))
-    // @ts-expect-error
-    expectType<Ref<string[]>>(useCollection<number>(collection(db, 'todos')))
+    expectType<Ref<TodoI[]>>(useCollection<TodoI>(collection(db, 'todos')))
+    expectType<Ref<TodoI[]>>(useCollection<TodoI>(collection(db, 'todos')).data)
+    expectType<string>(
+      useCollection<TodoI>(collection(db, 'todos')).value.at(0)!.id
+    )
+    expectType<string>(
+      useCollection<TodoI>(collection(db, 'todos')).data.value.at(0)!.id
+    )
+    // @ts-expect-error: wrong type
+    expectType<Ref<string[]>>(useCollection<TodoI>(collection(db, 'todos')))
 
     const refWithConverter = collection(db, 'todos').withConverter<number>({
       toFirestore: (data) => ({ n: data }),
       fromFirestore: (snap, options) => snap.data(options).n as number,
     })
     expectType<Ref<number[]>>(useCollection(refWithConverter))
+    expectType<Ref<number[]>>(useCollection(refWithConverter).data)
+    // @ts-expect-error: no id with converter
+    expectType<Ref<number[]>>(useCollection(refWithConverter).data.value.id)
     // @ts-expect-error
     expectType<Ref<string[]>>(useCollection(refWithConverter))
   })

@@ -2,6 +2,8 @@ import type {
   CollectionReference,
   DocumentData,
   DocumentReference,
+  DocumentSnapshot,
+  QuerySnapshot,
 } from 'firebase/firestore'
 import type { Ref } from 'vue-demi'
 
@@ -18,7 +20,8 @@ export interface OperationsType {
   remove<T extends unknown = unknown>(array: T[], index: number): T[]
 }
 
-export type ResetOption = boolean | (() => any)
+// TODO: probably boolean | void or just boolean
+export type ResetOption = boolean | (() => TODO)
 
 export type TODO = any
 /**
@@ -91,8 +94,6 @@ export function isDocumentRef(o: any): o is DocumentReference {
 export function isCollectionRef(o: any): o is CollectionReference {
   return isObject(o) && o.type === 'collection'
 }
-
-type ReferenceType = 'collection' | 'document' | 'query'
 
 /**
  * Wraps a function so it gets called only once

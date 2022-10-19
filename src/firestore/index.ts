@@ -1,4 +1,9 @@
-import { createSnapshot, extractRefs, FirestoreSerializer } from './utils'
+import {
+  createSnapshot,
+  extractRefs,
+  firestoreDefaultConverter,
+  FirestoreSerializer,
+} from './utils'
 import { walkGet, callOnceWithArg, OperationsType } from '../shared'
 import { ref, Ref, unref } from 'vue-demi'
 import type {
@@ -7,6 +12,7 @@ import type {
   DocumentData,
   DocumentReference,
   DocumentSnapshot,
+  FirestoreDataConverter,
   Query,
 } from 'firebase/firestore'
 import { onSnapshot } from 'firebase/firestore'
@@ -14,7 +20,13 @@ import { onSnapshot } from 'firebase/firestore'
 export interface FirestoreOptions {
   maxRefDepth?: number
   reset?: boolean | (() => any)
+  /**
+   * @deprecated use `converter` instead
+   */
   serialize?: FirestoreSerializer
+
+  converter?: FirestoreDataConverter<unknown>
+
   wait?: boolean
 }
 
@@ -22,6 +34,7 @@ const DEFAULT_OPTIONS: Required<FirestoreOptions> = {
   maxRefDepth: 2,
   reset: true,
   serialize: createSnapshot,
+  converter: firestoreDefaultConverter,
   wait: false,
 }
 export { DEFAULT_OPTIONS as firestoreOptions }

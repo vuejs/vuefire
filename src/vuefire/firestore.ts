@@ -10,6 +10,7 @@ import type {
   DocumentReference,
   Query,
   FirestoreError,
+  DocumentData,
 } from 'firebase/firestore'
 import {
   getCurrentInstance,
@@ -21,8 +22,6 @@ import {
 } from 'vue-demi'
 import { isDocumentRef, _RefWithState } from '../shared'
 import { firestoreUnbinds } from './optionsApi'
-
-export interface _RefFirestore<T> extends _RefWithState<T, FirestoreError> {}
 
 export const ops: OperationsType = {
   set: (target, key, value) => walkSet(target, key, value),
@@ -162,7 +161,7 @@ export function useCollection<
 >(
   collectionRef: R,
   options?: UseCollectionOptions
-): Ref<_InferReferenceType<R>[]>
+): _RefFirestore<_InferReferenceType<R>[]>
 
 /**
  * Creates a reactive collection (usually an array) of documents from a collection ref or a query from Firestore.
@@ -175,13 +174,15 @@ export function useCollection<
 export function useCollection<T>(
   collectionRef: CollectionReference | Query,
   options?: UseCollectionOptions
-): Ref<T[]>
+): _RefFirestore<VueFireQueryData<T>>
 
 export function useCollection<T>(
   collectionRef: CollectionReference<unknown> | Query<unknown>,
   options?: UseCollectionOptions
-): Ref<_InferReferenceType<T>[]> | Ref<T[]> {
-  return _useFirestoreRef(collectionRef, options) as _RefFirestore<T[]>
+): _RefFirestore<VueFireQueryData<T>> {
+  return _useFirestoreRef(collectionRef, options) as _RefFirestore<
+    VueFireQueryData<T>
+  >
 }
 
 export interface UseDocumentOptions {}
@@ -198,7 +199,7 @@ export function useDocument<
 >(
   documentRef: R,
   options?: UseDocumentOptions
-): _RefFirestore<_InferReferenceType<R> | null>
+): _RefFirestore<_InferReferenceType<R>> // this one can't be null or should be specified in the converter
 
 /**
  * Creates a reactive collection (usually an array) of documents from a collection ref or a query from Firestore.
@@ -211,7 +212,7 @@ export function useDocument<
 export function useDocument<T>(
   documentRef: DocumentReference,
   options?: UseDocumentOptions
-): _RefFirestore<T | null>
+): _RefFirestore<VueFireDocumentData<T>>
 
 export function useDocument<T>(
   documentRef: DocumentReference<unknown>,
@@ -248,3 +249,21 @@ export type _InferReferenceType<R> = R extends
   | DocumentReference<infer T>
   ? T
   : R
+
+/**
+ * Type used by default by the `firestoreDefaultConverter`.
+ */
+export type VueFireDocumentData<T = DocumentData> =
+  | null
+  | (T & {
+      /**
+       * id of the document
+       */
+      readonly id: string
+    })
+
+export type VueFireQueryData<T = DocumentData> = Array<
+  Exclude<VueFireDocumentData<T>, null>
+>
+
+export interface _RefFirestore<T> extends _RefWithState<T, FirestoreError> {}
