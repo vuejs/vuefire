@@ -14,6 +14,8 @@ import type {
   DocumentSnapshot,
   FirestoreDataConverter,
   Query,
+  SnapshotListenOptions,
+  SnapshotOptions,
 } from 'firebase/firestore'
 import { onSnapshot } from 'firebase/firestore'
 
@@ -21,12 +23,33 @@ export interface FirestoreOptions {
   maxRefDepth?: number
   reset?: boolean | (() => any)
 
+  // FIXME: should only be possible in global options
   converter?: FirestoreDataConverter<unknown>
+
+  initialValue?: unknown
+
+  snapshotOptions?: SnapshotOptions
+
+  /**
+   * @inheritdoc {SnapshotListenOptions}
+   */
+  snapshotListenOptions?: SnapshotListenOptions
 
   wait?: boolean
 }
 
-const DEFAULT_OPTIONS: Required<FirestoreOptions> = {
+export interface _GlobalFirestoreOptions extends FirestoreOptions {
+  maxRefDepth: number
+  reset: boolean | (() => any)
+  converter: FirestoreDataConverter<unknown>
+  wait: boolean
+}
+
+export interface VueFireFirestoreOptions extends FirestoreOptions {
+  converter?: FirestoreDataConverter<unknown>
+}
+
+const DEFAULT_OPTIONS: _GlobalFirestoreOptions = {
   maxRefDepth: 2,
   reset: true,
   converter: firestoreDefaultConverter,
@@ -50,7 +73,7 @@ function unsubscribeAll(subs: Record<string, FirestoreSubscription>) {
 }
 
 function updateDataFromDocumentSnapshot<T>(
-  options: Required<FirestoreOptions>,
+  options: _GlobalFirestoreOptions,
   target: Ref<T>,
   path: string,
   snapshot: DocumentSnapshot<T>,
@@ -81,7 +104,7 @@ interface SubscribeToDocumentParamater {
 
 function subscribeToDocument(
   { ref, target, path, depth, resolve, ops }: SubscribeToDocumentParamater,
-  options: Required<FirestoreOptions>
+  options: _GlobalFirestoreOptions
 ) {
   const subs = Object.create(null)
   const unbind = onSnapshot(ref, (snapshot) => {
@@ -122,7 +145,7 @@ function subscribeToDocument(
 // first one is calling the other on every ref and subscribeToDocument may call
 // updateDataFromDocumentSnapshot which may call subscribeToRefs as well
 function subscribeToRefs(
-  options: Required<FirestoreOptions>,
+  options: _GlobalFirestoreOptions,
   target: CommonBindOptionsParameter['target'],
   path: string | number,
   subs: Record<string, FirestoreSubscription>,
@@ -183,6 +206,7 @@ function subscribeToRefs(
   })
 }
 
+// TODO: get rid of the any
 interface CommonBindOptionsParameter {
   // vm: Record<string, any>
   target: Ref<any>
@@ -193,19 +217,17 @@ interface CommonBindOptionsParameter {
   ops: OperationsType
 }
 
-interface BindCollectionParameter extends CommonBindOptionsParameter {
-  collection: CollectionReference | Query
-}
-
 export function bindCollection<T = unknown>(
-  target: BindCollectionParameter['target'],
+  target: CommonBindOptionsParameter['target'],
   collection: CollectionReference<T> | Query<T>,
-  ops: BindCollectionParameter['ops'],
-  resolve: BindCollectionParameter['resolve'],
-  reject: BindCollectionParameter['reject'],
+  ops: CommonBindOptionsParameter['ops'],
+  resolve: CommonBindOptionsParameter['resolve'],
+  reject: CommonBindOptionsParameter['reject'],
   extraOptions: FirestoreOptions = DEFAULT_OPTIONS
 ) {
   const options = Object.assign({}, DEFAULT_OPTIONS, extraOptions) // fill default values
+
+  const { snapshotListenOptions, snapshotOptions, wait } = options
 
   if (!collection.converter) {
     // @ts-expect-error: seems like a ts error
@@ -216,8 +238,8 @@ export function bindCollection<T = unknown>(
   }
 
   const key = 'value'
-  if (!options.wait) ops.set(target, key, [])
-  let arrayRef = ref(options.wait ? [] : target[key])
+  if (!wait) ops.set(target, key, [])
+  let arrayRef = ref(wait ? [] : target[key])
   const originalResolve = resolve
   let isResolved: boolean
 
@@ -229,10 +251,9 @@ export function bindCollection<T = unknown>(
     added: ({ newIndex, doc }: DocumentChange<T>) => {
       arraySubs.splice(newIndex, 0, Object.create(null))
       const subs = arraySubs[newIndex]
-      // FIXME: wrong cast, needs better types
-      // TODO: pass SnapshotOptions
       const [data, refs] = extractRefs(
-        doc.data() as DocumentData,
+        // @ts-expect-error: FIXME: wrong cast, needs better types
+        doc.data(snapshotOptions),
         undefined,
         subs
       )
@@ -253,8 +274,7 @@ export function bindCollection<T = unknown>(
       const subs = arraySubs[oldIndex]
       const oldData = array[oldIndex]
       // @ts-expect-error: FIXME: Better types
-      // TODO: pass SnapshotOptions
-      const [data, refs] = extractRefs(doc.data(), oldData, subs)
+      const [data, refs] = extractRefs(doc.data(snapshotOptions), oldData, subs)
       // only move things around after extracting refs
       // only move things around after extracting refs
       arraySubs.splice(newIndex, 0, subs)
@@ -287,7 +307,7 @@ export function bindCollection<T = unknown>(
       // from the query appearing as added
       // (https://firebase.google.com/docs/firestore/query-data/listen#view_changes_between_snapshots)
 
-      const docChanges = snapshot.docChanges()
+      const docChanges = snapshot.docChanges(snapshotListenOptions)
 
       if (!isResolved && docChanges.length) {
         // isResolved is only meant to make sure we do the check only once

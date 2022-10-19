@@ -11,6 +11,8 @@ import type {
   Query,
   FirestoreError,
   DocumentData,
+  SnapshotOptions,
+  SnapshotListenOptions,
 } from 'firebase/firestore'
 import {
   getCurrentInstance,
@@ -33,8 +35,6 @@ type UnbindType = ReturnType<typeof bindCollection | typeof bindDocument>
 
 export interface _UseFirestoreRefOptions extends FirestoreOptions {
   target?: Ref<unknown>
-
-  initialValue?: unknown
 }
 
 /**
@@ -119,6 +119,8 @@ export function _useFirestoreRef(
   return data as _RefFirestore<unknown>
 }
 
+// TODO: remove in stable release or before
+
 /**
  * Binds a Firestore reference onto a Vue Ref and keep it updated.
  *
@@ -146,7 +148,7 @@ export function usePendingPromises() {
   return Promise.all(pendingPromises)
 }
 
-export interface UseCollectionOptions {}
+export interface UseCollectionOptions extends _UseFirestoreRefOptions {}
 
 /**
  * Creates a reactive collection (usually an array) of documents from a collection ref or a query from Firestore. Extracts the the type of the
@@ -185,7 +187,9 @@ export function useCollection<T>(
   >
 }
 
-export interface UseDocumentOptions {}
+// TODO: split document and collection into two different parts
+
+export interface UseDocumentOptions extends _UseFirestoreRefOptions {}
 
 /**
  * Creates a reactive document from a document ref from Firestore. Extracts the the type of the converter
@@ -221,6 +225,8 @@ export function useDocument<T>(
   // no unwrapRef to have a simpler type
   return _useFirestoreRef(documentRef, options) as _RefFirestore<T>
 }
+
+// TODO: move to an unsubscribe file
 
 export function internalUnbind(
   key: string,
