@@ -13,3 +13,10 @@ export {
 } from './firestore'
 
 export type { UseCollectionOptions } from './firestore'
+
+export { firestorePlugin } from './optionsApi'
+export type {
+  PluginOptions,
+  VueFirestoreObject,
+  FirestoreOption,
+} from './optionsApi'
