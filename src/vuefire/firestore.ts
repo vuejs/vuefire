@@ -51,7 +51,7 @@ export function _useFirestoreRef(
 ) {
   let unbind!: UnbindType
 
-  // TODO: allow passing pending and error refs as optios for when this is called using the options api
+  // TODO: allow passing pending and error refs as option for when this is called using the options api
   const data = options.target || ref<unknown | null>(options.initialValue)
   const pending = ref(true)
   const error = ref<FirestoreError>()
