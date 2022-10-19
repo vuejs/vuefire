@@ -20,10 +20,6 @@ import { onSnapshot } from 'firebase/firestore'
 export interface FirestoreOptions {
   maxRefDepth?: number
   reset?: boolean | (() => any)
-  /**
-   * @deprecated use `converter` instead
-   */
-  serialize?: FirestoreSerializer
 
   converter?: FirestoreDataConverter<unknown>
 
@@ -33,7 +29,6 @@ export interface FirestoreOptions {
 const DEFAULT_OPTIONS: Required<FirestoreOptions> = {
   maxRefDepth: 2,
   reset: true,
-  serialize: createSnapshot,
   converter: firestoreDefaultConverter,
   wait: false,
 }
@@ -65,7 +60,9 @@ function updateDataFromDocumentSnapshot<T>(
   resolve: CommonBindOptionsParameter['resolve']
 ) {
   const [data, refs] = extractRefs(
-    options.serialize(snapshot),
+    // @ts-expect-error: FIXME: use better types
+    // Pass snapshot options
+    snapshot.data(),
     walkGet(target, path),
     subs
   )
@@ -200,7 +197,7 @@ interface BindCollectionParameter extends CommonBindOptionsParameter {
   collection: CollectionReference | Query
 }
 
-export function bindCollection<T>(
+export function bindCollection<T = unknown>(
   target: BindCollectionParameter['target'],
   collection: CollectionReference<T> | Query<T>,
   ops: BindCollectionParameter['ops'],
@@ -209,11 +206,15 @@ export function bindCollection<T>(
   extraOptions: FirestoreOptions = DEFAULT_OPTIONS
 ) {
   const options = Object.assign({}, DEFAULT_OPTIONS, extraOptions) // fill default values
-  // a custom converter means we don't need a serializer
-  if (collection.converter) {
-    // @ts-expect-error: FIXME: remove this serialize option
-    options.serialize = (v) => v.data()
+
+  if (!collection.converter) {
+    // @ts-expect-error: seems like a ts error
+    collection = collection.withConverter(
+      // @ts-expect-error: seems like a ts error
+      options.converter as FirestoreDataConverter<T>
+    )
   }
+
   const key = 'value'
   if (!options.wait) ops.set(target, key, [])
   let arrayRef = ref(options.wait ? [] : target[key])
@@ -228,7 +229,13 @@ export function bindCollection<T>(
     added: ({ newIndex, doc }: DocumentChange<T>) => {
       arraySubs.splice(newIndex, 0, Object.create(null))
       const subs = arraySubs[newIndex]
-      const [data, refs] = extractRefs(options.serialize(doc), undefined, subs)
+      // FIXME: wrong cast, needs better types
+      // TODO: pass SnapshotOptions
+      const [data, refs] = extractRefs(
+        doc.data() as DocumentData,
+        undefined,
+        subs
+      )
       ops.add(unref(arrayRef), newIndex, data)
       subscribeToRefs(
         options,
@@ -245,7 +252,9 @@ export function bindCollection<T>(
       const array = unref(arrayRef)
       const subs = arraySubs[oldIndex]
       const oldData = array[oldIndex]
-      const [data, refs] = extractRefs(options.serialize(doc), oldData, subs)
+      // @ts-expect-error: FIXME: Better types
+      // TODO: pass SnapshotOptions
+      const [data, refs] = extractRefs(doc.data(), oldData, subs)
       // only move things around after extracting refs
       // only move things around after extracting refs
       arraySubs.splice(newIndex, 0, subs)

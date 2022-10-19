@@ -82,7 +82,7 @@ export const firestoreUnbinds = new WeakMap<
 export interface PluginOptions {
   bindName?: string
   unbindName?: string
-  serialize?: FirestoreOptions['serialize']
+  converter?: FirestoreOptions['converter']
   reset?: FirestoreOptions['reset']
   wait?: FirestoreOptions['wait']
 }
@@ -90,7 +90,7 @@ export interface PluginOptions {
 const defaultOptions: Readonly<Required<PluginOptions>> = {
   bindName: '$bind',
   unbindName: '$unbind',
-  serialize: firestoreOptions.serialize,
+  converter: firestoreOptions.converter,
   reset: firestoreOptions.reset,
   wait: firestoreOptions.wait,
 }

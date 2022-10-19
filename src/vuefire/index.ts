@@ -12,7 +12,11 @@ export {
   useDocument,
 } from './firestore'
 
-export type { UseCollectionOptions } from './firestore'
+export type {
+  UseCollectionOptions,
+  VueFireDocumentData,
+  VueFireQueryData,
+} from './firestore'
 
 export { firestorePlugin } from './optionsApi'
 export type {

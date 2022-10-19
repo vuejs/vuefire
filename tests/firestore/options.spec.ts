@@ -35,8 +35,14 @@ describe('Firestore: Options API', () => {
 
   it('calls custom serialize function with collection', async () => {
     const pluginOptions: PluginOptions = {
-      // @ts-expect-error: FIXME:
-      serialize: vi.fn(() => ({ foo: 'bar' })),
+      converter: {
+        fromFirestore: vi.fn((snapshot, options?) => ({
+          foo: 'bar',
+        })),
+        toFirestore(data: DocumentData) {
+          return data
+        },
+      },
     }
     const wrapper = mount(
       {
@@ -55,16 +61,24 @@ describe('Firestore: Options API', () => {
 
     await wrapper.vm.$bind('items', itemsRef)
 
-    expect(pluginOptions.serialize).toHaveBeenCalledTimes(1)
-    expect(pluginOptions.serialize).toHaveBeenCalledWith(
-      expect.objectContaining({ data: expect.any(Function) })
+    expect(pluginOptions.converter?.fromFirestore).toHaveBeenCalledTimes(1)
+    expect(pluginOptions.converter?.fromFirestore).toHaveBeenCalledWith(
+      expect.objectContaining({ data: expect.any(Function) }),
+      expect.anything()
     )
     expect(wrapper.vm.items).toEqual([{ foo: 'bar' }])
   })
 
   it('can be overridden by local option', async () => {
-    const pluginOptions = {
-      serialize: vi.fn(() => ({ foo: 'bar' })),
+    const pluginOptions: PluginOptions = {
+      converter: {
+        fromFirestore: vi.fn((snapshot, options?) => ({
+          foo: 'bar',
+        })),
+        toFirestore(data: DocumentData) {
+          return data
+        },
+      },
     }
     const wrapper = mount(
       {
@@ -83,13 +97,20 @@ describe('Firestore: Options API', () => {
 
     const spy = vi.fn(() => ({ bar: 'bar' }))
 
-    // @ts-expect-error: FIXME:
-    await wrapper.vm.$bind('items', itemsRef, { serialize: spy })
+    await wrapper.vm.$bind('items', itemsRef, {
+      converter: {
+        fromFirestore: spy,
+        toFirestore(data: DocumentData) {
+          return data
+        },
+      },
+    })
 
-    expect(pluginOptions.serialize).not.toHaveBeenCalled()
+    expect(pluginOptions.converter?.fromFirestore).not.toHaveBeenCalled()
     expect(spy).toHaveBeenCalledTimes(1)
     expect(spy).toHaveBeenCalledWith(
-      expect.objectContaining({ data: expect.any(Function) })
+      expect.objectContaining({ data: expect.any(Function) }),
+      expect.anything()
     )
     expect(wrapper.vm.items).toEqual([{ bar: 'bar' }])
   })

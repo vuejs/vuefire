@@ -9,6 +9,7 @@ import {
   FirestoreDataConverter,
 } from 'firebase/firestore'
 import { isTimestamp, isObject, isDocumentRef, TODO } from '../shared'
+import { VueFireDocumentData } from '../vuefire/firestore'
 
 export type FirestoreReference = Query | DocumentReference | CollectionReference
 
@@ -23,27 +24,28 @@ export function createSnapshot<T = DocumentData>(
   return Object.defineProperty(doc.data() || {}, 'id', { value: doc.id })
 }
 
-export const firestoreDefaultConverter: FirestoreDataConverter<unknown> = {
-  toFirestore(data) {
-    // this is okay because we declare other properties as non-enumerable
-    return data as DocumentData
-  },
-  fromFirestore(snapshot, options) {
-    return snapshot.exists()
-      ? Object.defineProperties(snapshot.data(options)!, {
-          id: {
-            // TODO: can the `id` change? If so this should be a get
-            value: () => snapshot.id,
-          },
-          // TODO: check if worth adding or should be through an option
-          // $meta: {
-          //   value: snapshot.metadata,
-          // },
-          // $ref: { get: () => snapshot.ref },
-        })
-      : null
-  },
-}
+export const firestoreDefaultConverter: FirestoreDataConverter<VueFireDocumentData> =
+  {
+    toFirestore(data) {
+      // this is okay because we declare other properties as non-enumerable
+      return data as DocumentData
+    },
+    fromFirestore(snapshot, options) {
+      return snapshot.exists()
+        ? (Object.defineProperties(snapshot.data(options)!, {
+            id: {
+              // TODO: can the `id` change? If so this should be a get
+              value: () => snapshot.id,
+            },
+            // TODO: check if worth adding or should be through an option
+            // $meta: {
+            //   value: snapshot.metadata,
+            // },
+            // $ref: { get: () => snapshot.ref },
+          }) as VueFireDocumentData)
+        : null
+    },
+  }
 
 export type FirestoreSerializer = typeof createSnapshot
 
