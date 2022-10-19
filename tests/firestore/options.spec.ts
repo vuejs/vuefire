@@ -1,12 +1,18 @@
-import { firestorePlugin } from '../../../src'
-import { db } from '../../src'
-import { mount } from '@vue/test-utils'
-import * as firestore from '@firebase/firestore-types'
 import { defineComponent } from 'vue'
+import { mount } from '@vue/test-utils'
+import { describe, expect, it, vi } from 'vitest'
+import { firestorePlugin, PluginOptions, useCollection } from '../../src'
+import { addDoc, DocumentData } from 'firebase/firestore'
+import { expectType, setupFirestoreRefs, tds, firestore } from '../utils'
+import { usePendingPromises } from '../../src/vuefire/firestore'
+import { type Ref } from 'vue'
 
 const component = defineComponent({ template: 'no' })
 
-describe('Firestore: plugin options', () => {
+describe.skip('Firestore: Options API', () => {
+  const { itemRef, listRef, orderedListRef, collection, doc } =
+    setupFirestoreRefs()
+
   it('allows customizing $rtdbBind', () => {
     const wrapper = mount(component, {
       global: {
@@ -21,13 +27,16 @@ describe('Firestore: plugin options', () => {
         ],
       },
     })
-    expect(typeof (wrapper.vm as any).$myBind).toBe('function')
-    expect(typeof (wrapper.vm as any).$myUnbind).toBe('function')
+
+    // @ts-expect-error: haven't extended the types
+    expect(wrapper.vm.$myBind).toBeTypeOf('function')
+    // @ts-expect-error: haven't extended the types
+    expect(wrapper.vm.$myUnbind).toBeTypeOf('function')
   })
 
   it('calls custom serialize function with collection', async () => {
-    const pluginOptions = {
-      serialize: jest.fn(() => ({ foo: 'bar' })),
+    const pluginOptions: PluginOptions = {
+      serialize: vi.fn(() => ({ foo: 'bar' })),
     }
     const wrapper = mount(
       {
@@ -41,8 +50,7 @@ describe('Firestore: plugin options', () => {
       }
     )
 
-    // @ts-ignore
-    const items: firestore.CollectionReference = db.collection()
+    const items = collection()
     await items.add({})
 
     await wrapper.vm.$bind('items', items)
@@ -57,7 +65,7 @@ describe('Firestore: plugin options', () => {
 
   it('can be overridden by local option', async () => {
     const pluginOptions = {
-      serialize: jest.fn(() => ({ foo: 'bar' })),
+      serialize: vi.fn(() => ({ foo: 'bar' })),
     }
     const wrapper = mount(
       {
@@ -75,7 +83,7 @@ describe('Firestore: plugin options', () => {
     const items: firestore.CollectionReference = db.collection()
     await items.add({})
 
-    const spy = jest.fn(() => ({ bar: 'bar' }))
+    const spy = vi.fn(() => ({ bar: 'bar' }))
 
     await wrapper.vm.$bind('items', items, { serialize: spy })
 

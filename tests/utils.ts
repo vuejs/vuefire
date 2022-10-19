@@ -18,6 +18,7 @@ import {
   getDocsFromServer,
   QueryDocumentSnapshot,
   deleteDoc,
+  DocumentReference,
 } from 'firebase/firestore'
 import { afterAll, beforeAll } from 'vitest'
 import { isCollectionRef, isDocumentRef } from '../src/shared'
@@ -45,15 +46,50 @@ export function setupFirestoreRefs() {
     // clean up the tests data
     await Promise.all([
       deleteDoc(itemRef),
+      ...[...docsToClean].map((doc) => deleteDoc(doc)),
+      deleteDoc(forItemsRef),
+      ...[...collectionsToClean].map((collection) =>
+        clearCollection(collection)
+      ),
       clearCollection(listRef),
       clearCollection(testsCollection),
     ])
   })
 
-  return { itemRef, listRef, orderedListRef, testId, col: forItemsRef }
+  // for automatically generated collections
+  let collectionId = 0
+  const collectionsToClean = new Set<CollectionReference<any>>()
+  function _collection(path?: string, ...pathSegments: string[]) {
+    path = path || `col_${collectionId++}`
+
+    const col = collection(forItemsRef, path, ...pathSegments)
+    collectionsToClean.add(col)
+    return col
+  }
+
+  // for automatically generated documents
+  let docId = 0
+  const docsToClean = new Set<DocumentReference<any>>()
+  function _doc(path?: string, ...pathSegments: string[]) {
+    path = path || `doc_${docId++}`
+    const d = doc(testsCollection, path, ...pathSegments)
+    docsToClean.add(d)
+    return d
+  }
+
+  return {
+    itemRef,
+    listRef,
+    orderedListRef,
+    testId,
+    col: forItemsRef,
+    collection: _collection,
+    doc: _doc,
+    query: firestoreQuery,
+  }
 }
 
-async function clearCollection(collection: CollectionReference) {
+async function clearCollection(collection: CollectionReference<any>) {
   const { docs } = await getDocsFromServer(collection)
   await Promise.all(
     docs.map((doc) => {
@@ -62,7 +98,7 @@ async function clearCollection(collection: CollectionReference) {
   )
 }
 
-async function recursiveDeleteDoc(doc: QueryDocumentSnapshot) {
+async function recursiveDeleteDoc(doc: QueryDocumentSnapshot<any>) {
   const docData = doc.data()
   const promises: Promise<any>[] = []
   if (docData) {
