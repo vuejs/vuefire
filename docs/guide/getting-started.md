@@ -1,92 +1,139 @@
 # Getting Started
 
-Before using Vuefire, make sure you have a Firebase account and a project setup by following the instructions at _[Create a Cloud Firestore project](https://firebase.google.com/docs/firestore/quickstart)_. Keep in mind there are two different databases: _RTDB_ and _Cloud Firestore_ (often referenced as _Firestore_). If you have never read about them, you should first read _[Choose a Database](https://firebase.google.com/docs/database/rtdb-vs-firestore)_ in Firebase documentation. Vuefire supports both versions although you probably will only use one of them in a given project. Throughout the docs you will often find snippets showing both, _RTDB_(<RtdbLogo width="24" style="display: inline; fill: currentColor;" />) and _Firestore_ (<FirestoreLogo height="24" style="display: inline; fill: currentColor;" />) examples. Click on them to switch code samples.
+Before using VueFire, make sure you have a Firebase account and a project setup by following the instructions at _[Create a Cloud Firestore project](https://firebase.google.com/docs/firestore/quickstart)_. Keep in mind there are two different databases: _Database_ and _Firestore_. If you have never read about them, you should first read _[Choose a Database](https://firebase.google.com/docs/database/rtdb-vs-firestore)_ in Firebase documentation. VueFire supports using one or both database on the same project. Throughout the docs you will often find snippets showing both, _Database_(<RtdbLogo width="24" style="display: inline; fill: currentColor;" />) and _Firestore_ (<FirestoreLogo height="24" style="display: inline; fill: currentColor;" />) examples. Click on them to switch code samples, they are often very similar.
 
 ## Installation
 
 In order to get started make sure to install the latest version of `vuefire` as well as `firebase`:
 
 ```sh
-yarn add vuefire firebase
+yarn add vuefire@next firebase
 # or
-npm install vuefire firebase
+npm install vuefire@next firebase
 ```
 
 :::warning
 
-- Vuefire requires Firebase JS SDK >= 9 but **is compatible with Vue 2 and Vue 3**.
+- VueFire requires Firebase JS SDK >= 9 but **is compatible with Vue 2 and Vue 3**. It's currently in alpha, make sure to check [the Roadmap](https://github.com/vuejs/vuefire/issues/1241) and report any issue you find.
 
 :::
 
-## Composition API
+## Usage
 
-TODO:
-usage with `useCollection()`, `useDocument()`, `useList()` and `useObject()`
+VueFire expects you to use the existing APIs from Firebase as much as possible. It doesn't expose any configs to initialize your app or get the database/firestore instances. You should follow the official Firebase documentation for that. We do have [some recommendations](#TODO) for a Vue project and [a Nuxt module](#TODO) to help you get started.
 
-## Option API
+Most of the time, you should gather collection references in one of your files and export them but to keep examples short, we will always create the database references whenever necessary. We will also consider that we have access to some globals (you usually import them from the file where you initialize your Firebase app):
 
-TODO: usage with plugin and option API
+```js
+import { initializeApp FirebaseApp } from 'firebase/app'
+import { getFirestore } from 'firebase/firestore'
+import { getDatabase } from 'firebase/database'
+import { getAnalytics, type Analytics } from 'firebase/analytics'
 
-## Plugin
+export const firebase = initializeApp({
+  // ...
+})
+export const database = getFirestore(firebase)
+export const firestore = getDataBase(firebase)
+```
 
-<!-- TODO: update to Vue 3 -->
+:::tip
+Note that we will refer to `database` and `firestore` as `db` in examples where only one of them is used.
+:::
 
-Vuefire must be installed as a Vue plugin. Make sure to install the right one:
+### Composition API
 
-- Install `firestorePlugin` if you need to use _Cloud Firestore_ (often abreviated _Firestore_)
-- Install `databasePlugin` if you need to use the original _RTDB_ (Real Time Database)
-- If you need to use both, check [Using RTDB and Firestore together](../cookbook/rtdb-and-firestore.md)
+VueFire exposes a few [composables](https://vuejs.org/guide/reusability/composables.html#composables) to create reactive variables from Firebase references.
+
+You can retrieve a reactive collection or list:
+
+<FirebaseExample>
+
+```vue
+<script setup>
+import { useList } from 'vuefire'
+import { ref as dbRef } from 'firebase/database'
+
+const todos = useList(dbRef(db, 'todos'))
+</script>
+
+<template>
+  <ul>
+    <li v-for="todo in todos" :key="todo.id">
+     <span>{{ todo.text }}</span>
+    </li>
+  </ul>
+</template>
+```
+
+```vue
+<script setup>
+import { useCollection } from 'vuefire'
+import { collection } from 'firebase/firestore'
+
+const todos = useCollection(collection(db, 'todos'))
+</script>
+
+<template>
+  <ul>
+    <li v-for="todo in todos" :key="todo.id">
+     <span>{{ todo.text }}</span>
+    </li>
+  </ul>
+</template>
+```
+
+</FirebaseExample>
+
+In both scenarios, `todos` will be a `ref()` of an array. You can use it as a readonly array, but it will be automatically updated when the data changes anywhere.
+
+You can also retrieve a reactive object/document:
+
+<FirebaseExample>
+
+```vue
+<script setup>
+import { useObject } from 'vuefire'
+import { ref as dbRef } from 'firebase/database'
+
+const settings = useObject(dbRef(db, 'settings', 'some_id'))
+</script>
+```
+
+```vue
+<script setup>
+import { useDocument } from 'vuefire'
+import { doc } from 'firebase/firestore'
+
+const todos = useDocument(doc(db, 'settings', 'some_id'))
+</script>
+```
+
+</FirebaseExample>
+
+### Options API
+
+VueFire can also be used with the Options API, while less flexible, it's still a valid way to use VueFire. First, you need to install the options plugin:
+
+- Install `firestorePlugin` to use _Firestore_
+- Install `databasePlugin` to use Firebase _Database_
 
 <FirebaseExample>
 
 ```js
-import Vue from 'vue'
+import { createApp } from 'vue'
 import { databasePlugin } from 'vuefire'
 
-Vue.use(databasePlugin)
+const app = createApp(App)
+app.use(databasePlugin)
 ```
 
 ```js
-import Vue from 'vue'
+import { createApp } from 'vue'
 import { firestorePlugin } from 'vuefire'
 
-Vue.use(firestorePlugin)
+const app = createApp(App)
+app.use(firestorePlugin)
 ```
 
 </FirebaseExample>
-
-You also need to get a database instance from firebase. This can be put into a `db.js` file in your project to conveniently import it anywhere:
-
-<FirebaseExample>
-
-```js
-// Get a RTDB instance
-import firebase from 'firebase/app'
-import 'firebase/database'
-
-export const db = firebase
-  .initializeApp({ databaseURL: 'MY PROJECT URL' })
-  .database()
-```
-
-```js
-import firebase from 'firebase/app'
-import 'firebase/firestore'
-
-// Get a Firestore instance
-export const db = firebase
-  .initializeApp({ projectId: 'MY PROJECT ID' })
-  .firestore()
-
-// Export types that exists in Firestore
-// This is not always necessary, but it's used in other examples
-const { Timestamp, GeoPoint } = firebase.firestore
-export { Timestamp, GeoPoint }
-
-// if using Firebase JS SDK < 5.8.0
-db.settings({ timestampsInSnapshots: true })
-```
-
-</FirebaseExample>
-
-Now we are ready to bind our first reference and see it update live!

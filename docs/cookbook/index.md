@@ -5,7 +5,7 @@ Here are some recipes that you may find useful. If you find a usecase that is mi
 ## Recipes
 
 - [Prototyping](./prototyping.md)
-- [Using RTDB and Firestore together](./rtdb-and-firestore.md)
+- [Using Firebase Database and Firestore together](./rtdb-and-firestore.md)
 - [Server Side Rendering](./ssr.md)
 
 ## Useful links

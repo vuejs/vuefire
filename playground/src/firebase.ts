@@ -1,9 +1,5 @@
 import { initializeApp, type FirebaseApp } from 'firebase/app'
-import {
-  connectFirestoreEmulator,
-  Firestore,
-  getFirestore,
-} from 'firebase/firestore'
+import { Firestore, getFirestore } from 'firebase/firestore'
 import { inject, type App, type InjectionKey } from 'vue'
 import { getAnalytics, type Analytics } from 'firebase/analytics'
 

@@ -30,7 +30,7 @@ VueFire is currently being rewritten to support Vue 3 and Firebase 9. You can fo
 VueFire requires the `firebase` package to be installed as well as `vuefire`:
 
 ```bash
-npm install vuefire@edge
+npm install vuefire@next
 ```
 
 ## Usage
