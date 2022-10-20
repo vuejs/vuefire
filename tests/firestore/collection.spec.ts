@@ -8,7 +8,7 @@ import {
   orderBy,
 } from 'firebase/firestore'
 import { expectType, setupFirestoreRefs, tds, firestore } from '../utils'
-import { usePendingPromises } from '../../src/vuefire/firestore'
+import { usePendingPromises } from '../../src/firestore'
 import { type Ref } from 'vue'
 
 describe('Firestore collections', () => {

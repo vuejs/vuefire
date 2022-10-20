@@ -11,8 +11,8 @@ import {
   bindDocument,
   firestoreOptions,
   FirestoreOptions,
-} from '../firestore'
-import { internalUnbind, _useFirestoreRef } from './firestore'
+} from './subscribe'
+import { internalUnbind, _useFirestoreRef } from '.'
 
 declare module '@vue/runtime-core' {
   export interface ComponentCustomProperties {

@@ -9,7 +9,7 @@ import {
   FirestoreDataConverter,
 } from 'firebase/firestore'
 import { isTimestamp, isObject, isDocumentRef, TODO } from '../shared'
-import { VueFireDocumentData } from '../vuefire/firestore'
+import { VueFireDocumentData } from '.'
 
 export type FirestoreReference = Query | DocumentReference | CollectionReference
 

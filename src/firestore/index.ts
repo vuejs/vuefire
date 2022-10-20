@@ -1,423 +1,275 @@
 import {
-  createSnapshot,
-  extractRefs,
-  firestoreDefaultConverter,
-  FirestoreSerializer,
-} from './utils'
-import { walkGet, callOnceWithArg, OperationsType } from '../shared'
-import { ref, Ref, unref } from 'vue-demi'
+  bindCollection,
+  bindDocument,
+  walkSet,
+  FirestoreOptions,
+  OperationsType,
+} from '../core'
 import type {
   CollectionReference,
-  DocumentChange,
-  DocumentData,
   DocumentReference,
-  DocumentSnapshot,
-  FirestoreDataConverter,
   Query,
-  SnapshotListenOptions,
+  FirestoreError,
+  DocumentData,
   SnapshotOptions,
+  SnapshotListenOptions,
 } from 'firebase/firestore'
-import { onSnapshot } from 'firebase/firestore'
+import {
+  getCurrentInstance,
+  getCurrentScope,
+  onBeforeUnmount,
+  onScopeDispose,
+  ref,
+  Ref,
+} from 'vue-demi'
+import { isDocumentRef, _RefWithState } from '../shared'
+import { firestoreUnbinds } from './optionsApi'
 
-export interface FirestoreOptions {
-  maxRefDepth?: number
-  reset?: boolean | (() => any)
-
-  // FIXME: should only be possible in global options
-  converter?: FirestoreDataConverter<unknown>
-
-  initialValue?: unknown
-
-  snapshotOptions?: SnapshotOptions
-
-  /**
-   * @inheritdoc {SnapshotListenOptions}
-   */
-  snapshotListenOptions?: SnapshotListenOptions
-
-  wait?: boolean
+export const ops: OperationsType = {
+  set: (target, key, value) => walkSet(target, key, value),
+  add: (array, index, data) => array.splice(index, 0, data),
+  remove: (array, index) => array.splice(index, 1),
 }
 
-export interface _GlobalFirestoreOptions extends FirestoreOptions {
-  maxRefDepth: number
-  reset: boolean | (() => any)
-  converter: FirestoreDataConverter<unknown>
-  wait: boolean
-}
+type UnbindType = ReturnType<typeof bindCollection | typeof bindDocument>
 
-export interface VueFireFirestoreOptions extends FirestoreOptions {
-  converter?: FirestoreDataConverter<unknown>
-}
-
-const DEFAULT_OPTIONS: _GlobalFirestoreOptions = {
-  maxRefDepth: 2,
-  reset: true,
-  converter: firestoreDefaultConverter,
-  wait: false,
-}
-export { DEFAULT_OPTIONS as firestoreOptions }
-
-interface FirestoreSubscription {
-  unsub: () => void
-  // Firestore unique key eg: items/12
-  path: string
-  data: () => DocumentData | null
-  // // path inside the object to access the data items.3
-  // key: string
-}
-
-function unsubscribeAll(subs: Record<string, FirestoreSubscription>) {
-  for (const sub in subs) {
-    subs[sub].unsub()
-  }
-}
-
-function updateDataFromDocumentSnapshot<T>(
-  options: _GlobalFirestoreOptions,
-  target: Ref<T>,
-  path: string,
-  snapshot: DocumentSnapshot<T>,
-  subs: Record<string, FirestoreSubscription>,
-  ops: CommonBindOptionsParameter['ops'],
-  depth: number,
-  resolve: CommonBindOptionsParameter['resolve']
-) {
-  const [data, refs] = extractRefs(
-    // @ts-expect-error: FIXME: use better types
-    // Pass snapshot options
-    snapshot.data(),
-    walkGet(target, path),
-    subs
-  )
-  ops.set(target, path, data)
-  subscribeToRefs(options, target, path, subs, refs, ops, depth, resolve)
-}
-
-interface SubscribeToDocumentParamater {
-  target: CommonBindOptionsParameter['target']
-  path: string
-  depth: number
-  resolve: () => void
-  ops: CommonBindOptionsParameter['ops']
-  ref: DocumentReference
-}
-
-function subscribeToDocument(
-  { ref, target, path, depth, resolve, ops }: SubscribeToDocumentParamater,
-  options: _GlobalFirestoreOptions
-) {
-  const subs = Object.create(null)
-  const unbind = onSnapshot(ref, (snapshot) => {
-    if (snapshot.exists()) {
-      updateDataFromDocumentSnapshot(
-        options,
-        target,
-        path,
-        snapshot,
-        subs,
-        ops,
-        depth,
-        resolve
-      )
-    } else {
-      ops.set(target, path, null)
-      resolve()
-    }
-  })
-
-  return () => {
-    unbind()
-    unsubscribeAll(subs)
-  }
-}
-
-// interface SubscribeToRefsParameter {
-//   subs: Record<string, FirestoreSubscription>
-//   target: CommonBindOptionsParameter['vm']
-//   refs: Record<string, DocumentReference>
-//   path: string | number
-//   depth: number
-//   resolve: CommonBindOptionsParameter['resolve']
-//   ops: CommonBindOptionsParameter['ops']
-// }
-
-// NOTE: not convinced by the naming of subscribeToRefs and subscribeToDocument
-// first one is calling the other on every ref and subscribeToDocument may call
-// updateDataFromDocumentSnapshot which may call subscribeToRefs as well
-function subscribeToRefs(
-  options: _GlobalFirestoreOptions,
-  target: CommonBindOptionsParameter['target'],
-  path: string | number,
-  subs: Record<string, FirestoreSubscription>,
-  refs: Record<string, DocumentReference>,
-  ops: CommonBindOptionsParameter['ops'],
-  depth: number,
-  resolve: CommonBindOptionsParameter['resolve']
-) {
-  const refKeys = Object.keys(refs)
-  const missingKeys = Object.keys(subs).filter(
-    (refKey) => refKeys.indexOf(refKey) < 0
-  )
-  // unbind keys that are no longer there
-  missingKeys.forEach((refKey) => {
-    subs[refKey].unsub()
-    delete subs[refKey]
-  })
-  if (!refKeys.length || ++depth > options.maxRefDepth) return resolve(path)
-
-  let resolvedCount = 0
-  const totalToResolve = refKeys.length
-  const validResolves: Record<string, boolean> = Object.create(null)
-  function deepResolve(key: string) {
-    if (key in validResolves) {
-      if (++resolvedCount >= totalToResolve) resolve(path)
-    }
-  }
-
-  refKeys.forEach((refKey) => {
-    const sub = subs[refKey]
-    const ref = refs[refKey]
-    const docPath = `${path}.${refKey}`
-
-    validResolves[docPath] = true
-
-    // unsubscribe if bound to a different ref
-    if (sub) {
-      if (sub.path !== ref.path) sub.unsub()
-      // if has already be bound and as we always walk the objects, it will work
-      else return
-    }
-
-    subs[refKey] = {
-      data: () => walkGet(target, docPath),
-      unsub: subscribeToDocument(
-        {
-          ref,
-          target,
-          path: docPath,
-          depth,
-          ops,
-          resolve: deepResolve.bind(null, docPath),
-        },
-        options
-      ),
-      path: ref.path,
-    }
-  })
-}
-
-// TODO: get rid of the any
-interface CommonBindOptionsParameter {
-  // vm: Record<string, any>
-  target: Ref<any>
-  // key: string
-  // Override this property in necessary functions
-  resolve: (value: any) => void
-  reject: (error: any) => void
-  ops: OperationsType
-}
-
-export function bindCollection<T = unknown>(
-  target: CommonBindOptionsParameter['target'],
-  collection: CollectionReference<T> | Query<T>,
-  ops: CommonBindOptionsParameter['ops'],
-  resolve: CommonBindOptionsParameter['resolve'],
-  reject: CommonBindOptionsParameter['reject'],
-  extraOptions: FirestoreOptions = DEFAULT_OPTIONS
-) {
-  const options = Object.assign({}, DEFAULT_OPTIONS, extraOptions) // fill default values
-
-  const { snapshotListenOptions, snapshotOptions, wait } = options
-
-  if (!collection.converter) {
-    // @ts-expect-error: seems like a ts error
-    collection = collection.withConverter(
-      // @ts-expect-error: seems like a ts error
-      options.converter as FirestoreDataConverter<T>
-    )
-  }
-
-  const key = 'value'
-  if (!wait) ops.set(target, key, [])
-  let arrayRef = ref(wait ? [] : target[key])
-  const originalResolve = resolve
-  let isResolved: boolean
-
-  // contain ref subscriptions of objects
-  // arraySubs is a mirror of array
-  const arraySubs: Record<string, FirestoreSubscription>[] = []
-
-  const change = {
-    added: ({ newIndex, doc }: DocumentChange<T>) => {
-      arraySubs.splice(newIndex, 0, Object.create(null))
-      const subs = arraySubs[newIndex]
-      const [data, refs] = extractRefs(
-        // @ts-expect-error: FIXME: wrong cast, needs better types
-        doc.data(snapshotOptions),
-        undefined,
-        subs
-      )
-      ops.add(unref(arrayRef), newIndex, data)
-      subscribeToRefs(
-        options,
-        arrayRef,
-        `${key}.${newIndex}`,
-        subs,
-        refs,
-        ops,
-        0,
-        resolve.bind(null, doc)
-      )
-    },
-    modified: ({ oldIndex, newIndex, doc }: DocumentChange<T>) => {
-      const array = unref(arrayRef)
-      const subs = arraySubs[oldIndex]
-      const oldData = array[oldIndex]
-      // @ts-expect-error: FIXME: Better types
-      const [data, refs] = extractRefs(doc.data(snapshotOptions), oldData, subs)
-      // only move things around after extracting refs
-      // only move things around after extracting refs
-      arraySubs.splice(newIndex, 0, subs)
-      ops.remove(array, oldIndex)
-      ops.add(array, newIndex, data)
-      subscribeToRefs(
-        options,
-        arrayRef,
-        `${key}.${newIndex}`,
-        subs,
-        refs,
-        ops,
-        0,
-        resolve
-      )
-    },
-    removed: ({ oldIndex }: DocumentChange<T>) => {
-      const array = unref(arrayRef)
-      ops.remove(array, oldIndex)
-      unsubscribeAll(arraySubs.splice(oldIndex, 1)[0])
-    },
-  }
-
-  const unbind = onSnapshot(
-    collection,
-    (snapshot) => {
-      // console.log('pending', metadata.hasPendingWrites)
-      // docs.forEach(d => console.log('doc', d, '\n', 'data', d.data()))
-      // NOTE: this will only be triggered once and it will be with all the documents
-      // from the query appearing as added
-      // (https://firebase.google.com/docs/firestore/query-data/listen#view_changes_between_snapshots)
-
-      const docChanges = snapshot.docChanges(snapshotListenOptions)
-
-      if (!isResolved && docChanges.length) {
-        // isResolved is only meant to make sure we do the check only once
-        isResolved = true
-        let count = 0
-        const expectedItems = docChanges.length
-        const validDocs = Object.create(null)
-        for (let i = 0; i < expectedItems; i++) {
-          validDocs[docChanges[i].doc.id] = true
-        }
-
-        resolve = ({ id }) => {
-          if (id in validDocs) {
-            if (++count >= expectedItems) {
-              // if wait is true, finally set the array
-              if (options.wait) {
-                ops.set(target, key, unref(arrayRef))
-                // use the proxy object
-                // arrayRef = target.value
-              }
-              originalResolve(unref(arrayRef))
-              // reset resolve to noop
-              resolve = () => {}
-            }
-          }
-        }
-      }
-      docChanges.forEach((c) => {
-        change[c.type](c)
-      })
-
-      // resolves when array is empty
-      // since this can only happen once, there is no need to guard against it
-      // being called multiple times
-      if (!docChanges.length) {
-        if (options.wait) {
-          ops.set(target, key, unref(arrayRef))
-          // use the proxy object
-          // arrayRef = target.value
-        }
-        resolve(unref(arrayRef))
-      }
-    },
-    reject
-  )
-
-  return (reset?: FirestoreOptions['reset']) => {
-    unbind()
-    if (reset !== false) {
-      const value = typeof reset === 'function' ? reset() : []
-      ops.set(target, key, value)
-    }
-    arraySubs.forEach(unsubscribeAll)
-  }
-}
-
-interface BindDocumentParameter extends CommonBindOptionsParameter {
-  document: DocumentReference
+export interface _UseFirestoreRefOptions extends FirestoreOptions {
+  target?: Ref<unknown>
 }
 
 /**
- * Binds a Document to a property of vm
- * @param param0
- * @param extraOptions
+ * Internal version of `useDocument()` and `useCollection()`.
+ *
+ * @internal
  */
-export function bindDocument<T>(
-  target: BindDocumentParameter['target'],
-  document: DocumentReference<T>,
-  ops: BindDocumentParameter['ops'],
-  resolve: BindDocumentParameter['resolve'],
-  reject: BindDocumentParameter['reject'],
-  extraOptions: FirestoreOptions = DEFAULT_OPTIONS
+export function _useFirestoreRef(
+  docOrCollectionRef:
+    | DocumentReference<unknown>
+    | Query<unknown>
+    | CollectionReference<unknown>,
+  options: _UseFirestoreRefOptions = {}
 ) {
-  const options = Object.assign({}, DEFAULT_OPTIONS, extraOptions) // fill default values
-  const key = 'value'
-  // TODO: warning check if key exists?
-  // const boundRefs = Object.create(null)
+  let unbind!: UnbindType
 
-  const subs = Object.create(null)
-  // bind here the function so it can be resolved anywhere
-  // this is specially useful for refs
-  resolve = callOnceWithArg(resolve, () => walkGet(target, key))
-  const unbind = onSnapshot(
-    document,
-    (snapshot) => {
-      if (snapshot.exists()) {
-        updateDataFromDocumentSnapshot(
-          options,
-          target,
-          key,
-          snapshot,
-          subs,
-          ops,
-          0,
-          resolve
-        )
-      } else {
-        ops.set(target, key, null)
-        resolve(null)
-      }
+  // TODO: allow passing pending and error refs as option for when this is called using the options api
+  const data = options.target || ref<unknown | null>(options.initialValue)
+  const pending = ref(true)
+  const error = ref<FirestoreError>()
+
+  const unbinds = {}
+  firestoreUnbinds.set(data, unbinds)
+
+  const promise = new Promise<unknown | null>((resolve, reject) => {
+    unbind = (
+      isDocumentRef(docOrCollectionRef) ? bindDocument : bindCollection
+    )(
+      data,
+      // @ts-expect-error: the type is good because of the ternary
+      docOrCollectionRef,
+      ops,
+      resolve,
+      reject,
+      options
+    )
+  })
+
+  promise
+    .catch((reason: FirestoreError) => {
+      error.value = reason
+    })
+    .finally(() => {
+      pending.value = false
+    })
+
+  // TODO: SSR serialize the values for Nuxt to expose them later and use them
+  // as initial values while specifying a wait: true to only swap objects once
+  // Firebase has done its initial sync. Also, on server, you don't need to
+  // create sync, you can read only once the whole thing so maybe we
+  // should take an option like once: true to not setting up any listener
+
+  // TODO: warn else
+  if (getCurrentScope()) {
+    pendingPromises.add(promise)
+    onScopeDispose(() => {
+      pendingPromises.delete(promise)
+      unbind()
+    })
+  }
+
+  // allow to destructure the returned value
+  Object.defineProperties(data, {
+    error: {
+      get: () => error,
     },
-    reject
-  )
+    data: {
+      get: () => data,
+    },
+    pending: {
+      get: () => pending,
+    },
+    promise: {
+      get: () => promise,
+    },
+    unbind: {
+      get: () => unbind,
+    },
+  })
 
-  return (reset?: FirestoreOptions['reset']) => {
-    unbind()
-    if (reset !== false) {
-      const value = typeof reset === 'function' ? reset() : null
-      ops.set(target, key, value)
-    }
-    unsubscribeAll(subs)
+  // no unwrapRef to have a simpler type
+  return data as _RefFirestore<unknown>
+}
+
+// TODO: remove in stable release or before
+
+/**
+ * Binds a Firestore reference onto a Vue Ref and keep it updated.
+ *
+ * @deprecated use `useDocument()` and `useCollection()` instead
+ *
+ * @param target - target Ref to bind to
+ * @param docOrCollectionRef - Firestore Reference to be bound
+ * @param options
+ */
+export function bind(
+  target: Ref,
+  docOrCollectionRef: CollectionReference | Query | DocumentReference,
+  options?: FirestoreOptions
+) {
+  return _useFirestoreRef(docOrCollectionRef, {
+    target,
+    ...options,
+  }).promise
+}
+
+const pendingPromises = new Set<Promise<any>>()
+
+// TODO: should be usable in different contexts, use inject, provide
+export function usePendingPromises() {
+  return Promise.all(pendingPromises)
+}
+
+export interface UseCollectionOptions extends _UseFirestoreRefOptions {}
+
+/**
+ * Creates a reactive collection (usually an array) of documents from a collection ref or a query from Firestore. Extracts the the type of the
+ * query or converter.
+ *
+ * @param collectionRef - query or collection
+ * @param options - optional options
+ */
+export function useCollection<
+  // explicit generic as unknown to allow arbitrary types like numbers or strings
+  R extends CollectionReference<unknown> | Query<unknown>
+>(
+  collectionRef: R,
+  options?: UseCollectionOptions
+): _RefFirestore<_InferReferenceType<R>[]>
+
+/**
+ * Creates a reactive collection (usually an array) of documents from a collection ref or a query from Firestore.
+ * Accepts a generic to **enforce the type** of the returned Ref. Note you can (and probably should) use
+ * `.withConverter()` to have stricter type safe version of a collection reference.
+ *
+ * @param collectionRef - query or collection
+ * @param options - optional options
+ */
+export function useCollection<T>(
+  collectionRef: CollectionReference | Query,
+  options?: UseCollectionOptions
+): _RefFirestore<VueFireQueryData<T>>
+
+export function useCollection<T>(
+  collectionRef: CollectionReference<unknown> | Query<unknown>,
+  options?: UseCollectionOptions
+): _RefFirestore<VueFireQueryData<T>> {
+  return _useFirestoreRef(collectionRef, options) as _RefFirestore<
+    VueFireQueryData<T>
+  >
+}
+
+// TODO: split document and collection into two different parts
+
+export interface UseDocumentOptions extends _UseFirestoreRefOptions {}
+
+/**
+ * Creates a reactive document from a document ref from Firestore. Extracts the the type of the converter
+ *
+ * @param documentRef - document reference
+ * @param options - optional options
+ */
+export function useDocument<
+  // explicit generic as unknown to allow arbitrary types like numbers or strings
+  R extends DocumentReference<unknown>
+>(
+  documentRef: R,
+  options?: UseDocumentOptions
+): _RefFirestore<_InferReferenceType<R>> // this one can't be null or should be specified in the converter
+
+/**
+ * Creates a reactive collection (usually an array) of documents from a collection ref or a query from Firestore.
+ * Accepts a generic to **enforce the type** of the returned Ref. Note you can (and probably should) use
+ * `.withConverter()` to have stricter type safe version of a collection reference.
+ *
+ * @param collectionRef - query or collection
+ * @param options - optional options
+ */
+export function useDocument<T>(
+  documentRef: DocumentReference,
+  options?: UseDocumentOptions
+): _RefFirestore<VueFireDocumentData<T>>
+
+export function useDocument<T>(
+  documentRef: DocumentReference<unknown>,
+  options?: UseDocumentOptions
+): _RefFirestore<_InferReferenceType<T> | null> | _RefFirestore<T | null> {
+  // no unwrapRef to have a simpler type
+  return _useFirestoreRef(documentRef, options) as _RefFirestore<T>
+}
+
+// TODO: move to an unsubscribe file
+
+export function internalUnbind(
+  key: string,
+  unbinds:
+    | Record<string, ReturnType<typeof bindCollection | typeof bindDocument>>
+    | undefined,
+  reset?: FirestoreOptions['reset']
+) {
+  if (unbinds && unbinds[key]) {
+    unbinds[key](reset)
+    delete unbinds[key]
   }
 }
+
+export const unbind = (target: Ref, reset?: FirestoreOptions['reset']) =>
+  internalUnbind('', firestoreUnbinds.get(target), reset)
+
+/**
+ * Infers the type from a firestore reference. If it is not a reference, it returns the type as is.
+ *
+ * @internal
+ */
+export type _InferReferenceType<R> = R extends
+  | CollectionReference<infer T>
+  | Query<infer T>
+  | DocumentReference<infer T>
+  ? T
+  : R
+
+/**
+ * Type used by default by the `firestoreDefaultConverter`.
+ */
+export type VueFireDocumentData<T = DocumentData> =
+  | null
+  | (T & {
+      /**
+       * id of the document
+       */
+      readonly id: string
+    })
+
+export type VueFireQueryData<T = DocumentData> = Array<
+  Exclude<VueFireDocumentData<T>, null>
+>
+
+export interface _RefFirestore<T> extends _RefWithState<T, FirestoreError> {}

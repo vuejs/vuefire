@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { firestorePlugin, PluginOptions, useCollection } from '../../src'
 import { addDoc, DocumentData } from 'firebase/firestore'
 import { expectType, setupFirestoreRefs, tds, firestore } from '../utils'
-import { usePendingPromises } from '../../src/vuefire/firestore'
+import { usePendingPromises } from '../../src/firestore'
 import { type Ref } from 'vue'
 
 const component = defineComponent({ template: 'no' })
