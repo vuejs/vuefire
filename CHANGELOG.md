@@ -1,3 +1,57 @@
+# [3.0.0-alpha.4](https://github.com/vuejs/vuefire/compare/v3.0.0-alpha.2...v3.0.0-alpha.4) (2022-10-20)
+
+This version is very different from the previous alpha. If you were using it, make sure to read the list of breaking changes
+
+### Bug Fixes
+
+- make @vue/composition-api optional ([#1068](https://github.com/vuejs/vuefire/issues/1068)) ([33eee5e](https://github.com/vuejs/vuefire/commit/33eee5e47a6b0cd3522d4cd44ec7387c9075fcee))
+- nested refs ([c4ab275](https://github.com/vuejs/vuefire/commit/c4ab2757638928d43f3a269118c1c0c974a6994d))
+
+### Build System
+
+- fix peer deps ([3f56f10](https://github.com/vuejs/vuefire/commit/3f56f10091483927e637eacd54be0b31fe073539))
+
+### Code Refactoring
+
+- **firestore:** rename `$bind` to `$firestoreBind` ([a636c21](https://github.com/vuejs/vuefire/commit/a636c21e6a7fc62827ca83c3363bf648811172ff))
+- remove manual bind/unbind methods ([7b8b037](https://github.com/vuejs/vuefire/commit/7b8b037e345d1983cb6b80f2de896ad36a5a9fed))
+- rename rtdbPlugin to databasePlugin ([a7f500d](https://github.com/vuejs/vuefire/commit/a7f500dc55df841c7b44ffd512cf944f53fbaef0))
+
+### Features
+
+- **database:** add databasePlugin ([058d7dc](https://github.com/vuejs/vuefire/commit/058d7dc8abf3f1fb0927aa515f5bdc024c5968fe))
+- **database:** useList for arrays ([86ccfc7](https://github.com/vuejs/vuefire/commit/86ccfc79d44bcc7a87f4d7de79418dfcc5064ba0))
+- **database:** useObject for objects ([44413b2](https://github.com/vuejs/vuefire/commit/44413b2ee0de49d56fea81a09168312eaf95c006))
+- **firestore:** allow custom converter ([18224e4](https://github.com/vuejs/vuefire/commit/18224e48800e2ef4817ea05f96f3c2a37c26e76e)), closes [#608](https://github.com/vuejs/vuefire/issues/608)
+- **firestore:** allow destructuring from useDocument() ([3b376f4](https://github.com/vuejs/vuefire/commit/3b376f48ba239d4463834a472a920912af5e6714))
+- **firestore:** allow passing snapshot options ([76d36f5](https://github.com/vuejs/vuefire/commit/76d36f5ae7d0b47af5dcbf71fa7cd7089a2ae184)), closes [#955](https://github.com/vuejs/vuefire/issues/955)
+- **firestore:** useDocument ([e5cb5b0](https://github.com/vuejs/vuefire/commit/e5cb5b0cec014e35c1bc507bfa9780f6130315f3))
+- **types:** allow generics in useCollection ([57dbbc8](https://github.com/vuejs/vuefire/commit/57dbbc8d702f078db28a6692f390e00811e3c75f))
+- **types:** deprecate serializer in favor of converter ([1c8012e](https://github.com/vuejs/vuefire/commit/1c8012eb1db03d70881d5d55602eb9c540b9f045))
+- use Firebase 9 ([81701bb](https://github.com/vuejs/vuefire/commit/81701bba36776a2bb75d3581a66d2060f9144591))
+
+### BREAKING CHANGES
+
+- manual bind, and unbind from database and firestore
+  have been removed. Use the new functions `useList()`/`useCollection()`
+  and `useObject()`/`useDocument()` instead.
+- **firestore:** Firestore method `$bind()` is now named
+  `$firestoreBind()` to align with Database `$rtdbBind()`. Note this can
+  be changed through the plugin options with `bindName`. The same applies
+  to `$unbind()` which has been renamed to `$firestoreUnbind()`
+- rename `rtdbPlugin` to `databasePlugin` in your code
+- VueFire is compatible only with Vue `^2.7.0 || ^3.2.0`,
+  it **cannot work with `@vue/composition-api`** (which is natively included and therefore not needed
+  on `vue@>=2.7.0`). Note VueFire also requires `firebase@^9.0.0`.
+- **firestore:** `options.serialize()` is replaced with `converter`. It
+  effectively has the same effect as calling `doc().withConverter()` or
+  `collection().withConverter()` but it allows to have a global converter
+  that is automatically applied to all snapshots. This custom converter
+  adds a non-enumerable `id` property for documents like the previous
+  `serialize` options. **If you were not using this option**, you don't
+  need to change anything.
+- vuefire now requires firebase 9
+
 # [3.0.0-alpha.3](https://github.com/vuejs/vuefire/compare/v3.0.0-alpha.2...v3.0.0-alpha.3) (2022-10-07)
 
 ### Bug Fixes
