@@ -5,7 +5,7 @@ In Vuefire, subscriptions to changes are handled transparently. That's why we al
 There are two ways of binding a Reference to the Database with Vuefire:
 
 - Declarative binding with the `firebase`/`firestore` option
-- Programmatic binding with the injected methods `$rtdbBind`/`$bind`
+- Programmatic binding with the injected methods `$rtdbBind`/`$firestoreBind`
 
 Once a Reference is bound, Vuefire will keep the local version synchronized with the remote Database. However, this synchronisation **is only one-way**. Do not modify the local variable (e.g. doing `this.user.name = 'John'`), because (a) it will not change the remote Database and (b) it can be overwritten at any time by Vuefire. To [write changes to the Database](./writing-data.md), use the Firebase JS SDK.
 
@@ -57,7 +57,7 @@ You must declare properties with their initial values in `data`. **For the RTDB,
 
 ## Programmatic binding
 
-If you need to change the bound reference while the application is running, e.g. to display a different user profile, or different product detail page, _Declarative binding_ isn't enough. This can be achieved through the `$rtdbBind`/`$bind` methods added by `databasePlugin`/`firestorePlugin` in any Vue component.
+If you need to change the bound reference while the application is running, e.g. to display a different user profile, or different product detail page, _Declarative binding_ isn't enough. This can be achieved through the `$rtdbBind`/`$firestoreBind` methods added by `databasePlugin`/`firestorePlugin` in any Vue component.
 
 <FirebaseExample>
 
@@ -102,7 +102,7 @@ export default {
       // call it upon creation too
       immediate: true,
       handler(id) {
-        this.$bind('user', users.doc(id))
+        this.$firestoreBind('user', users.doc(id))
       },
     },
   },
@@ -114,7 +114,7 @@ export default {
 With the approach above, `user` will always be bound to the user defined by the prop `id`
 
 :::tip
-No need to call [`$rtdbUnbind`/`$unbind`](#unbinding-unsubscribing-to-changes) as `$rtdbBind`/`$bind` will automatically unbind any existing binding on the provided key. Upon component removal, all bindings are removed as well, so no need to use `$rtdbUnbind`/`$unbind` in `destroyed` hooks.
+No need to call [`$rtdbUnbind`/`$firestoreUnbind`](#unbinding-unsubscribing-to-changes) as `$rtdbBind`/`$firestoreBind` will automatically unbind any existing binding on the provided key. Upon component removal, all bindings are removed as well, so no need to use `$rtdbUnbind`/`$firestoreUnbind` in `destroyed` hooks.
 :::
 
 If you need to wait for a binding to be ready before doing something, you can _await_ for the returned Promise:
@@ -136,12 +136,12 @@ this.$rtdbBind('documents', documents.orderByChild('creator').equalTo(this.id)).
 ```
 
 ```js
-this.$bind('user', users.doc(this.id)).then(user => {
+this.$firestoreBind('user', users.doc(this.id)).then(user => {
   // user will point to the same property declared in data:
   // this.user === user
 })
 
-this.$bind('documents', documents.where('creator', '==', this.id)).then(documents => {
+this.$firestoreBind('documents', documents.where('creator', '==', this.id)).then(documents => {
   // documents will point to the same property declared in data:
   // this.documents === documents
 })
@@ -305,11 +305,11 @@ Given some _users_ with _documents_ that are being viewed by other _users_. This
 
 `documents.sharedWith.documents` end up as arrays of strings. Those strings can be passed to `db.doc()` as in `db.doc('documents/robin-book')` to get the actual reference to the document. By being a string instead of a Reference, it is possibe to display a bound document with Vuefire as plain text.
 
-It is possible to customize this behaviour by providing a [`maxRefDepth` option](#TODO:) when invoking `$bind`:
+It is possible to customize this behaviour by providing a [`maxRefDepth` option](#TODO:) when invoking `$firestoreBind`:
 
 ```js
 // override the default value of 2 for maxRefDepth
-this.$bind('user', db.collection('users').doc('1'), { maxRefDepth: 1 })
+this.$firestoreBind('user', db.collection('users').doc('1'), { maxRefDepth: 1 })
 ```
 
 Read more about [writing References to the Database](./writing-data.md#references) in the [writing data](./writing-data.md) section.
@@ -328,8 +328,8 @@ this.$rtdbUnbind('documents')
 
 ```js
 // unsubscribe from Database updates
-this.$unbind('user')
-this.$unbind('documents')
+this.$firestoreUnbind('user')
+this.$firestoreUnbind('documents')
 ```
 
 </FirebaseExample>
@@ -359,20 +359,20 @@ this.$rtdbUnbind('documents')
 
 ```js
 // default behavior
-this.$unbind('user')
-this.$unbind('user', true)
+this.$firestoreUnbind('user')
+this.$firestoreUnbind('user', true)
 // this.user === null
 
 // using a boolean value for reset to keep current value
-this.$unbind('user', false)
+this.$firestoreUnbind('user', false)
 // this.user === { name: 'Eduardo' }
 
 // using the function syntax to customize the value
-this.$unbind('user', () => ({ name: 'unregistered' }))
+this.$firestoreUnbind('user', () => ({ name: 'unregistered' }))
 // this.user === { name: 'unregistered' }
 
 // for collections, they are reset to an empty array by default instead of `null`
-this.$unbind('documents')
+this.$firestoreUnbind('documents')
 // this.documents === []
 ```
 
@@ -392,8 +392,8 @@ this.$rtdbBind('user', otherUserRef, { reset: false })
 
 ```js
 // using a boolean value for reset
-await this.$bind('user', userRef)
-this.$bind('user', otherUserRef, { reset: false })
+await this.$firestoreBind('user', userRef)
+this.$firestoreBind('user', otherUserRef, { reset: false })
 // while the user is fetched
 // this.user === { name: 'Eduardo' }
 ```

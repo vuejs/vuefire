@@ -8,7 +8,7 @@ If you didn't follow during the alpha releases, **no worries**, you can easily c
 
 ## Renamed import for the _RTDB_
 
-Because we support both _RTDB_ and _Firestore_, there are now named exports instead of one single _default_ export. The injected methods `$bind` and `$unbind` are now reserved by default to _Firestore_, but [this can also be customized](https://vuefire.vuejs.org/api/vuefire.html#rtdbplugin).
+Because we support both _RTDB_ and _Firestore_, there are now named exports instead of one single _default_ export. The injected methods `$firestoreBind` and `$firestoreUnbind` are now reserved by default to _Firestore_, but [this can also be customized](https://vuefire.vuejs.org/api/vuefire.html#rtdbplugin).
 
 ```diff
 import Vue from 'vue'
@@ -19,7 +19,7 @@ import Vue from 'vue'
 Vue.use(VueFire)
 ```
 
-## Changes to `$bindAsArray`/`$bindAsObject` and `$unbind`
+## Changes to `$firestoreBindAsArray`/`$firestoreBindAsObject` and `$firestoreUnbind`
 
 There are few changes here but it's all for the best:
 
@@ -76,16 +76,16 @@ Because the type is automatic, the object syntax is not supported anymore. So if
 +  },
 +
 +  created () {
-+    this.$bindAsObject(db.ref('url/to/my/object'), cancelCallback, readyCallback)
++    this.$firestoreBindAsObject(db.ref('url/to/my/object'), cancelCallback, readyCallback)
 +  }
 }
 ```
 
 But this is not exactly it, we need to rename that _programmatic_ call.
 
-### Unifiying `$bindAsArray` and `$bindAsObject` and using Promises
+### Unifiying `$firestoreBindAsArray` and `$firestoreBindAsObject` and using Promises
 
-Previously you would call `$bindAsArray` and `$bindAsObject` depending on what you wanted to bind. Now there is only one `$rtdbBind` (which can be renamed to `$bind`, see the tip below).
+Previously you would call `$firestoreBindAsArray` and `$firestoreBindAsObject` depending on what you wanted to bind. Now there is only one `$rtdbBind` (which can be renamed to `$firestoreBind`, see the tip below).
 
 ```diff
 {
@@ -99,7 +99,7 @@ Previously you would call `$bindAsArray` and `$bindAsObject` depending on what y
   },
 
   created () {
--    this.$bindAsObject(db.ref('url/to/my/object'), cancelCallback, readyCallback)
+-    this.$firestoreBindAsObject(db.ref('url/to/my/object'), cancelCallback, readyCallback)
 +    // you could also use the async/await syntax with a try/catch block
 +    this.$rtdbBind(db.ref('url/to/my/object')
 +      .then(readyCallback)
@@ -109,7 +109,7 @@ Previously you would call `$bindAsArray` and `$bindAsObject` depending on what y
 ```
 
 :::tip
-Note: you can pass an options object with `{ bindName: '$bind', unbindName: '$unbind' }` to `Vue.use(VueFire)` to keep a shorter name for binding instead of `$rtdbBind` and `$rtdbUnbind`.
+Note: you can pass an options object with `{ bindName: '$firestoreBind', unbindName: '$firestoreUnbind' }` to `Vue.use(VueFire)` to keep a shorter name for binding instead of `$rtdbBind` and `$rtdbUnbind`.
 :::
 
 🎉 That's it! Your app should be running again! If you found things missing in this small guide, feel free to open an Issue or a Pull Request [on Github](https://github.com/vuejs/vuefire)

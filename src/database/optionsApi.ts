@@ -68,7 +68,7 @@ declare module '@vue/runtime-core' {
   }
   export interface ComponentCustomOptions {
     /**
-     * Calls `$bind` at created
+     * Calls `$firestoreBind` at created
      */
     firebase?: FirebaseOption
   }
@@ -83,7 +83,7 @@ export const rtdbUnbinds = new WeakMap<
 >()
 
 /**
- * Install this plugin if you want to add `$bind` and `$unbind` functions. Note
+ * Install this plugin if you want to add `$firestoreBind` and `$firestoreUnbind` functions. Note
  * this plugin is not necessary if you exclusively use the Composition API.
  *
  * @param app

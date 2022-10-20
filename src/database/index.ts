@@ -77,7 +77,7 @@ export function internalUnbind(
     unbinds[key](reset)
     delete unbinds[key]
   }
-  // TODO: move to $unbind
+  // TODO: move to $firestoreUnbind
   // delete vm._firebaseSources[key]
   // delete vm._firebaseUnbinds[key]
 }

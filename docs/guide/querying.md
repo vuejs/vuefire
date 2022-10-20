@@ -88,7 +88,7 @@ export default {
 
 </FirebaseExample>
 
-This also works with `$rtbBind`/`$bind`:
+This also works with `$rtbBind`/`$firestoreBind`:
 
 <FirebaseExample>
 
@@ -97,7 +97,7 @@ this.$rtdbBind('documents', db.ref('documents').orderByChild('createdAt'))
 ```
 
 ```js
-this.$bind('documents', db.collection('documents').orderBy('createdAt'))
+this.$firestoreBind('documents', db.collection('documents').orderBy('createdAt'))
 ```
 
 </FirebaseExample>
@@ -128,7 +128,7 @@ this.$rtdbBind(
 ```js
 // only get documents with more than 200 words
 // the orderBy is optional
-this.$bind(
+this.$firestoreBind(
   'documents',
   db
     .collection('documents')

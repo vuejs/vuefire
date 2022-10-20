@@ -23,12 +23,12 @@ declare module '@vue/runtime-core' {
      * @param reference
      * @param options
      */
-    $bind(
+    $firestoreBind(
       name: string,
       reference: Query | CollectionReference,
       options?: FirestoreOptions
     ): Promise<DocumentData[]>
-    $bind(
+    $firestoreBind(
       name: string,
       reference: DocumentReference,
       options?: FirestoreOptions
@@ -37,7 +37,7 @@ declare module '@vue/runtime-core' {
     /**
      * Unbinds a bound reference
      */
-    $unbind: (name: string, reset?: FirestoreOptions['reset']) => void
+    $firestoreUnbind: (name: string, reset?: FirestoreOptions['reset']) => void
 
     /**
      * Bound firestore references
@@ -59,7 +59,7 @@ declare module '@vue/runtime-core' {
 
   export interface ComponentCustomOptions {
     /**
-     * Calls `$bind` at created
+     * Calls `$firestoreBind` at created
      */
     firestore?: FirestoreOption
   }
@@ -88,15 +88,15 @@ export interface FirestorePluginOptions {
 }
 
 const defaultOptions: Readonly<Required<FirestorePluginOptions>> = {
-  bindName: '$bind',
-  unbindName: '$unbind',
+  bindName: '$firestoreBind',
+  unbindName: '$firestoreUnbind',
   converter: firestoreOptions.converter,
   reset: firestoreOptions.reset,
   wait: firestoreOptions.wait,
 }
 
 /**
- * Install this plugin to add `$bind` and `$unbind` functions. Note this plugin
+ * Install this plugin to add `$firestoreBind` and `$firestoreUnbind` functions. Note this plugin
  * is not necessary if you exclusively use the Composition API
  *
  * @param app
@@ -171,7 +171,7 @@ export const firestorePlugin = function firestorePlugin(
         typeof firestore === 'function' ? firestore.call(this) : firestore
       if (!refs) return
       for (const key in refs) {
-        this[bindName as '$bind'](
+        this[bindName as '$firestoreBind'](
           key,
           // @ts-expect-error: FIXME: there is probably a wrong type in global properties
           refs[key],
