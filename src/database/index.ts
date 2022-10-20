@@ -82,30 +82,6 @@ export function internalUnbind(
   // delete vm._firebaseUnbinds[key]
 }
 
-export function bind(
-  target: Ref,
-  reference: DatabaseReference | Query,
-  options?: RTDBOptions
-) {
-  const unbinds = {}
-  rtdbUnbinds.set(target, unbinds)
-  const promise = internalBind(target, '', reference, unbinds, options)
-
-  // TODO: SSR serialize the values for Nuxt to expose them later and use them
-  // as initial values while specifying a wait: true to only swap objects once
-  // Firebase has done its initial sync. Also, on server, you don't need to
-  // create sync, you can read only once the whole thing so maybe internalBind
-  // should take an option like once: true to not setting up any listener
-
-  if (getCurrentInstance()) {
-    onBeforeUnmount(() => {
-      unbind(target, options && options.reset)
-    })
-  }
-
-  return promise
-}
-
 // export function useList(reference: DatabaseReference | Query, options?: RTDBOptions)
 
 /**
@@ -176,11 +152,7 @@ export function useObject<T = unknown>(
       pending.value = false
     })
 
-  // TODO: SSR serialize the values for Nuxt to expose them later and use them
-  // as initial values while specifying a wait: true to only swap objects once
-  // Firebase has done its initial sync. Also, on server, you don't need to
-  // create sync, you can read only once the whole thing so maybe internalBind
-  // should take an option like once: true to not setting up any listener
+  // TODO: refactor code to avoid duplication
 
   if (getCurrentScope()) {
     onScopeDispose(() => {
