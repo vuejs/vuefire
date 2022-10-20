@@ -120,18 +120,18 @@ export default defineConfig({
               text: 'Getting Started',
               link: '/guide/getting-started',
             },
-            {
-              text: 'Realtime data',
-              link: '/guide/binding-subscriptions',
-            },
-            {
-              text: 'Querying the database',
-              link: '/guide/querying',
-            },
-            {
-              text: 'Writing to the database',
-              link: '/guide/writing-data',
-            },
+            // {
+            //   text: 'Realtime data',
+            //   link: '/guide/binding-subscriptions',
+            // },
+            // {
+            //   text: 'Querying the database',
+            //   link: '/guide/querying',
+            // },
+            // {
+            //   text: 'Writing to the database',
+            //   link: '/guide/writing-data',
+            // },
           ],
         },
         {

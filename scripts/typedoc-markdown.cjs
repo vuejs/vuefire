@@ -49,7 +49,7 @@ exports.createTypeDocApp = function createTypeDocApp(config = {}) {
         page.contents = prependYAML(page.contents, {
           sidebar: 'auto',
           // TODO: figure out a way to point to the source files?
-          editLinks: false,
+          editLink: false,
           sidebarDepth: 3,
         })
       }
