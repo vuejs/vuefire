@@ -34,16 +34,16 @@ TODO: usage with plugin and option API
 Vuefire must be installed as a Vue plugin. Make sure to install the right one:
 
 - Install `firestorePlugin` if you need to use _Cloud Firestore_ (often abreviated _Firestore_)
-- Install `rtdbPlugin` if you need to use the original _RTDB_ (Real Time Database)
+- Install `databasePlugin` if you need to use the original _RTDB_ (Real Time Database)
 - If you need to use both, check [Using RTDB and Firestore together](../cookbook/rtdb-and-firestore.md)
 
 <FirebaseExample>
 
 ```js
 import Vue from 'vue'
-import { rtdbPlugin } from 'vuefire'
+import { databasePlugin } from 'vuefire'
 
-Vue.use(rtdbPlugin)
+Vue.use(databasePlugin)
 ```
 
 ```js

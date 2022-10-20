@@ -1,7 +1,7 @@
 import { defineComponent } from 'vue'
 import { mount } from '@vue/test-utils'
 import { describe, expect, it, vi } from 'vitest'
-import { rtdbPlugin, DatabasePluginOptions } from '../../src'
+import { databasePlugin, DatabasePluginOptions } from '../../src'
 import { setupDatabaseRefs } from '../utils'
 import { push } from 'firebase/database'
 
@@ -15,7 +15,7 @@ describe('RTDB: plugin options', () => {
       global: {
         plugins: [
           [
-            rtdbPlugin,
+            databasePlugin,
             {
               bindName: '$myBind',
               unbindName: '$myUnbind',
@@ -39,7 +39,7 @@ describe('RTDB: plugin options', () => {
       },
       {
         global: {
-          plugins: [[rtdbPlugin, pluginOptions]],
+          plugins: [[databasePlugin, pluginOptions]],
         },
       }
     )
@@ -71,7 +71,7 @@ describe('RTDB: plugin options', () => {
       },
       {
         global: {
-          plugins: [[rtdbPlugin, pluginOptions]],
+          plugins: [[databasePlugin, pluginOptions]],
         },
       }
     )

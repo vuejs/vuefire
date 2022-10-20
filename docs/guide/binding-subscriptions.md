@@ -57,7 +57,7 @@ You must declare properties with their initial values in `data`. **For the RTDB,
 
 ## Programmatic binding
 
-If you need to change the bound reference while the application is running, e.g. to display a different user profile, or different product detail page, _Declarative binding_ isn't enough. This can be achieved through the `$rtdbBind`/`$bind` methods added by `rtdbPlugin`/`firestorePlugin` in any Vue component.
+If you need to change the bound reference while the application is running, e.g. to display a different user profile, or different product detail page, _Declarative binding_ isn't enough. This can be achieved through the `$rtdbBind`/`$bind` methods added by `databasePlugin`/`firestorePlugin` in any Vue component.
 
 <FirebaseExample>
 

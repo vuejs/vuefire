@@ -89,7 +89,7 @@ export const rtdbUnbinds = new WeakMap<
  * @param app
  * @param pluginOptions
  */
-export function rtdbPlugin(
+export function databasePlugin(
   app: App,
   pluginOptions: DatabasePluginOptions = defaultOptions
 ) {

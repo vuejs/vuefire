@@ -22,7 +22,7 @@ import type { DatabaseReference, DataSnapshot, Query } from 'firebase/database'
 import { _RefWithState } from '../shared'
 import { rtdbUnbinds } from './optionsApi'
 
-export { rtdbPlugin } from './optionsApi'
+export { databasePlugin } from './optionsApi'
 
 const ops: OperationsType = {
   set: (target, key, value) => walkSet(target, key, value),

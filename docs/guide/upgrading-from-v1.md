@@ -13,7 +13,7 @@ Because we support both _RTDB_ and _Firestore_, there are now named exports inst
 ```diff
 import Vue from 'vue'
 - import VueFire from 'vuefire'
-+ import { rtdbPlugin as VueFire } from 'vuefire'
++ import { databasePlugin as VueFire } from 'vuefire'
 
 // explicit installation required in module environments
 Vue.use(VueFire)

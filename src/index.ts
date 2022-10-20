@@ -5,7 +5,7 @@ export {
   useObject,
 } from './database'
 
-export { rtdbPlugin } from './database/optionsApi'
+export { databasePlugin } from './database/optionsApi'
 export type { DatabasePluginOptions } from './database/optionsApi'
 
 // TODO: rename and move to database
