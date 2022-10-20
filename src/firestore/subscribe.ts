@@ -31,7 +31,7 @@ export interface FirestoreOptions {
   snapshotOptions?: SnapshotOptions
 
   /**
-   * @inheritdoc {SnapshotListenOptions}
+   * @inheritDoc {SnapshotListenOptions}
    */
   snapshotListenOptions?: SnapshotListenOptions
 

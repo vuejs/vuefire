@@ -19,6 +19,8 @@ importers:
       p-series: ^3.0.0
       prettier: ^2.0.5
       semver: ^7.3.8
+      typedoc: ^0.23.17
+      typedoc-plugin-markdown: ^3.13.6
       typescript: ~4.8.4
       unbuild: ^0.9.4
       vitepress: 1.0.0-alpha.21
@@ -44,6 +46,8 @@ importers:
       p-series: 3.0.0
       prettier: 2.7.1
       semver: 7.3.8
+      typedoc: 0.23.17_typescript@4.8.4
+      typedoc-plugin-markdown: 3.13.6_typedoc@0.23.17
       typescript: 4.8.4
       unbuild: 0.9.4
       vitepress: 1.0.0-alpha.21
@@ -5100,6 +5104,10 @@ packages:
       lodash.clonedeep: 4.5.0
       lru-cache: 4.0.2
 
+  /lunr/2.3.9:
+    resolution: {integrity: sha512-zTU3DaZaF3Rt9rhN3uBMGQD3dD2/vFQqnvZCDv4dl5iOzq2IZQqTxu90r4E5J+nP70J3ilqVCrbho2eWaeW8Ow==}
+    dev: true
+
   /magic-string/0.25.9:
     resolution: {integrity: sha512-RmF0AsMzgt25qzqqLc1+MbHmhdx0ojF2Fvs4XnOqz2ZOBXzzkEwc/dJQZCYHAn7v1jbVOjAZfK8msRn4BxO4VQ==}
     dependencies:
@@ -5133,6 +5141,12 @@ packages:
   /map-obj/4.3.0:
     resolution: {integrity: sha512-hdN1wVrZbb29eBGiGjJbeP8JbKjq1urkHJ/LIP/NY48MZ1QVXUsQBV1G1zvYFHn1XE06cwjBsOI2K3Ulnj1YXQ==}
     engines: {node: '>=8'}
+    dev: true
+
+  /marked/4.1.1:
+    resolution: {integrity: sha512-0cNMnTcUJPxbA6uWmCmjWz4NJRe/0Xfk2NhXCUHjew9qJzFN20krFnsUe7QynwqOwa5m1fZ4UDg0ycKFVC0ccw==}
+    engines: {node: '>= 12'}
+    hasBin: true
     dev: true
 
   /media-typer/0.3.0:
@@ -6619,6 +6633,29 @@ packages:
 
   /typedarray/0.0.6:
     resolution: {integrity: sha512-/aCDEGatGvZ2BIk+HmLf4ifCJFwvKFNb9/JeZPMulfgFracn9QFcAf5GO8B/mweUjSoblS5In0cWhqpfs/5PQA==}
+    dev: true
+
+  /typedoc-plugin-markdown/3.13.6_typedoc@0.23.17:
+    resolution: {integrity: sha512-ISSc9v3BK7HkokxSBuJPttXox4tJ6hP0N9wfSIk0fmLN67+eqtAxbk97gs2nDiuha+RTO5eW9gdeAb+RPP0mgg==}
+    peerDependencies:
+      typedoc: '>=0.23.0'
+    dependencies:
+      handlebars: 4.7.7
+      typedoc: 0.23.17_typescript@4.8.4
+    dev: true
+
+  /typedoc/0.23.17_typescript@4.8.4:
+    resolution: {integrity: sha512-3rtNubo1dK0pvs6ixpMAq4pESULd5/JNUqJbdyZoeilI14reb1RNVomN4fMgIadd0RMX1aenYjJSSMBOJ+/+0Q==}
+    engines: {node: '>= 14.14'}
+    hasBin: true
+    peerDependencies:
+      typescript: 4.6.x || 4.7.x || 4.8.x
+    dependencies:
+      lunr: 2.3.9
+      marked: 4.1.1
+      minimatch: 5.1.0
+      shiki: 0.11.1
+      typescript: 4.8.4
     dev: true
 
   /typescript/4.8.4:
