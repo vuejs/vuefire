@@ -11,21 +11,31 @@
 </p>
 <br/>
 
-> Synchronize your data and Firebase Cloud Store database in real-time
+> Firebase for Vue made easy!
 
-- Works with Vue 2 and Vue 3
-- Supports Composition API
-- Supports Vuex & Pinia
+- Works with Vue >=2.7 and Vue 3
+- Supports Composition and Options API
+- Supports Vuex, Pinia, and anything that gives you a Vue `ref()`
 - Built for Firebase 9 for optimal tree shaking
 - Automatically listen for changes in nested references
 
-[**Documentation**](https://vuefire.vuejs.org)
+[**WIP 📚 Documentation**](https://main--vuefire.netlify.app/)
+
+## Roadmap
+
+VueFire is currently being rewritten to support Vue 3 and Firebase 9. You can follow the progress on [the Roadmap issue](https://github.com/vuejs/vuefire/issues/1241).
 
 ## Installation
+
+VueFire requires the `firebase` package to be installed as well as `vuefire`:
 
 ```bash
 npm install vuefire@edge
 ```
+
+## Usage
+
+[Getting Started](https://main--vuefire.netlify.app/guide/getting-started.html)
 
 ## Related
 
