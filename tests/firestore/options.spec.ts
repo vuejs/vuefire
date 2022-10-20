@@ -1,11 +1,9 @@
 import { defineComponent } from 'vue'
 import { mount } from '@vue/test-utils'
 import { describe, expect, it, vi } from 'vitest'
-import { firestorePlugin, PluginOptions, useCollection } from '../../src'
+import { firestorePlugin, FirestorePluginOptions } from '../../src'
 import { addDoc, DocumentData } from 'firebase/firestore'
-import { expectType, setupFirestoreRefs, tds, firestore } from '../utils'
-import { usePendingPromises } from '../../src/firestore'
-import { type Ref } from 'vue'
+import { setupFirestoreRefs } from '../utils'
 
 const component = defineComponent({ template: 'no' })
 
@@ -34,7 +32,7 @@ describe('Firestore: Options API', () => {
   })
 
   it('calls custom serialize function with collection', async () => {
-    const pluginOptions: PluginOptions = {
+    const pluginOptions: FirestorePluginOptions = {
       converter: {
         fromFirestore: vi.fn((snapshot, options?) => ({
           foo: 'bar',
@@ -70,7 +68,7 @@ describe('Firestore: Options API', () => {
   })
 
   it('can be overridden by local option', async () => {
-    const pluginOptions: PluginOptions = {
+    const pluginOptions: FirestorePluginOptions = {
       converter: {
         fromFirestore: vi.fn((snapshot, options?) => ({
           foo: 'bar',

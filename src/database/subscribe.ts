@@ -15,6 +15,7 @@ import {
   onChildRemoved,
 } from 'firebase/database'
 
+// TODO: rename to match where it's used
 export interface RTDBOptions {
   reset?: ResetOption
   serialize?: RTDBSerializer

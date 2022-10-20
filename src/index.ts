@@ -1,10 +1,16 @@
 export {
-  rtdbPlugin,
   bind as rtdbBind,
   unbind as rtdbUnbind,
   useList,
   useObject,
 } from './database'
+
+export { rtdbPlugin } from './database/optionsApi'
+export type { DatabasePluginOptions } from './database/optionsApi'
+
+// TODO: rename and move to database
+export type { RTDBOptions } from './core'
+
 export {
   bind as firestoreBind,
   unbind as firestoreUnbind,
@@ -20,7 +26,7 @@ export type {
 
 export { firestorePlugin } from './firestore/optionsApi'
 export type {
-  PluginOptions,
+  FirestorePluginOptions,
   VueFirestoreObject,
   FirestoreOption,
 } from './firestore/optionsApi'

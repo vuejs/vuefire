@@ -6,6 +6,7 @@ import {
   query as databaseQuery,
   orderByChild,
   remove,
+  push as databaseAdd,
 } from 'firebase/database'
 import {
   getFirestore,
@@ -132,8 +133,9 @@ export function setupDatabaseRefs() {
     await remove(testsCollection)
   })
 
-  function databaseRef(path: string) {
-    return ref(database, testsCollection.key + '/' + path)
+  function databaseRef(path?: string) {
+    const data = databaseAdd(testsCollection, path)
+    return data.ref
   }
 
   return { itemRef, listRef, orderedListRef, testId, databaseRef }

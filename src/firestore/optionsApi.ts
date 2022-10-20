@@ -79,7 +79,7 @@ export const firestoreUnbinds = new WeakMap<
   Record<string, ReturnType<typeof bindCollection | typeof bindDocument>>
 >()
 
-export interface PluginOptions {
+export interface FirestorePluginOptions {
   bindName?: string
   unbindName?: string
   converter?: FirestoreOptions['converter']
@@ -87,7 +87,7 @@ export interface PluginOptions {
   wait?: FirestoreOptions['wait']
 }
 
-const defaultOptions: Readonly<Required<PluginOptions>> = {
+const defaultOptions: Readonly<Required<FirestorePluginOptions>> = {
   bindName: '$bind',
   unbindName: '$unbind',
   converter: firestoreOptions.converter,
@@ -104,7 +104,7 @@ const defaultOptions: Readonly<Required<PluginOptions>> = {
  */
 export const firestorePlugin = function firestorePlugin(
   app: App,
-  pluginOptions: PluginOptions = defaultOptions
+  pluginOptions: FirestorePluginOptions = defaultOptions
 ) {
   // const strategies = app.config.optionMergeStrategies
   // TODO: implement

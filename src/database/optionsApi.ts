@@ -18,15 +18,12 @@ function getRef(refOrQuery: DatabaseReference | Query): DatabaseReference {
   return refOrQuery.ref
 }
 
-interface PluginOptions {
+export interface DatabasePluginOptions extends RTDBOptions {
   bindName?: string
   unbindName?: string
-  serialize?: RTDBOptions['serialize']
-  reset?: RTDBOptions['reset']
-  wait?: RTDBOptions['wait']
 }
 
-const defaultOptions: Readonly<Required<PluginOptions>> = {
+const defaultOptions: Readonly<Required<DatabasePluginOptions>> = {
   bindName: '$rtdbBind',
   unbindName: '$rtdbUnbind',
   serialize: rtdbOptions.serialize,
@@ -94,7 +91,7 @@ export const rtdbUnbinds = new WeakMap<
  */
 export function rtdbPlugin(
   app: App,
-  pluginOptions: PluginOptions = defaultOptions
+  pluginOptions: DatabasePluginOptions = defaultOptions
 ) {
   // TODO: implement
   // const strategies = Vue.config.optionMergeStrategies
