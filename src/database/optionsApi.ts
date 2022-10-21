@@ -157,14 +157,13 @@ export function databasePlugin(
     },
     created(this: ComponentPublicInstance) {
       let bindings = this.$options.firebase
-      if (typeof bindings === 'function')
-        bindings =
-          // @ts-ignore
-          bindings.call(this)
+      if (typeof bindings === 'function') {
+        bindings = bindings.call(this)
+      }
       if (!bindings) return
 
       for (const key in bindings) {
-        // @ts-ignore
+        // @ts-expect-error: TODO: try fixing it
         this[bindName](key, bindings[key], globalOptions)
       }
     },
@@ -176,7 +175,7 @@ export function databasePlugin(
           unbinds[key]()
         }
       }
-      // @ts-ignore
+      // @ts-expect-error: we are freeing the memory
       this.$firebaseRefs = null
     },
   })

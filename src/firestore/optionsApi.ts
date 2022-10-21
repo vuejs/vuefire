@@ -151,12 +151,12 @@ export const firestorePlugin = function firestorePlugin(
       firestoreUnbinds.set(this, (unbinds = {}))
     }
 
-    const { promise, unbind } = _useFirestoreRef(docOrCollectionRef as any, {
+    const { promise, unbind } = _useFirestoreRef(docOrCollectionRef, {
       target,
       ...options,
     })
     unbinds[key] = unbind
-    // @ts-ignore we are allowed to write it
+    // @ts-expect-error: we are allowed to write it
     this.$firestoreRefs[key] = docOrCollectionRef
     return promise
   }
