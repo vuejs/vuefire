@@ -1,10 +1,3 @@
-import {
-  bindCollection,
-  bindDocument,
-  walkSet,
-  FirestoreOptions,
-  OperationsType,
-} from '../core'
 import type {
   CollectionReference,
   DocumentReference,
@@ -13,8 +6,14 @@ import type {
   DocumentData,
 } from 'firebase/firestore'
 import { getCurrentScope, onScopeDispose, ref, Ref } from 'vue-demi'
-import { isDocumentRef, _RefWithState } from '../shared'
+import {
+  isDocumentRef,
+  OperationsType,
+  walkSet,
+  _RefWithState,
+} from '../shared'
 import { firestoreUnbinds } from './optionsApi'
+import { bindCollection, bindDocument, FirestoreOptions } from './subscribe'
 
 export const ops: OperationsType = {
   set: (target, key, value) => walkSet(target, key, value),

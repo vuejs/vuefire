@@ -1,26 +1,8 @@
-import {
-  rtdbBindAsArray as bindAsArray,
-  rtdbBindAsObject as bindAsObject,
-  rtdbOptions,
-  RTDBOptions,
-  walkSet,
-  OperationsType,
-} from '../core'
-import {
-  ComponentPublicInstance,
-  App,
-  Ref,
-  toRef,
-  getCurrentInstance,
-  onBeforeUnmount,
-  isVue3,
-  ref,
-  getCurrentScope,
-  onScopeDispose,
-} from 'vue-demi'
-import type { DatabaseReference, DataSnapshot, Query } from 'firebase/database'
-import { _RefWithState } from '../shared'
+import { Ref, ref, getCurrentScope, onScopeDispose } from 'vue-demi'
+import type { DatabaseReference, Query } from 'firebase/database'
+import { OperationsType, walkSet, _RefWithState } from '../shared'
 import { rtdbUnbinds } from './optionsApi'
+import { bindAsArray, bindAsObject, RTDBOptions } from './subscribe'
 
 export { databasePlugin } from './optionsApi'
 

@@ -1,14 +1,13 @@
 import { DatabaseReference, DataSnapshot, Query } from 'firebase/database'
 import { App, ComponentPublicInstance, toRef } from 'vue'
 import { isVue3 } from 'vue-demi'
+import { internalUnbind, _useDatabaseRef } from './index'
 import {
+  bindAsArray,
+  bindAsObject,
   rtdbOptions,
   RTDBOptions,
-  rtdbBindAsArray as bindAsArray,
-  rtdbBindAsObject as bindAsObject,
-} from '../core'
-import { internalUnbind, _useDatabaseRef } from './index'
-import { RTDBSerializer } from './utils'
+} from './subscribe'
 
 /**
  * Returns the original reference of a Firebase reference or query across SDK versions.

@@ -58,7 +58,7 @@ interface BindAsObjectParameter extends CommonBindOptionsParameter {
  * @param options
  * @returns a function to be called to stop listeninng for changes
  */
-export function rtdbBindAsObject(
+export function bindAsObject(
   { target, document, resolve, reject, ops }: BindAsObjectParameter,
   extraOptions: RTDBOptions = DEFAULT_OPTIONS
 ) {
@@ -100,7 +100,7 @@ interface BindAsArrayParameter extends CommonBindOptionsParameter {
  * @param options
  * @returns a function to be called to stop listening for changes
  */
-export function rtdbBindAsArray(
+export function bindAsArray(
   { target, collection, resolve, reject, ops }: BindAsArrayParameter,
   extraOptions: RTDBOptions = DEFAULT_OPTIONS
 ) {
