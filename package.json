@@ -104,17 +104,6 @@
       "prettier --parser=typescript --write"
     ]
   },
-  "size-limit": [
-    {
-      "path": "size-checks/vuefire-firestore.js"
-    },
-    {
-      "path": "size-checks/vuefire-rtdb.js"
-    },
-    {
-      "path": "size-checks/vuefire-full.js"
-    }
-  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/vuejs/vuefire.git"
