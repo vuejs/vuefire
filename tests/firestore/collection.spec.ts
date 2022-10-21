@@ -10,6 +10,7 @@ import {
   DocumentData,
   Query,
   setDoc,
+  updateDoc,
 } from 'firebase/firestore'
 import { expectType, setupFirestoreRefs, tds, firestore } from '../utils'
 import { type Ref } from 'vue'
@@ -90,6 +91,24 @@ describe('Firestore collections', () => {
     await deleteDoc(cRef)
     expect(wrapper.vm.list).toHaveLength(1)
     expect(wrapper.vm.list).toContainEqual({ name: 'b' })
+  })
+
+  it('updates items of the collection', async () => {
+    const { wrapper, listRef } = factory<{ name: string }>()
+
+    const aRef = doc(listRef)
+    const a = await setDoc(aRef, { name: 'a' })
+    const bRef = doc(listRef)
+    const b = await setDoc(bRef, { name: 'b' })
+    const cRef = doc(listRef)
+    const c = await setDoc(cRef, { name: 'c' })
+
+    await setDoc(aRef, { name: 'aa' })
+    await updateDoc(cRef, { name: 'cc' })
+    expect(wrapper.vm.list).toHaveLength(3)
+    expect(wrapper.vm.list).toContainEqual({ name: 'aa' })
+    expect(wrapper.vm.list).toContainEqual({ name: 'b' })
+    expect(wrapper.vm.list).toContainEqual({ name: 'cc' })
   })
 
   tds(() => {
