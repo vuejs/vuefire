@@ -64,22 +64,24 @@ export function setupFirestoreRefs() {
   // for automatically generated collections
   let collectionId = 0
   const collectionsToClean = new Set<CollectionReference<any>>()
-  function _collection(path?: string, ...pathSegments: string[]) {
+  function _collection<T = unknown>(path?: string, ...pathSegments: string[]) {
     path = path || `col_${collectionId++}`
 
     const col = collection(forItemsRef, path, ...pathSegments)
     collectionsToClean.add(col)
-    return col
+    // to avoid having to pass a converter for types
+    return col as CollectionReference<T>
   }
 
   // for automatically generated documents
   let docId = 0
   const docsToClean = new Set<DocumentReference<any>>()
-  function _doc(path?: string, ...pathSegments: string[]) {
+  function _doc<T = unknown>(path?: string, ...pathSegments: string[]) {
     path = path || `doc_${docId++}`
     const d = doc(testsCollection, path, ...pathSegments)
     docsToClean.add(d)
-    return d
+    // to avoid having to pass a converter for types
+    return d as DocumentReference<T>
   }
 
   return {

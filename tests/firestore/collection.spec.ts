@@ -4,45 +4,92 @@ import { useCollection } from '../../src'
 import {
   addDoc,
   collection as originalCollection,
+  CollectionReference,
+  deleteDoc,
+  doc,
   DocumentData,
-  orderBy,
+  Query,
+  setDoc,
 } from 'firebase/firestore'
 import { expectType, setupFirestoreRefs, tds, firestore } from '../utils'
-import { usePendingPromises } from '../../src/firestore'
 import { type Ref } from 'vue'
 
 describe('Firestore collections', () => {
   const { collection, query } = setupFirestoreRefs()
 
-  const listRef = collection()
-  const orderedListRef = query(listRef, orderBy('name'))
+  function factory<
+    T = unknown,
+    K extends CollectionReference<T> | Query<T> = CollectionReference<T>
+  >(
+    // @ts-expect-error: collection or query
+    listRef: K = collection()
+  ) {
+    const wrapper = mount({
+      template: 'no',
+      setup() {
+        const {
+          data: list,
+          promise,
+          unbind,
+          pending,
+          error,
+        } = useCollection(listRef)
 
-  it('binds a collection as an array', async () => {
-    const wrapper = mount(
-      {
-        template: 'no',
-        setup() {
-          const list = useCollection(orderedListRef)
+        return { list, promise, unbind, pending, error }
+      },
+    })
 
-          return { list }
-        },
-      }
-      // should work without the plugin
-      // { global: { plugins: [firestorePlugin] } }
-    )
+    return { wrapper, listRef }
+  }
 
+  function sortedList<
+    A extends Array<Record<any, unknown>>,
+    K extends keyof A[any]
+  >(list: A, key: K) {
+    return list.slice().sort((a, b) => {
+      const aVal = a[key]
+      const bVal = b[key]
+      return typeof aVal === 'string' && typeof bVal === 'string'
+        ? aVal.localeCompare(bVal)
+        : 0
+    })
+  }
+
+  it('starts the collection as an empty array', async () => {
+    const { wrapper } = factory()
     expect(wrapper.vm.list).toEqual([])
-    await usePendingPromises()
+  })
+
+  it('add items to the collection', async () => {
+    const { wrapper, listRef } = factory<{ name: string }>()
 
     await addDoc(listRef, { name: 'a' })
     await addDoc(listRef, { name: 'b' })
     await addDoc(listRef, { name: 'c' })
     expect(wrapper.vm.list).toHaveLength(3)
-    expect(wrapper.vm.list).toEqual([
-      { name: 'a' },
-      { name: 'b' },
-      { name: 'c' },
-    ])
+    expect(wrapper.vm.list).toContainEqual({ name: 'a' })
+    expect(wrapper.vm.list).toContainEqual({ name: 'b' })
+    expect(wrapper.vm.list).toContainEqual({ name: 'c' })
+  })
+
+  it('delete items from the collection', async () => {
+    const { wrapper, listRef } = factory<{ name: string }>()
+
+    const aRef = doc(listRef)
+    const a = await setDoc(aRef, { name: 'a' })
+    const bRef = doc(listRef)
+    const b = await setDoc(bRef, { name: 'b' })
+    const cRef = doc(listRef)
+    const c = await setDoc(cRef, { name: 'c' })
+
+    await deleteDoc(aRef)
+    expect(wrapper.vm.list).toHaveLength(2)
+    expect(wrapper.vm.list).toContainEqual({ name: 'b' })
+    expect(wrapper.vm.list).toContainEqual({ name: 'c' })
+
+    await deleteDoc(cRef)
+    expect(wrapper.vm.list).toHaveLength(1)
+    expect(wrapper.vm.list).toContainEqual({ name: 'b' })
   })
 
   tds(() => {
