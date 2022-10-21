@@ -46,6 +46,9 @@ jobs:
       - name: Lint
         run: pnpm run lint
 
+      - name: Types
+        run: pnpm run test:types
+
       - name: Test
         run: firebase emulators:exec 'pnpm run test:unit'
 
