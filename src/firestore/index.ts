@@ -46,9 +46,6 @@ export function _useFirestoreRef(
   const pending = ref(true)
   const error = ref<FirestoreError>()
 
-  const unbinds = {}
-  firestoreUnbinds.set(data, unbinds)
-
   const promise = new Promise<unknown | null>((resolve, reject) => {
     unbind = (
       isDocumentRef(docOrCollectionRef) ? bindDocument : bindCollection
