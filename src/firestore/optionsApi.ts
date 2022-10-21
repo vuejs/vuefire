@@ -161,12 +161,15 @@ declare module '@vue/runtime-core' {
      */
     $firestoreBind(
       name: string,
-      reference: Query | CollectionReference,
+      // TODO: create proper overloads with generics like in the composition API
+      reference: Query<unknown> | CollectionReference<unknown>,
       options?: FirestoreOptions
     ): Promise<DocumentData[]>
+
     $firestoreBind(
       name: string,
-      reference: DocumentReference,
+      // TODO: create proper overloads with generics like in the composition API
+      reference: DocumentReference<unknown>,
       options?: FirestoreOptions
     ): Promise<DocumentData>
 
