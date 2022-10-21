@@ -7,7 +7,8 @@ import {
   rtdbBindAsArray as bindAsArray,
   rtdbBindAsObject as bindAsObject,
 } from '../core'
-import { internalBind, internalUnbind } from './index'
+import { internalUnbind, _useDatabaseRef } from './index'
+import { RTDBSerializer } from './utils'
 
 /**
  * Returns the original reference of a Firebase reference or query across SDK versions.
@@ -18,12 +19,18 @@ function getRef(refOrQuery: DatabaseReference | Query): DatabaseReference {
   return refOrQuery.ref
 }
 
-export interface DatabasePluginOptions extends RTDBOptions {
+/**
+ * Options for the Firebase Database Plugin that enables the Options API such as `$rtdbBind` and `$rtdbUnbind`.
+ */
+export interface DatabasePluginOptions {
   bindName?: string
   unbindName?: string
+  serialize?: RTDBOptions['serialize']
+  reset?: RTDBOptions['reset']
+  wait?: RTDBOptions['wait']
 }
 
-const defaultOptions: Readonly<Required<DatabasePluginOptions>> = {
+const databasePluginDefaults: Readonly<Required<DatabasePluginOptions>> = {
   bindName: '$rtdbBind',
   unbindName: '$rtdbUnbind',
   serialize: rtdbOptions.serialize,
@@ -52,7 +59,7 @@ declare module '@vue/runtime-core' {
     $rtdbUnbind: (name: string, reset?: RTDBOptions['reset']) => void
 
     /**
-     * Bound firestore references
+     * Bound database references
      */
     $firebaseRefs: Readonly<Record<string, DatabaseReference>>
     // _firebaseSources: Readonly<
@@ -68,7 +75,7 @@ declare module '@vue/runtime-core' {
   }
   export interface ComponentCustomOptions {
     /**
-     * Calls `$firestoreBind` at created
+     * Calls `$rtdbBind` at created
      */
     firebase?: FirebaseOption
   }
@@ -83,21 +90,21 @@ export const rtdbUnbinds = new WeakMap<
 >()
 
 /**
- * Install this plugin if you want to add `$firestoreBind` and `$firestoreUnbind` functions. Note
- * this plugin is not necessary if you exclusively use the Composition API.
+ * Install this plugin if you want to add `$rtdbBind` and `$rtdbUnbind` functions. Note this plugin is only necessary if
+ * you use the Options API. If you **only use the Composition API**, you can completely skip it.
  *
  * @param app
  * @param pluginOptions
  */
 export function databasePlugin(
   app: App,
-  pluginOptions: DatabasePluginOptions = defaultOptions
+  pluginOptions?: DatabasePluginOptions
 ) {
   // TODO: implement
   // const strategies = Vue.config.optionMergeStrategies
   // strategies.firebase = strategies.provide
 
-  const globalOptions = Object.assign({}, defaultOptions, pluginOptions)
+  const globalOptions = Object.assign({}, databasePluginDefaults, pluginOptions)
   const { bindName, unbindName } = globalOptions
 
   const GlobalTarget = isVue3
@@ -139,7 +146,9 @@ export function databasePlugin(
       rtdbUnbinds.set(this, (unbinds = {}))
     }
 
-    const promise = internalBind(target, key, source, unbinds!, options)
+    // TODO: ensure creating refs outside of the scope of the component here doesn't create a memory leak
+    const { promise, unbind } = _useDatabaseRef(source, { target, ...options })
+    unbinds[key] = unbind
 
     // TODO:
     // this._firebaseSources[key] = source

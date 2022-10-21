@@ -20,14 +20,23 @@ export interface RTDBOptions {
   reset?: ResetOption
   serialize?: RTDBSerializer
   wait?: boolean
+
+  initialValue?: unknown
 }
 
-const DEFAULT_OPTIONS: Required<RTDBOptions> = {
+export interface _GlobalRTDBOptions extends RTDBOptions {
+  reset: ResetOption
+  serialize: RTDBSerializer
+  wait: boolean
+}
+
+const DEFAULT_OPTIONS: _GlobalRTDBOptions = {
   reset: true,
   serialize: createRecordFromRTDBSnapshot,
   wait: false,
 }
 
+// TODO: rename rtdbDefaults databaseDefaults
 export { DEFAULT_OPTIONS as rtdbOptions }
 
 interface CommonBindOptionsParameter {
@@ -89,7 +98,7 @@ interface BindAsArrayParameter extends CommonBindOptionsParameter {
  * Binds a RTDB reference or query as an array
  * @param param0
  * @param options
- * @returns a function to be called to stop listeninng for changes
+ * @returns a function to be called to stop listening for changes
  */
 export function rtdbBindAsArray(
   { target, collection, resolve, reject, ops }: BindAsArrayParameter,

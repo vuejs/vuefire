@@ -14,57 +14,6 @@ import {
 } from './subscribe'
 import { internalUnbind, _useFirestoreRef } from '.'
 
-declare module '@vue/runtime-core' {
-  export interface ComponentCustomProperties {
-    /**
-     * Binds a reference
-     *
-     * @param name
-     * @param reference
-     * @param options
-     */
-    $firestoreBind(
-      name: string,
-      reference: Query | CollectionReference,
-      options?: FirestoreOptions
-    ): Promise<DocumentData[]>
-    $firestoreBind(
-      name: string,
-      reference: DocumentReference,
-      options?: FirestoreOptions
-    ): Promise<DocumentData>
-
-    /**
-     * Unbinds a bound reference
-     */
-    $firestoreUnbind: (name: string, reset?: FirestoreOptions['reset']) => void
-
-    /**
-     * Bound firestore references
-     */
-    $firestoreRefs: Readonly<
-      Record<string, DocumentReference | CollectionReference>
-    >
-    // _firestoreSources: Readonly<
-    //   Record<string, CollectionReference | Query | DocumentReference>
-    // >
-    /**
-     * Existing unbind functions that get automatically called when the component is unmounted
-     * @internal
-     */
-    // _firestoreUnbinds: Readonly<
-    //   Record<string, ReturnType<typeof bindCollection | typeof bindDocument>>
-    // >
-  }
-
-  export interface ComponentCustomOptions {
-    /**
-     * Calls `$firestoreBind` at created
-     */
-    firestore?: FirestoreOption
-  }
-}
-
 export type FirestoreOption = VueFirestoreObject | (() => VueFirestoreObject)
 
 export type VueFirestoreObject = Record<
@@ -79,6 +28,10 @@ export const firestoreUnbinds = new WeakMap<
   Record<string, ReturnType<typeof bindCollection | typeof bindDocument>>
 >()
 
+/**
+ * Options for the Firebase Database Plugin that enables the Options API such as `$firestoreBind` and
+ * `$firestoreUnbind`.
+ */
 export interface FirestorePluginOptions {
   bindName?: string
   unbindName?: string
@@ -87,7 +40,7 @@ export interface FirestorePluginOptions {
   wait?: FirestoreOptions['wait']
 }
 
-const defaultOptions: Readonly<Required<FirestorePluginOptions>> = {
+const firestorePluginDefaults: Readonly<Required<FirestorePluginOptions>> = {
   bindName: '$firestoreBind',
   unbindName: '$firestoreUnbind',
   converter: firestoreOptions.converter,
@@ -104,13 +57,17 @@ const defaultOptions: Readonly<Required<FirestorePluginOptions>> = {
  */
 export const firestorePlugin = function firestorePlugin(
   app: App,
-  pluginOptions: FirestorePluginOptions = defaultOptions
+  pluginOptions?: FirestorePluginOptions
 ) {
   // const strategies = app.config.optionMergeStrategies
   // TODO: implement
   // strategies.firestore =
 
-  const globalOptions = Object.assign({}, defaultOptions, pluginOptions)
+  const globalOptions = Object.assign(
+    {},
+    firestorePluginDefaults,
+    pluginOptions
+  )
   const { bindName, unbindName } = globalOptions
 
   const GlobalTarget = isVue3
@@ -191,4 +148,55 @@ export const firestorePlugin = function firestorePlugin(
       this.$firestoreRefs = null
     },
   })
+}
+
+declare module '@vue/runtime-core' {
+  export interface ComponentCustomProperties {
+    /**
+     * Binds a reference
+     *
+     * @param name
+     * @param reference
+     * @param options
+     */
+    $firestoreBind(
+      name: string,
+      reference: Query | CollectionReference,
+      options?: FirestoreOptions
+    ): Promise<DocumentData[]>
+    $firestoreBind(
+      name: string,
+      reference: DocumentReference,
+      options?: FirestoreOptions
+    ): Promise<DocumentData>
+
+    /**
+     * Unbinds a bound reference
+     */
+    $firestoreUnbind: (name: string, reset?: FirestoreOptions['reset']) => void
+
+    /**
+     * Bound firestore references
+     */
+    $firestoreRefs: Readonly<
+      Record<string, DocumentReference | CollectionReference>
+    >
+    // _firestoreSources: Readonly<
+    //   Record<string, CollectionReference | Query | DocumentReference>
+    // >
+    /**
+     * Existing unbind functions that get automatically called when the component is unmounted
+     * @internal
+     */
+    // _firestoreUnbinds: Readonly<
+    //   Record<string, ReturnType<typeof bindCollection | typeof bindDocument>>
+    // >
+  }
+
+  export interface ComponentCustomOptions {
+    /**
+     * Calls `$firestoreBind` at created
+     */
+    firestore?: FirestoreOption
+  }
 }

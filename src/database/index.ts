@@ -24,26 +24,36 @@ import { rtdbUnbinds } from './optionsApi'
 
 export { databasePlugin } from './optionsApi'
 
+// TODO: if we allow passing them locally, we could also add the create and reset to allow creating other data structures like a Map
+
 const ops: OperationsType = {
   set: (target, key, value) => walkSet(target, key, value),
   add: (array, index, data) => array.splice(index, 0, data),
   remove: (array, index) => array.splice(index, 1),
 }
 
-export function internalBind(
-  target: Ref<any>,
-  key: string,
-  source: Query | DatabaseReference,
-  unbinds: Record<string, ReturnType<typeof bindAsArray | typeof bindAsObject>>,
-  options?: RTDBOptions
+export interface _UseDatabaseRefOptions extends RTDBOptions {
+  target?: Ref<unknown>
+}
+
+type UnbindType = ReturnType<typeof bindAsArray | typeof bindAsObject>
+
+export function _useDatabaseRef(
+  reference: DatabaseReference | Query,
+  options: _UseDatabaseRefOptions = {}
 ) {
-  return new Promise((resolve, reject) => {
-    let unbind
-    if (Array.isArray(target.value)) {
+  let unbind!: UnbindType
+
+  const data = options.target || ref<unknown | null>(options.initialValue)
+  const error = ref<Error>()
+  const pending = ref(true)
+
+  const promise = new Promise((resolve, reject) => {
+    if (Array.isArray(data.value)) {
       unbind = bindAsArray(
         {
-          target,
-          collection: source,
+          target: data,
+          collection: reference,
           resolve,
           reject,
           ops,
@@ -53,8 +63,8 @@ export function internalBind(
     } else {
       unbind = bindAsObject(
         {
-          target,
-          document: source,
+          target: data,
+          document: reference,
           resolve,
           reject,
           ops,
@@ -62,45 +72,8 @@ export function internalBind(
         options
       )
     }
-    unbinds[key] = unbind
   })
-}
 
-export function internalUnbind(
-  key: string,
-  unbinds:
-    | Record<string, ReturnType<typeof bindAsArray | typeof bindAsObject>>
-    | undefined,
-  reset?: RTDBOptions['reset']
-) {
-  if (unbinds && unbinds[key]) {
-    unbinds[key](reset)
-    delete unbinds[key]
-  }
-  // TODO: move to $firestoreUnbind
-  // delete vm._firebaseSources[key]
-  // delete vm._firebaseUnbinds[key]
-}
-
-// export function useList(reference: DatabaseReference | Query, options?: RTDBOptions)
-
-/**
- * Creates a reactive variable connected to the database.
- *
- * @param reference - Reference or query to the database
- * @param options - optional options
- */
-export function useList<T = unknown>(
-  reference: DatabaseReference | Query,
-  options?: RTDBOptions
-): _RefWithState<T[]> {
-  const unbinds = {}
-  const data = ref<T[]>([]) as Ref<T[]>
-  const error = ref<Error>()
-  const pending = ref(true)
-
-  rtdbUnbinds.set(data, unbinds)
-  const promise = internalBind(data, '', reference, unbinds, options)
   promise
     .catch((reason) => {
       error.value = reason
@@ -112,65 +85,69 @@ export function useList<T = unknown>(
   // TODO: SSR serialize the values for Nuxt to expose them later and use them
   // as initial values while specifying a wait: true to only swap objects once
   // Firebase has done its initial sync. Also, on server, you don't need to
-  // create sync, you can read only once the whole thing so maybe internalBind
+  // create sync, you can read only once the whole thing so maybe _useDatabaseRef
   // should take an option like once: true to not setting up any listener
 
   if (getCurrentScope()) {
     onScopeDispose(() => {
-      unbind(data, options && options.reset)
+      unbind(options.reset)
     })
   }
 
-  return Object.defineProperties<_RefWithState<T[]>>(
-    data as _RefWithState<T[]>,
-    {
-      data: { get: () => data },
-      error: { get: () => error },
-      pending: { get: () => error },
+  return Object.defineProperties(data, {
+    data: { get: () => data },
+    error: { get: () => error },
+    pending: { get: () => error },
 
-      promise: { get: () => promise },
-    }
-  )
+    promise: { get: () => promise },
+    unbind: { get: () => unbind },
+  }) as _RefDatabase<unknown | null>
+}
+
+export function internalUnbind(
+  key: string,
+  unbinds: Record<string, UnbindType> | undefined,
+  reset?: RTDBOptions['reset']
+) {
+  if (unbinds && unbinds[key]) {
+    unbinds[key](reset)
+    delete unbinds[key]
+  }
+  // TODO: move to $firestoreUnbind
+  // delete vm._firebaseSources[key]
+  // delete vm._firebaseUnbinds[key]
+}
+
+/**
+ * Creates a reactive variable connected to the database.
+ *
+ * @param reference - Reference or query to the database
+ * @param options - optional options
+ */
+export function useList<T = unknown>(
+  reference: DatabaseReference | Query,
+  options?: RTDBOptions
+): _RefDatabase<T[]> {
+  const unbinds = {}
+  const data = ref<T[]>([]) as Ref<T[]>
+  return _useDatabaseRef(reference, {
+    target: data,
+    ...options,
+  }) as _RefDatabase<T[]>
 }
 
 export function useObject<T = unknown>(
   reference: DatabaseReference,
   options?: RTDBOptions
-): _RefWithState<T | undefined> {
-  const unbinds = {}
+): _RefDatabase<T | undefined> {
   const data = ref<T>() as Ref<T | undefined>
-  const error = ref<Error>()
-  const pending = ref(true)
-
-  rtdbUnbinds.set(data, unbinds)
-  const promise = internalBind(data, '', reference, unbinds, options)
-  promise
-    .catch((reason) => {
-      error.value = reason
-    })
-    .finally(() => {
-      pending.value = false
-    })
-
-  // TODO: refactor code to avoid duplication
-
-  if (getCurrentScope()) {
-    onScopeDispose(() => {
-      unbind(data, options && options.reset)
-    })
-  }
-
-  return Object.defineProperties<_RefWithState<T | undefined>>(
-    data as _RefWithState<T | undefined>,
-    {
-      data: { get: () => data },
-      error: { get: () => error },
-      pending: { get: () => error },
-
-      promise: { get: () => promise },
-    }
-  )
+  return _useDatabaseRef(reference, {
+    target: data,
+    ...options,
+  }) as _RefDatabase<T | undefined>
 }
 
 export const unbind = (target: Ref, reset?: RTDBOptions['reset']) =>
   internalUnbind('', rtdbUnbinds.get(target), reset)
+
+export interface _RefDatabase<T> extends _RefWithState<T, Error> {}

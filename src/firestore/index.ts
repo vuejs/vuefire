@@ -11,17 +11,8 @@ import type {
   Query,
   FirestoreError,
   DocumentData,
-  SnapshotOptions,
-  SnapshotListenOptions,
 } from 'firebase/firestore'
-import {
-  getCurrentInstance,
-  getCurrentScope,
-  onBeforeUnmount,
-  onScopeDispose,
-  ref,
-  Ref,
-} from 'vue-demi'
+import { getCurrentScope, onScopeDispose, ref, Ref } from 'vue-demi'
 import { isDocumentRef, _RefWithState } from '../shared'
 import { firestoreUnbinds } from './optionsApi'
 
