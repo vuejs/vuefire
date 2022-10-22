@@ -9,6 +9,8 @@ on:
     paths-ignore:
       - 'docs/**'
       - 'playground/**'
+permissions:
+  contents: read
 
 jobs:
   build:
