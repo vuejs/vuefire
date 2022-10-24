@@ -106,28 +106,6 @@ export function _useFirestoreRef(
   return data as _RefFirestore<unknown>
 }
 
-// TODO: remove in stable release or before
-
-/**
- * Binds a Firestore reference onto a Vue Ref and keep it updated.
- *
- * @deprecated use `useDocument()` and `useCollection()` instead
- *
- * @param target - target Ref to bind to
- * @param docOrCollectionRef - Firestore Reference to be bound
- * @param options
- */
-export function bind(
-  target: Ref,
-  docOrCollectionRef: CollectionReference | Query | DocumentReference,
-  options?: FirestoreOptions
-) {
-  return _useFirestoreRef(docOrCollectionRef, {
-    target,
-    ...options,
-  }).promise
-}
-
 const pendingPromises = new Set<Promise<any>>()
 
 // TODO: should be usable in different contexts, use inject, provide
