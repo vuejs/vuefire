@@ -1,43 +1,54 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-import { useCollection } from '../../src'
 import {
-  addDoc,
   collection as originalCollection,
   CollectionReference,
-  deleteDoc,
   doc,
   DocumentData,
   Query,
-  setDoc,
-  updateDoc,
 } from 'firebase/firestore'
 import { expectType, setupFirestoreRefs, tds, firestore } from '../utils'
-import { type Ref } from 'vue'
+import { ref, type Ref } from 'vue'
+import { _InferReferenceType, _RefFirestore } from '../../src/firestore'
 import {
-  VueFireQueryData,
-  _InferReferenceType,
-  _RefFirestore,
-} from '../../src/firestore'
+  useCollection,
+  UseCollectionOptions,
+  VueFirestoreQueryData,
+} from '../../src'
 
 describe('Firestore collections', () => {
-  const { collection, query } = setupFirestoreRefs()
+  const { collection, query, addDoc, setDoc, updateDoc, deleteDoc } =
+    setupFirestoreRefs()
 
-  function factory<T = DocumentData>() {
-    const listRef = collection()
-    const useIt = () => useCollection<T>(listRef)
-    let data!: ReturnType<typeof useIt>
+  function factory<T = DocumentData>({
+    options,
+    ref = collection(),
+  }: {
+    options?: UseCollectionOptions
+    ref?: CollectionReference<T>
+  } = {}) {
+    let data!: _RefFirestore<VueFirestoreQueryData<T>>
 
     const wrapper = mount({
       template: 'no',
       setup() {
-        data = useIt()
-
-        return { list: data.data, ...data }
+        // @ts-expect-error: generic forced
+        data = useCollection(ref, options)
+        const { data: list, pending, error, promise, unbind } = data
+        return { list, pending, error, promise, unbind }
       },
     })
 
-    return { wrapper, listRef, ...data }
+    return {
+      wrapper,
+      listRef: ref,
+      // non enumerable properties cannot be spread
+      data: data.data,
+      pending: data.pending,
+      error: data.error,
+      promise: data.promise,
+      unbind: data.unbind,
+    }
   }
 
   function sortedList<
@@ -52,8 +63,6 @@ describe('Firestore collections', () => {
         : 0
     })
   }
-
-  // TODO: factory by default returns an unknown, but even then it should include the id
 
   it('starts the collection as an empty array', async () => {
     const { wrapper, data } = factory()
@@ -128,6 +137,97 @@ describe('Firestore collections', () => {
     expect(data.value[0].id).toEqual(a.id)
   })
 
+  it('unbinds when the component is unbound', async () => {
+    const { wrapper, listRef, data } = factory()
+
+    await addDoc(listRef, { name: 'a' })
+    expect(data.value).toHaveLength(1)
+    await wrapper.unmount()
+    // use a copy instead of length to avoid depending on reset option
+    const copy = [...data.value]
+    await addDoc(listRef, { name: 'b' })
+    expect(data.value).toEqual(copy)
+  })
+
+  it('can be manually unbound', async () => {
+    const { listRef, data, unbind } = factory()
+
+    await addDoc(listRef, { name: 'a' })
+    expect(data.value).toHaveLength(1)
+    unbind()
+    // use a copy instead of length to avoid depending on reset option
+    const copy = [...data.value]
+    await addDoc(listRef, { name: 'b' })
+    expect(data.value).toEqual(copy)
+  })
+
+  it('rejects on error', async () => {
+    const { error, promise } = factory({
+      ref: originalCollection(firestore, 'cannot exist'),
+    })
+
+    expect(error.value).toBeUndefined()
+    await expect(promise).rejects.toThrow()
+    expect(error.value).toBeTruthy()
+  })
+
+  it('resolves when the ref is populated', async () => {
+    const ref = collection()
+    await addDoc(ref, { name: 'a' })
+    await addDoc(ref, { name: 'b' })
+    const { error, promise, data } = factory({ ref })
+
+    await expect(promise).resolves.toEqual(expect.anything())
+    expect(data.value).toContainEqual({ name: 'a' })
+    expect(data.value).toContainEqual({ name: 'b' })
+    expect(error.value).toBeUndefined()
+  })
+
+  describe('reset option', () => {
+    it('resets the value when unbinding', async () => {
+      const { wrapper, listRef, data } = factory()
+
+      await addDoc(listRef, { name: 'a' })
+      expect(data.value).toHaveLength(1)
+      await wrapper.unmount()
+      expect(data.value).toHaveLength(0)
+    })
+
+    it('skips resetting when specified', async () => {
+      const { wrapper, listRef, data } = factory({ options: { reset: false } })
+
+      await addDoc(listRef, { name: 'a' })
+      expect(data.value).toHaveLength(1)
+      await wrapper.unmount()
+      expect(data.value).toHaveLength(1)
+    })
+
+    it('can be reset to a specific value', async () => {
+      const { wrapper, listRef, data } = factory({
+        options: { reset: () => 'reset' },
+      })
+
+      await addDoc(listRef, { name: 'a' })
+      expect(data.value).toHaveLength(1)
+      await wrapper.unmount()
+      expect(data.value).toEqual('reset')
+    })
+  })
+
+  it('awaits before setting the value if wait', async () => {
+    const { wrapper, listRef, data } = factory({
+      options: {
+        wait: true,
+        target: ref([{ name: 'old' }]),
+      },
+    })
+
+    const p = addDoc(listRef, { name: 'a' })
+    expect(data.value).toEqual([{ name: 'old' }])
+    await p
+    expect(data.value).toEqual([{ name: 'a' }])
+  })
+
   tds(() => {
     interface TodoI {
       text: string
@@ -141,6 +241,7 @@ describe('Firestore collections', () => {
     expectType<Ref<number[]>>(useCollection(collection(db, 'todos')))
 
     // Adds the id
+    // FIXME: this one is any but the test passes
     expectType<string>(useCollection(collection(db, 'todos')).value[0].id)
     expectType<string>(
       useCollection<TodoI>(collection(db, 'todos')).value[0].id

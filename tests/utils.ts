@@ -21,8 +21,15 @@ import {
   deleteDoc,
   DocumentReference,
   DocumentData,
+  addDoc,
+  setDoc,
+  updateDoc,
+  PartialWithFieldValue,
+  SetOptions,
+  WithFieldValue,
 } from 'firebase/firestore'
 import { afterAll, beforeAll } from 'vitest'
+import { nextTick } from 'vue'
 import { isCollectionRef, isDocumentRef } from '../src/shared'
 
 export const firebaseApp = initializeApp({ projectId: 'vue-fire-store' })
@@ -88,6 +95,34 @@ export function setupFirestoreRefs() {
     return d as DocumentReference<T>
   }
 
+  // waiting a tick should ensure the data is up to date
+
+  async function _addDoc(...args: Parameters<typeof addDoc>) {
+    const d = await addDoc(...args)
+    await nextTick()
+    return d
+  }
+
+  const _setDoc: typeof setDoc = async (...args: any[]) => {
+    // @ts-expect-error: not a tuple
+    const d = await setDoc(...args)
+    await nextTick()
+    return d
+  }
+
+  async function _deleteDoc(...args: Parameters<typeof deleteDoc>) {
+    const d = await deleteDoc(...args)
+    await nextTick()
+    return d
+  }
+
+  const _updateDoc: typeof updateDoc = async (...args: any[]) => {
+    // @ts-expect-error: not a tuple
+    const d = await updateDoc(...args)
+    await nextTick()
+    return d
+  }
+
   return {
     itemRef,
     listRef,
@@ -97,6 +132,10 @@ export function setupFirestoreRefs() {
     collection: _collection,
     doc: _doc,
     query: firestoreQuery,
+    addDoc: _addDoc,
+    setDoc: _setDoc,
+    updateDoc: _updateDoc,
+    deleteDoc: _deleteDoc,
   }
 }
 
