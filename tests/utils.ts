@@ -20,6 +20,7 @@ import {
   QueryDocumentSnapshot,
   deleteDoc,
   DocumentReference,
+  DocumentData,
 } from 'firebase/firestore'
 import { afterAll, beforeAll } from 'vitest'
 import { isCollectionRef, isDocumentRef } from '../src/shared'
@@ -64,7 +65,10 @@ export function setupFirestoreRefs() {
   // for automatically generated collections
   let collectionId = 0
   const collectionsToClean = new Set<CollectionReference<any>>()
-  function _collection<T = unknown>(path?: string, ...pathSegments: string[]) {
+  function _collection<T = DocumentData>(
+    path?: string,
+    ...pathSegments: string[]
+  ) {
     path = path || `col_${collectionId++}`
 
     const col = collection(forItemsRef, path, ...pathSegments)

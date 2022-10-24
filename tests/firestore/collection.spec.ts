@@ -14,33 +14,30 @@ import {
 } from 'firebase/firestore'
 import { expectType, setupFirestoreRefs, tds, firestore } from '../utils'
 import { type Ref } from 'vue'
+import {
+  VueFireQueryData,
+  _InferReferenceType,
+  _RefFirestore,
+} from '../../src/firestore'
 
 describe('Firestore collections', () => {
   const { collection, query } = setupFirestoreRefs()
 
-  function factory<
-    T = unknown,
-    K extends CollectionReference<T> | Query<T> = CollectionReference<T>
-  >(
-    // @ts-expect-error: collection or query
-    listRef: K = collection()
-  ) {
+  function factory<T = DocumentData>() {
+    const listRef = collection()
+    const useIt = () => useCollection<T>(listRef)
+    let data!: ReturnType<typeof useIt>
+
     const wrapper = mount({
       template: 'no',
       setup() {
-        const {
-          data: list,
-          promise,
-          unbind,
-          pending,
-          error,
-        } = useCollection(listRef)
+        data = useIt()
 
-        return { list, promise, unbind, pending, error }
+        return { list: data.data, ...data }
       },
     })
 
-    return { wrapper, listRef }
+    return { wrapper, listRef, ...data }
   }
 
   function sortedList<
@@ -56,9 +53,12 @@ describe('Firestore collections', () => {
     })
   }
 
+  // TODO: factory by default returns an unknown, but even then it should include the id
+
   it('starts the collection as an empty array', async () => {
-    const { wrapper } = factory()
+    const { wrapper, data } = factory()
     expect(wrapper.vm.list).toEqual([])
+    expect(data.value).toEqual([])
   })
 
   it('add items to the collection', async () => {
@@ -77,11 +77,11 @@ describe('Firestore collections', () => {
     const { wrapper, listRef } = factory<{ name: string }>()
 
     const aRef = doc(listRef)
-    const a = await setDoc(aRef, { name: 'a' })
+    await setDoc(aRef, { name: 'a' })
     const bRef = doc(listRef)
-    const b = await setDoc(bRef, { name: 'b' })
+    await setDoc(bRef, { name: 'b' })
     const cRef = doc(listRef)
-    const c = await setDoc(cRef, { name: 'c' })
+    await setDoc(cRef, { name: 'c' })
 
     await deleteDoc(aRef)
     expect(wrapper.vm.list).toHaveLength(2)
@@ -97,11 +97,11 @@ describe('Firestore collections', () => {
     const { wrapper, listRef } = factory<{ name: string }>()
 
     const aRef = doc(listRef)
-    const a = await setDoc(aRef, { name: 'a' })
+    await setDoc(aRef, { name: 'a' })
     const bRef = doc(listRef)
-    const b = await setDoc(bRef, { name: 'b' })
+    await setDoc(bRef, { name: 'b' })
     const cRef = doc(listRef)
-    const c = await setDoc(cRef, { name: 'c' })
+    await setDoc(cRef, { name: 'c' })
 
     await setDoc(aRef, { name: 'aa' })
     await updateDoc(cRef, { name: 'cc' })
@@ -109,6 +109,23 @@ describe('Firestore collections', () => {
     expect(wrapper.vm.list).toContainEqual({ name: 'aa' })
     expect(wrapper.vm.list).toContainEqual({ name: 'b' })
     expect(wrapper.vm.list).toContainEqual({ name: 'cc' })
+  })
+
+  it('can add an array with null to the collection', async () => {
+    const { wrapper, listRef, data } = factory<{ list: Array<number | null> }>()
+
+    await addDoc(listRef, { list: [2, null] })
+    expect(wrapper.vm.list).toHaveLength(1)
+    expect(wrapper.vm.list).toContainEqual({ list: [2, null] })
+  })
+
+  it('adds a non enumerable id to docs in the collection', async () => {
+    const { wrapper, listRef, data } = factory<{ name: string }>()
+
+    const a = await addDoc(listRef, { name: 'a' })
+    expect(wrapper.vm.list).toHaveLength(1)
+    expect(data.value[0].id).toBeTypeOf('string')
+    expect(data.value[0].id).toEqual(a.id)
   })
 
   tds(() => {
@@ -122,6 +139,25 @@ describe('Firestore collections', () => {
     expectType<Ref<DocumentData[]>>(useCollection(collection(db, 'todos')))
     // @ts-expect-error: document data by default
     expectType<Ref<number[]>>(useCollection(collection(db, 'todos')))
+
+    // Adds the id
+    expectType<string>(useCollection(collection(db, 'todos')).value[0].id)
+    expectType<string>(
+      useCollection<TodoI>(collection(db, 'todos')).value[0].id
+    )
+    expectType<string>(
+      useCollection<unknown>(collection(db, 'todos')).value[0].id
+    )
+    useCollection(
+      collection(db, 'todos').withConverter<TodoI>({
+        fromFirestore: (snapshot) => {
+          const data = snapshot.data()
+          return { text: data.text, finished: data.finished }
+        },
+        toFirestore: (todo) => todo,
+      })
+      // @ts-expect-error: no id with custom converter
+    ).value[0].id
 
     expectType<Ref<TodoI[]>>(useCollection<TodoI>(collection(db, 'todos')))
     expectType<Ref<TodoI[]>>(useCollection<TodoI>(collection(db, 'todos')).data)
