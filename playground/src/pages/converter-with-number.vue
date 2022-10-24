@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { collection, doc } from 'firebase/firestore'
-import { ref } from 'vue'
-import { firestoreBind, useCollection } from 'vuefire'
+import { useCollection } from 'vuefire'
 import { useFirestore } from '@/firebase'
 
 const db = useFirestore()

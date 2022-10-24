@@ -54,6 +54,12 @@ declare module 'vue-router/auto/routes' {
       Record<never, never>,
       Record<never, never>
     >
+    '/pinia-store': RouteRecordInfo<
+      '/pinia-store',
+      '/pinia-store',
+      Record<never, never>,
+      Record<never, never>
+    >
     '/todos': RouteRecordInfo<
       '/todos',
       '/todos',
