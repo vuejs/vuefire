@@ -6,7 +6,7 @@ importers:
     specifiers:
       '@vitest/coverage-c8': ^0.24.3
       '@vue/runtime-core': ^3.2.41
-      '@vue/test-utils': ^2.1.0
+      '@vue/test-utils': ^2.2.0
       chalk: ^5.1.2
       conventional-changelog-cli: ^2.0.34
       enquirer: ^2.3.6
@@ -33,7 +33,7 @@ importers:
     devDependencies:
       '@vitest/coverage-c8': 0.24.3_happy-dom@7.5.13
       '@vue/runtime-core': 3.2.41
-      '@vue/test-utils': 2.1.0_vue@3.2.41
+      '@vue/test-utils': 2.2.0_vue@3.2.41
       chalk: 5.1.2
       conventional-changelog-cli: 2.2.2
       enquirer: 2.3.6
@@ -1858,8 +1858,8 @@ packages:
   /@vue/shared/3.2.41:
     resolution: {integrity: sha512-W9mfWLHmJhkfAmV+7gDjcHeAWALQtgGT3JErxULl0oz6R6+3ug91I7IErs93eCFhPCZPHBs4QJS7YWEV7A3sxw==}
 
-  /@vue/test-utils/2.1.0_vue@3.2.41:
-    resolution: {integrity: sha512-U4AxAD/tKJ3ajxYew1gkfEotpr96DE/gLXpbl+nPbsNRqGBfQZZA7YhwGoQNDPgon56v+IGZDrYq7pe3GDl9aw==}
+  /@vue/test-utils/2.2.0_vue@3.2.41:
+    resolution: {integrity: sha512-EKp5/N7ieNZdoLTkD16j/irUjIEDN63QUIc41vLUMqGvSsTQN0QxbFiQqh5v49RPfS5vZH+DhjNUEkijCMOCSg==}
     peerDependencies:
       vue: ^3.0.1
     dependencies:
@@ -4335,7 +4335,7 @@ packages:
       source-map: 0.6.1
       wordwrap: 1.0.0
     optionalDependencies:
-      uglify-js: 3.17.3
+      uglify-js: 3.17.4
     dev: true
 
   /happy-dom/7.5.13:
@@ -6667,8 +6667,8 @@ packages:
     resolution: {integrity: sha512-fk6CmUgwKCfX79EzcDQQpSCMxrHstvbLswFChHS0Vump+kFkw7nJBfTZoC1j0bOGoY9I7R3n2DGek5ajbcYnOw==}
     dev: true
 
-  /uglify-js/3.17.3:
-    resolution: {integrity: sha512-JmMFDME3iufZnBpyKL+uS78LRiC+mK55zWfM5f/pWBJfpOttXAqYfdDGRukYhJuyRinvPVAtUhvy7rlDybNtFg==}
+  /uglify-js/3.17.4:
+    resolution: {integrity: sha512-T9q82TJI9e/C1TAxYvfb16xO120tMVFZrGA3f9/P4424DNu6ypK103y0GPFVa17yotwSyZW5iYXgjYHkGrJW/g==}
     engines: {node: '>=0.8.0'}
     hasBin: true
     requiresBuild: true

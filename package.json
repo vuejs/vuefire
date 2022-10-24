@@ -70,7 +70,7 @@
   "devDependencies": {
     "@vitest/coverage-c8": "^0.24.3",
     "@vue/runtime-core": "^3.2.41",
-    "@vue/test-utils": "^2.1.0",
+    "@vue/test-utils": "^2.2.0",
     "chalk": "^5.1.2",
     "conventional-changelog-cli": "^2.0.34",
     "enquirer": "^2.3.6",
