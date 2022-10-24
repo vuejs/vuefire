@@ -35,7 +35,7 @@ export const firestoreDefaultConverter: FirestoreDataConverter<VueFirestoreDocum
         ? (Object.defineProperties(snapshot.data(options)!, {
             id: {
               // TODO: can the `id` change? If so this should be a get
-              value: () => snapshot.id,
+              value: snapshot.id,
             },
             // TODO: check if worth adding or should be through an option
             // $meta: {
