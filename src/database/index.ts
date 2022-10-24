@@ -2,7 +2,7 @@ import { Ref, ref, getCurrentScope, onScopeDispose } from 'vue-demi'
 import type { DatabaseReference, Query } from 'firebase/database'
 import { OperationsType, walkSet, _RefWithState } from '../shared'
 import { rtdbUnbinds } from './optionsApi'
-import { bindAsArray, bindAsObject, RTDBOptions } from './subscribe'
+import { bindAsArray, bindAsObject, _DatabaseRefOptions } from './subscribe'
 
 export { databasePlugin } from './optionsApi'
 
@@ -14,7 +14,7 @@ const ops: OperationsType = {
   remove: (array, index) => array.splice(index, 1),
 }
 
-export interface _UseDatabaseRefOptions extends RTDBOptions {
+export interface _UseDatabaseRefOptions extends _DatabaseRefOptions {
   target?: Ref<unknown>
 }
 
@@ -89,7 +89,7 @@ export function _useDatabaseRef(
 export function internalUnbind(
   key: string,
   unbinds: Record<string, UnbindType> | undefined,
-  reset?: RTDBOptions['reset']
+  reset?: _DatabaseRefOptions['reset']
 ) {
   if (unbinds && unbinds[key]) {
     unbinds[key](reset)
@@ -108,7 +108,7 @@ export function internalUnbind(
  */
 export function useList<T = unknown>(
   reference: DatabaseReference | Query,
-  options?: RTDBOptions
+  options?: _DatabaseRefOptions
 ): _RefDatabase<T[]> {
   const unbinds = {}
   const data = ref<T[]>([]) as Ref<T[]>
@@ -120,7 +120,7 @@ export function useList<T = unknown>(
 
 export function useObject<T = unknown>(
   reference: DatabaseReference,
-  options?: RTDBOptions
+  options?: _DatabaseRefOptions
 ): _RefDatabase<T | undefined> {
   const data = ref<T>() as Ref<T | undefined>
   return _useDatabaseRef(reference, {
@@ -129,7 +129,7 @@ export function useObject<T = unknown>(
   }) as _RefDatabase<T | undefined>
 }
 
-export const unbind = (target: Ref, reset?: RTDBOptions['reset']) =>
+export const unbind = (target: Ref, reset?: _DatabaseRefOptions['reset']) =>
   internalUnbind('', rtdbUnbinds.get(target), reset)
 
 export interface _RefDatabase<T> extends _RefWithState<T, Error> {}

@@ -1,7 +1,7 @@
 import {
-  createRecordFromRTDBSnapshot,
+  createRecordFromDatabaseSnapshot,
   indexForKey,
-  RTDBSerializer,
+  DatabaseSnapshotSerializer,
 } from './utils'
 import { OperationsType, ResetOption } from '../shared'
 import { ref, Ref, unref } from 'vue-demi'
@@ -16,23 +16,23 @@ import {
 } from 'firebase/database'
 
 // TODO: rename to match where it's used
-export interface RTDBOptions {
+export interface _DatabaseRefOptions {
   reset?: ResetOption
-  serialize?: RTDBSerializer
+  serialize?: DatabaseSnapshotSerializer
   wait?: boolean
 
   initialValue?: unknown
 }
 
-export interface _GlobalRTDBOptions extends RTDBOptions {
+export interface _GlobalDatabaseRefOptions extends _DatabaseRefOptions {
   reset: ResetOption
-  serialize: RTDBSerializer
+  serialize: DatabaseSnapshotSerializer
   wait: boolean
 }
 
-const DEFAULT_OPTIONS: _GlobalRTDBOptions = {
+const DEFAULT_OPTIONS: _GlobalDatabaseRefOptions = {
   reset: true,
-  serialize: createRecordFromRTDBSnapshot,
+  serialize: createRecordFromDatabaseSnapshot,
   wait: false,
 }
 
@@ -53,14 +53,14 @@ interface BindAsObjectParameter extends CommonBindOptionsParameter {
 }
 
 /**
- * Binds a RTDB reference as an object
+ * Binds a Firebase Database reference as an object
  * @param param0
  * @param options
- * @returns a function to be called to stop listeninng for changes
+ * @returns a function to be called to stop listening for changes
  */
 export function bindAsObject(
   { target, document, resolve, reject, ops }: BindAsObjectParameter,
-  extraOptions: RTDBOptions = DEFAULT_OPTIONS
+  extraOptions: _DatabaseRefOptions = DEFAULT_OPTIONS
 ) {
   const key = 'value'
   const options = Object.assign({}, DEFAULT_OPTIONS, extraOptions)
@@ -102,7 +102,7 @@ interface BindAsArrayParameter extends CommonBindOptionsParameter {
  */
 export function bindAsArray(
   { target, collection, resolve, reject, ops }: BindAsArrayParameter,
-  extraOptions: RTDBOptions = DEFAULT_OPTIONS
+  extraOptions: _DatabaseRefOptions = DEFAULT_OPTIONS
 ) {
   const options = Object.assign({}, DEFAULT_OPTIONS, extraOptions)
   const key = 'value'

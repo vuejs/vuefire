@@ -6,7 +6,7 @@ import {
   bindAsArray,
   bindAsObject,
   rtdbOptions,
-  RTDBOptions,
+  _DatabaseRefOptions,
 } from './subscribe'
 
 /**
@@ -24,9 +24,9 @@ function getRef(refOrQuery: DatabaseReference | Query): DatabaseReference {
 export interface DatabasePluginOptions {
   bindName?: string
   unbindName?: string
-  serialize?: RTDBOptions['serialize']
-  reset?: RTDBOptions['reset']
-  wait?: RTDBOptions['wait']
+  serialize?: _DatabaseRefOptions['serialize']
+  reset?: _DatabaseRefOptions['reset']
+  wait?: _DatabaseRefOptions['wait']
 }
 
 const databasePluginDefaults: Readonly<Required<DatabasePluginOptions>> = {
@@ -49,13 +49,13 @@ declare module '@vue/runtime-core' {
     $rtdbBind(
       name: string,
       reference: DatabaseReference | Query,
-      options?: RTDBOptions
+      options?: _DatabaseRefOptions
     ): Promise<DataSnapshot>
 
     /**
      * Unbinds a bound reference
      */
-    $rtdbUnbind: (name: string, reset?: RTDBOptions['reset']) => void
+    $rtdbUnbind: (name: string, reset?: _DatabaseRefOptions['reset']) => void
 
     /**
      * Bound database references
@@ -112,7 +112,7 @@ export function databasePlugin(
 
   GlobalTarget[unbindName] = function rtdbUnbind(
     key: string,
-    reset?: RTDBOptions['reset']
+    reset?: _DatabaseRefOptions['reset']
   ) {
     internalUnbind(key, rtdbUnbinds.get(this), reset)
     delete this.$firebaseRefs[key]
@@ -123,7 +123,7 @@ export function databasePlugin(
     this: ComponentPublicInstance,
     key: string,
     source: DatabaseReference | Query,
-    userOptions?: RTDBOptions
+    userOptions?: _DatabaseRefOptions
   ) {
     const options = Object.assign({}, globalOptions, userOptions)
     const target = toRef(this.$data as any, key)

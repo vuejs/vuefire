@@ -2,12 +2,12 @@ import type { DataSnapshot } from 'firebase/database'
 import { isObject } from '../shared'
 
 /**
- * Convert firebase RTDB snapshot into a bindable data record.
+ * Convert firebase Database snapshot into a bindable data record.
  *
  * @param snapshot
  * @return
  */
-export function createRecordFromRTDBSnapshot(snapshot: DataSnapshot): any {
+export function createRecordFromDatabaseSnapshot(snapshot: DataSnapshot): any {
   const value = snapshot.val()
   const res = isObject(value)
     ? value
@@ -23,7 +23,7 @@ export function createRecordFromRTDBSnapshot(snapshot: DataSnapshot): any {
   return res
 }
 
-export type RTDBSerializer = typeof createRecordFromRTDBSnapshot
+export type DatabaseSnapshotSerializer = typeof createRecordFromDatabaseSnapshot
 
 /**
  * Find the index for an object with given key.
