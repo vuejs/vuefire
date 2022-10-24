@@ -79,7 +79,7 @@ export function _useFirestoreRef(
     pendingPromises.add(promise)
     onScopeDispose(() => {
       pendingPromises.delete(promise)
-      unbind()
+      unbind(options.reset)
     })
   }
 
@@ -141,14 +141,14 @@ export function useCollection<
 export function useCollection<T>(
   collectionRef: CollectionReference | Query,
   options?: UseCollectionOptions
-): _RefFirestore<VueFireStoreQueryData<T>>
+): _RefFirestore<VueFirestoreQueryData<T>>
 
 export function useCollection<T>(
   collectionRef: CollectionReference<unknown> | Query<unknown>,
   options?: UseCollectionOptions
-): _RefFirestore<VueFireStoreQueryData<T>> {
+): _RefFirestore<VueFirestoreQueryData<T>> {
   return _useFirestoreRef(collectionRef, options) as _RefFirestore<
-    VueFireStoreQueryData<T>
+    VueFirestoreQueryData<T>
   >
 }
 
@@ -237,7 +237,7 @@ export type VueFirestoreDocumentData<T = DocumentData> =
       readonly id: string
     })
 
-export type VueFireStoreQueryData<T = DocumentData> = Array<
+export type VueFirestoreQueryData<T = DocumentData> = Array<
   Exclude<VueFirestoreDocumentData<T>, null>
 >
 
