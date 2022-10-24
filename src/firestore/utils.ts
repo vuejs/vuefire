@@ -9,7 +9,7 @@ import {
   FirestoreDataConverter,
 } from 'firebase/firestore'
 import { isTimestamp, isObject, isDocumentRef, TODO } from '../shared'
-import { VueFireDocumentData } from '.'
+import { VueFirestoreDocumentData } from '.'
 
 export type FirestoreReference = Query | DocumentReference | CollectionReference
 
@@ -24,7 +24,7 @@ export function createSnapshot<T = DocumentData>(
   return Object.defineProperty(doc.data() || {}, 'id', { value: doc.id })
 }
 
-export const firestoreDefaultConverter: FirestoreDataConverter<VueFireDocumentData> =
+export const firestoreDefaultConverter: FirestoreDataConverter<VueFirestoreDocumentData> =
   {
     toFirestore(data) {
       // this is okay because we declare other properties as non-enumerable
@@ -42,7 +42,7 @@ export const firestoreDefaultConverter: FirestoreDataConverter<VueFireDocumentDa
             //   value: snapshot.metadata,
             // },
             // $ref: { get: () => snapshot.ref },
-          }) as VueFireDocumentData)
+          }) as VueFirestoreDocumentData)
         : null
     },
   }

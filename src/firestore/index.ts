@@ -141,14 +141,14 @@ export function useCollection<
 export function useCollection<T>(
   collectionRef: CollectionReference | Query,
   options?: UseCollectionOptions
-): _RefFirestore<VueFireQueryData<T>>
+): _RefFirestore<VueFireStoreQueryData<T>>
 
 export function useCollection<T>(
   collectionRef: CollectionReference<unknown> | Query<unknown>,
   options?: UseCollectionOptions
-): _RefFirestore<VueFireQueryData<T>> {
+): _RefFirestore<VueFireStoreQueryData<T>> {
   return _useFirestoreRef(collectionRef, options) as _RefFirestore<
-    VueFireQueryData<T>
+    VueFireStoreQueryData<T>
   >
 }
 
@@ -181,14 +181,18 @@ export function useDocument<
 export function useDocument<T>(
   documentRef: DocumentReference,
   options?: UseDocumentOptions
-): _RefFirestore<VueFireDocumentData<T>>
+): _RefFirestore<VueFirestoreDocumentData<T>>
 
 export function useDocument<T>(
   documentRef: DocumentReference<unknown>,
   options?: UseDocumentOptions
-): _RefFirestore<_InferReferenceType<T> | null> | _RefFirestore<T | null> {
+):
+  | _RefFirestore<VueFirestoreDocumentData<T> | null>
+  | _RefFirestore<VueFirestoreDocumentData<T> | null> {
   // no unwrapRef to have a simpler type
-  return _useFirestoreRef(documentRef, options) as _RefFirestore<T>
+  return _useFirestoreRef(documentRef, options) as _RefFirestore<
+    VueFirestoreDocumentData<T>
+  >
 }
 
 // TODO: move to an unsubscribe file
@@ -224,7 +228,7 @@ export type _InferReferenceType<R> = R extends
 /**
  * Type used by default by the `firestoreDefaultConverter`.
  */
-export type VueFireDocumentData<T = DocumentData> =
+export type VueFirestoreDocumentData<T = DocumentData> =
   | null
   | (T & {
       /**
@@ -233,8 +237,8 @@ export type VueFireDocumentData<T = DocumentData> =
       readonly id: string
     })
 
-export type VueFireQueryData<T = DocumentData> = Array<
-  Exclude<VueFireDocumentData<T>, null>
+export type VueFireStoreQueryData<T = DocumentData> = Array<
+  Exclude<VueFirestoreDocumentData<T>, null>
 >
 
 export interface _RefFirestore<T> extends _RefWithState<T, FirestoreError> {}
