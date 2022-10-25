@@ -37,11 +37,9 @@ describe(
         template: 'no',
         setup() {
           // @ts-expect-error: generic forced
-          data = useCollection(
-            // @ts-expect-error: generic forced
-            ref,
-            options
-          )
+          data =
+            // split for ts
+            useCollection(ref, options)
           const { data: list, pending, error, promise, unbind } = data
           return { list, pending, error, promise, unbind }
         },

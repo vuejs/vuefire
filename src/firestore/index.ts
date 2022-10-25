@@ -176,7 +176,7 @@ export function useCollection<
   R extends CollectionReference<unknown> | Query<unknown>
 >(
   // TODO: add MaybeRef
-  collectionRef: R,
+  collectionRef: _MaybeRef<R>,
   options?: UseCollectionOptions
 ): _RefFirestore<_InferReferenceType<R>[]>
 
@@ -189,12 +189,12 @@ export function useCollection<
  * @param options - optional options
  */
 export function useCollection<T>(
-  collectionRef: CollectionReference | Query,
+  collectionRef: _MaybeRef<CollectionReference | Query>,
   options?: UseCollectionOptions
 ): _RefFirestore<VueFirestoreQueryData<T>>
 
 export function useCollection<T>(
-  collectionRef: CollectionReference<unknown> | Query<unknown>,
+  collectionRef: _MaybeRef<CollectionReference<unknown> | Query<unknown>>,
   options?: UseCollectionOptions
 ): _RefFirestore<VueFirestoreQueryData<T>> {
   return _useFirestoreRef(collectionRef, options) as _RefFirestore<
