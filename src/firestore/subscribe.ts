@@ -223,19 +223,12 @@ export function bindCollection<T = unknown>(
   ops: CommonBindOptionsParameter['ops'],
   resolve: CommonBindOptionsParameter['resolve'],
   reject: CommonBindOptionsParameter['reject'],
-  extraOptions: FirestoreOptions = DEFAULT_OPTIONS
+  extraOptions?: FirestoreOptions
 ) {
+  // FIXME: can be removed now
   const options = Object.assign({}, DEFAULT_OPTIONS, extraOptions) // fill default values
 
   const { snapshotListenOptions, snapshotOptions, wait } = options
-
-  if (!collection.converter) {
-    // @ts-expect-error: seems like a ts error
-    collection = collection.withConverter(
-      // @ts-expect-error: seems like a ts error
-      options.converter as FirestoreDataConverter<T>
-    )
-  }
 
   const key = 'value'
   if (!wait) ops.set(target, key, [])
@@ -379,7 +372,7 @@ export function bindDocument<T>(
   ops: BindDocumentParameter['ops'],
   resolve: BindDocumentParameter['resolve'],
   reject: BindDocumentParameter['reject'],
-  extraOptions: FirestoreOptions = DEFAULT_OPTIONS
+  extraOptions?: FirestoreOptions
 ) {
   const options = Object.assign({}, DEFAULT_OPTIONS, extraOptions) // fill default values
   const key = 'value'

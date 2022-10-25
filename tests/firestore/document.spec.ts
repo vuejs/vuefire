@@ -5,8 +5,6 @@ import {
   DocumentData,
   DocumentReference,
   FirestoreError,
-  setDoc,
-  updateDoc,
 } from 'firebase/firestore'
 import { expectType, setupFirestoreRefs, tds, firestore } from '../utils'
 import { unref, type Ref } from 'vue'
@@ -17,11 +15,12 @@ import {
   UseDocumentOptions,
   _RefFirestore,
 } from '../../src'
+import { FirebaseError } from 'firebase/app'
 
 describe(
   'Firestore documents',
   () => {
-    const { doc } = setupFirestoreRefs()
+    const { doc, deleteDoc, setDoc, updateDoc } = setupFirestoreRefs()
 
     function factory<T = DocumentData>({
       options,
@@ -67,13 +66,121 @@ describe(
       expect(data.value).toEqual({ name: 'b' })
     })
 
+    it('stays null if document does not exists', async () => {
+      const { wrapper, data, promise } = factory()
+
+      await promise.value
+      expect(wrapper.vm.item).toBe(null)
+      expect(data.value).toBe(null)
+    })
+
+    it('becomes null when deleted', async () => {
+      const { itemRef, data } = factory()
+
+      await setDoc(itemRef, { name: 'a' })
+      expect(data.value).toBeTruthy()
+      await deleteDoc(itemRef)
+      expect(data.value).toBe(null)
+    })
+
+    it('adds a non-enumerable id', async () => {
+      const { itemRef, data } = factory()
+
+      await setDoc(itemRef, { name: 'a' })
+      expect(data.value!.id).toBe(itemRef.id)
+    })
+
+    it('manually unbinds a document', async () => {
+      const { itemRef, data, unbind } = factory()
+
+      await setDoc(itemRef, { name: 'a' })
+      expect(data.value).toEqual({ name: 'a' })
+      unbind()
+      await setDoc(itemRef, { name: 'b' })
+      // can be set to null based on reset
+      expect(data.value).not.toEqual({ name: 'b' })
+    })
+
+    it('rejects with errors', async () => {
+      const { promise, error } = factory({
+        ref: originalDoc(firestore, 'no/rights'),
+      })
+
+      await expect(promise.value).rejects.toThrow()
+      expect(error.value).toBeTruthy()
+    })
+
+    it('resolves when the ref is populated', async () => {
+      const itemRef = doc()
+      await setDoc(itemRef, { name: 'a' })
+      const { promise, error, data } = factory({ ref: itemRef })
+
+      await expect(unref(promise)).resolves.toEqual(expect.anything())
+      expect(data.value).toEqual({ name: 'a' })
+      expect(error.value).toBeUndefined()
+    })
+
+    describe('reset option', () => {
+      it('resets the value when unbinding', async () => {
+        const { wrapper, itemRef, data } = factory()
+
+        await setDoc(itemRef, { name: 'a' })
+        expect(data.value).toBeTruthy()
+        await wrapper.unmount()
+        expect(data.value).toBe(null)
+      })
+
+      it('skips resetting when specified', async () => {
+        const { wrapper, itemRef, data } = factory({
+          options: { reset: false },
+        })
+
+        await setDoc(itemRef, { name: 'a' })
+        expect(data.value).toEqual({ name: 'a' })
+        await wrapper.unmount()
+        expect(data.value).toEqual({ name: 'a' })
+      })
+
+      it('can be reset to a specific value', async () => {
+        const { wrapper, itemRef, data } = factory({
+          options: { reset: () => 'reset' },
+        })
+
+        await setDoc(itemRef, { name: 'a' })
+        expect(data.value).toEqual({ name: 'a' })
+        await wrapper.unmount()
+        expect(data.value).toEqual('reset')
+      })
+    })
+
     tds(() => {
       const db = firestore
       const doc = originalDoc
       const itemRef = doc(db, 'todos', '1')
+      interface TodoI {
+        text: string
+        finished: boolean
+      }
+
       expectType<Ref<DocumentData | null>>(useDocument(itemRef))
       // @ts-expect-error
       expectType<Ref<number | null>>(useDocument(itemRef))
+
+      // Adds the id
+      // FIXME: this one is any but the test passes
+      expectType<string>(useDocument(doc(db, 'todos', '1')).value.id)
+      expectType<string>(useDocument<TodoI>(doc(db, 'todos', '1')).value!.id)
+      expectType<string>(useDocument<unknown>(doc(db, 'todos', '1')).value!.id)
+      useDocument(
+        doc(db, 'todos').withConverter<TodoI>({
+          fromFirestore: (snapshot) => {
+            const data = snapshot.data()
+            return { text: data.text, finished: data.finished }
+          },
+          toFirestore: (todo) => todo,
+        })
+        // @ts-expect-error: no id with custom converter
+      ).value.id
 
       expectType<Ref<number | null>>(useDocument<number>(itemRef))
       expectType<Ref<number | null>>(useDocument<number>(itemRef).data)

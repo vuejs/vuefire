@@ -24,7 +24,12 @@ import {
   _RefWithState,
 } from '../shared'
 import { firestoreUnbinds } from './optionsApi'
-import { bindCollection, bindDocument, FirestoreOptions } from './subscribe'
+import {
+  bindCollection,
+  bindDocument,
+  firestoreOptions,
+  FirestoreOptions,
+} from './subscribe'
 
 export const ops: OperationsType = {
   set: (target, key, value) => walkSet(target, key, value),
@@ -47,9 +52,10 @@ export function _useFirestoreRef(
   docOrCollectionRef: _MaybeRef<
     DocumentReference<unknown> | Query<unknown> | CollectionReference<unknown>
   >,
-  options: _UseFirestoreRefOptions = {}
+  localOptions?: _UseFirestoreRefOptions
 ) {
   let _unbind!: UnbindType
+  const options = Object.assign({}, firestoreOptions, localOptions)
 
   // TODO: allow passing pending and error refs as option for when this is called using the options api
   const data = options.target || ref<unknown | null>(options.initialValue)
@@ -62,7 +68,14 @@ export function _useFirestoreRef(
 
   function bindFirestoreRef() {
     const p = new Promise<unknown | null>((resolve, reject) => {
-      const docRefValue = unref(docOrCollectionRef)
+      let docRefValue = unref(docOrCollectionRef)
+      if (!docRefValue.converter) {
+        docRefValue = docRefValue.withConverter(
+          // @ts-expect-error: seems like a ts error
+          options.converter as FirestoreDataConverter<T>
+        )
+      }
+
       _unbind = (isDocumentRef(docRefValue) ? bindDocument : bindCollection)(
         data,
         // @ts-expect-error: the type is good because of the ternary
