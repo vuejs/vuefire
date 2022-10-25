@@ -7,6 +7,8 @@ export { useCollection, useDocument } from './firestore'
 
 export type {
   UseCollectionOptions,
+  UseDocumentOptions,
+  _RefFirestore,
   VueFirestoreDocumentData,
   VueFirestoreQueryData,
 } from './firestore'

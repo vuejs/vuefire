@@ -162,6 +162,7 @@ export function useCollection<
   // explicit generic as unknown to allow arbitrary types like numbers or strings
   R extends CollectionReference<unknown> | Query<unknown>
 >(
+  // TODO: add MaybeRef
   collectionRef: R,
   options?: UseCollectionOptions
 ): _RefFirestore<_InferReferenceType<R>[]>
@@ -202,7 +203,7 @@ export function useDocument<
   // explicit generic as unknown to allow arbitrary types like numbers or strings
   R extends DocumentReference<unknown>
 >(
-  documentRef: R,
+  documentRef: _MaybeRef<R>,
   options?: UseDocumentOptions
 ): _RefFirestore<_InferReferenceType<R>> // this one can't be null or should be specified in the converter
 
@@ -215,12 +216,12 @@ export function useDocument<
  * @param options - optional options
  */
 export function useDocument<T>(
-  documentRef: DocumentReference,
+  documentRef: _MaybeRef<DocumentReference>,
   options?: UseDocumentOptions
 ): _RefFirestore<VueFirestoreDocumentData<T>>
 
 export function useDocument<T>(
-  documentRef: DocumentReference<unknown>,
+  documentRef: _MaybeRef<DocumentReference<unknown>>,
   options?: UseDocumentOptions
 ):
   | _RefFirestore<VueFirestoreDocumentData<T> | null>
