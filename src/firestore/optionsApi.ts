@@ -115,7 +115,7 @@ export const firestorePlugin = function firestorePlugin(
     unbinds[key] = unbind
     // @ts-expect-error: we are allowed to write it
     this.$firestoreRefs[key] = docOrCollectionRef
-    return promise
+    return promise.value
   }
 
   app.mixin({

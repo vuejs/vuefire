@@ -5,11 +5,22 @@ import type {
   FirestoreError,
   DocumentData,
 } from 'firebase/firestore'
-import { getCurrentScope, onScopeDispose, ref, Ref } from 'vue-demi'
+import {
+  getCurrentScope,
+  isRef,
+  onScopeDispose,
+  ref,
+  Ref,
+  ShallowRef,
+  shallowRef,
+  unref,
+  watch,
+} from 'vue-demi'
 import {
   isDocumentRef,
   OperationsType,
   walkSet,
+  _MaybeRef,
   _RefWithState,
 } from '../shared'
 import { firestoreUnbinds } from './optionsApi'
@@ -33,40 +44,56 @@ export interface _UseFirestoreRefOptions extends FirestoreOptions {
  * @internal
  */
 export function _useFirestoreRef(
-  docOrCollectionRef:
-    | DocumentReference<unknown>
-    | Query<unknown>
-    | CollectionReference<unknown>,
+  docOrCollectionRef: _MaybeRef<
+    DocumentReference<unknown> | Query<unknown> | CollectionReference<unknown>
+  >,
   options: _UseFirestoreRefOptions = {}
 ) {
-  let unbind!: UnbindType
+  let _unbind!: UnbindType
 
   // TODO: allow passing pending and error refs as option for when this is called using the options api
   const data = options.target || ref<unknown | null>(options.initialValue)
   const pending = ref(true)
   const error = ref<FirestoreError>()
+  // force the type since its value is set right after and undefined isn't possible
+  const promise = shallowRef() as ShallowRef<Promise<unknown | null>>
+  const createdPromises = new Set<Promise<unknown | null>>()
+  const hasCurrentScope = getCurrentScope()
 
-  const promise = new Promise<unknown | null>((resolve, reject) => {
-    unbind = (
-      isDocumentRef(docOrCollectionRef) ? bindDocument : bindCollection
-    )(
-      data,
-      // @ts-expect-error: the type is good because of the ternary
-      docOrCollectionRef,
-      ops,
-      resolve,
-      reject,
-      options
-    )
-  })
-
-  promise
-    .catch((reason: FirestoreError) => {
-      error.value = reason
+  function bindFirestoreRef() {
+    const p = new Promise<unknown | null>((resolve, reject) => {
+      const docRefValue = unref(docOrCollectionRef)
+      _unbind = (isDocumentRef(docRefValue) ? bindDocument : bindCollection)(
+        data,
+        // @ts-expect-error: the type is good because of the ternary
+        docRefValue,
+        ops,
+        resolve,
+        reject,
+        options
+      )
     })
-    .finally(() => {
+
+    // only add the first promise to the pending ones
+    if (!createdPromises.size) {
+      pendingPromises.add(p)
+    }
+    createdPromises.add(p)
+    promise.value = p
+
+    p.catch((reason: FirestoreError) => {
+      error.value = reason
+    }).finally(() => {
       pending.value = false
     })
+  }
+
+  let unwatch: ReturnType<typeof watch> | undefined
+  if (isRef(docOrCollectionRef)) {
+    unwatch = watch(docOrCollectionRef, bindFirestoreRef, { immediate: true })
+  } else {
+    bindFirestoreRef()
+  }
 
   // TODO: SSR serialize the values for Nuxt to expose them later and use them
   // as initial values while specifying a wait: true to only swap objects once
@@ -75,12 +102,21 @@ export function _useFirestoreRef(
   // should take an option like once: true to not setting up any listener
 
   // TODO: warn else
-  if (getCurrentScope()) {
-    pendingPromises.add(promise)
+  if (hasCurrentScope) {
     onScopeDispose(() => {
-      pendingPromises.delete(promise)
-      unbind(options.reset)
+      for (const p of createdPromises) {
+        pendingPromises.delete(p)
+      }
+      _unbind(options.reset)
     })
+  }
+
+  // TODO: rename to stop
+  function unbind() {
+    if (unwatch) {
+      unwatch()
+    }
+    _unbind(options.reset)
   }
 
   // allow to destructure the returned value

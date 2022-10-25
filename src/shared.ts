@@ -5,7 +5,7 @@ import type {
   DocumentSnapshot,
   QuerySnapshot,
 } from 'firebase/firestore'
-import type { Ref } from 'vue-demi'
+import type { Ref, ShallowRef } from 'vue-demi'
 
 // FIXME: replace any with unknown or T generics
 
@@ -83,7 +83,9 @@ export function isTimestamp(o: any): o is Date {
  * Checks if a variable is a Firestore Document Reference
  * @param o
  */
-export function isDocumentRef(o: any): o is DocumentReference {
+export function isDocumentRef<T = DocumentData>(
+  o: any
+): o is DocumentReference<T> {
   return isObject(o) && o.type === 'document'
 }
 
@@ -91,7 +93,9 @@ export function isDocumentRef(o: any): o is DocumentReference {
  * Checks if a variable is a Firestore Collection Reference
  * @param o
  */
-export function isCollectionRef(o: any): o is CollectionReference {
+export function isCollectionRef<T = DocumentData>(
+  o: any
+): o is CollectionReference<T> {
   return isObject(o) && o.type === 'collection'
 }
 
@@ -122,8 +126,12 @@ export interface _RefWithState<T, E = Error> extends Ref<T> {
   get error(): Ref<E | undefined>
   get pending(): Ref<boolean>
 
-  // TODO: is it really void?
-  get promise(): Promise<void>
+  get promise(): ShallowRef<Promise<void>>
   // TODO: extract type from bindDocument and bindCollection
   unbind: () => void
 }
+
+/**
+ * @internal
+ */
+export type _MaybeRef<T> = T | Ref<T>

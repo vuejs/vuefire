@@ -6,15 +6,17 @@ import {
   doc,
   DocumentData,
   Query,
+  where,
 } from 'firebase/firestore'
 import { expectType, setupFirestoreRefs, tds, firestore } from '../utils'
-import { ref, type Ref } from 'vue'
+import { computed, nextTick, ref, unref, type Ref } from 'vue'
 import { _InferReferenceType, _RefFirestore } from '../../src/firestore'
 import {
   useCollection,
   UseCollectionOptions,
   VueFirestoreQueryData,
 } from '../../src'
+import { _MaybeRef } from '../../src/shared'
 
 describe('Firestore collections', () => {
   const { collection, query, addDoc, setDoc, updateDoc, deleteDoc } =
@@ -25,7 +27,7 @@ describe('Firestore collections', () => {
     ref = collection(),
   }: {
     options?: UseCollectionOptions
-    ref?: CollectionReference<T>
+    ref?: _MaybeRef<CollectionReference<T>>
   } = {}) {
     let data!: _RefFirestore<VueFirestoreQueryData<T>>
 
@@ -33,7 +35,11 @@ describe('Firestore collections', () => {
       template: 'no',
       setup() {
         // @ts-expect-error: generic forced
-        data = useCollection(ref, options)
+        data = useCollection(
+          // @ts-expect-error: generic forced
+          ref,
+          options
+        )
         const { data: list, pending, error, promise, unbind } = data
         return { list, pending, error, promise, unbind }
       },
@@ -41,7 +47,41 @@ describe('Firestore collections', () => {
 
     return {
       wrapper,
-      listRef: ref,
+      listRef: unref(ref),
+      // non enumerable properties cannot be spread
+      data: data.data,
+      pending: data.pending,
+      error: data.error,
+      promise: data.promise,
+      unbind: data.unbind,
+    }
+  }
+
+  function factoryQuery<T = DocumentData>({
+    options,
+    ref,
+  }: {
+    options?: UseCollectionOptions
+    ref?: _MaybeRef<CollectionReference<T> | Query<T>>
+  } = {}) {
+    let data!: _RefFirestore<VueFirestoreQueryData<T>>
+
+    const wrapper = mount({
+      template: 'no',
+      setup() {
+        // @ts-expect-error: generic forced
+        data = useCollection(
+          // @ts-expect-error: generic forced
+          ref,
+          options
+        )
+        const { data: list, pending, error, promise, unbind } = data
+        return { list, pending, error, promise, unbind }
+      },
+    })
+
+    return {
+      wrapper,
       // non enumerable properties cannot be spread
       data: data.data,
       pending: data.pending,
@@ -167,7 +207,7 @@ describe('Firestore collections', () => {
     })
 
     expect(error.value).toBeUndefined()
-    await expect(promise).rejects.toThrow()
+    await expect(unref(promise)).rejects.toThrow()
     expect(error.value).toBeTruthy()
   })
 
@@ -177,7 +217,7 @@ describe('Firestore collections', () => {
     await addDoc(ref, { name: 'b' })
     const { error, promise, data } = factory({ ref })
 
-    await expect(promise).resolves.toEqual(expect.anything())
+    await expect(unref(promise)).resolves.toEqual(expect.anything())
     expect(data.value).toContainEqual({ name: 'a' })
     expect(data.value).toContainEqual({ name: 'b' })
     expect(error.value).toBeUndefined()
@@ -226,6 +266,37 @@ describe('Firestore collections', () => {
     expect(data.value).toEqual([{ name: 'old' }])
     await p
     expect(data.value).toEqual([{ name: 'a' }])
+  })
+
+  it('can be bound to a ref of a query', async () => {
+    const listRef = collection<{ text: string; finished: boolean }>()
+    const finishedListRef = query(listRef, where('finished', '==', true))
+    const unfinishedListRef = query(listRef, where('finished', '==', false))
+    const showFinished = ref(false)
+    const listToDisplay = computed(() =>
+      showFinished.value ? finishedListRef : unfinishedListRef
+    )
+    await addDoc(listRef, { text: 'task 1', finished: false })
+    await addDoc(listRef, { text: 'task 2', finished: false })
+    await addDoc(listRef, { text: 'task 3', finished: true })
+    await addDoc(listRef, { text: 'task 4', finished: false })
+
+    const { wrapper, data, promise } = factoryQuery({
+      ref: listToDisplay,
+    })
+
+    await promise.value
+    expect(data.value).toHaveLength(3)
+    expect(data.value).toContainEqual({ text: 'task 1', finished: false })
+    expect(data.value).toContainEqual({ text: 'task 2', finished: false })
+    expect(data.value).toContainEqual({ text: 'task 4', finished: false })
+
+    showFinished.value = true
+    await nextTick()
+    await promise.value
+    await nextTick()
+    expect(data.value).toHaveLength(1)
+    expect(data.value).toContainEqual({ text: 'task 3', finished: true })
   })
 
   tds(() => {

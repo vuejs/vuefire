@@ -4,8 +4,8 @@ import {
   firestoreDefaultConverter,
   FirestoreSerializer,
 } from './utils'
-import { walkGet, callOnceWithArg, OperationsType } from '../shared'
-import { ref, Ref, unref } from 'vue-demi'
+import { walkGet, callOnceWithArg, OperationsType, _MaybeRef } from '../shared'
+import { isRef, ref, Ref, unref, watch } from 'vue-demi'
 import type {
   CollectionReference,
   DocumentChange,
@@ -386,11 +386,11 @@ export function bindDocument<T>(
   // TODO: warning check if key exists?
   // const boundRefs = Object.create(null)
 
-  const subs = Object.create(null)
+  const subs: Record<string, FirestoreSubscription> = Object.create(null)
   // bind here the function so it can be resolved anywhere
   // this is specially useful for refs
   resolve = callOnceWithArg(resolve, () => walkGet(target, key))
-  const unbind = onSnapshot(
+  const _unbind = onSnapshot(
     document,
     (snapshot) => {
       if (snapshot.exists()) {
@@ -413,7 +413,7 @@ export function bindDocument<T>(
   )
 
   return (reset?: FirestoreOptions['reset']) => {
-    unbind()
+    _unbind()
     if (reset !== false) {
       const value = typeof reset === 'function' ? reset() : null
       ops.set(target, key, value)
