@@ -1,7 +1,11 @@
 import { defineComponent } from 'vue'
 import { mount } from '@vue/test-utils'
 import { describe, expect, it, vi } from 'vitest'
-import { databasePlugin, DatabasePluginOptions } from '../../src'
+import {
+  databasePlugin,
+  DatabasePluginOptions,
+  DatabaseSnapshotSerializer,
+} from '../../src'
 import { setupDatabaseRefs } from '../utils'
 import { push } from 'firebase/database'
 
@@ -30,7 +34,7 @@ describe('RTDB: plugin options', () => {
 
   it('calls custom serialize function with a ref', async () => {
     const pluginOptions: DatabasePluginOptions = {
-      serialize: vi.fn(() => ({ foo: 'bar' })),
+      serialize: vi.fn(() => ({ id: '2', foo: 'bar' })),
     }
     const { vm } = mount(
       {
@@ -55,12 +59,12 @@ describe('RTDB: plugin options', () => {
     expect(pluginOptions.serialize).toHaveBeenCalledWith(
       expect.objectContaining({ val: expect.any(Function) })
     )
-    expect(vm.items).toEqual([{ foo: 'bar' }])
+    expect(vm.items).toEqual([{ foo: 'bar', id: '2' }])
   })
 
   it('can override serialize with local option', async () => {
-    const pluginOptions = {
-      serialize: vi.fn(() => ({ foo: 'bar' })),
+    const pluginOptions: DatabasePluginOptions = {
+      serialize: vi.fn(() => ({ id: '2', foo: 'bar' })),
     }
 
     const items = databaseRef()
@@ -76,7 +80,10 @@ describe('RTDB: plugin options', () => {
       }
     )
 
-    const spy = vi.fn(() => ({ bar: 'bar' }))
+    const spy: DatabaseSnapshotSerializer = vi.fn(() => ({
+      id: '3',
+      bar: 'bar',
+    }))
 
     vm.$rtdbBind('items', items, { serialize: spy })
     await push(items, { text: 'foo' })
@@ -86,6 +93,6 @@ describe('RTDB: plugin options', () => {
     expect(spy).toHaveBeenCalledWith(
       expect.objectContaining({ val: expect.any(Function) })
     )
-    expect(vm.items).toEqual([{ bar: 'bar' }])
+    expect(vm.items).toEqual([{ bar: 'bar', id: '3' }])
   })
 })

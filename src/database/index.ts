@@ -19,6 +19,11 @@ import {
 } from '../shared'
 import { rtdbUnbinds } from './optionsApi'
 import { bindAsArray, bindAsObject, _DatabaseRefOptions } from './subscribe'
+import {
+  VueDatabaseDocumentData,
+  VueDatabaseQueryData,
+  _RefDatabase,
+} from './utils'
 
 export { databasePlugin } from './optionsApi'
 
@@ -180,24 +185,3 @@ export function useObject<T = unknown>(
 
 export const unbind = (target: Ref, reset?: _DatabaseRefOptions['reset']) =>
   internalUnbind('', rtdbUnbinds.get(target), reset)
-
-export interface _RefDatabase<T> extends _RefWithState<T, Error> {}
-
-/**
- * Type used by default by the `serialize` option.
- */
-export type VueDatabaseDocumentData<T = unknown> =
-  | null
-  | (T & {
-      /**
-       * id of the document
-       */
-      readonly id: string
-    })
-
-/**
- * Same as VueDatabaseDocumentData but for a query.
- */
-export type VueDatabaseQueryData<T = unknown> = Array<
-  Exclude<VueDatabaseDocumentData<T>, null>
->

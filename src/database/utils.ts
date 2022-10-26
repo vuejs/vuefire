@@ -1,5 +1,5 @@
 import type { DataSnapshot } from 'firebase/database'
-import { isObject } from '../shared'
+import { isObject, _RefWithState } from '../shared'
 
 /**
  * Convert firebase Database snapshot into a bindable data record.
@@ -7,19 +7,18 @@ import { isObject } from '../shared'
  * @param snapshot
  * @return
  */
-export function createRecordFromDatabaseSnapshot(snapshot: DataSnapshot): any {
-  const value = snapshot.val()
-  const res = isObject(value)
+export function createRecordFromDatabaseSnapshot(
+  snapshot: DataSnapshot
+): VueDatabaseDocumentData<unknown> {
+  const value: unknown = snapshot.val()
+  const res: unknown = isObject(value)
     ? value
-    : Object.defineProperty({}, '.value', { value })
-  // if (isObject(value)) {
-  //   res = value
-  // } else {
-  //   res = {}
-  //   Object.defineProperty(res, '.value', { value })
-  // }
+    : (Object.defineProperty({}, '.value', { value }) as unknown)
+  // TODO: Transform the return type to be T directly (value different from object)
+  // since we have a ref, we can set any value now
 
-  Object.defineProperty(res, '.key', { value: snapshot.key })
+  Object.defineProperty(res, 'id', { value: snapshot.key })
+  // @ts-expect-error: id added just above
   return res
 }
 
@@ -32,10 +31,34 @@ export type DatabaseSnapshotSerializer = typeof createRecordFromDatabaseSnapshot
  * @param key
  * @return the index where the key was found
  */
-export function indexForKey(array: any[], key: string | null | number): number {
+export function indexForKey(
+  array: VueDatabaseQueryData,
+  key: string | null | number
+): number {
   for (let i = 0; i < array.length; i++) {
-    if (array[i]['.key'] === key) return i
+    if (array[i].id === key) return i
   }
 
   return -1
 }
+
+export interface _RefDatabase<T> extends _RefWithState<T, Error> {}
+
+/**
+ * Type used by default by the `serialize` option.
+ */
+export type VueDatabaseDocumentData<T = unknown> =
+  | null
+  | (T & {
+      /**
+       * id of the document
+       */
+      readonly id: string
+    })
+
+/**
+ * Same as VueDatabaseDocumentData but for a query.
+ */
+export type VueDatabaseQueryData<T = unknown> = Array<
+  Exclude<VueDatabaseDocumentData<T>, null>
+>

@@ -2,11 +2,14 @@ export { useList, useObject } from './database'
 export type {
   UseListOptions,
   UseObjectOptions,
-  _RefDatabase,
   UseDatabaseRefOptions,
+} from './database'
+export type {
+  DatabaseSnapshotSerializer,
+  _RefDatabase,
   VueDatabaseDocumentData,
   VueDatabaseQueryData,
-} from './database'
+} from './database/utils'
 
 export { databasePlugin } from './database/optionsApi'
 export type { DatabasePluginOptions } from './database/optionsApi'
