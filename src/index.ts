@@ -1,10 +1,17 @@
 export { useList, useObject } from './database'
+export type {
+  UseListOptions,
+  UseObjectOptions,
+  _RefDatabase,
+  UseDatabaseRefOptions,
+  VueDatabaseDocumentData,
+  VueDatabaseQueryData,
+} from './database'
 
 export { databasePlugin } from './database/optionsApi'
 export type { DatabasePluginOptions } from './database/optionsApi'
 
 export { useCollection, useDocument } from './firestore'
-
 export type {
   UseCollectionOptions,
   UseDocumentOptions,

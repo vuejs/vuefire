@@ -2,11 +2,13 @@ import { initializeApp } from 'firebase/app'
 import {
   connectDatabaseEmulator,
   getDatabase,
-  ref,
+  ref as _databaseRef,
   query as databaseQuery,
   orderByChild,
-  remove,
-  push as databaseAdd,
+  remove as databaseRemove,
+  set as databaseSet,
+  update as databaseUpdate,
+  push as databasePush,
 } from 'firebase/database'
 import {
   getFirestore,
@@ -167,23 +169,59 @@ async function recursiveDeleteDoc(doc: QueryDocumentSnapshot<any>) {
 // Database
 export function setupDatabaseRefs() {
   const testId = _id++
-  const testsCollection = ref(database, `__tests_${testId}`)
+  const testsCollection = _databaseRef(database, `__tests_${testId}`)
 
-  const itemRef = ref(database, testsCollection.key + `/item`)
-  const listRef = ref(database, testsCollection.key + `/items`)
+  const itemRef = _databaseRef(database, testsCollection.key + `/item`)
+  const listRef = _databaseRef(database, testsCollection.key + `/items`)
   const orderedListRef = databaseQuery(listRef, orderByChild('name'))
 
   beforeAll(async () => {
     // clean up the tests data
-    await remove(testsCollection)
+    await databaseRemove(testsCollection)
   })
 
   function databaseRef(path?: string) {
-    const data = databaseAdd(testsCollection, path)
+    const data = databasePush(testsCollection, path)
     return data.ref
   }
 
-  return { itemRef, listRef, orderedListRef, testId, databaseRef }
+  const _set: typeof databaseSet = async (ref, options) => {
+    const d = await databaseSet(ref, options)
+    await nextTick()
+    return d
+  }
+
+  const _update: typeof databaseUpdate = async (ref, options) => {
+    const d = await databaseUpdate(ref, options)
+    await nextTick()
+    return d
+  }
+
+  const _remove: typeof databaseRemove = async (ref) => {
+    const d = await databaseRemove(ref)
+    await nextTick()
+    return d
+  }
+
+  // @ts-expect-error: it complains about thenable vs promise...
+  const _push: typeof databasePush = async (...args: any[]) => {
+    // @ts-expect-error: not a tuple
+    const d = await databasePush(...args)
+    await nextTick()
+    return d
+  }
+
+  return {
+    itemRef,
+    listRef,
+    orderedListRef,
+    testId,
+    databaseRef,
+    set: _set,
+    update: _update,
+    remove: _remove,
+    push: _push,
+  }
 }
 
 // General utils

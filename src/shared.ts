@@ -7,6 +7,8 @@ import type {
 } from 'firebase/firestore'
 import type { Ref, ShallowRef } from 'vue-demi'
 
+export const noop = () => {}
+
 // FIXME: replace any with unknown or T generics
 
 export interface OperationsType {

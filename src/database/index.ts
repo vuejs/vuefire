@@ -1,6 +1,22 @@
-import { Ref, ref, getCurrentScope, onScopeDispose } from 'vue-demi'
+import {
+  Ref,
+  ref,
+  getCurrentScope,
+  onScopeDispose,
+  shallowRef,
+  ShallowRef,
+  unref,
+  watch,
+  isRef,
+} from 'vue-demi'
 import type { DatabaseReference, Query } from 'firebase/database'
-import { OperationsType, walkSet, _RefWithState } from '../shared'
+import {
+  noop,
+  OperationsType,
+  walkSet,
+  _MaybeRef,
+  _RefWithState,
+} from '../shared'
 import { rtdbUnbinds } from './optionsApi'
 import { bindAsArray, bindAsObject, _DatabaseRefOptions } from './subscribe'
 
@@ -14,66 +30,96 @@ const ops: OperationsType = {
   remove: (array, index) => array.splice(index, 1),
 }
 
-export interface _UseDatabaseRefOptions extends _DatabaseRefOptions {
+export interface UseDatabaseRefOptions extends _DatabaseRefOptions {
   target?: Ref<unknown>
 }
 
 type UnbindType = ReturnType<typeof bindAsArray | typeof bindAsObject>
 
 export function _useDatabaseRef(
-  reference: DatabaseReference | Query,
-  options: _UseDatabaseRefOptions = {}
+  reference: _MaybeRef<DatabaseReference | Query>,
+  options: UseDatabaseRefOptions = {}
 ) {
-  let unbind!: UnbindType
+  let _unbind!: UnbindType
 
   const data = options.target || ref<unknown | null>(options.initialValue)
   const error = ref<Error>()
   const pending = ref(true)
+  // force the type since its value is set right after and undefined isn't possible
+  const promise = shallowRef() as ShallowRef<Promise<unknown | null>>
+  const createdPromises = new Set<Promise<unknown | null>>()
+  const hasCurrentScope = getCurrentScope()
 
-  const promise = new Promise((resolve, reject) => {
-    if (Array.isArray(data.value)) {
-      unbind = bindAsArray(
-        {
-          target: data,
-          collection: reference,
-          resolve,
-          reject,
-          ops,
-        },
-        options
-      )
-    } else {
-      unbind = bindAsObject(
-        {
-          target: data,
-          document: reference,
-          resolve,
-          reject,
-          ops,
-        },
-        options
-      )
-    }
-  })
-
-  promise
-    .catch((reason) => {
-      error.value = reason
+  function bindDatabaseRef() {
+    const p = new Promise<unknown | null>((resolve, reject) => {
+      const referenceValue = unref(reference)
+      if (Array.isArray(data.value)) {
+        _unbind = bindAsArray(
+          {
+            target: data,
+            collection: referenceValue,
+            resolve,
+            reject,
+            ops,
+          },
+          options
+        )
+      } else {
+        _unbind = bindAsObject(
+          {
+            target: data,
+            document: referenceValue,
+            resolve,
+            reject,
+            ops,
+          },
+          options
+        )
+      }
     })
-    .finally(() => {
+
+    // only add the first promise to the pending ones
+    if (!createdPromises.size) {
+      // TODO: add the pending promise like in firestore
+      // pendingPromises.add(p)
+    }
+    createdPromises.add(p)
+    promise.value = p
+
+    p.catch((reason) => {
+      error.value = reason
+    }).finally(() => {
       pending.value = false
     })
 
-  // TODO: SSR serialize the values for Nuxt to expose them later and use them
-  // as initial values while specifying a wait: true to only swap objects once
-  // Firebase has done its initial sync. Also, on server, you don't need to
-  // create sync, you can read only once the whole thing so maybe _useDatabaseRef
-  // should take an option like once: true to not setting up any listener
+    // TODO: SSR serialize the values for Nuxt to expose them later and use them
+    // as initial values while specifying a wait: true to only swap objects once
+    // Firebase has done its initial sync. Also, on server, you don't need to
+    // create sync, you can read only once the whole thing so maybe _useDatabaseRef
+    // should take an option like once: true to not setting up any listener
+  }
 
-  if (getCurrentScope()) {
+  let stopWatcher: ReturnType<typeof watch> = noop
+  if (isRef(reference)) {
+    stopWatcher = watch(reference, bindDatabaseRef, { immediate: true })
+  } else {
+    bindDatabaseRef()
+  }
+
+  if (hasCurrentScope) {
     onScopeDispose(() => {
-      unbind(options.reset)
+      // TODO: clear pending promises
+      // for (const p of createdPromises) {
+      //   pendingPromises.delete(p)
+      // }
+      _unbind(options.reset)
     })
+  }
+
+  // TODO: rename to stop
+  function unbind() {
+    stopWatcher()
+    _unbind(options.reset)
   }
 
   return Object.defineProperties(data, {
@@ -100,6 +146,9 @@ export function internalUnbind(
   // delete vm._firebaseUnbinds[key]
 }
 
+export type UseListOptions = UseDatabaseRefOptions
+export type UseObjectOptions = UseDatabaseRefOptions
+
 /**
  * Creates a reactive variable connected to the database.
  *
@@ -107,29 +156,48 @@ export function internalUnbind(
  * @param options - optional options
  */
 export function useList<T = unknown>(
-  reference: DatabaseReference | Query,
-  options?: _DatabaseRefOptions
-): _RefDatabase<T[]> {
+  reference: _MaybeRef<DatabaseReference | Query>,
+  options?: UseListOptions
+): _RefDatabase<VueDatabaseQueryData<T>> {
   const unbinds = {}
   const data = ref<T[]>([]) as Ref<T[]>
   return _useDatabaseRef(reference, {
     target: data,
     ...options,
-  }) as _RefDatabase<T[]>
+  }) as _RefDatabase<VueDatabaseQueryData<T>>
 }
 
 export function useObject<T = unknown>(
-  reference: DatabaseReference,
-  options?: _DatabaseRefOptions
-): _RefDatabase<T | undefined> {
+  reference: _MaybeRef<DatabaseReference>,
+  options?: UseObjectOptions
+): _RefDatabase<VueDatabaseDocumentData<T> | undefined> {
   const data = ref<T>() as Ref<T | undefined>
   return _useDatabaseRef(reference, {
     target: data,
     ...options,
-  }) as _RefDatabase<T | undefined>
+  }) as _RefDatabase<VueDatabaseDocumentData<T> | undefined>
 }
 
 export const unbind = (target: Ref, reset?: _DatabaseRefOptions['reset']) =>
   internalUnbind('', rtdbUnbinds.get(target), reset)
 
 export interface _RefDatabase<T> extends _RefWithState<T, Error> {}
+
+/**
+ * Type used by default by the `serialize` option.
+ */
+export type VueDatabaseDocumentData<T = unknown> =
+  | null
+  | (T & {
+      /**
+       * id of the document
+       */
+      readonly id: string
+    })
+
+/**
+ * Same as VueDatabaseDocumentData but for a query.
+ */
+export type VueDatabaseQueryData<T = unknown> = Array<
+  Exclude<VueDatabaseDocumentData<T>, null>
+>

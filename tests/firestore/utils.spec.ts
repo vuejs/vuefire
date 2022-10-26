@@ -1,4 +1,3 @@
-import { DocumentData, getDoc } from 'firebase/firestore'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { extractRefs } from '../../src/firestore/utils'
 import { setupFirestoreRefs } from '../utils'
@@ -25,8 +24,7 @@ describe('Firestore utils', () => {
     })
   })
 
-  it.skip('extracts refs from documents', async () => {
-    const docRef = doc<DocumentData>()
+  it('extracts refs from documents', async () => {
     const [noRefsDoc, refs] = extractRefs(docData, undefined, {})
     expect(noRefsDoc.ref).toBe(docRef.path)
     expect(refs).toEqual({

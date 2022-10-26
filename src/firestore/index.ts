@@ -18,6 +18,7 @@ import {
 } from 'vue-demi'
 import {
   isDocumentRef,
+  noop,
   OperationsType,
   walkSet,
   _MaybeRef,
@@ -101,9 +102,11 @@ export function _useFirestoreRef(
     })
   }
 
-  let unwatch: ReturnType<typeof watch> | undefined
+  let stopWatcher: ReturnType<typeof watch> = noop
   if (isRef(docOrCollectionRef)) {
-    unwatch = watch(docOrCollectionRef, bindFirestoreRef, { immediate: true })
+    stopWatcher = watch(docOrCollectionRef, bindFirestoreRef, {
+      immediate: true,
+    })
   } else {
     bindFirestoreRef()
   }
@@ -126,9 +129,7 @@ export function _useFirestoreRef(
 
   // TODO: rename to stop
   function unbind() {
-    if (unwatch) {
-      unwatch()
-    }
+    stopWatcher()
     _unbind(options.reset)
   }
 
