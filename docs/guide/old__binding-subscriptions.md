@@ -1,13 +1,13 @@
-# Binding / Subscribing to changes
+# Subscribing to firebase data changes
 
-In Vuefire, subscriptions to changes are handled transparently. That's why we always talk about _binding_: you only provide the key of the state where to bind, and the _Source_ (Collection, Query or Document), and Vuefire takes care of the rest!
+In VueFire, subscriptions to data changes are handled transparently. That's why we always talk about _binding_: you only provide the _data source_ (Collection, Query or Document), and VueFire takes care of the rest!
 
-There are two ways of binding a Reference to the Database with Vuefire:
+There are two ways of binding a Reference to the Database with VueFire:
 
 - Declarative binding with the `firebase`/`firestore` option
 - Programmatic binding with the injected methods `$rtdbBind`/`$firestoreBind`
 
-Once a Reference is bound, Vuefire will keep the local version synchronized with the remote Database. However, this synchronisation **is only one-way**. Do not modify the local variable (e.g. doing `this.user.name = 'John'`), because (a) it will not change the remote Database and (b) it can be overwritten at any time by Vuefire. To [write changes to the Database](./writing-data.md), use the Firebase JS SDK.
+Once a Reference is bound, VueFire will keep the local version synchronized with the remote Database. However, this synchronisation **is only one-way**. Do not modify the local variable (e.g. doing `this.user.name = 'John'`), because (a) it will not change the remote Database and (b) it can be overwritten at any time by VueFire. To [write changes to the Database](./writing-data.md), use the Firebase JS SDK.
 
 ## Declarative binding
 
@@ -149,11 +149,11 @@ this.$firestoreBind('documents', documents.where('creator', '==', this.id)).then
 
 </FirebaseExample>
 
-## Using the data bound by Vuefire
+## Using the data bound by VueFire
 
 ### `.key` / `id`
 
-Any document bound by Vuefire will retain it's _id_ in the Database as a non-enumerable, read-only property. This makes it easier to [write changes](./writing-data.md#updates-to-collection-and-documents) and allows you to copy the data only using the [spread operator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax#Spread_in_object_literals) or [`Object.assign`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign).
+Any document bound by VueFire will retain it's _id_ in the Database as a non-enumerable, read-only property. This makes it easier to [write changes](./writing-data.md#updates-to-collection-and-documents) and allows you to copy the data only using the [spread operator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax#Spread_in_object_literals) or [`Object.assign`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign).
 
 <FirebaseExample>
 
@@ -183,7 +183,7 @@ db.collection('users').doc('ada').id // 'ada'
 
 ### Geopoints (Firestore only)
 
-In Firestore you can store [Geopoints](https://firebase.google.com/docs/reference/js/firebase.firestore.GeoPoint). They are retrieved as-is by Vuefire, meaning that you can directly use methods like `isEqual` and access its properties `latitude` and `longitude`.
+In Firestore you can store [Geopoints](https://firebase.google.com/docs/reference/js/firebase.firestore.GeoPoint). They are retrieved as-is by VueFire, meaning that you can directly use methods like `isEqual` and access its properties `latitude` and `longitude`.
 
 > Refer to [Plugin installation](./getting-started.md#plugin) to retrieve the `Geopoint` class
 
@@ -216,7 +216,7 @@ paris.location.longitude // 2.2770206
 
 ### Timestamps (Firestore only)
 
-In Firestore you can store [Timestamps](https://firebase.google.com/docs/reference/js/firebase.firestore.Timestamp). They are stored as-is by Vuefire, meaning that you can directly use methods like `isEqual`, `toDate` and access its properties `seconds` and `nanoseconds`.
+In Firestore you can store [Timestamps](https://firebase.google.com/docs/reference/js/firebase.firestore.Timestamp). They are stored as-is by VueFire, meaning that you can directly use methods like `isEqual`, `toDate` and access its properties `seconds` and `nanoseconds`.
 
 > Refer to [Plugin installation](./getting-started.md#plugin) to retrieve the `Timestamp` class
 
@@ -250,7 +250,7 @@ prise.toDate() // Tue Jul 14 1789
 
 ### References (Firestore only)
 
-In Firestore you can store [References](https://firebase.google.com/docs/reference/js/firebase.firestore.DocumentReference) to other Documents in Documents. Vuefire automatically bind References found in Collections and documents. This also works for nested references (References found in bound References). By default, Vuefire will stop at that level (2 level nesting).
+In Firestore you can store [References](https://firebase.google.com/docs/reference/js/firebase.firestore.DocumentReference) to other Documents in Documents. VueFire automatically bind References found in Collections and documents. This also works for nested references (References found in bound References). By default, VueFire will stop at that level (2 level nesting).
 
 Given some _users_ with _documents_ that are being viewed by other _users_. This could be **users/1**:
 
@@ -275,7 +275,7 @@ Given some _users_ with _documents_ that are being viewed by other _users_. This
 }
 ```
 
-`sharedWith` is also an array of References, but those references are users. Users also contain references to documents, therefore, if we automatically bind every nested reference, we could end up with an infinite-memory-consumming binding. By default, if we bind `users/1` with Vuefire, this is what we end up having:
+`sharedWith` is also an array of References, but those references are users. Users also contain references to documents, therefore, if we automatically bind every nested reference, we could end up with an infinite-memory-consumming binding. By default, if we bind `users/1` with VueFire, this is what we end up having:
 
 ```js
 {
@@ -303,7 +303,7 @@ Given some _users_ with _documents_ that are being viewed by other _users_. This
 }
 ```
 
-`documents.sharedWith.documents` end up as arrays of strings. Those strings can be passed to `db.doc()` as in `db.doc('documents/robin-book')` to get the actual reference to the document. By being a string instead of a Reference, it is possibe to display a bound document with Vuefire as plain text.
+`documents.sharedWith.documents` end up as arrays of strings. Those strings can be passed to `db.doc()` as in `db.doc('documents/robin-book')` to get the actual reference to the document. By being a string instead of a Reference, it is possibe to display a bound document with VueFire as plain text.
 
 It is possible to customize this behaviour by providing a [`maxRefDepth` option](#TODO:) when invoking `$firestoreBind`:
 
@@ -316,7 +316,7 @@ Read more about [writing References to the Database](./writing-data.md#reference
 
 ## Unbinding / Unsubscribing to changes
 
-While Vuefire will automatically unbind any reference bound in a component whenever needed, you may still want to do it on your own to stop displaying updates on a document or collection or because the user logged out and they do not have read-access to a resource anymore.
+While VueFire will automatically unbind any reference bound in a component whenever needed, you may still want to do it on your own to stop displaying updates on a document or collection or because the user logged out and they do not have read-access to a resource anymore.
 
 <FirebaseExample>
 
@@ -334,7 +334,7 @@ this.$firestoreUnbind('documents')
 
 </FirebaseExample>
 
-By default, Vuefire **will reset** the property, you can customize this behaviour by providing a second argument to the `unbind`/`rtdbUnbind`
+By default, VueFire **will reset** the property, you can customize this behaviour by providing a second argument to the `unbind`/`rtdbUnbind`
 
 <FirebaseExample>
 

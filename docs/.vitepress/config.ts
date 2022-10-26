@@ -66,6 +66,8 @@ export default defineConfig({
       text: 'Suggest changes to this page',
     },
 
+    outline: [2, 3],
+
     socialLinks: [
       { icon: 'twitter', link: twitter },
       { icon: 'github', link: github },
@@ -120,10 +122,10 @@ export default defineConfig({
               text: 'Getting Started',
               link: '/guide/getting-started',
             },
-            // {
-            //   text: 'Realtime data',
-            //   link: '/guide/binding-subscriptions',
-            // },
+            {
+              text: 'Realtime Data',
+              link: '/guide/realtime-data',
+            },
             // {
             //   text: 'Querying the database',
             //   link: '/guide/querying',

@@ -1,11 +1,13 @@
 # Binding Firebase Reference to existing Vue Refs
 
-When you need to bind a Firebase reference to existing Vue `ref()`, you can pass it as the `target` option:
+Sometimes, you might want to reuse an existing `ref()`. This might be because you want to write the Firebase data to a _custom ref_ coming from a composable or because the ref comes from an existing reactivity source like a Vuex/Pinia store. This can be achieved by passing the `ref()` to the `target` option of the composable:
 
 ```ts
-todos // Ref<Todo[]>
-useCollection(todoListRef, { target: todos })
+todos // given an existing Ref<Todo[]>
+const { pending } = useCollection(todoListRef, { target: todos })
 ```
+
+When passing a target ref, the composable will not create a new `ref()` for you, but will instead use the one you passed. It will also not return the `ref()` as a result, but instead return an object with some useful properties. You can find more about this in [the declarative subscriptions](./data-subscriptions.md) section.
 
 ## Pinia
 

@@ -22,19 +22,20 @@ npm install vuefire@next firebase
 
 VueFire expects you to use the existing APIs from Firebase as much as possible. It doesn't expose any configs to initialize your app or get the database/firestore instances. You should follow the official Firebase documentation for that. We do have [some recommendations](#TODO) for a Vue project and [a Nuxt module](#TODO) to help you get started.
 
-Most of the time, you should gather collection references in one of your files and export them but to keep examples short, we will always create the database references whenever necessary. We will also consider that we have access to some globals (you usually import them from the file where you initialize your Firebase app):
+Most of the time, you should gather collection references in one of your files and export them but **to keep examples short, we will always create the database references whenever necessary** instead of gathering them in one place. We will also consider that we have access to some globals (you usually import them from the file where you initialize your Firebase app):
 
 ```js
-import { initializeApp FirebaseApp } from 'firebase/app'
+import { initializeApp } from 'firebase/app'
 import { getFirestore } from 'firebase/firestore'
 import { getDatabase } from 'firebase/database'
-import { getAnalytics, type Analytics } from 'firebase/analytics'
+// ... other firebase imports
 
 export const firebase = initializeApp({
-  // ...
+  // your application settings
 })
 export const database = getFirestore(firebase)
 export const firestore = getDataBase(firebase)
+// ... other firebase exports
 ```
 
 :::tip
@@ -45,7 +46,9 @@ Note that we will refer to `database` and `firestore` as `db` in examples where 
 
 VueFire exposes a few [composables](https://vuejs.org/guide/reusability/composables.html#composables) to create reactive variables from Firebase references.
 
-You can retrieve a reactive collection or list:
+#### Collections/Lists
+
+You can retrieve a reactive collection (Firestore) or list (Realtime Database) with the `useCollection()`/`useList()` composable:
 
 <FirebaseExample>
 
@@ -85,9 +88,16 @@ const todos = useCollection(collection(db, 'todos'))
 
 </FirebaseExample>
 
-In both scenarios, `todos` will be a `ref()` of an array. You can use it as a readonly array, but it will be automatically updated when the data changes anywhere.
+In both scenarios, `todos` will be a `ref()` of an array. Note **this is a readonly array**, but it will be automatically updated when the data changes anywhere.
 
-You can also retrieve a reactive object/document:
+If you want to change the data, you should use the Firebase API (e.g. `addDoc()`, `updateDoc()`, `push()` etc) to update the data:
+
+- [Firestore Documentation](https://firebase.google.com/docs/firestore/manage-data/add-data)
+- [Realtime Database Documentation](https://firebase.google.com/docs/database/web/read-and-write)
+
+#### Documents/Objects
+
+Similarly, you can retrieve a reactive document (Firestore) or object (Realtime Database) with the `useDocument()`/`useObject()` composable:
 
 <FirebaseExample>
 
@@ -105,13 +115,22 @@ const settings = useObject(dbRef(db, 'settings', 'some_id'))
 import { useDocument } from 'vuefire'
 import { doc } from 'firebase/firestore'
 
-const todos = useDocument(doc(db, 'settings', 'some_id'))
+const settings = useDocument(doc(db, 'settings', 'some_id'))
 </script>
 ```
 
 </FirebaseExample>
 
+In both scenarios, `settings` becomes a reactive object. Note **this is a readonly object**, but it will be automatically updated when the data changes anywhere.
+
+If you want to change the data, you should use the Firebase API (e.g. `setDoc()`, `updateDoc()`, `set()` etc) to update the data:
+
+- [Firestore Documentation](https://firebase.google.com/docs/firestore/manage-data/add-data)
+- [Realtime Database Documentation](https://firebase.google.com/docs/database/web/read-and-write)
+
 ### Options API
+
+TODO: complete this section. The composition API is the recommended way to use VueFire at the moment because its API is more stable and it's easier to use with TypeScript.
 
 VueFire can also be used with the Options API, while less flexible, it's still a valid way to use VueFire. First, you need to install the options plugin:
 
@@ -137,3 +156,7 @@ app.use(firestorePlugin)
 ```
 
 </FirebaseExample>
+
+### Which API should I use?
+
+The composition API is the recommended way to use VueFire. At the moment its API is more stable and it's easier to use with TypeScript. However, the Options API is still a valid way to use VueFire. The main difference is that the Options API is more verbose and requires you to install the plugin, also being slightly heavier than the composables.

@@ -20,10 +20,12 @@ hero:
       link: https://github.com/vuejs/vuefire
 
 features:
-  - title: "Flexible"
-    details: Use Firebase Database and Firestore. You can use both at the same time or just use one of them.
-  - title: Simple
+  - title: Idiomatic
+    details: Use composables that align with the declarative approach of Vue. Everything that can be automatically handled by VueFire is. Nested Collections, Document References, and more, are all handled for you.
+  - title: Performant
     details: VueFire only handles the binding for you so your state is always up to date with the server. You still be able to use Firebase JS SDK to its full potential!
+  - title: Flexible
+    details: Use Firebase Database, Firestore, Authentication, etc. VueFire exposes tree-shakable APIs that are built on top of the Firebase modular JS SDK.
 
 footer: MIT Licensed | Copyright © 2016-present Eduardo San Martin Morote
 ---
