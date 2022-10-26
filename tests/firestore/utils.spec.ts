@@ -18,6 +18,7 @@ describe('Firestore utils', () => {
 
   beforeEach(async () => {
     await setDoc(docRef, {
+      // TODO: ref of collection
       // collection,
       data: {},
       index: 0,
