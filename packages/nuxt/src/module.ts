@@ -1,23 +1,45 @@
+import { fileURLToPath } from 'node:url'
 import { resolve } from 'path'
-import { fileURLToPath } from 'url'
-import { defineNuxtModule, addPlugin } from '@nuxt/kit'
+import { addPlugin, defineNuxtModule } from '@nuxt/kit'
+import { FirebaseOptions } from '@firebase/app-types'
 
-export interface ModuleOptions {
-  addPlugin: boolean
+export interface VueFireNuxtModuleOptions {
+  optionsApiPlugin: boolean
+
+  config: FirebaseOptions
+  /**
+   * Optional name passed to `firebase.initializeApp(config, name)`
+   */
+  appName?: string
+
+  services: {
+    auth?: boolean
+    firestore?: boolean
+    database?: boolean
+    storage?: boolean
+  }
 }
 
-export default defineNuxtModule<ModuleOptions>({
+export default defineNuxtModule<VueFireNuxtModuleOptions>({
   meta: {
-    name: 'my-module',
-    configKey: 'myModule',
+    name: 'vuefire',
+    configKey: 'vuefire',
+    compatibility: {
+      nuxt: '^3.0.0-0',
+    },
   },
+
   defaults: {
-    addPlugin: true,
+    optionsApiPlugin: false,
+    config: {},
+    services: {},
   },
+
   setup(options, nuxt) {
-    if (options.addPlugin) {
-      const runtimeDir = fileURLToPath(new URL('./runtime', import.meta.url))
+    const runtimeDir = fileURLToPath(new URL('./runtime', import.meta.url))
+    if (options.optionsApiPlugin) {
       nuxt.options.build.transpile.push(runtimeDir)
+      // TODO: check for individual options
       addPlugin(resolve(runtimeDir, 'plugin'))
     }
   },

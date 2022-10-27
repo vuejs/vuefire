@@ -1,9 +1,15 @@
+import { fileURLToPath } from 'node:url'
 import { defineNuxtConfig } from 'nuxt/config'
-import MyModule from '..'
+import VueFire from '..'
 
 export default defineNuxtConfig({
-  modules: [MyModule],
-  myModule: {
-    addPlugin: true,
+  pageTransition: null,
+  layoutTransition: null,
+  alias: {
+    vuefire: fileURLToPath(new URL('../src/index.ts', import.meta.url)),
+    'nuxt-vuefire': fileURLToPath(
+      new URL('../packages/nuxt/src/module.ts', import.meta.url)
+    ),
   },
+  modules: [VueFire],
 })

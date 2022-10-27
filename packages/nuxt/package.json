@@ -30,10 +30,13 @@
     "@nuxt/kit": "^3.0.0-rc.12"
   },
   "devDependencies": {
+    "@firebase/app-types": "^0.8.0",
     "@nuxt/module-builder": "^0.2.0",
     "@nuxt/schema": "^3.0.0-rc.12",
     "@nuxtjs/eslint-config-typescript": "^11.0.0",
     "eslint": "^8.26.0",
-    "nuxt": "^3.0.0-rc.12"
+    "firebase": "^9.12.1",
+    "nuxt": "^3.0.0-rc.12",
+    "vuefire": "workspace:*"
   }
 }
