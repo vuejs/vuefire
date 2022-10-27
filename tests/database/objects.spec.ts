@@ -56,6 +56,16 @@ describe('Database lists', () => {
     expect(wrapper.vm.item).toMatchObject({ name: 'b' })
   })
 
+  // TODO: right now this creates an object with a .value property equal to null
+  it.todo('stays null if it does not exist', async () => {
+    const { wrapper, itemRef } = factory()
+
+    expect(wrapper.vm.item).toEqual(undefined)
+
+    await remove(itemRef)
+    expect(wrapper.vm.item).toEqual(undefined)
+  })
+
   it('can be bound to a Vue ref', async () => {
     const aRef = databaseRef()
     const bRef = databaseRef()
@@ -82,6 +92,70 @@ describe('Database lists', () => {
     const { wrapper, data } = factory({})
 
     expect(wrapper.vm.item).toEqual(undefined)
+  })
+
+  // TODO: not implemented yet
+  it.todo('rejects when error', async () => {
+    const { promise, error } = factory({
+      ref: _databaseRef(database, 'forbidden'),
+    })
+
+    await expect(promise.value).rejects.toThrow()
+    expect(error.value).toBeTruthy()
+  })
+
+  // TODO:
+  it.todo('resolves when ready', async () => {
+    const item = databaseRef()
+    await update(item, { name: 'a' })
+    const { promise, data } = factory({ ref: item })
+
+    await expect(promise.value).resolves
+    expect(data.value).toEqual({ name: 'a' })
+  })
+
+  it('resets the data when unbound', async () => {
+    const { wrapper, data, unbind, itemRef } = factory()
+
+    await set(itemRef, { name: 'a' })
+    expect(data.value).toMatchObject({ name: 'a' })
+
+    unbind()
+    await nextTick()
+    expect(data.value).toBe(null)
+  })
+
+  describe('reset option', () => {
+    it('resets the value when unbinding', async () => {
+      const { wrapper, itemRef, data } = factory()
+
+      await set(itemRef, { name: 'a' })
+      expect(data.value).toBeTruthy()
+      await wrapper.unmount()
+      expect(data.value).toBe(null)
+    })
+
+    it('skips resetting when specified', async () => {
+      const { wrapper, itemRef, data } = factory({
+        options: { reset: false },
+      })
+
+      await set(itemRef, { name: 'a' })
+      expect(data.value).toEqual({ name: 'a' })
+      await wrapper.unmount()
+      expect(data.value).toEqual({ name: 'a' })
+    })
+
+    it('can be reset to a specific value', async () => {
+      const { wrapper, itemRef, data } = factory({
+        options: { reset: () => 'reset' },
+      })
+
+      await set(itemRef, { name: 'a' })
+      expect(data.value).toEqual({ name: 'a' })
+      await wrapper.unmount()
+      expect(data.value).toEqual('reset')
+    })
   })
 
   tds(() => {

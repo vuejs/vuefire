@@ -164,7 +164,6 @@ export function useList<T = unknown>(
   reference: _MaybeRef<DatabaseReference | Query>,
   options?: UseListOptions
 ): _RefDatabase<VueDatabaseQueryData<T>> {
-  const unbinds = {}
   const data = ref<T[]>([]) as Ref<T[]>
   return _useDatabaseRef(reference, {
     target: data,

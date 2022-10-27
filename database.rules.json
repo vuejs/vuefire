@@ -4,7 +4,7 @@
       ".read": false,
       ".write": false
     },
-    ".read": "auth != null",
-    ".write": "auth != null"
+    ".read": true,
+    ".write": false
   }
 }

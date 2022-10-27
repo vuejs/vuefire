@@ -8,7 +8,6 @@ import { ref, Ref, unref } from 'vue-demi'
 import type { Query, DatabaseReference } from 'firebase/database'
 import {
   onValue,
-  off,
   onChildAdded,
   onChildChanged,
   onChildMoved,
@@ -64,14 +63,6 @@ export function bindAsObject(
 ) {
   const key = 'value'
   const options = Object.assign({}, DEFAULT_OPTIONS, extraOptions)
-  const listener = onValue(
-    document,
-    (snapshot) => {
-      ops.set(target, key, options.serialize(snapshot))
-    }
-    // TODO: allow passing a cancel callback
-    // cancelCallback
-  )
   const unsub = onValue(
     document,
     (snapshot) => {
@@ -80,9 +71,18 @@ export function bindAsObject(
     },
     reject
   )
+  // FIXME: Use only one onValue and
+  const listener = onValue(
+    document,
+    (snapshot) => {
+      ops.set(target, key, options.serialize(snapshot))
+    }
+    // TODO: allow passing a cancel callback
+    // cancelCallback
+  )
 
   return (reset?: ResetOption) => {
-    off(document, 'value', listener)
+    listener()
     if (reset !== false) {
       const value = typeof reset === 'function' ? reset() : null
       ops.set(target, key, value)
@@ -110,7 +110,7 @@ export function bindAsArray(
   if (!options.wait) ops.set(target, key, [])
   let arrayRef = ref(options.wait ? [] : target[key])
 
-  const childAdded = onChildAdded(
+  const removeChildAddedListener = onChildAdded(
     collection,
     (snapshot, prevKey) => {
       const array = unref(arrayRef)
@@ -120,7 +120,7 @@ export function bindAsArray(
     // TODO: cancelcallback
   )
 
-  const childRemoved = onChildRemoved(
+  const removeChildRemovedListener = onChildRemoved(
     collection,
 
     (snapshot) => {
@@ -130,7 +130,7 @@ export function bindAsArray(
     // TODO: cancelcallback
   )
 
-  const childChanged = onChildChanged(
+  const removeChildChangedListener = onChildChanged(
     collection,
     (snapshot) => {
       const array = unref(arrayRef)
@@ -143,7 +143,7 @@ export function bindAsArray(
     // TODO: cancelcallback
   )
 
-  const childMoved = onChildMoved(
+  const removeChildMovedListener = onChildMoved(
     collection,
     (snapshot, prevKey) => {
       const array = unref(arrayRef)
@@ -155,22 +155,23 @@ export function bindAsArray(
     // TODO: cancelcallback
   )
 
-  const unsub = onValue(
+  const removeValueListener = onValue(
     collection,
     (data) => {
       const array = unref(arrayRef)
       if (options.wait) ops.set(target, key, array)
       resolve(data)
-      unsub()
+      // FIXME: this can be called before it's initialized
+      removeValueListener()
     },
     reject
   )
 
   return (reset?: ResetOption) => {
-    off(collection, 'child_added', childAdded)
-    off(collection, 'child_removed', childRemoved)
-    off(collection, 'child_changed', childChanged)
-    off(collection, 'child_moved', childMoved)
+    removeChildAddedListener()
+    removeChildRemovedListener()
+    removeChildChangedListener()
+    removeChildMovedListener()
     if (reset !== false) {
       const value = typeof reset === 'function' ? reset() : []
       ops.set(target, key, value)
