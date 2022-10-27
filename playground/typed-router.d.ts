@@ -60,6 +60,12 @@ declare module 'vue-router/auto/routes' {
       Record<never, never>,
       Record<never, never>
     >
+    '/rtdb-todos': RouteRecordInfo<
+      '/rtdb-todos',
+      '/rtdb-todos',
+      Record<never, never>,
+      Record<never, never>
+    >
     '/todos': RouteRecordInfo<
       '/todos',
       '/todos',
