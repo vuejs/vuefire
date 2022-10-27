@@ -152,6 +152,14 @@ export default defineConfig({
               text: 'Cookbook',
               link: '/cookbook/',
             },
+            {
+              text: 'Migration from VueFire 2',
+              link: '/cookbook/migration-v2-v3',
+            },
+            {
+              text: 'Binding to existing refs',
+              link: '/cookbook/subscriptions-external',
+            },
           ],
         },
       ],
