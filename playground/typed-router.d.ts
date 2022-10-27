@@ -72,6 +72,12 @@ declare module 'vue-router/auto/routes' {
       Record<never, never>,
       Record<never, never>
     >
+    '/vuex-store': RouteRecordInfo<
+      '/vuex-store',
+      '/vuex-store',
+      Record<never, never>,
+      Record<never, never>
+    >
   }
 }
 

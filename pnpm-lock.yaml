@@ -96,11 +96,13 @@ importers:
       vue-router: ^4.1.5
       vue-tsc: ^1.0.8
       vuefire: workspace:*
+      vuex: ^4.1.0
     dependencies:
       pinia: 2.0.23_l7r24p6nevbtlimqmqcwa3ouhu
       vue: 3.2.41
       vue-router: 4.1.5_vue@3.2.41
       vuefire: link:..
+      vuex: 4.1.0_vue@3.2.41
     devDependencies:
       '@firebase/app-types': 0.8.0
       '@types/node': 16.11.65
@@ -9987,6 +9989,15 @@ packages:
       '@vue/runtime-dom': 3.2.41
       '@vue/server-renderer': 3.2.41_vue@3.2.41
       '@vue/shared': 3.2.41
+
+  /vuex/4.1.0_vue@3.2.41:
+    resolution: {integrity: sha512-hmV6UerDrPcgbSy9ORAtNXDr9M4wlNP4pEFKye4ujJF8oqgFFuxDCdOLS3eNoRTtq5O3hoBDh9Doj1bQMYHRbQ==}
+    peerDependencies:
+      vue: ^3.2.0
+    dependencies:
+      '@vue/devtools-api': 6.4.4
+      vue: 3.2.41
+    dev: false
 
   /wcwidth/1.0.1:
     resolution: {integrity: sha512-XHPEwS0q6TaxcvG85+8EYkbiCux2XtWG2mkc47Ng2A77BQu9+DqIOJldST4HgPkuea7dvKSj5VgX3P1d4rW8Tg==}
