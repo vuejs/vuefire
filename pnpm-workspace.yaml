@@ -1,3 +1,4 @@
 - packages
   - playground
   - nuxt-playground
+  - packages/*
