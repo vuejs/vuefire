@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { collection } from 'firebase/firestore'
-import { ref } from 'vue'
-import { firestoreBind } from 'vuefire'
+import { useCollection } from 'vuefire'
 import { useFirestore } from '@/firebase'
 
 const db = useFirestore()
@@ -9,13 +8,10 @@ const tweetsRef = collection(db, 'tweets')
 const nestedRef = collection(db, 'nested')
 const momentsRef = collection(db, 'moments')
 
-const nested = ref([])
-firestoreBind(nested, nestedRef)
+const nested = useCollection(nestedRef)
 
-const tweets = ref([])
-firestoreBind(tweets, tweetsRef)
-const moments = ref([])
-firestoreBind(moments, momentsRef)
+const tweets = useCollection(tweetsRef)
+const moments = useCollection(momentsRef)
 </script>
 
 <template>
