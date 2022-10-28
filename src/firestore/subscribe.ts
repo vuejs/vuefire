@@ -1,11 +1,12 @@
+import { extractRefs, firestoreDefaultConverter } from './utils'
 import {
-  createSnapshot,
-  extractRefs,
-  firestoreDefaultConverter,
-  FirestoreSerializer,
-} from './utils'
-import { walkGet, callOnceWithArg, OperationsType, _MaybeRef } from '../shared'
-import { isRef, ref, Ref, unref, watch } from 'vue-demi'
+  walkGet,
+  callOnceWithArg,
+  OperationsType,
+  _MaybeRef,
+  ResetOption,
+} from '../shared'
+import { ref, Ref, unref } from 'vue-demi'
 import type {
   CollectionReference,
   DocumentChange,
@@ -21,7 +22,7 @@ import { onSnapshot } from 'firebase/firestore'
 
 export interface FirestoreOptions {
   maxRefDepth?: number
-  reset?: boolean | (() => any)
+  reset?: ResetOption
 
   // FIXME: should only be possible in global options
   converter?: FirestoreDataConverter<unknown>
@@ -40,7 +41,7 @@ export interface FirestoreOptions {
 
 export interface _GlobalFirestoreOptions extends FirestoreOptions {
   maxRefDepth: number
-  reset: boolean | (() => any)
+  reset: ResetOption
   converter: FirestoreDataConverter<unknown>
   wait: boolean
 }

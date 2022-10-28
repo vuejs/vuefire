@@ -13,17 +13,24 @@ import type { DatabaseReference, Query } from 'firebase/database'
 import {
   noop,
   OperationsType,
+  ResetOption,
   walkSet,
   _MaybeRef,
   _RefWithState,
 } from '../shared'
 import { rtdbUnbinds } from './optionsApi'
-import { bindAsArray, bindAsObject, _DatabaseRefOptions } from './subscribe'
+import {
+  bindAsArray,
+  bindAsObject,
+  rtdbOptions,
+  _DatabaseRefOptions,
+} from './subscribe'
 import {
   VueDatabaseDocumentData,
   VueDatabaseQueryData,
   _RefDatabase,
 } from './utils'
+import { addPendingPromise } from '../ssr/plugin'
 
 export { databasePlugin } from './optionsApi'
 
@@ -43,8 +50,9 @@ type UnbindType = ReturnType<typeof bindAsArray | typeof bindAsObject>
 
 export function _useDatabaseRef(
   reference: _MaybeRef<DatabaseReference | Query>,
-  options: UseDatabaseRefOptions = {}
+  localOptions: UseDatabaseRefOptions = {}
 ) {
+  const options = Object.assign({}, rtdbOptions, localOptions)
   let _unbind!: UnbindType
 
   const data = options.target || ref<unknown | null>(options.initialValue)
@@ -52,8 +60,9 @@ export function _useDatabaseRef(
   const pending = ref(true)
   // force the type since its value is set right after and undefined isn't possible
   const promise = shallowRef() as ShallowRef<Promise<unknown | null>>
-  const createdPromises = new Set<Promise<unknown | null>>()
+  let isPromiseAdded = false
   const hasCurrentScope = getCurrentScope()
+  let removePendingPromise = noop
 
   function bindDatabaseRef() {
     const p = new Promise<unknown | null>((resolve, reject) => {
@@ -84,11 +93,10 @@ export function _useDatabaseRef(
     })
 
     // only add the first promise to the pending ones
-    if (!createdPromises.size) {
-      // TODO: add the pending promise like in firestore
-      // pendingPromises.add(p)
+    if (!isPromiseAdded) {
+      removePendingPromise = addPendingPromise(p, unref(reference))
+      isPromiseAdded = true
     }
-    createdPromises.add(p)
     promise.value = p
 
     p.catch((reason) => {
@@ -112,19 +120,14 @@ export function _useDatabaseRef(
   }
 
   if (hasCurrentScope) {
-    onScopeDispose(() => {
-      // TODO: clear pending promises
-      // for (const p of createdPromises) {
-      //   pendingPromises.delete(p)
-      // }
-      _unbind(options.reset)
-    })
+    onScopeDispose(unbind)
   }
 
   // TODO: rename to stop
-  function unbind() {
+  function unbind(reset: ResetOption = options.reset) {
     stopWatcher()
-    _unbind(options.reset)
+    removePendingPromise()
+    _unbind(reset)
   }
 
   return Object.defineProperties(data, {
@@ -140,7 +143,7 @@ export function _useDatabaseRef(
 export function internalUnbind(
   key: string,
   unbinds: Record<string, UnbindType> | undefined,
-  reset?: _DatabaseRefOptions['reset']
+  reset?: ResetOption
 ) {
   if (unbinds && unbinds[key]) {
     unbinds[key](reset)

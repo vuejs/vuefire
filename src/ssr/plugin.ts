@@ -7,7 +7,7 @@ import {
 } from 'firebase/firestore'
 import type { App } from 'vue'
 import { useFirebaseApp, _FirebaseAppInjectionKey } from '../app'
-import { isDatabaseReference, isFirestoreDataReference } from '../shared'
+import { isDatabaseReference, isFirestoreDataReference, noop } from '../shared'
 
 export function VueFireSSR(app: App, firebaseApp: FirebaseApp) {
   app.provide(_FirebaseAppInjectionKey, firebaseApp)
@@ -41,6 +41,8 @@ export function addPendingPromise(
     // TODO: warn if in SSR context
     // throw new Error('Could not get the path of the data source')
   }
+
+  return ssrKey ? () => pendingPromises.delete(ssrKey!) : noop
 }
 
 function getDataSourcePath(
@@ -57,6 +59,24 @@ function getDataSourcePath(
     : null
 }
 
+/**
+ * Allows awaiting for all pending data sources. Useful to wait for SSR
+ *
+ * @param name - optional name of teh firebase app
+ * @returns - a Promise that resolves with an array of all the resolved pending promises
+ */
+export function usePendingPromises(name?: string) {
+  const app = useFirebaseApp(name)
+  const pendingPromises = appPendingPromises.get(app)
+  return pendingPromises
+    ? Promise.all(
+        Array.from(pendingPromises).map(([key, promise]) =>
+          promise.then((data) => [key, data] as const)
+        )
+      )
+    : Promise.resolve([])
+}
+
 export function getInitialData(
   app?: FirebaseApp
 ): Promise<Record<string, unknown>> {
@@ -70,11 +90,7 @@ export function getInitialData(
     return Promise.resolve({})
   }
 
-  return Promise.all(
-    Array.from(pendingPromises).map(([key, promise]) =>
-      promise.then((data) => [key, data] as const)
-    )
-  ).then((keyData) =>
+  return usePendingPromises(app.name).then((keyData) =>
     keyData.reduce((initialData, [key, data]) => {
       initialData[key] = data
       return initialData

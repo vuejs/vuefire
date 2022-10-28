@@ -20,6 +20,7 @@ import {
   isDocumentRef,
   noop,
   OperationsType,
+  ResetOption,
   walkSet,
   _MaybeRef,
   _RefWithState,
@@ -67,6 +68,7 @@ export function _useFirestoreRef(
   const promise = shallowRef() as ShallowRef<Promise<unknown | null>>
   let isPromiseAdded = false
   const hasCurrentScope = getCurrentScope()
+  let removePendingPromise = noop
 
   function bindFirestoreRef() {
     const p = new Promise<unknown | null>((resolve, reject) => {
@@ -91,7 +93,8 @@ export function _useFirestoreRef(
 
     // only add the first promise to the pending ones
     if (!isPromiseAdded) {
-      addPendingPromise(p, unref(docOrCollectionRef))
+      // TODO: is there a way to make this only for the first render?
+      removePendingPromise = addPendingPromise(p, unref(docOrCollectionRef))
       isPromiseAdded = true
     }
     promise.value = p
@@ -120,15 +123,14 @@ export function _useFirestoreRef(
 
   // TODO: warn else
   if (hasCurrentScope) {
-    onScopeDispose(() => {
-      _unbind(options.reset)
-    })
+    onScopeDispose(unbind)
   }
 
   // TODO: rename to stop
-  function unbind() {
+  function unbind(reset: ResetOption = options.reset) {
     stopWatcher()
-    _unbind(options.reset)
+    removePendingPromise()
+    _unbind(reset)
   }
 
   // allow to destructure the returned value

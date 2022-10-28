@@ -24,7 +24,10 @@ export interface OperationsType {
   remove<T extends unknown = unknown>(array: T[], index: number): T[]
 }
 
-// TODO: probably boolean | void or just boolean
+/**
+ * Allow resetting a subscription vue ref when the source changes or is removed. `false` keeps the value as is while
+ * true resets it to `null` for objects and `[]` for arrays. A function allows to specify a custom reset value.
+ */
 export type ResetOption = boolean | (() => TODO)
 
 export type TODO = any
@@ -142,9 +145,8 @@ export interface _RefWithState<T, E = Error> extends Ref<T> {
   get error(): Ref<E | undefined>
   get pending(): Ref<boolean>
 
-  get promise(): ShallowRef<Promise<void>>
-  // TODO: extract type from bindDocument and bindCollection
-  unbind: () => void
+  get promise(): ShallowRef<Promise<T>>
+  unbind: (reset?: ResetOption) => void
 }
 
 /**

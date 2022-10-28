@@ -29,3 +29,6 @@ export type {
   VueFirestoreObject,
   FirestoreOption,
 } from './firestore/optionsApi'
+
+export { useFirebaseApp } from './app'
+export { usePendingPromises } from './ssr/plugin'
