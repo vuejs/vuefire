@@ -24,6 +24,7 @@ import {
   _MaybeRef,
   _RefWithState,
 } from '../shared'
+import { addPendingPromise } from '../ssr/plugin'
 import { firestoreUnbinds } from './optionsApi'
 import {
   bindCollection,
@@ -64,7 +65,7 @@ export function _useFirestoreRef(
   const error = ref<FirestoreError>()
   // force the type since its value is set right after and undefined isn't possible
   const promise = shallowRef() as ShallowRef<Promise<unknown | null>>
-  const createdPromises = new Set<Promise<unknown | null>>()
+  let isPromiseAdded = false
   const hasCurrentScope = getCurrentScope()
 
   function bindFirestoreRef() {
@@ -89,10 +90,10 @@ export function _useFirestoreRef(
     })
 
     // only add the first promise to the pending ones
-    if (!createdPromises.size) {
-      pendingPromises.add(p)
+    if (!isPromiseAdded) {
+      addPendingPromise(p, unref(docOrCollectionRef))
+      isPromiseAdded = true
     }
-    createdPromises.add(p)
     promise.value = p
 
     p.catch((reason: FirestoreError) => {
@@ -120,9 +121,6 @@ export function _useFirestoreRef(
   // TODO: warn else
   if (hasCurrentScope) {
     onScopeDispose(() => {
-      for (const p of createdPromises) {
-        pendingPromises.delete(p)
-      }
       _unbind(options.reset)
     })
   }
@@ -154,13 +152,6 @@ export function _useFirestoreRef(
 
   // no unwrapRef to have a simpler type
   return data as _RefFirestore<unknown>
-}
-
-const pendingPromises = new Set<Promise<any>>()
-
-// TODO: should be usable in different contexts, use inject, provide
-export function usePendingPromises() {
-  return Promise.all(pendingPromises)
 }
 
 export interface UseCollectionOptions extends _UseFirestoreRefOptions {}

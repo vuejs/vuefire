@@ -1,8 +1,10 @@
+import { DatabaseReference, Query as DatabaseQuery } from 'firebase/database'
 import type {
   CollectionReference,
   DocumentData,
   DocumentReference,
   DocumentSnapshot,
+  Query as FirestoreQuery,
   QuerySnapshot,
 } from 'firebase/firestore'
 import type { Ref, ShallowRef } from 'vue-demi'
@@ -99,6 +101,18 @@ export function isCollectionRef<T = DocumentData>(
   o: any
 ): o is CollectionReference<T> {
   return isObject(o) && o.type === 'collection'
+}
+
+export function isFirestoreDataReference<T = unknown>(
+  source: any
+): source is CollectionReference<T> | DocumentReference<T> {
+  return isDocumentRef(source) || isCollectionRef(source)
+}
+
+export function isDatabaseReference(
+  source: any
+): source is DatabaseReference | DatabaseQuery {
+  return isObject(source) && 'ref' in source
 }
 
 /**
