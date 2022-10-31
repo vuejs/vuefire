@@ -54,6 +54,12 @@ declare module 'vue-router/auto/routes' {
       Record<never, never>,
       Record<never, never>
     >
+    '/nested-refs-list': RouteRecordInfo<
+      '/nested-refs-list',
+      '/nested-refs-list',
+      Record<never, never>,
+      Record<never, never>
+    >
     '/pinia-store': RouteRecordInfo<
       '/pinia-store',
       '/pinia-store',

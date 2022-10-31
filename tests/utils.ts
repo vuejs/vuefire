@@ -144,9 +144,11 @@ export function setupFirestoreRefs() {
 async function clearCollection(collection: CollectionReference<any>) {
   const { docs } = await getDocsFromServer(collection)
   await Promise.all(
-    docs.map((doc) => {
-      return recursiveDeleteDoc(doc)
-    })
+    docs
+      .filter((doc) => doc && typeof doc.data === 'function')
+      .map((doc) => {
+        return recursiveDeleteDoc(doc)
+      })
   )
 }
 
@@ -157,7 +159,10 @@ async function recursiveDeleteDoc(doc: QueryDocumentSnapshot<any>) {
     for (const key in docData) {
       if (isCollectionRef(docData[key])) {
         promises.push(clearCollection(docData[key]))
-      } else if (isDocumentRef(docData[key])) {
+      } else if (
+        isDocumentRef(docData[key]) &&
+        typeof docData[key] === 'function'
+      ) {
         promises.push(recursiveDeleteDoc(docData[key]))
       }
     }
