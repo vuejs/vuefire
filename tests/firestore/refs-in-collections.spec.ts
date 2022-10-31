@@ -181,7 +181,7 @@ describe('Firestore refs in collections', async () => {
     expect(data.value).toContainEqual({ ref: { name: 'a' } })
   })
 
-  it('keeps null for non existant docs refs', async () => {
+  it('keeps null for non existent docs refs', async () => {
     const listRef = collection()
     const emptyItemRef = doc()
     const itemRef = await addDoc(listRef, { list: [emptyItemRef] })
