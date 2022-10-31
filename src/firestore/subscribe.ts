@@ -5,6 +5,7 @@ import {
   OperationsType,
   _MaybeRef,
   ResetOption,
+  _DataSourceOptions,
 } from '../shared'
 import { ref, Ref, unref } from 'vue-demi'
 import type {
@@ -20,12 +21,15 @@ import type {
 } from 'firebase/firestore'
 import { onSnapshot } from 'firebase/firestore'
 
-export interface FirestoreOptions {
+/**
+ * Options when binding a Firestore document or collection.
+ */
+export interface FirestoreRefOptions extends _DataSourceOptions {
+  /**
+   * The maximum depth to bind nested refs. A nested ref that isn't bound will stay as the ref path while a bound ref
+   * will contain the same data as if the ref was bound directly.
+   */
   maxRefDepth?: number
-  reset?: ResetOption
-
-  // FIXME: should only be possible in global options
-  converter?: FirestoreDataConverter<unknown>
 
   initialValue?: unknown
 
@@ -35,26 +39,38 @@ export interface FirestoreOptions {
    * @inheritDoc {SnapshotListenOptions}
    */
   snapshotListenOptions?: SnapshotListenOptions
-
-  wait?: boolean
 }
 
-export interface _GlobalFirestoreOptions extends FirestoreOptions {
-  maxRefDepth: number
+/**
+ * Type of the global options for firestore refs. Some values cannot be `undefined`.
+ * @internal
+ */
+export interface _GlobalFirestoreRefOptions extends FirestoreRefOptions {
+  /**
+   * @defaultValue `false`
+   */
   reset: ResetOption
-  converter: FirestoreDataConverter<unknown>
+  /**
+   * @defaultValue `true`
+   */
   wait: boolean
+
+  /**
+   * @defaultValue `2`
+   */
+  maxRefDepth: number
+
+  /**
+   * Default Firestore converter to use with snapshots.
+   */
+  converter: FirestoreDataConverter<unknown>
 }
 
-export interface VueFireFirestoreOptions extends FirestoreOptions {
-  converter?: FirestoreDataConverter<unknown>
-}
-
-const DEFAULT_OPTIONS: _GlobalFirestoreOptions = {
+const DEFAULT_OPTIONS: _GlobalFirestoreRefOptions = {
+  reset: false,
+  wait: true,
   maxRefDepth: 2,
-  reset: true,
   converter: firestoreDefaultConverter,
-  wait: false,
 }
 export { DEFAULT_OPTIONS as firestoreOptions }
 
@@ -74,7 +90,7 @@ function unsubscribeAll(subs: Record<string, FirestoreSubscription>) {
 }
 
 function updateDataFromDocumentSnapshot<T>(
-  options: _GlobalFirestoreOptions,
+  options: _GlobalFirestoreRefOptions,
   target: Ref<T>,
   path: string,
   snapshot: DocumentSnapshot<T>,
@@ -94,8 +110,8 @@ function updateDataFromDocumentSnapshot<T>(
   subscribeToRefs(options, target, path, subs, refs, ops, depth, resolve)
 }
 
-interface SubscribeToDocumentParamater {
-  target: CommonBindOptionsParameter['target']
+interface SubscribeToDocumentParameter {
+  target: Ref<unknown>
   path: string
   depth: number
   resolve: () => void
@@ -104,8 +120,8 @@ interface SubscribeToDocumentParamater {
 }
 
 function subscribeToDocument(
-  { ref, target, path, depth, resolve, ops }: SubscribeToDocumentParamater,
-  options: _GlobalFirestoreOptions
+  { ref, target, path, depth, resolve, ops }: SubscribeToDocumentParameter,
+  options: _GlobalFirestoreRefOptions
 ) {
   const subs = Object.create(null)
   const unbind = onSnapshot(ref, (snapshot) => {
@@ -132,22 +148,12 @@ function subscribeToDocument(
   }
 }
 
-// interface SubscribeToRefsParameter {
-//   subs: Record<string, FirestoreSubscription>
-//   target: CommonBindOptionsParameter['vm']
-//   refs: Record<string, DocumentReference>
-//   path: string | number
-//   depth: number
-//   resolve: CommonBindOptionsParameter['resolve']
-//   ops: CommonBindOptionsParameter['ops']
-// }
-
 // NOTE: not convinced by the naming of subscribeToRefs and subscribeToDocument
 // first one is calling the other on every ref and subscribeToDocument may call
 // updateDataFromDocumentSnapshot which may call subscribeToRefs as well
 function subscribeToRefs(
-  options: _GlobalFirestoreOptions,
-  target: CommonBindOptionsParameter['target'],
+  options: _GlobalFirestoreRefOptions,
+  target: Ref<unknown>,
   path: string | number,
   subs: Record<string, FirestoreSubscription>,
   refs: Record<string, DocumentReference>,
@@ -219,12 +225,12 @@ interface CommonBindOptionsParameter {
 }
 
 export function bindCollection<T = unknown>(
-  target: CommonBindOptionsParameter['target'],
+  target: Ref<unknown[]>,
   collection: CollectionReference<T> | Query<T>,
   ops: CommonBindOptionsParameter['ops'],
   resolve: CommonBindOptionsParameter['resolve'],
   reject: CommonBindOptionsParameter['reject'],
-  extraOptions?: FirestoreOptions
+  extraOptions?: FirestoreRefOptions
 ) {
   // FIXME: can be removed now
   const options = Object.assign({}, DEFAULT_OPTIONS, extraOptions) // fill default values
@@ -348,7 +354,7 @@ export function bindCollection<T = unknown>(
     reject
   )
 
-  return (reset?: FirestoreOptions['reset']) => {
+  return (reset?: FirestoreRefOptions['reset']) => {
     unbind()
     if (reset !== false) {
       const value = typeof reset === 'function' ? reset() : []
@@ -368,12 +374,12 @@ interface BindDocumentParameter extends CommonBindOptionsParameter {
  * @param extraOptions
  */
 export function bindDocument<T>(
-  target: BindDocumentParameter['target'],
+  target: Ref<unknown>,
   document: DocumentReference<T>,
   ops: BindDocumentParameter['ops'],
   resolve: BindDocumentParameter['resolve'],
   reject: BindDocumentParameter['reject'],
-  extraOptions?: FirestoreOptions
+  extraOptions?: FirestoreRefOptions
 ) {
   const options = Object.assign({}, DEFAULT_OPTIONS, extraOptions) // fill default values
   const key = 'value'
@@ -406,7 +412,7 @@ export function bindDocument<T>(
     reject
   )
 
-  return (reset?: FirestoreOptions['reset']) => {
+  return (reset?: FirestoreRefOptions['reset']) => {
     _unbind()
     if (reset !== false) {
       const value = typeof reset === 'function' ? reset() : null

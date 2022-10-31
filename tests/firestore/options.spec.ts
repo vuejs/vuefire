@@ -95,14 +95,16 @@ describe('Firestore: Options API', () => {
 
     const spy = vi.fn(() => ({ bar: 'bar' }))
 
-    await wrapper.vm.$firestoreBind('items', itemsRef, {
-      converter: {
+    await wrapper.vm.$firestoreBind(
+      'items',
+      itemsRef.withConverter({
         fromFirestore: spy,
         toFirestore(data: DocumentData) {
           return data
         },
-      },
-    })
+      }),
+      {}
+    )
 
     expect(pluginOptions.converter?.fromFirestore).not.toHaveBeenCalled()
     expect(spy).toHaveBeenCalledTimes(1)

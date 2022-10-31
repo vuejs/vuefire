@@ -121,8 +121,10 @@ describe(
     })
 
     describe('reset option', () => {
-      it('resets the value when unbinding', async () => {
-        const { wrapper, itemRef, data } = factory()
+      it('resets the value when specified', async () => {
+        const { wrapper, itemRef, data } = factory({
+          options: { reset: true },
+        })
 
         await setDoc(itemRef, { name: 'a' })
         expect(data.value).toBeTruthy()
@@ -130,10 +132,8 @@ describe(
         expect(data.value).toBe(null)
       })
 
-      it('skips resetting when specified', async () => {
-        const { wrapper, itemRef, data } = factory({
-          options: { reset: false },
-        })
+      it('skips resetting by default', async () => {
+        const { wrapper, itemRef, data } = factory()
 
         await setDoc(itemRef, { name: 'a' })
         expect(data.value).toEqual({ name: 'a' })

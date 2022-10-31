@@ -104,12 +104,6 @@ describe(
       })
     }
 
-    it('starts the collection as an empty array', async () => {
-      const { wrapper, data } = factory()
-      expect(wrapper.vm.list).toEqual([])
-      expect(data.value).toEqual([])
-    })
-
     it('add items to the collection', async () => {
       const { wrapper, listRef } = factory<{ name: string }>()
 
@@ -226,8 +220,8 @@ describe(
     })
 
     describe('reset option', () => {
-      it('resets the value when unbinding', async () => {
-        const { wrapper, listRef, data } = factory()
+      it('resets the value when specified', async () => {
+        const { wrapper, listRef, data } = factory({ options: { reset: true } })
 
         await addDoc(listRef, { name: 'a' })
         expect(data.value).toHaveLength(1)
@@ -235,11 +229,8 @@ describe(
         expect(data.value).toHaveLength(0)
       })
 
-      it('skips resetting when specified', async () => {
-        const { wrapper, listRef, data } = factory({
-          options: { reset: false },
-        })
-
+      it('skips resetting by default', async () => {
+        const { wrapper, listRef, data } = factory()
         await addDoc(listRef, { name: 'a' })
         expect(data.value).toHaveLength(1)
         await wrapper.unmount()

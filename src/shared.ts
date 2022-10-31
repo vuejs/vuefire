@@ -28,7 +28,7 @@ export interface OperationsType {
  * Allow resetting a subscription vue ref when the source changes or is removed. `false` keeps the value as is while
  * true resets it to `null` for objects and `[]` for arrays. A function allows to specify a custom reset value.
  */
-export type ResetOption = boolean | (() => TODO)
+export type ResetOption = boolean | (() => unknown)
 
 export type TODO = any
 /**
@@ -153,3 +153,20 @@ export interface _RefWithState<T, E = Error> extends Ref<T> {
  * @internal
  */
 export type _MaybeRef<T> = T | Ref<T>
+
+/**
+ * Base options for the data source options in both Firestore and Realtime Database.
+ * @internal
+ */
+export interface _DataSourceOptions {
+  /**
+   * If true, the data will be reset when the data source is unbound. Pass a function to specify a custom reset value.
+   */
+  reset?: ResetOption
+
+  /**
+   * If true, wait until the data is loaded before setting the data for the first time. For Firestore, this includes
+   * nested refs.
+   */
+  wait?: boolean
+}

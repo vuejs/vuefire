@@ -12,7 +12,7 @@ import { computed, nextTick, ref, unref, type Ref } from 'vue'
 import { DatabaseReference, ref as _databaseRef } from 'firebase/database'
 import { _MaybeRef } from '../../src/shared'
 
-describe('Database lists', () => {
+describe('Database objects', () => {
   const { databaseRef, set, update, remove } = setupDatabaseRefs()
 
   function factory<T = unknown>({
@@ -114,20 +114,11 @@ describe('Database lists', () => {
     expect(data.value).toEqual({ name: 'a' })
   })
 
-  it('resets the data when unbound', async () => {
-    const { wrapper, data, unbind, itemRef } = factory()
-
-    await set(itemRef, { name: 'a' })
-    expect(data.value).toMatchObject({ name: 'a' })
-
-    unbind()
-    await nextTick()
-    expect(data.value).toBe(null)
-  })
-
   describe('reset option', () => {
-    it('resets the value when unbinding', async () => {
-      const { wrapper, itemRef, data } = factory()
+    it('resets the value when specified', async () => {
+      const { wrapper, itemRef, data } = factory({
+        options: { reset: true },
+      })
 
       await set(itemRef, { name: 'a' })
       expect(data.value).toBeTruthy()
@@ -135,10 +126,8 @@ describe('Database lists', () => {
       expect(data.value).toBe(null)
     })
 
-    it('skips resetting when specified', async () => {
-      const { wrapper, itemRef, data } = factory({
-        options: { reset: false },
-      })
+    it('skips resetting by default', async () => {
+      const { wrapper, itemRef, data } = factory()
 
       await set(itemRef, { name: 'a' })
       expect(data.value).toEqual({ name: 'a' })

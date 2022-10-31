@@ -3,6 +3,9 @@
     "src",
     "tests",
   ],
+  "exclude": [
+    "dist"
+  ],
   "compilerOptions": {
     "target": "ESNext",
     "module": "ESNext",

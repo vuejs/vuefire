@@ -3,7 +3,7 @@ import {
   indexForKey,
   DatabaseSnapshotSerializer,
 } from './utils'
-import { OperationsType, ResetOption } from '../shared'
+import { OperationsType, ResetOption, _DataSourceOptions } from '../shared'
 import { ref, Ref, unref } from 'vue-demi'
 import type { Query, DatabaseReference } from 'firebase/database'
 import {
@@ -15,24 +15,29 @@ import {
 } from 'firebase/database'
 
 // TODO: rename to match where it's used
-export interface _DatabaseRefOptions {
-  reset?: ResetOption
+export interface _DatabaseRefOptions extends _DataSourceOptions {
   serialize?: DatabaseSnapshotSerializer
-  wait?: boolean
 
   initialValue?: unknown
 }
 
 export interface _GlobalDatabaseRefOptions extends _DatabaseRefOptions {
+  /**
+   * @defaultValue `false`
+   */
   reset: ResetOption
-  serialize: DatabaseSnapshotSerializer
+  /**
+   * @defaultValue `true`
+   */
   wait: boolean
+
+  serialize: DatabaseSnapshotSerializer
 }
 
 const DEFAULT_OPTIONS: _GlobalDatabaseRefOptions = {
-  reset: true,
+  reset: false,
   serialize: createRecordFromDatabaseSnapshot,
-  wait: false,
+  wait: true,
 }
 
 // TODO: rename rtdbDefaults databaseDefaults

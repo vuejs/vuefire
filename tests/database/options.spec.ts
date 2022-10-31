@@ -7,12 +7,11 @@ import {
   DatabaseSnapshotSerializer,
 } from '../../src'
 import { setupDatabaseRefs } from '../utils'
-import { push } from 'firebase/database'
 
 const component = defineComponent({ template: 'no' })
 
 describe('RTDB: plugin options', () => {
-  const { databaseRef } = setupDatabaseRefs()
+  const { databaseRef, push } = setupDatabaseRefs()
 
   it('allows customizing $rtdbBind', () => {
     const wrapper = mount(component, {
@@ -51,9 +50,7 @@ describe('RTDB: plugin options', () => {
     const itemListRef = databaseRef()
 
     const p = vm.$rtdbBind('items', itemListRef)
-    push(itemListRef, { text: 'foo' })
-
-    await p
+    await push(itemListRef, { text: 'foo' })
 
     expect(pluginOptions.serialize).toHaveBeenCalledTimes(1)
     expect(pluginOptions.serialize).toHaveBeenCalledWith(

@@ -122,14 +122,17 @@ describe('Database lists', () => {
 
     await push(listRef, { name: 'a' })
 
+    const copy = [...data.value]
     unbind()
     await push(listRef, { name: 'b' })
-    expect(data.value).toHaveLength(0)
+    expect(data.value).toEqual(copy)
   })
 
   describe('reset option', () => {
-    it('resets the value when unbinding', async () => {
-      const { wrapper, listRef, data } = factory()
+    it('resets the value when specified', async () => {
+      const { wrapper, listRef, data } = factory({
+        options: { reset: true },
+      })
 
       await push(listRef, { name: 'a' })
       expect(data.value).toHaveLength(1)
@@ -137,10 +140,8 @@ describe('Database lists', () => {
       expect(data.value).toHaveLength(0)
     })
 
-    it('skips resetting when specified', async () => {
-      const { wrapper, listRef, data } = factory({
-        options: { reset: false },
-      })
+    it('skips resetting by default', async () => {
+      const { wrapper, listRef, data } = factory()
 
       await push(listRef, { name: 'a' })
       expect(data.value).toHaveLength(1)

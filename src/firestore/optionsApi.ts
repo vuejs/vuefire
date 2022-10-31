@@ -10,9 +10,11 @@ import {
   bindCollection,
   bindDocument,
   firestoreOptions,
-  FirestoreOptions,
+  FirestoreRefOptions,
+  _GlobalFirestoreRefOptions,
 } from './subscribe'
 import { internalUnbind, _useFirestoreRef } from '.'
+import { ResetOption } from '../shared'
 
 export type FirestoreOption = VueFirestoreObject | (() => VueFirestoreObject)
 
@@ -32,20 +34,17 @@ export const firestoreUnbinds = new WeakMap<
  * Options for the Firebase Database Plugin that enables the Options API such as `$firestoreBind` and
  * `$firestoreUnbind`.
  */
-export interface FirestorePluginOptions {
+export interface FirestorePluginOptions
+  extends Partial<_GlobalFirestoreRefOptions> {
   bindName?: string
   unbindName?: string
-  converter?: FirestoreOptions['converter']
-  reset?: FirestoreOptions['reset']
-  wait?: FirestoreOptions['wait']
 }
 
-const firestorePluginDefaults: Readonly<Required<FirestorePluginOptions>> = {
+const firestorePluginDefaults: Readonly<
+  Required<Omit<FirestorePluginOptions, keyof _GlobalFirestoreRefOptions>>
+> = {
   bindName: '$firestoreBind',
   unbindName: '$firestoreUnbind',
-  converter: firestoreOptions.converter,
-  reset: firestoreOptions.reset,
-  wait: firestoreOptions.wait,
 }
 
 /**
@@ -76,7 +75,7 @@ export const firestorePlugin = function firestorePlugin(
 
   GlobalTarget[unbindName] = function firestoreUnbind(
     key: string,
-    reset?: FirestoreOptions['reset']
+    reset?: FirestoreRefOptions['reset']
   ) {
     internalUnbind(key, firestoreUnbinds.get(this), reset)
     delete this.$firestoreRefs[key]
@@ -86,7 +85,7 @@ export const firestorePlugin = function firestorePlugin(
     this: ComponentPublicInstance,
     key: string,
     docOrCollectionRef: Query | CollectionReference | DocumentReference,
-    userOptions?: FirestoreOptions
+    userOptions?: FirestoreRefOptions
   ) {
     const options = Object.assign({}, globalOptions, userOptions)
     const target = toRef(this.$data as any, key)
@@ -163,26 +162,27 @@ declare module '@vue/runtime-core' {
       name: string,
       // TODO: create proper overloads with generics like in the composition API
       reference: Query<unknown> | CollectionReference<unknown>,
-      options?: FirestoreOptions
+      options?: FirestoreRefOptions
+      // TODO: match the promise with the type of internalBind
     ): Promise<DocumentData[]>
 
     $firestoreBind(
       name: string,
       // TODO: create proper overloads with generics like in the composition API
       reference: DocumentReference<unknown>,
-      options?: FirestoreOptions
+      options?: FirestoreRefOptions
     ): Promise<DocumentData>
 
     /**
      * Unbinds a bound reference
      */
-    $firestoreUnbind: (name: string, reset?: FirestoreOptions['reset']) => void
+    $firestoreUnbind: (name: string, reset?: ResetOption) => void
 
     /**
      * Bound firestore references
      */
     $firestoreRefs: Readonly<
-      Record<string, DocumentReference | CollectionReference>
+      Record<string, DocumentReference<unknown> | CollectionReference<unknown>>
     >
     // _firestoreSources: Readonly<
     //   Record<string, CollectionReference | Query | DocumentReference>

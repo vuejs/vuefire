@@ -31,7 +31,7 @@ import {
   bindCollection,
   bindDocument,
   firestoreOptions,
-  FirestoreOptions,
+  FirestoreRefOptions,
 } from './subscribe'
 
 export const ops: OperationsType = {
@@ -42,7 +42,10 @@ export const ops: OperationsType = {
 
 type UnbindType = ReturnType<typeof bindCollection | typeof bindDocument>
 
-export interface _UseFirestoreRefOptions extends FirestoreOptions {
+export interface _UseFirestoreRefOptions extends FirestoreRefOptions {
+  /**
+   * Use the `target` ref instead of creating one.
+   */
   target?: Ref<unknown>
 }
 
@@ -81,8 +84,8 @@ export function _useFirestoreRef(
       }
 
       _unbind = (isDocumentRef(docRefValue) ? bindDocument : bindCollection)(
+        // @ts-expect-error: cannot type with the ternary
         data,
-        // @ts-expect-error: the type is good because of the ternary
         docRefValue,
         ops,
         resolve,
@@ -246,7 +249,7 @@ export function internalUnbind(
   unbinds:
     | Record<string, ReturnType<typeof bindCollection | typeof bindDocument>>
     | undefined,
-  reset?: FirestoreOptions['reset']
+  reset?: FirestoreRefOptions['reset']
 ) {
   if (unbinds && unbinds[key]) {
     unbinds[key](reset)
@@ -254,7 +257,7 @@ export function internalUnbind(
   }
 }
 
-export const unbind = (target: Ref, reset?: FirestoreOptions['reset']) =>
+export const unbind = (target: Ref, reset?: FirestoreRefOptions['reset']) =>
   internalUnbind('', firestoreUnbinds.get(target), reset)
 
 /**

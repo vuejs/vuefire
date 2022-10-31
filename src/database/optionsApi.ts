@@ -7,6 +7,7 @@ import {
   bindAsObject,
   rtdbOptions,
   _DatabaseRefOptions,
+  _GlobalDatabaseRefOptions,
 } from './subscribe'
 
 /**
@@ -21,20 +22,17 @@ function getRef(refOrQuery: DatabaseReference | Query): DatabaseReference {
 /**
  * Options for the Firebase Database Plugin that enables the Options API such as `$rtdbBind` and `$rtdbUnbind`.
  */
-export interface DatabasePluginOptions {
+export interface DatabasePluginOptions
+  extends Partial<_GlobalDatabaseRefOptions> {
   bindName?: string
   unbindName?: string
-  serialize?: _DatabaseRefOptions['serialize']
-  reset?: _DatabaseRefOptions['reset']
-  wait?: _DatabaseRefOptions['wait']
 }
 
-const databasePluginDefaults: Readonly<Required<DatabasePluginOptions>> = {
+const databasePluginDefaults: Readonly<
+  Required<Omit<DatabasePluginOptions, keyof _GlobalDatabaseRefOptions>>
+> = {
   bindName: '$rtdbBind',
   unbindName: '$rtdbUnbind',
-  serialize: rtdbOptions.serialize,
-  reset: rtdbOptions.reset,
-  wait: rtdbOptions.wait,
 }
 
 declare module '@vue/runtime-core' {
