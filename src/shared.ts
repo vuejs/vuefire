@@ -30,6 +30,11 @@ export interface OperationsType {
  */
 export type ResetOption = boolean | (() => unknown)
 
+/**
+ * @internal
+ */
+export type _Nullable<T> = T | null | undefined
+
 export type TODO = any
 /**
  * Walks a path inside an object

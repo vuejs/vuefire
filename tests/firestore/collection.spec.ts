@@ -16,7 +16,7 @@ import {
   UseCollectionOptions,
   VueFirestoreQueryData,
 } from '../../src'
-import { _MaybeRef } from '../../src/shared'
+import { _MaybeRef, _Nullable } from '../../src/shared'
 
 describe(
   'Firestore collections',
@@ -29,7 +29,7 @@ describe(
       ref = collection(),
     }: {
       options?: UseCollectionOptions
-      ref?: _MaybeRef<CollectionReference<T>>
+      ref?: _MaybeRef<_Nullable<CollectionReference<T>>>
     } = {}) {
       let data!: _RefFirestore<VueFirestoreQueryData<T>>
 
@@ -47,7 +47,8 @@ describe(
 
       return {
         wrapper,
-        listRef: unref(ref),
+        // to simplify types
+        listRef: unref(ref)!,
         // non enumerable properties cannot be spread
         data: data.data,
         pending: data.pending,
@@ -62,7 +63,7 @@ describe(
       ref,
     }: {
       options?: UseCollectionOptions
-      ref?: _MaybeRef<CollectionReference<T> | Query<T>>
+      ref?: _MaybeRef<_Nullable<CollectionReference<T> | Query<T>>>
     } = {}) {
       let data!: _RefFirestore<VueFirestoreQueryData<T>>
 
@@ -71,7 +72,7 @@ describe(
         setup() {
           // @ts-expect-error: generic forced
           data = useCollection(
-            // @ts-expect-error: generic forced
+            // split for ts
             ref,
             options
           )
@@ -263,18 +264,34 @@ describe(
       expect(data.value).toEqual([{ name: 'a' }])
     })
 
-    it('can be bound to a ref of a query', async () => {
+    async function createFilteredLists() {
       const listRef = collection<{ text: string; finished: boolean }>()
       const finishedListRef = query(listRef, where('finished', '==', true))
       const unfinishedListRef = query(listRef, where('finished', '==', false))
-      const showFinished = ref(false)
+      const showFinished = ref<boolean | null>(false)
       const listToDisplay = computed(() =>
-        showFinished.value ? finishedListRef : unfinishedListRef
+        showFinished.value
+          ? finishedListRef
+          : showFinished.value === false
+          ? unfinishedListRef
+          : null
       )
       await addDoc(listRef, { text: 'task 1', finished: false })
       await addDoc(listRef, { text: 'task 2', finished: false })
       await addDoc(listRef, { text: 'task 3', finished: true })
       await addDoc(listRef, { text: 'task 4', finished: false })
+
+      return {
+        listRef,
+        finishedListRef,
+        unfinishedListRef,
+        showFinished,
+        listToDisplay,
+      }
+    }
+
+    it('can be bound to a ref of a query', async () => {
+      const { showFinished, listToDisplay } = await createFilteredLists()
 
       const { wrapper, data, promise } = factoryQuery({
         ref: listToDisplay,
@@ -292,6 +309,30 @@ describe(
       await nextTick()
       expect(data.value).toHaveLength(1)
       expect(data.value).toContainEqual({ text: 'task 3', finished: true })
+    })
+
+    it('can be bound to a null ref', async () => {
+      const { showFinished, listToDisplay } = await createFilteredLists()
+      showFinished.value = null
+
+      const { data, promise } = factory({
+        // @ts-expect-error
+        ref: listToDisplay,
+      })
+      await promise.value
+
+      expect(data.value).toHaveLength(0)
+
+      showFinished.value = false
+      await nextTick()
+      await promise.value
+      expect(data.value).toHaveLength(3)
+
+      showFinished.value = null
+      await nextTick()
+      await promise.value
+      // it stays the same
+      expect(data.value).toHaveLength(3)
     })
 
     tds(() => {

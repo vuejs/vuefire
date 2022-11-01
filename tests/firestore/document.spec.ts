@@ -7,7 +7,7 @@ import {
   FirestoreError,
 } from 'firebase/firestore'
 import { expectType, setupFirestoreRefs, tds, firestore } from '../utils'
-import { unref, type Ref } from 'vue'
+import { nextTick, shallowRef, unref, type Ref } from 'vue'
 import { _MaybeRef } from '../../src/shared'
 import {
   useDocument,
@@ -151,6 +151,73 @@ describe(
         await wrapper.unmount()
         expect(data.value).toEqual('reset')
       })
+    })
+
+    it('can be bound to a ref of a document', async () => {
+      const aRef = doc()
+      const bRef = doc()
+      await setDoc(aRef, { name: 'a' })
+      await setDoc(bRef, { name: 'b' })
+      const targetRef = shallowRef(bRef)
+
+      const { data, promise } = factory({ ref: targetRef })
+      await promise.value
+
+      expect(data.value).toEqual({ name: 'b' })
+
+      targetRef.value = aRef
+      await nextTick()
+      await promise.value
+      expect(data.value).toEqual({ name: 'a' })
+    })
+
+    it('can be bound to a null ref', async () => {
+      const aRef = doc()
+      const bRef = doc()
+      await setDoc(aRef, { name: 'a' })
+      await setDoc(bRef, { name: 'b' })
+      const targetRef = shallowRef()
+
+      const { data, promise } = factory({ ref: targetRef })
+      await promise.value
+
+      expect(data.value).toBeFalsy()
+
+      targetRef.value = aRef
+      expect(data.value).toBeFalsy()
+      await nextTick()
+      await promise.value
+      expect(data.value).toEqual({ name: 'a' })
+
+      targetRef.value = null
+      await nextTick()
+      await promise.value
+      // it stays the same
+      expect(data.value).toEqual({ name: 'a' })
+
+      targetRef.value = bRef
+      await nextTick()
+      await promise.value
+      // it stays the same
+      expect(data.value).toEqual({ name: 'b' })
+    })
+
+    it('can be set to a null ref', async () => {
+      const aRef = doc()
+      const bRef = doc()
+      await setDoc(aRef, { name: 'a' })
+      await setDoc(bRef, { name: 'b' })
+      const targetRef = shallowRef()
+
+      const { data, promise } = factory({ ref: targetRef })
+      await promise.value
+
+      expect(data.value).toBeFalsy()
+
+      targetRef.value = aRef
+      await nextTick()
+      await promise.value
+      expect(data.value).toEqual({ name: 'a' })
     })
 
     tds(() => {

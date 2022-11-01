@@ -4,6 +4,7 @@ import type {
   Query,
   FirestoreError,
   DocumentData,
+  FirestoreDataConverter,
 } from 'firebase/firestore'
 import {
   getCurrentScope,
@@ -23,6 +24,7 @@ import {
   ResetOption,
   walkSet,
   _MaybeRef,
+  _Nullable,
   _RefWithState,
 } from '../shared'
 import { addPendingPromise } from '../ssr/plugin'
@@ -56,11 +58,13 @@ export interface _UseFirestoreRefOptions extends FirestoreRefOptions {
  */
 export function _useFirestoreRef(
   docOrCollectionRef: _MaybeRef<
-    DocumentReference<unknown> | Query<unknown> | CollectionReference<unknown>
+    _Nullable<
+      DocumentReference<unknown> | Query<unknown> | CollectionReference<unknown>
+    >
   >,
   localOptions?: _UseFirestoreRefOptions
 ) {
-  let _unbind!: UnbindType
+  let _unbind: UnbindType = noop
   const options = Object.assign({}, firestoreOptions, localOptions)
 
   // TODO: allow passing pending and error refs as option for when this is called using the options api
@@ -74,8 +78,19 @@ export function _useFirestoreRef(
   let removePendingPromise = noop
 
   function bindFirestoreRef() {
+    let docRefValue = unref(docOrCollectionRef)
+
     const p = new Promise<unknown | null>((resolve, reject) => {
-      let docRefValue = unref(docOrCollectionRef)
+      // stop the previous subscription
+      _unbind(options.reset)
+      // skip if the ref is null or undefined
+      // we still want to create the new promise
+      if (!docRefValue) {
+        _unbind = noop
+        // TODO: maybe we shouldn't resolve this at all?
+        return resolve(null)
+      }
+
       if (!docRefValue.converter) {
         docRefValue = docRefValue.withConverter(
           // @ts-expect-error: seems like a ts error
@@ -95,9 +110,9 @@ export function _useFirestoreRef(
     })
 
     // only add the first promise to the pending ones
-    if (!isPromiseAdded) {
+    if (!isPromiseAdded && docRefValue) {
       // TODO: is there a way to make this only for the first render?
-      removePendingPromise = addPendingPromise(p, unref(docOrCollectionRef))
+      removePendingPromise = addPendingPromise(p, docRefValue)
       isPromiseAdded = true
     }
     promise.value = p
@@ -173,7 +188,7 @@ export function useCollection<
   R extends CollectionReference<unknown> | Query<unknown>
 >(
   // TODO: add MaybeRef
-  collectionRef: _MaybeRef<R>,
+  collectionRef: _MaybeRef<_Nullable<R>>,
   options?: UseCollectionOptions
 ): _RefFirestore<_InferReferenceType<R>[]>
 
@@ -186,17 +201,20 @@ export function useCollection<
  * @param options - optional options
  */
 export function useCollection<T>(
-  collectionRef: _MaybeRef<CollectionReference | Query>,
+  collectionRef: _MaybeRef<_Nullable<CollectionReference | Query>>,
   options?: UseCollectionOptions
 ): _RefFirestore<VueFirestoreQueryData<T>>
 
 export function useCollection<T>(
-  collectionRef: _MaybeRef<CollectionReference<unknown> | Query<unknown>>,
+  collectionRef: _MaybeRef<
+    _Nullable<CollectionReference<unknown> | Query<unknown>>
+  >,
   options?: UseCollectionOptions
 ): _RefFirestore<VueFirestoreQueryData<T>> {
-  return _useFirestoreRef(collectionRef, options) as _RefFirestore<
-    VueFirestoreQueryData<T>
-  >
+  return _useFirestoreRef(collectionRef, {
+    target: ref([]),
+    ...options,
+  }) as _RefFirestore<VueFirestoreQueryData<T>>
 }
 
 // TODO: split document and collection into two different parts
@@ -213,7 +231,7 @@ export function useDocument<
   // explicit generic as unknown to allow arbitrary types like numbers or strings
   R extends DocumentReference<unknown>
 >(
-  documentRef: _MaybeRef<R>,
+  documentRef: _MaybeRef<_Nullable<R>>,
   options?: UseDocumentOptions
 ): _RefFirestore<_InferReferenceType<R>> // this one can't be null or should be specified in the converter
 
@@ -226,12 +244,12 @@ export function useDocument<
  * @param options - optional options
  */
 export function useDocument<T>(
-  documentRef: _MaybeRef<DocumentReference>,
+  documentRef: _MaybeRef<_Nullable<DocumentReference>>,
   options?: UseDocumentOptions
 ): _RefFirestore<VueFirestoreDocumentData<T>>
 
 export function useDocument<T>(
-  documentRef: _MaybeRef<DocumentReference<unknown>>,
+  documentRef: _MaybeRef<_Nullable<DocumentReference<unknown>>>,
   options?: UseDocumentOptions
 ):
   | _RefFirestore<VueFirestoreDocumentData<T> | null>

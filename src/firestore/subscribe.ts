@@ -6,6 +6,7 @@ import {
   _MaybeRef,
   ResetOption,
   _DataSourceOptions,
+  noop,
 } from '../shared'
 import { ref, Ref, unref } from 'vue-demi'
 import type {
@@ -298,7 +299,7 @@ export function bindCollection<T = unknown>(
     },
   }
 
-  const unbind = onSnapshot(
+  const stopOnSnapshot = onSnapshot(
     collection,
     (snapshot) => {
       // console.log('pending', metadata.hasPendingWrites)
@@ -330,7 +331,7 @@ export function bindCollection<T = unknown>(
               }
               originalResolve(unref(arrayRef))
               // reset resolve to noop
-              resolve = () => {}
+              resolve = noop
             }
           }
         }
@@ -355,7 +356,7 @@ export function bindCollection<T = unknown>(
   )
 
   return (reset?: FirestoreRefOptions['reset']) => {
-    unbind()
+    stopOnSnapshot()
     if (reset !== false) {
       const value = typeof reset === 'function' ? reset() : []
       ops.set(target, key, value)
@@ -390,7 +391,7 @@ export function bindDocument<T>(
   // bind here the function so it can be resolved anywhere
   // this is specially useful for refs
   resolve = callOnceWithArg(resolve, () => walkGet(target, key))
-  const _unbind = onSnapshot(
+  const stopOnSnapshot = onSnapshot(
     document,
     (snapshot) => {
       if (snapshot.exists()) {
@@ -413,7 +414,7 @@ export function bindDocument<T>(
   )
 
   return (reset?: FirestoreRefOptions['reset']) => {
-    _unbind()
+    stopOnSnapshot()
     if (reset !== false) {
       const value = typeof reset === 'function' ? reset() : null
       ops.set(target, key, value)
