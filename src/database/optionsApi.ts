@@ -123,7 +123,7 @@ export function databasePlugin(
     const unbinds = rtdbUnbinds.get(this)!
 
     if (unbinds[key]) {
-      unbinds[key](options.wait)
+      unbinds[key](options.reset)
     }
 
     // FIXME: Create a single scopeEffect per instance that wraps thin call and stop the effect scope when `unbind()` is called
