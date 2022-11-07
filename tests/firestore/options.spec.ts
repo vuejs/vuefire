@@ -1,7 +1,11 @@
 import { defineComponent } from 'vue'
 import { mount } from '@vue/test-utils'
 import { describe, expect, it, vi } from 'vitest'
-import { firestorePlugin, FirestorePluginOptions } from '../../src'
+import {
+  FirestoreOption,
+  firestorePlugin,
+  FirestorePluginOptions,
+} from '../../src'
 import { DocumentData } from 'firebase/firestore'
 import { setupFirestoreRefs } from '../utils'
 
@@ -92,6 +96,40 @@ describe('Firestore: Options API', () => {
         expect.anything()
       )
       expect(wrapper.vm.itemList).toEqual([{ bar: 'bar' }])
+    })
+  })
+
+  describe('firestore option', () => {
+    function factory(
+      firestore: FirestoreOption,
+      pluginOptions?: FirestorePluginOptions
+    ) {
+      return mount(component, {
+        firestore,
+        global: {
+          plugins: [[firestorePlugin, pluginOptions]],
+        },
+      })
+    }
+
+    it('setups $firestoreRefs', async () => {
+      const itemSource = doc()
+      const itemListSource = collection()
+      const { vm } = factory({ item: itemSource, itemList: itemListSource })
+      expect(Object.keys(vm.$firestoreRefs).sort()).toEqual([
+        'item',
+        'itemList',
+      ])
+      expect(vm.$firestoreRefs.item.path).toBe(itemSource.path)
+      expect(vm.$firestoreRefs.itemList.path).toBe(itemListSource.path)
+    })
+
+    it('clears $firestoreRefs on unmount', async () => {
+      const itemSource = doc()
+      const itemListSource = collection()
+      const wrapper = factory({ item: itemSource, itemList: itemListSource })
+      wrapper.unmount()
+      expect(wrapper.vm.$firestoreRefs).toEqual(null)
     })
   })
 })

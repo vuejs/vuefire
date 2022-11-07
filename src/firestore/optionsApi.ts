@@ -16,12 +16,12 @@ import {
 import { internalUnbind, _useFirestoreRef } from '.'
 import { ResetOption, UnbindWithReset } from '../shared'
 
-export type FirestoreOption = VueFirestoreObject | (() => VueFirestoreObject)
-
 export type VueFirestoreObject = Record<
   string,
-  DocumentReference | Query | CollectionReference
+  DocumentReference<unknown> | Query<unknown> | CollectionReference<unknown>
 >
+
+export type FirestoreOption = VueFirestoreObject | (() => VueFirestoreObject)
 
 // TODO: this should be an entry point to generate the corresponding .d.ts file that only gets included if the plugin is imported
 
@@ -84,7 +84,10 @@ export const firestorePlugin = function firestorePlugin(
   GlobalTarget[bindName] = function firestoreBind(
     this: ComponentPublicInstance,
     key: string,
-    docOrCollectionRef: Query | CollectionReference | DocumentReference,
+    docOrCollectionRef:
+      | Query<unknown>
+      | CollectionReference<unknown>
+      | DocumentReference<unknown>,
     userOptions?: FirestoreRefOptions
   ) {
     const options = Object.assign({}, globalOptions, userOptions)
@@ -191,7 +194,7 @@ declare module '@vue/runtime-core' {
 
   export interface ComponentCustomOptions {
     /**
-     * Calls `$firestoreBind` at created
+     * Calls `$firestoreBind` before mounting the component
      */
     firestore?: FirestoreOption
   }
