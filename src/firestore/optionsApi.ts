@@ -89,22 +89,13 @@ export const firestorePlugin = function firestorePlugin(
   ) {
     const options = Object.assign({}, globalOptions, userOptions)
     const target = toRef(this.$data as any, key)
-    let unbinds = firestoreUnbinds.get(this)
+    if (!firestoreUnbinds.has(this)) {
+      firestoreUnbinds.set(this, {})
+    }
+    const unbinds = firestoreUnbinds.get(this)!
 
-    if (unbinds) {
-      if (unbinds[key]) {
-        unbinds[key](
-          // if wait, allow overriding with a function or reset, otherwise, force reset to false
-          // else pass the reset option
-          options.wait
-            ? typeof options.reset === 'function'
-              ? options.reset
-              : false
-            : options.reset
-        )
-      }
-    } else {
-      firestoreUnbinds.set(this, (unbinds = {}))
+    if (unbinds[key]) {
+      unbinds[key](options.reset)
     }
 
     const { promise, unbind } = _useFirestoreRef(docOrCollectionRef, {
@@ -113,7 +104,9 @@ export const firestorePlugin = function firestorePlugin(
     })
     unbinds[key] = unbind
     // @ts-expect-error: we are allowed to write it
-    this.$firestoreRefs[key] = docOrCollectionRef
+    this.$firestoreRefs[key] =
+      // ts
+      docOrCollectionRef
     return promise.value
   }
 
