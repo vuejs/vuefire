@@ -117,30 +117,19 @@ export function databasePlugin(
   ) {
     const options = Object.assign({}, globalOptions, userOptions)
     const target = toRef(this.$data as any, key)
-    let unbinds = rtdbUnbinds.get(this)
+    if (!rtdbUnbinds.has(this)) {
+      rtdbUnbinds.set(this, {})
+    }
+    const unbinds = rtdbUnbinds.get(this)!
 
-    if (unbinds) {
-      if (unbinds[key]) {
-        unbinds[key](
-          // if wait, allow overriding with a function or reset, otherwise, force reset to false
-          // else pass the reset option
-          options.wait
-            ? typeof options.reset === 'function'
-              ? options.reset
-              : false
-            : options.reset
-        )
-      }
-    } else {
-      rtdbUnbinds.set(this, (unbinds = {}))
+    if (unbinds[key]) {
+      unbinds[key](options.wait)
     }
 
-    // TODO: ensure creating refs outside of the scope of the component here doesn't create a memory leak
+    // FIXME: Create a single scopeEffect per instance that wraps thin call and stop the effect scope when `unbind()` is called
     const { promise, unbind } = _useDatabaseRef(source, { target, ...options })
     unbinds[key] = unbind
 
-    // TODO:
-    // this._firebaseSources[key] = source
     // we make it readonly for the user but we must change it. Maybe there is a way to have an internal type here but expose a readonly type through a d.ts
     ;(this.$firebaseRefs as Mutable<Record<string, DatabaseReference>>)[key] =
       source.ref
@@ -161,8 +150,13 @@ export function databasePlugin(
       if (!bindings) return
 
       for (const key in bindings) {
-        // @ts-expect-error: TODO: try fixing it
-        this[bindName](key, bindings[key], globalOptions)
+        // @ts-expect-error: bindName is a string here
+        this[bindName](
+          // ts
+          key,
+          bindings[key],
+          globalOptions
+        )
       }
     },
 
@@ -173,7 +167,7 @@ export function databasePlugin(
           unbinds[key]()
         }
       }
-      // @ts-expect-error: we are freeing the memory
+      // @ts-expect-error: we are freeing the references to avoid memory leaks
       this.$firebaseRefs = null
     },
   })
