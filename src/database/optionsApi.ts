@@ -11,15 +11,6 @@ import {
 } from './subscribe'
 
 /**
- * Returns the original reference of a Firebase reference or query across SDK versions.
- *
- * @param refOrQuery
- */
-function getRef(refOrQuery: DatabaseReference | Query): DatabaseReference {
-  return refOrQuery.ref
-}
-
-/**
  * Options for the Firebase Database Plugin that enables the Options API such as `$rtdbBind` and `$rtdbUnbind`.
  */
 export interface DatabasePluginOptions
@@ -78,8 +69,8 @@ declare module '@vue/runtime-core' {
   }
 }
 
-type VueFirebaseObject = Record<string, Query | DatabaseReference>
-type FirebaseOption = VueFirebaseObject | (() => VueFirebaseObject)
+export type VueFirebaseObject = Record<string, Query | DatabaseReference>
+export type FirebaseOption = VueFirebaseObject | (() => VueFirebaseObject)
 
 export const rtdbUnbinds = new WeakMap<
   object,
@@ -151,7 +142,7 @@ export function databasePlugin(
     // this._firebaseSources[key] = source
     // we make it readonly for the user but we must change it. Maybe there is a way to have an internal type here but expose a readonly type through a d.ts
     ;(this.$firebaseRefs as Mutable<Record<string, DatabaseReference>>)[key] =
-      getRef(source)
+      source.ref
 
     return promise
   }

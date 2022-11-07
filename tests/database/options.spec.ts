@@ -5,12 +5,13 @@ import {
   databasePlugin,
   DatabasePluginOptions,
   DatabaseSnapshotSerializer,
+  FirebaseOption,
 } from '../../src'
 import { setupDatabaseRefs } from '../utils'
 
 const component = defineComponent({
   template: 'no',
-  data: () => ({ items: [], item: null }),
+  data: () => ({ itemList: [], item: null }),
 })
 
 describe('RTDB: plugin options', () => {
@@ -40,14 +41,14 @@ describe('RTDB: plugin options', () => {
 
       const itemListRef = databaseRef()
 
-      const p = vm.$rtdbBind('items', itemListRef)
+      const p = vm.$rtdbBind('itemList', itemListRef)
       await push(itemListRef, { text: 'foo' })
 
       expect(serialize).toHaveBeenCalledTimes(1)
       expect(serialize).toHaveBeenCalledWith(
         expect.objectContaining({ val: expect.any(Function) })
       )
-      expect(vm.items).toEqual([{ foo: 'bar', id: '2' }])
+      expect(vm.itemList).toEqual([{ foo: 'bar', id: '2' }])
     })
 
     it('can override serialize with local option', async () => {
@@ -60,7 +61,7 @@ describe('RTDB: plugin options', () => {
         bar: 'bar',
       }))
 
-      vm.$rtdbBind('items', items, { serialize: spy })
+      vm.$rtdbBind('itemList', items, { serialize: spy })
       await push(items, { text: 'foo' })
 
       expect(serialize).not.toHaveBeenCalled()
@@ -68,9 +69,38 @@ describe('RTDB: plugin options', () => {
       expect(spy).toHaveBeenCalledWith(
         expect.objectContaining({ val: expect.any(Function) })
       )
-      expect(vm.items).toEqual([{ bar: 'bar', id: '3' }])
+      expect(vm.itemList).toEqual([{ bar: 'bar', id: '3' }])
     })
   })
 
-  // describe('firebase option', () => {})
+  describe('firebase option', () => {
+    function factory(
+      firebase: FirebaseOption,
+      pluginOptions?: DatabasePluginOptions
+    ) {
+      return mount(component, {
+        firebase,
+        global: {
+          plugins: [[databasePlugin, pluginOptions]],
+        },
+      })
+    }
+
+    it('setups $firebaseRefs', async () => {
+      const itemSource = databaseRef()
+      const itemListSource = databaseRef()
+      const { vm } = factory({ item: itemSource, itemList: itemListSource })
+      expect(Object.keys(vm.$firebaseRefs).sort()).toEqual(['item', 'itemList'])
+      expect(vm.$firebaseRefs.item.key).toBe(itemSource.key)
+      expect(vm.$firebaseRefs.itemList.key).toBe(itemListSource.key)
+    })
+
+    it('clears $firebaseRefs on unmount', async () => {
+      const itemSource = databaseRef()
+      const itemListSource = databaseRef()
+      const wrapper = factory({ item: itemSource, itemList: itemListSource })
+      wrapper.unmount()
+      expect(wrapper.vm.$firebaseRefs).toEqual(null)
+    })
+  })
 })

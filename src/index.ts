@@ -12,7 +12,11 @@ export type {
 } from './database/utils'
 
 export { databasePlugin } from './database/optionsApi'
-export type { DatabasePluginOptions } from './database/optionsApi'
+export type {
+  DatabasePluginOptions,
+  VueFirebaseObject,
+  FirebaseOption,
+} from './database/optionsApi'
 
 export { useCollection, useDocument } from './firestore'
 export type {
