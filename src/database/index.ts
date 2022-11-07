@@ -17,6 +17,7 @@ import {
   UnbindWithReset,
   walkSet,
   _MaybeRef,
+  _Nullable,
   _RefWithState,
 } from '../shared'
 import { rtdbUnbinds } from './optionsApi'
@@ -48,7 +49,7 @@ export interface UseDatabaseRefOptions extends _DatabaseRefOptions {
 }
 
 export function _useDatabaseRef(
-  reference: _MaybeRef<DatabaseReference | Query>,
+  reference: _MaybeRef<_Nullable<DatabaseReference | Query>>,
   localOptions: UseDatabaseRefOptions = {}
 ) {
   const options = Object.assign({}, rtdbOptions, localOptions)
@@ -64,8 +65,15 @@ export function _useDatabaseRef(
   let removePendingPromise = noop
 
   function bindDatabaseRef() {
+    let referenceValue = unref(reference)
+
     const p = new Promise<unknown | null>((resolve, reject) => {
-      const referenceValue = unref(reference)
+      if (!referenceValue) {
+        _unbind = noop
+        // TODO: maybe we shouldn't resolve this at all?
+        return resolve(null)
+      }
+
       if (Array.isArray(data.value)) {
         _unbind = bindAsArray(
           {
@@ -92,8 +100,8 @@ export function _useDatabaseRef(
     })
 
     // only add the first promise to the pending ones
-    if (!isPromiseAdded) {
-      removePendingPromise = addPendingPromise(p, unref(reference))
+    if (!isPromiseAdded && referenceValue) {
+      removePendingPromise = addPendingPromise(p, referenceValue)
       isPromiseAdded = true
     }
     promise.value = p

@@ -8,9 +8,9 @@ import {
   _RefDatabase,
 } from '../../src'
 import { expectType, tds, setupDatabaseRefs, database } from '../utils'
-import { computed, nextTick, ref, unref, type Ref } from 'vue'
+import { computed, nextTick, ref, shallowRef, unref, type Ref } from 'vue'
 import { DatabaseReference, ref as _databaseRef } from 'firebase/database'
-import { _MaybeRef } from '../../src/shared'
+import { _MaybeRef, _Nullable } from '../../src/shared'
 
 describe('Database objects', () => {
   const { databaseRef, set, update, remove } = setupDatabaseRefs()
@@ -111,6 +111,24 @@ describe('Database objects', () => {
     const { promise, data } = factory({ ref: item })
 
     await expect(promise.value).resolves
+    expect(data.value).toEqual({ name: 'a' })
+  })
+
+  it('can be bound to a null ref', async () => {
+    const aRef = databaseRef()
+    const bRef = databaseRef()
+    await set(aRef, { name: 'a' })
+    await set(bRef, { name: 'b' })
+    const targetRef = shallowRef()
+
+    const { data, promise } = factory({ ref: targetRef })
+    await promise.value
+
+    expect(data.value).toBeFalsy()
+
+    targetRef.value = aRef
+    await nextTick()
+    await promise.value
     expect(data.value).toEqual({ name: 'a' })
   })
 

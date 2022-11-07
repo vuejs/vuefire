@@ -207,24 +207,6 @@ describe(
       expect(data.value).toEqual({ name: 'b' })
     })
 
-    it('can be set to a null ref', async () => {
-      const aRef = doc()
-      const bRef = doc()
-      await setDoc(aRef, { name: 'a' })
-      await setDoc(bRef, { name: 'b' })
-      const targetRef = shallowRef()
-
-      const { data, promise } = factory({ ref: targetRef })
-      await promise.value
-
-      expect(data.value).toBeFalsy()
-
-      targetRef.value = aRef
-      await nextTick()
-      await promise.value
-      expect(data.value).toEqual({ name: 'a' })
-    })
-
     tds(() => {
       const db = firestore
       const doc = originalDoc
