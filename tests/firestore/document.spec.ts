@@ -133,20 +133,25 @@ describe(
       })
 
       it('skips resetting by default', async () => {
-        const { wrapper, itemRef, data } = factory()
-
+        const itemRef = doc()
         await setDoc(itemRef, { name: 'a' })
+        const { wrapper, data, promise } = factory({ ref: itemRef })
+        await promise.value
+
         expect(data.value).toEqual({ name: 'a' })
         await wrapper.unmount()
         expect(data.value).toEqual({ name: 'a' })
       })
 
       it('can be reset to a specific value', async () => {
-        const { wrapper, itemRef, data } = factory({
+        const itemRef = doc()
+        await setDoc(itemRef, { name: 'a' })
+        const { wrapper, data, promise } = factory({
+          ref: itemRef,
           options: { reset: () => 'reset' },
         })
+        await promise.value
 
-        await setDoc(itemRef, { name: 'a' })
         expect(data.value).toEqual({ name: 'a' })
         await wrapper.unmount()
         expect(data.value).toEqual('reset')
