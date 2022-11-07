@@ -31,6 +31,11 @@ export interface OperationsType {
 export type ResetOption = boolean | (() => unknown)
 
 /**
+ * Return type of `$rtdbBind()` and `$firestoreBind()`
+ */
+export type UnbindWithReset = (reset?: ResetOption) => void
+
+/**
  * @internal
  */
 export type _Nullable<T> = T | null | undefined

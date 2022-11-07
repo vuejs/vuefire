@@ -14,7 +14,7 @@ import {
   _GlobalFirestoreRefOptions,
 } from './subscribe'
 import { internalUnbind, _useFirestoreRef } from '.'
-import { ResetOption } from '../shared'
+import { ResetOption, UnbindWithReset } from '../shared'
 
 export type FirestoreOption = VueFirestoreObject | (() => VueFirestoreObject)
 
@@ -27,7 +27,7 @@ export type VueFirestoreObject = Record<
 
 export const firestoreUnbinds = new WeakMap<
   object,
-  Record<string, ReturnType<typeof bindCollection | typeof bindDocument>>
+  Record<string, UnbindWithReset>
 >()
 
 /**
@@ -192,7 +192,7 @@ declare module '@vue/runtime-core' {
      * @internal
      */
     // _firestoreUnbinds: Readonly<
-    //   Record<string, ReturnType<typeof bindCollection | typeof bindDocument>>
+    //   Record<string, UnbindWithReset>
     // >
   }
 

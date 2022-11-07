@@ -14,6 +14,7 @@ import {
   noop,
   OperationsType,
   ResetOption,
+  UnbindWithReset,
   walkSet,
   _MaybeRef,
   _RefWithState,
@@ -46,14 +47,12 @@ export interface UseDatabaseRefOptions extends _DatabaseRefOptions {
   target?: Ref<unknown>
 }
 
-type UnbindType = ReturnType<typeof bindAsArray | typeof bindAsObject>
-
 export function _useDatabaseRef(
   reference: _MaybeRef<DatabaseReference | Query>,
   localOptions: UseDatabaseRefOptions = {}
 ) {
   const options = Object.assign({}, rtdbOptions, localOptions)
-  let _unbind!: UnbindType
+  let _unbind!: UnbindWithReset
 
   const data = options.target || ref<unknown | null>(options.initialValue)
   const error = ref<Error>()
@@ -112,7 +111,7 @@ export function _useDatabaseRef(
     // should take an option like once: true to not setting up any listener
   }
 
-  let stopWatcher: ReturnType<typeof watch> = noop
+  let stopWatcher = noop
   if (isRef(reference)) {
     stopWatcher = watch(reference, bindDatabaseRef, { immediate: true })
   } else {
@@ -142,7 +141,7 @@ export function _useDatabaseRef(
 
 export function internalUnbind(
   key: string,
-  unbinds: Record<string, UnbindType> | undefined,
+  unbinds: Record<string, UnbindWithReset> | undefined,
   reset?: ResetOption
 ) {
   if (unbinds && unbinds[key]) {
@@ -185,5 +184,5 @@ export function useObject<T = unknown>(
   }) as _RefDatabase<VueDatabaseDocumentData<T> | undefined>
 }
 
-export const unbind = (target: Ref, reset?: _DatabaseRefOptions['reset']) =>
+export const unbind = (target: Ref, reset?: ResetOption) =>
   internalUnbind('', rtdbUnbinds.get(target), reset)

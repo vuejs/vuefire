@@ -22,6 +22,7 @@ import {
   noop,
   OperationsType,
   ResetOption,
+  UnbindWithReset,
   walkSet,
   _MaybeRef,
   _Nullable,
@@ -41,8 +42,6 @@ export const ops: OperationsType = {
   add: (array, index, data) => array.splice(index, 0, data),
   remove: (array, index) => array.splice(index, 1),
 }
-
-type UnbindType = ReturnType<typeof bindCollection | typeof bindDocument>
 
 export interface _UseFirestoreRefOptions extends FirestoreRefOptions {
   /**
@@ -64,7 +63,7 @@ export function _useFirestoreRef(
   >,
   localOptions?: _UseFirestoreRefOptions
 ) {
-  let _unbind: UnbindType = noop
+  let _unbind: UnbindWithReset = noop
   const options = Object.assign({}, firestoreOptions, localOptions)
 
   // TODO: allow passing pending and error refs as option for when this is called using the options api
@@ -124,7 +123,7 @@ export function _useFirestoreRef(
     })
   }
 
-  let stopWatcher: ReturnType<typeof watch> = noop
+  let stopWatcher = noop
   if (isRef(docOrCollectionRef)) {
     stopWatcher = watch(docOrCollectionRef, bindFirestoreRef, {
       immediate: true,
@@ -264,9 +263,7 @@ export function useDocument<T>(
 
 export function internalUnbind(
   key: string,
-  unbinds:
-    | Record<string, ReturnType<typeof bindCollection | typeof bindDocument>>
-    | undefined,
+  unbinds: Record<string, UnbindWithReset> | undefined,
   reset?: FirestoreRefOptions['reset']
 ) {
   if (unbinds && unbinds[key]) {

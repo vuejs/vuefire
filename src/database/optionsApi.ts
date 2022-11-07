@@ -1,6 +1,7 @@
 import { DatabaseReference, DataSnapshot, Query } from 'firebase/database'
 import { App, ComponentPublicInstance, toRef } from 'vue'
 import { isVue3 } from 'vue-demi'
+import { ResetOption, UnbindWithReset } from '../shared'
 import { internalUnbind, _useDatabaseRef } from './index'
 import {
   bindAsArray,
@@ -44,7 +45,7 @@ declare module '@vue/runtime-core' {
     /**
      * Unbinds a bound reference
      */
-    $rtdbUnbind: (name: string, reset?: _DatabaseRefOptions['reset']) => void
+    $rtdbUnbind: (name: string, reset?: ResetOption) => void
 
     /**
      * Bound database references
@@ -58,7 +59,7 @@ declare module '@vue/runtime-core' {
      * @internal
      */
     // _firebaseUnbinds: Readonly<
-    //   Record<string, ReturnType<typeof bindAsArray | typeof bindAsObject>>
+    //   Record<string, UnbindWithReset>
     // >
   }
   export interface ComponentCustomOptions {
@@ -74,7 +75,7 @@ export type FirebaseOption = VueFirebaseObject | (() => VueFirebaseObject)
 
 export const rtdbUnbinds = new WeakMap<
   object,
-  Record<string, ReturnType<typeof bindAsArray | typeof bindAsObject>>
+  Record<string, UnbindWithReset>
 >()
 
 /**
@@ -101,7 +102,7 @@ export function databasePlugin(
 
   GlobalTarget[unbindName] = function rtdbUnbind(
     key: string,
-    reset?: _DatabaseRefOptions['reset']
+    reset?: ResetOption
   ) {
     internalUnbind(key, rtdbUnbinds.get(this), reset)
     delete this.$firebaseRefs[key]
