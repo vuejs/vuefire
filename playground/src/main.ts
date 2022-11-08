@@ -1,8 +1,8 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
-import { firestorePlugin } from 'vuefire'
+import { firestorePlugin, VueFire, VueFireAuth } from 'vuefire'
 import App from './App.vue'
-import { createFirebaseApp, VueFirePlugin } from './firebase'
+import { createFirebaseApp } from './firebase'
 import { createWebHistory, createRouter } from 'vue-router/auto'
 import { createStore } from 'vuex'
 
@@ -22,8 +22,11 @@ const store = createStore({
 const app = createApp(App)
 app
   .use(createPinia())
+  .use(VueFire, {
+    firebaseApp: createFirebaseApp(),
+    modules: [VueFireAuth],
+  })
   .use(firestorePlugin)
-  .use(VueFirePlugin(createFirebaseApp()))
   .use(store)
   .use(router)
 

@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { collection, doc, getDoc } from 'firebase/firestore'
-import { useCollection, useDocument } from 'vuefire'
-import { useFirestore } from '@/firebase'
+import { collection } from 'firebase/firestore'
+import { useCollection, useFirestore } from 'vuefire'
 
 const db = useFirestore()
 const nestedRefs = collection(db, 'playground/nested-refs/list')

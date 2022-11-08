@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { collection, doc } from 'firebase/firestore'
-import { useCollection } from 'vuefire'
-import { useFirestore } from '@/firebase'
+import { useCollection, useFirestore } from 'vuefire'
 
 const db = useFirestore()
 const numbers = useCollection(

@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import { doc, getDoc } from 'firebase/firestore'
-import { useDocument } from 'vuefire'
-import { useFirestore } from '@/firebase'
+import { useDocument, useFirestore, usePendingPromises } from 'vuefire'
 import { ref } from 'vue'
-import { usePendingPromises } from '../../../src/ssr/plugin'
 
 const db = useFirestore()
 const configRef = doc(db, 'configs', 'jORwjIykFo2NmkdzTkhU')

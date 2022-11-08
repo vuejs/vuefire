@@ -2,27 +2,14 @@ import {
   Query,
   DocumentReference,
   CollectionReference,
-  DocumentSnapshot,
   DocumentData,
   GeoPoint,
-  doc,
   FirestoreDataConverter,
 } from 'firebase/firestore'
 import { isTimestamp, isObject, isDocumentRef, TODO } from '../shared'
 import { VueFirestoreDocumentData } from '.'
 
 export type FirestoreReference = Query | DocumentReference | CollectionReference
-
-// TODO: fix type not to be any
-export function createSnapshot<T = DocumentData>(
-  doc: DocumentSnapshot<T>
-): { id: string } & T {
-  // TODO: it should create a deep copy instead because otherwise we will modify internal data
-  // defaults everything to false, so no need to set
-  // FIXME: can this be called when the document doesn't exist?
-  // @ts-expect-error
-  return Object.defineProperty(doc.data() || {}, 'id', { value: doc.id })
-}
 
 /**
  * Default converter for Firestore data. Can be overridden by setting the
@@ -49,8 +36,6 @@ export const firestoreDefaultConverter: FirestoreDataConverter<VueFirestoreDocum
         : null
     },
   }
-
-export type FirestoreSerializer = typeof createSnapshot
 
 export function extractRefs(
   // FIXME: unknown

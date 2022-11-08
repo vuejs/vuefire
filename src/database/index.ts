@@ -9,7 +9,7 @@ import {
   watch,
   isRef,
 } from 'vue-demi'
-import type { DatabaseReference, Query } from 'firebase/database'
+import { DatabaseReference, getDatabase, Query } from 'firebase/database'
 import {
   noop,
   OperationsType,
@@ -33,6 +33,7 @@ import {
   _RefDatabase,
 } from './utils'
 import { addPendingPromise } from '../ssr/plugin'
+import { useFirebaseApp } from '../app'
 
 export { databasePlugin } from './optionsApi'
 
@@ -194,3 +195,13 @@ export function useObject<T = unknown>(
 
 export const unbind = (target: Ref, reset?: ResetOption) =>
   internalUnbind('', rtdbUnbinds.get(target), reset)
+
+/**
+ * Retrieves the Database instance.
+ *
+ * @param name - name of the application
+ * @returns the Database instance
+ */
+export function useDatabase(name?: string) {
+  return getDatabase(useFirebaseApp(name))
+}

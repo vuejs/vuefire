@@ -7,8 +7,7 @@ import {
   update,
 } from 'firebase/database'
 import { ref } from 'vue'
-import { useList } from 'vuefire'
-import { useDatabase } from '@/firebase'
+import { useDatabase, useList } from 'vuefire'
 
 interface Todo {
   created: Date

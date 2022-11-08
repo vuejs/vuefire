@@ -1,10 +1,11 @@
-import type {
+import {
   CollectionReference,
   DocumentReference,
   Query,
   FirestoreError,
   DocumentData,
   FirestoreDataConverter,
+  getFirestore,
 } from 'firebase/firestore'
 import {
   getCurrentScope,
@@ -17,6 +18,7 @@ import {
   unref,
   watch,
 } from 'vue-demi'
+import { useFirebaseApp } from '../app'
 import {
   isDocumentRef,
   noop,
@@ -304,3 +306,13 @@ export type VueFirestoreQueryData<T = DocumentData> = Array<
 >
 
 export interface _RefFirestore<T> extends _RefWithState<T, FirestoreError> {}
+
+/**
+ * Retrieves the Firestore instance.
+ *
+ * @param name - name of the application
+ * @returns the Firestore instance
+ */
+export function useFirestore(name?: string) {
+  return getFirestore(useFirebaseApp(name))
+}

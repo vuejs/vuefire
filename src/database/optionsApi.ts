@@ -80,7 +80,8 @@ export const rtdbUnbinds = new WeakMap<
 
 /**
  * Install this plugin if you want to add `$rtdbBind` and `$rtdbUnbind` functions. Note this plugin is only necessary if
- * you use the Options API. If you **only use the Composition API**, you can completely skip it.
+ * you use the Options API. If you **exclusively use the Composition API** (e.g. `useObject()` and `useList()`), you
+ * should not add it.
  *
  * @param app
  * @param pluginOptions

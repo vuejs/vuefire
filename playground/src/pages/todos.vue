@@ -10,14 +10,16 @@ import {
   where,
 } from 'firebase/firestore'
 import { ref } from 'vue'
-import { useCollection } from 'vuefire'
-import { useFirestore } from '@/firebase'
+import { useCollection, useFirestore } from 'vuefire'
 
 interface Todo {
   created: Date
   finished: boolean
   text: string
 }
+
+// TODO: expose some kind of type to make this posssible
+// type TodoData = _VueFireQueryData<Todo>
 
 const db = useFirestore()
 const todosRef = collection(db, 'todos')

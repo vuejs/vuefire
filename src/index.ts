@@ -1,4 +1,9 @@
-export { useList, useObject } from './database'
+import type { FirebaseApp } from 'firebase/app'
+import type { App } from 'vue'
+import { _FirebaseAppInjectionKey } from './app'
+
+// Database
+export { useList, useObject, useDatabase } from './database'
 export type {
   UseListOptions,
   UseObjectOptions,
@@ -11,14 +16,9 @@ export type {
   VueDatabaseQueryData,
 } from './database/utils'
 
-export { databasePlugin } from './database/optionsApi'
-export type {
-  DatabasePluginOptions,
-  VueFirebaseObject,
-  FirebaseOption,
-} from './database/optionsApi'
-
-export { useCollection, useDocument } from './firestore'
+// Firestore
+export { useCollection, useDocument, useFirestore } from './firestore'
+export { firestoreDefaultConverter } from './firestore/utils'
 export type {
   UseCollectionOptions,
   UseDocumentOptions,
@@ -27,6 +27,15 @@ export type {
   VueFirestoreQueryData,
 } from './firestore'
 
+// Database options API
+export { databasePlugin } from './database/optionsApi'
+export type {
+  DatabasePluginOptions,
+  VueFirebaseObject,
+  FirebaseOption,
+} from './database/optionsApi'
+
+// Firestore options API
 export { firestorePlugin } from './firestore/optionsApi'
 export type {
   FirestorePluginOptions,
@@ -34,5 +43,40 @@ export type {
   FirestoreOption,
 } from './firestore/optionsApi'
 
+// app
 export { useFirebaseApp } from './app'
+
+// Auth
+export { useCurrentUser, VueFireAuth, useFirebaseAuth } from './auth'
+
+// SSR
 export { usePendingPromises } from './ssr/plugin'
+
+/**
+ * Options for VueFire Vue plugin.
+ */
+export interface VueFireOptions {
+  firebaseApp: FirebaseApp
+
+  /**
+   * Array of VueFire modules that should be added to the application. e.g. `[VueFireAuth, VueFireDatabase]`. Remember
+   * to import them from `vuefire`.
+   */
+  modules?: Array<(firebaseApp: FirebaseApp | undefined, app: App) => void>
+}
+
+/**
+ * Still under development.
+ *
+ * @experimental
+ */
+export function VueFire(
+  app: App,
+  { firebaseApp, modules: services = [] }: VueFireOptions
+) {
+  app.provide(_FirebaseAppInjectionKey, firebaseApp)
+
+  for (const firebaseModule of services) {
+    app.use(firebaseModule.bind(null, firebaseApp))
+  }
+}

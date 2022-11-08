@@ -48,8 +48,8 @@ const firestorePluginDefaults: Readonly<
 }
 
 /**
- * Install this plugin to add `$firestoreBind` and `$firestoreUnbind` functions. Note this plugin
- * is not necessary if you exclusively use the Composition API
+ * Install this plugin to add `$firestoreBind` and `$firestoreUnbind` functions. Note this plugin is not necessary if
+ * you exclusively use the Composition API (`useDocument()` and `useCollection()`).
  *
  * @param app
  * @param pluginOptions

@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { collection } from 'firebase/firestore'
-import { useCollection } from 'vuefire'
-import { useFirestore } from '@/firebase'
+import { useCollection, useFirestore } from 'vuefire'
 
 const db = useFirestore()
 const tweetsRef = collection(db, 'tweets')

@@ -1,8 +1,7 @@
 <script lang="ts" setup>
-import { useFirestore } from '@/firebase'
 import { doc, setDoc } from 'firebase/firestore'
 import { toRef } from 'vue'
-import { useDocument } from 'vuefire'
+import { useDocument, useFirestore } from 'vuefire'
 import { useStore } from 'vuex'
 
 const store = useStore()
