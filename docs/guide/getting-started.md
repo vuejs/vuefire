@@ -14,7 +14,7 @@ npm install vuefire@next firebase
 
 :::warning
 
-- VueFire requires Firebase JS SDK >= 9 but **is compatible with Vue 2 and Vue 3**. It's currently in alpha, make sure to check [the Roadmap](https://github.com/vuejs/vuefire/issues/1241) and report any issue you find.
+VueFire requires Firebase JS SDK >= 9 but **is compatible with Vue 2 and Vue 3**. It's currently in alpha, make sure to check [the Roadmap](https://github.com/vuejs/vuefire/issues/1241) and report any issue you find.
 
 :::
 
