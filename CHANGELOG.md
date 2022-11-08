@@ -1,3 +1,45 @@
+# [3.0.0-alpha.5](https://github.com/vuejs/vuefire/compare/v3.0.0-alpha.4...v3.0.0-alpha.5) (2022-11-08)
+
+### Bug Fixes
+
+- **firestore:** pass the id as a value ([d0afc0a](https://github.com/vuejs/vuefire/commit/d0afc0aa70cd5dd1d05c17b6f266fad81dd0d341))
+- pass options when unbinding documents ([6d4f151](https://github.com/vuejs/vuefire/commit/6d4f1512e26ddcfb0f208abc11feab8ef6e38804))
+
+### Features
+
+- better defaults for wait and reset ([872bd1c](https://github.com/vuejs/vuefire/commit/872bd1cf65d5df3d28c75e03e42c94d7f897926e))
+- **database:** allow passing a vue ref ([df66d6e](https://github.com/vuejs/vuefire/commit/df66d6ebd31ce4e3df96a798225677f8d2b1ed8d))
+- **database:** rename `.key` property to `id` to match Firestore ([0c0b1e4](https://github.com/vuejs/vuefire/commit/0c0b1e4e092f8b8aded8d295d1c62cb8abb2ae3c))
+- **database:** support null as a value ([d1d2b5a](https://github.com/vuejs/vuefire/commit/d1d2b5ac5760ee7539f0385ccd08f154fe9b43c5))
+- **firestore:** accept a vue ref as parameter in useCollection() and useDocument() ([ee180a7](https://github.com/vuejs/vuefire/commit/ee180a717256511c43b9ccea3737aebfabb97252))
+- **firestore:** allow setting the ref value to null ([7af2c6e](https://github.com/vuejs/vuefire/commit/7af2c6eb8167602f8ce7979960c908a68c56d9e0))
+- usePendingPromises() ([b0a65dd](https://github.com/vuejs/vuefire/commit/b0a65ddd40a667ff0abcef15c1ad3ccaa1992a94))
+
+### BREAKING CHANGES
+
+- `wait` option now defaults to `true` to better align
+  with SSR. Similarly, the `reset` option now defaults to `false` to
+  better align with declarative usage of `useDocument()` and others. If
+  you want to keep the old behavior, you can still override the defaults
+  globally (refer to global options in the docs).
+- **database:** the default `serialize()` option adds a non enumerable
+  property named `id` that correspond to the DatabaseRef's `key`. It was
+  previously added as a non-enumerable key named `.key`. if you want to
+  keep the old behavior you can pass a global `serialize()` to the
+  `rtdbPlugin` options:
+
+```ts
+import { createApp } from 'vue'
+import { rtdbPlugin } from 'vuefire'
+
+const app = createApp()
+app.use(rtdbPlugin, {
+  serialize: (doc) => {
+    // write your personalized serialize version
+  }
+})
+```
+
 # [3.0.0-alpha.4](https://github.com/vuejs/vuefire/compare/v3.0.0-alpha.2...v3.0.0-alpha.4) (2022-10-20)
 
 This version is very different from the previous alpha. If you were using it, make sure to read the list of breaking changes
