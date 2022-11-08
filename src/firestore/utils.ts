@@ -24,6 +24,9 @@ export function createSnapshot<T = DocumentData>(
   return Object.defineProperty(doc.data() || {}, 'id', { value: doc.id })
 }
 
+/**
+ * Default converter for Firestore data. Can be overridden by setting the
+ */
 export const firestoreDefaultConverter: FirestoreDataConverter<VueFirestoreDocumentData> =
   {
     toFirestore(data) {
