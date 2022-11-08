@@ -9,7 +9,7 @@ Therefore, these are the requirements to upgrade to VueFire v3:
 
 ## General recommendations
 
-VueFire 3 introduces a Composition API that is more flexible and powerful than the Options API. It keeps the existing Options API as a wrapper around the Composition API but we recommend you to give the Composition API a try as it gives you more control over your data state.
+VueFire 3 introduces a Composition API that is more flexible and powerful than the Options API. However, it keeps the existing Options API as close as possible to the existing version in v2. Internally, it is implemented as a wrapper around the Composition API.
 
 ## Breaking changes
 
@@ -20,8 +20,57 @@ Firestore supports a native equivalent of the `serialize` option: [Firestore Dat
 VueFire does support a **global `converter` option** that is equivalent to the previous global `serialize` option. Note that, like the its predecessor `serialize`, VueFire uses a default converter that adds the `id` property to your data, you can import it to use it:
 
 ```ts
-// TODO:
+import { firestorePlugin } from 'vuefire'
+import { createApp } from 'vue'
+
+const app = createApp(App)
+app.use(firestorePlugin, {
+  converter: {
+    toFirestore() {
+      // ...
+    },
+    fromFirestore() {
+      // ...
+    }
+  }
+})
 ```
+
+If you were using it locally when calling `$bind()`, you should now use the `.withConverter()` method on your data source:
+
+```ts
+const usersRef = collection(db, 'users').withConverter({
+  // you can directly use the default converter
+  toFirestore: firestoreDefaultConverter.toFirestore,
+  fromFirestore: (snapshot, options) => {
+    // or reuse it and extend it
+    const data = firestoreDefaultConverter.fromFirestore(snapshot, options)
+    return new User(data)
+  }
+})
+```
+
+Note you can even **reuse** the default converter to extend it:
+
+```ts
+import { firestoreDefaultConverter } from 'vuefire'
+
+const usersRef = collection(db, 'users').withConverter({
+  // you can directly use the default converter
+  toFirestore: firestoreDefaultConverter.toFirestore,
+  fromFirestore: (snapshot, options) => {
+    // or reuse it and extend it
+    const data = firestoreDefaultConverter.fromFirestore(snapshot, options)
+    return new User(data)
+  }
+})
+```
+
+### Rename `$bind` to `$firestoreBind`
+
+The `$bind` method is now called `$firestoreBind` to avoid conflicts with other libraries. In the same way, `$unbind` is now called `$firestoreUnbind`.
+
+The `$rtdbBind` and `$rtdbUnbind` methods are unchanged.
 
 ## Vuexfire
 
