@@ -180,7 +180,7 @@ async function recursiveDeleteDoc(doc: QueryDocumentSnapshot<any>) {
 // Database
 export function setupDatabaseRefs() {
   const testId = _id++
-  const testsCollection = _databaseRef(database, `__tests_${testId}`)
+  const testsCollection = _databaseRef(database, `__tests/${testId}`)
 
   const itemRef = _databaseRef(database, testsCollection.key + `/item`)
   const listRef = _databaseRef(database, testsCollection.key + `/items`)

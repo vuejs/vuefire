@@ -4,6 +4,10 @@
       ".read": false,
       ".write": false
     },
+    "__test": {
+      ".read": true,
+      ".write": true
+    },
     ".read": true,
     ".write": false
   }
