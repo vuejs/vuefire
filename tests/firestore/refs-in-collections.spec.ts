@@ -1,15 +1,12 @@
 import { mount } from '@vue/test-utils'
 import { beforeEach, describe, expect, it } from 'vitest'
 import {
-  collection as originalCollection,
   CollectionReference,
   doc as originalDoc,
   DocumentData,
-  Query,
-  where,
 } from 'firebase/firestore'
-import { expectType, setupFirestoreRefs, tds, firestore, sleep } from '../utils'
-import { computed, nextTick, ref, unref, type Ref } from 'vue'
+import { setupFirestoreRefs, sleep } from '../utils'
+import { unref } from 'vue'
 import { _InferReferenceType, _RefFirestore } from '../../src/firestore'
 import {
   useCollection,
