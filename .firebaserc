@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "vue-fire-store"
+    "default": "vue-fire-store",
+    "docs": "vuefiredocs"
   }
 }

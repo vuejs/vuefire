@@ -1,0 +1,24 @@
+# From https://github.com/marketplace/actions/deploy-to-firebase-hosting
+
+name: Deploy Docs
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'docs/**'
+
+jobs:
+  deploy_live_website:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      # Add any build steps here. For example:
+      - run: pnpm i && pnpm run docs:build
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_VUEFIREDOCS }}'
+          projectId: vuefiredocs
+          channelId: live
