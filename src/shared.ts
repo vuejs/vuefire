@@ -67,13 +67,15 @@ export function walkSet<T extends object = Record<any, unknown>>(
 ): T[any] | T[any][] {
   // path can be a number
   const keys = ('' + path).split('.') as Array<keyof T>
-  const key = keys.pop() as string // split will produce at least one element array
-  const target = keys.reduce(
-    (target, key): any =>
+  // slipt produces at least one element
+  const key = keys.pop()!
+  const target: any = keys.reduce(
+    (target, key) =>
       // TODO: dev errors
+      // @ts-expect-error:
       target[key],
     obj
-  ) as Record<string | number, T> | T[]
+  )
 
   return Array.isArray(target)
     ? target.splice(Number(key), 1, value)
