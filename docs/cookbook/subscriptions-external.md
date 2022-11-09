@@ -7,7 +7,7 @@ todos // given an existing Ref<Todo[]>
 const { pending } = useCollection(todoListRef, { target: todos })
 ```
 
-When passing a target ref, the composable will not create a new `ref()` for you, but will instead use the one you passed. It will also not return the `ref()` as a result, but instead return an object with some useful properties. You can find more about this in [the declarative subscriptions](./data-subscriptions.md) section.
+When passing a target ref, the composable will not create a new `ref()` for you, but will instead use the one you passed. It will also not return the `ref()` as a result, but instead return an object with some useful properties. You can find more about this in [the declarative subscriptions](../guide/realtime-data.md) section.
 
 ## Pinia
 

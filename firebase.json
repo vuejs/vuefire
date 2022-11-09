@@ -8,6 +8,9 @@
   "storage": {
     "rules": "storage.rules"
   },
+  "hosting": {
+    "public": "docs/.vitepress/dist"
+  },
   "emulators": {
     "auth": {
       "port": 9099

@@ -132,7 +132,7 @@ createApp({
 :::warning
 
 - In the [**RTDB** example](#original_rtdb), we are omitting the unsubscribe part because it requires to save the return of every listener created to later on call `this.todosRef.off` with _every single_ one of them.
-- In the [**Firestore** example](#original_firestore), the code above is not taking into account [Firestore references](https://firebase.google.com/docs/firestore/data-model#references) which **considerably** increases the complexity of binding and [is handled transparently](./binding-subscriptions.md#references-firestore-only) by Vuefire
+- In the [**Firestore** example](#original_firestore), the code above is not taking into account [Firestore references](https://firebase.google.com/docs/firestore/data-model#references) which **considerably** increases the complexity of binding and [is handled transparently](./realtime-data.md#references-firestore-only) by Vuefire
 
 :::
 
