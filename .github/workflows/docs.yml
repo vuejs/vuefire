@@ -46,7 +46,7 @@ jobs:
         run: pnpm install
 
       - name: Build docs
-        run: pnpm run build:docs
+        run: pnpm run docs:build
 
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
