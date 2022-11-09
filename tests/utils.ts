@@ -49,12 +49,17 @@ export function setupFirestoreRefs() {
   const testsCollection = collection(firestore, `__tests`)
   const itemRef = doc(testsCollection)
   // let firestore generate the id
-  const forItemsRef = doc(testsCollection)
+  const forCollectionRefs = doc(testsCollection)
+  const forDocRefs = collection(forCollectionRefs, 'docs')
 
-  const listRef = collection(forItemsRef, 'list')
+  const listRef = collection(forCollectionRefs, 'list')
   const orderedListRef = firestoreQuery(listRef, orderBy('name'))
 
   afterAll(async () => {
+    // cleaning up creates unexpected errors and is only necessary during dev
+    if (process.env.CI) {
+      return
+    }
     // clean up the tests data
     await Promise.all([
       deleteDoc(itemRef),
@@ -63,12 +68,13 @@ export function setupFirestoreRefs() {
     await Promise.all(
       [...collectionsToClean].map((collection) => clearCollection(collection))
     )
+    await clearCollection(forDocRefs)
     // must be done after the cleanup of its docs
-    await deleteDoc(forItemsRef),
-      await Promise.all([
-        clearCollection(listRef),
-        clearCollection(testsCollection),
-      ])
+    await deleteDoc(forCollectionRefs)
+    await Promise.all([
+      clearCollection(listRef),
+      clearCollection(testsCollection),
+    ])
   })
 
   // for automatically generated collections
@@ -80,7 +86,7 @@ export function setupFirestoreRefs() {
   ) {
     path = path || `col_${collectionId++}`
 
-    const col = collection(forItemsRef, path, ...pathSegments)
+    const col = collection(forCollectionRefs, path, ...pathSegments)
     collectionsToClean.add(col)
     // to avoid having to pass a converter for types
     return col as CollectionReference<T>
@@ -91,7 +97,7 @@ export function setupFirestoreRefs() {
   const docsToClean = new Set<DocumentReference<any>>()
   function _doc<T = unknown>(path?: string, ...pathSegments: string[]) {
     path = path || `doc_${docId++}`
-    const d = doc(testsCollection, path, ...pathSegments)
+    const d = doc(forDocRefs, path, ...pathSegments)
     docsToClean.add(d)
     // to avoid having to pass a converter for types
     return d as DocumentReference<T>
@@ -130,7 +136,7 @@ export function setupFirestoreRefs() {
     listRef,
     orderedListRef,
     testId,
-    col: forItemsRef,
+    col: forCollectionRefs,
     collection: _collection,
     doc: _doc,
     query: firestoreQuery,

@@ -92,6 +92,7 @@ describe('Firestore refs in collections', async () => {
     await addDoc(listRef, { ref: bRef })
     // wait a bit for the nested ref to be bound
     await sleep(20)
+    await promise.value
 
     expect(data.value).toHaveLength(2)
     expect(data.value).toContainEqual({ ref: { name: 'a' } })
