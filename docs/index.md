@@ -7,7 +7,7 @@ titleTemplate: Official Firebase bindings for Vue.js
 hero:
   name: VueFire
   text: Official Firebase bindings for Vue.js
-  tagline: Performant and feature-rich Firebase bindings for Vue.js
+  tagline: Idiomatic composables for realtime data and other Firebase services
   image:
     src: /logo.svg
     alt: VueFire logo
