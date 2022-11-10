@@ -20,6 +20,23 @@ const user = toRef(store.state, 'user')
 useDocument(userDataRef, { target: user })
 ```
 
-In this scenario, the Firebase subscription will stop when the component is unmounted. In order to keep the subscription alive after the component gets unmounted, use an `effectScope()` within an action:
+In this scenario, the Firebase subscription will stop when the component is unmounted. In order to keep the subscription alive after the component gets unmounted, use [an `effectScope()`](https://vuejs.org/api/reactivity-advanced.html#effectscope) within an action:
 
-<!-- TODO: I think we can find a simpler way -->
+```ts
+// create and export a detached effect scope next to where you create your store
+export const scope = effectScope(true)
+
+export store = createStore({
+  // ...
+})
+```
+
+Then you must call the `useDocument()`, `useCollection()` and other composables from VueFire within that effect scope like this:
+
+```ts
+scope.run(() => {
+  useDocument(userDataRef, { target: user })
+})
+```
+
+The good thing is you can call this **anywhere in your app**, you are not limited to doing this inside `setup()`.

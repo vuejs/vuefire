@@ -78,6 +78,6 @@ The `$rtdbBind` and `$rtdbUnbind` methods are unchanged.
 If you are using [Pinia](https://pinia.vuejs.org/), make sure to check the [Pinia guide](./subscriptions-external.md#pinia) instead.
 :::
 
-As of VueFire 3, Vuexfire doesn't have an exact replacement. This is because the Composition API allows us to have the same functionality without the need for a plugin.
+As of VueFire 3, Vuexfire doesn't have an exact replacement. This is because Pinia has become the new defacto store solution for Vue.
 
-TODO: example
+Find a guide on how to use VueFire with Vuex [here](./vuex.md).
