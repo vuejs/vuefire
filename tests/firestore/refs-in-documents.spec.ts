@@ -1,7 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { beforeEach, describe, it, expect, afterEach } from 'vitest'
 import {
-  CollectionReference,
   doc as originalDoc,
   DocumentData,
   DocumentReference,
@@ -11,7 +10,6 @@ import { unref } from 'vue'
 import { _InferReferenceType, _RefFirestore } from '../../src/firestore'
 import {
   UseDocumentOptions,
-  usePendingPromises,
   VueFirestoreQueryData,
   useDocument,
 } from '../../src'

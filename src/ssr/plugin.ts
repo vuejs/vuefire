@@ -5,18 +5,17 @@ import {
   DocumentReference,
   Query as FirestoreQuery,
 } from 'firebase/firestore'
-import type { App } from 'vue'
 import { useFirebaseApp, _FirebaseAppInjectionKey } from '../app'
-import { isDatabaseReference, isFirestoreDataReference, noop } from '../shared'
+import { getDataSourcePath, noop } from '../shared'
 
-export function VueFireSSR(app: App, firebaseApp: FirebaseApp) {
-  app.provide(_FirebaseAppInjectionKey, firebaseApp)
-}
-
-const appPendingPromises = new WeakMap<
+export const appPendingPromises = new WeakMap<
   FirebaseApp,
   Map<string, Promise<unknown>>
 >()
+
+export function clearPendingPromises(app: FirebaseApp) {
+  appPendingPromises.delete(app)
+}
 
 export function addPendingPromise(
   promise: Promise<unknown>,
@@ -38,25 +37,13 @@ export function addPendingPromise(
   if (ssrKey) {
     pendingPromises.set(ssrKey, promise)
   } else {
-    // TODO: warn if in SSR context
-    // throw new Error('Could not get the path of the data source')
+    // TODO: warn if in SSR context in other contexts than vite
+    if (process.env.NODE_ENV !== 'production' /* && import.meta.env?.SSR */) {
+      console.warn('[VueFire]: Could not get the path of the data source')
+    }
   }
 
   return ssrKey ? () => pendingPromises.delete(ssrKey!) : noop
-}
-
-function getDataSourcePath(
-  source:
-    | DocumentReference<unknown>
-    | FirestoreQuery<unknown>
-    | CollectionReference<unknown>
-    | DatabaseQuery
-): string | null {
-  return isFirestoreDataReference(source)
-    ? source.path
-    : isDatabaseReference(source)
-    ? source.toString()
-    : null
 }
 
 /**
@@ -65,16 +52,21 @@ function getDataSourcePath(
  * @param name - optional name of teh firebase app
  * @returns - a Promise that resolves with an array of all the resolved pending promises
  */
-export function usePendingPromises(name?: string) {
-  const app = useFirebaseApp(name)
+export function usePendingPromises(app?: FirebaseApp) {
+  app = app || useFirebaseApp()
   const pendingPromises = appPendingPromises.get(app)
-  return pendingPromises
+  const p = pendingPromises
     ? Promise.all(
         Array.from(pendingPromises).map(([key, promise]) =>
           promise.then((data) => [key, data] as const)
         )
       )
     : Promise.resolve([])
+
+  // consume the promises
+  appPendingPromises.delete(app)
+
+  return p
 }
 
 export function getInitialData(
@@ -84,13 +76,13 @@ export function getInitialData(
   const pendingPromises = appPendingPromises.get(app)
 
   if (!pendingPromises) {
-    if (__DEV__) {
+    if (process.env.NODE_ENV !== 'production') {
       console.warn('[VueFire]: No initial data found.')
     }
     return Promise.resolve({})
   }
 
-  return usePendingPromises(app.name).then((keyData) =>
+  return usePendingPromises(app).then((keyData) =>
     keyData.reduce((initialData, [key, data]) => {
       initialData[key] = data
       return initialData

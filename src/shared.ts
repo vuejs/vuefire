@@ -124,6 +124,42 @@ export function isFirestoreDataReference<T = unknown>(
   return isDocumentRef(source) || isCollectionRef(source)
 }
 
+// The Firestore SDK has an undocumented _query
+// object that has a method to generate a hash for a query,
+// which we need for useObservable
+// https://github.com/firebase/firebase-js-sdk/blob/5beb23cd47312ffc415d3ce2ae309cc3a3fde39f/packages/firestore/src/core/query.ts#L221
+// @internal
+export interface _FirestoreQueryWithId<T = DocumentData>
+  extends FirestoreQuery<T> {
+  _query: {
+    canonicalId(): string
+  }
+}
+
+export function isFirestoreQuery(
+  source: unknown
+): source is _FirestoreQueryWithId<unknown> {
+  return isObject(source) && source.type === 'query'
+}
+
+export function getDataSourcePath(
+  source:
+    | DocumentReference<unknown>
+    | FirestoreQuery<unknown>
+    | CollectionReference<unknown>
+    | DatabaseQuery
+): string | null {
+  return isFirestoreDataReference(source)
+    ? source.path
+    : isDatabaseReference(source)
+    ? // gets a path like /users/1?orderByKey=true
+      source.toString()
+    : isFirestoreQuery(source)
+    ? // internal id
+      null // FIXME: find a way to get the canonicalId that no longer exists
+    : null
+}
+
 export function isDatabaseReference(
   source: any
 ): source is DatabaseReference | DatabaseQuery {

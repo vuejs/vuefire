@@ -1,8 +1,7 @@
 import { ref, computed } from 'vue'
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import { doc, setDoc, updateDoc } from 'firebase/firestore'
-import { useFirestore } from '@/firebase'
-import { useDocument } from 'vuefire'
+import { useDocument, useFirestore } from 'vuefire'
 
 export const useCounterStore = defineStore('counter', () => {
   const count = ref(0)

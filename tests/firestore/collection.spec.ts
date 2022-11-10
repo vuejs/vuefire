@@ -316,7 +316,7 @@ describe(
       showFinished.value = null
 
       const { data, promise } = factory({
-        // @ts-expect-error
+        // @ts-expect-error: this one is a query
         ref: listToDisplay,
       })
       await promise.value

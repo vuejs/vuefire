@@ -11,6 +11,7 @@ import {
   getCurrentScope,
   isRef,
   onScopeDispose,
+  onServerPrefetch,
   ref,
   Ref,
   ShallowRef,
@@ -99,6 +100,7 @@ export function _useFirestoreRef(
         )
       }
 
+      // FIXME: force once on server
       _unbind = (isDocumentRef(docRefValue) ? bindDocument : bindCollection)(
         // @ts-expect-error: cannot type with the ternary
         data,
@@ -143,6 +145,9 @@ export function _useFirestoreRef(
   // TODO: warn else
   if (hasCurrentScope) {
     onScopeDispose(unbind)
+    // wait for the promise during SSR
+    // TODO: configurable
+    onServerPrefetch(() => promise.value)
   }
 
   // TODO: rename to stop
