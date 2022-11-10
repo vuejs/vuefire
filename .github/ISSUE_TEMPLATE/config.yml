@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Question
+    url: https://github.com/vuejs/vuefire/discussions/new?category=Q-A
+    about: Ask a question or discuss about VueFire
+  - name: Ideas
+    url: https://github.com/vuejs/vuefire/discussions/new?category=Ideas
+    about: Start a discussion to improve VueFire
+  - name: GitHub Sponsors
+    url: https://github.com/sponsors/posva
+    about: Like this project? Please consider supporting the author.
