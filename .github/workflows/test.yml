@@ -72,7 +72,7 @@ jobs:
         run: pnpm run test:types
 
       - name: Test
-        run: firebase emulators:exec --project default 'pnpm run test:unit'
+        run: firebase emulators:exec 'pnpm run test:unit'
 
       - name: Build
         run: pnpm run build
