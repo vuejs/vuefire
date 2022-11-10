@@ -8,6 +8,7 @@ on:
       - main
     paths:
       - 'docs/**'
+      - 'src/**' # for api changes
       - '.github/workflows/docs.yml'
 
 jobs:
