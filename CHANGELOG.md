@@ -1,3 +1,10 @@
+# [3.0.0-alpha.6](https://github.com/vuejs/vuefire/compare/v3.0.0-alpha.5...v3.0.0-alpha.6) (2022-11-10)
+
+### Features
+
+- composables to use firebase ([f854b67](https://github.com/vuejs/vuefire/commit/f854b6764f7457b10934236278a0b7389a35e03e))
+- wait on server for data ([947a325](https://github.com/vuejs/vuefire/commit/947a32518002cecc36e10e6166f89f7d04c8f749))
+
 # [3.0.0-alpha.5](https://github.com/vuejs/vuefire/compare/v3.0.0-alpha.4...v3.0.0-alpha.5) (2022-11-08)
 
 ### Bug Fixes
@@ -36,7 +43,7 @@ const app = createApp()
 app.use(rtdbPlugin, {
   serialize: (doc) => {
     // write your personalized serialize version
-  }
+  },
 })
 ```
 
