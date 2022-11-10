@@ -1,10 +1,11 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
-import { firestorePlugin, VueFire, VueFireAuth } from 'vuefire'
+import { firestorePlugin, VueFire, VueFireAuth, VueFireAppCheck } from 'vuefire'
 import App from './App.vue'
 import { createFirebaseApp } from './firebase'
 import { createWebHistory, createRouter } from 'vue-router/auto'
 import { createStore } from 'vuex'
+import { ReCaptchaV3Provider } from 'firebase/app-check'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -19,12 +20,23 @@ const store = createStore({
   }),
 })
 
+// @ts-expect-error: ok
+self.FIREBASE_APPCHECK_DEBUG_TOKEN = true
+
 const app = createApp(App)
 app
   .use(createPinia())
   .use(VueFire, {
     firebaseApp: createFirebaseApp(),
-    modules: [VueFireAuth],
+    modules: [
+      VueFireAuth(),
+      VueFireAppCheck({
+        isTokenAutoRefreshEnabled: true,
+        provider: new ReCaptchaV3Provider(
+          '6LfJ0vgiAAAAAHheQE7GQVdG_c9m8xipBESx_SKI'
+        ),
+      }),
+    ],
   })
   .use(firestorePlugin)
   .use(store)

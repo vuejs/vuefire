@@ -52,6 +52,9 @@ export { useCurrentUser, VueFireAuth, useFirebaseAuth } from './auth'
 // SSR
 export { usePendingPromises } from './ssr/plugin'
 
+// App Check
+export { VueFireAppCheck, useAppCheckToken } from './app-check'
+
 /**
  * Options for VueFire Vue plugin.
  */
