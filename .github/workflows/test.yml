@@ -5,11 +5,13 @@ on:
     paths-ignore:
       - 'docs/**'
       - 'playground/**'
+      - 'examples/**'
 
   pull_request:
     paths-ignore:
       - 'docs/**'
       - 'playground/**'
+      - 'examples/**'
 
 permissions:
   contents: read
