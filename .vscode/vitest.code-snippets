@@ -18,7 +18,7 @@
   },
   "New test case": {
     "scope": "javascript,typescript",
-    "prefix": "it",
+    "prefix": "vit",
     "body": [
       "it('$1', ${2:async }() => {",
       "  $0",
