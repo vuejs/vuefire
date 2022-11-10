@@ -173,7 +173,7 @@ describe('Firestore refs in documents', async () => {
     })
   })
 
-  it('should remove elements from arays', async () => {
+  it('should remove elements from arrays', async () => {
     const docRef = await addDoc(listOfRefs, { a: [aRef, bRef, cRef] })
     const { data, pending, promise } = factory({
       ref: docRef,
@@ -183,6 +183,7 @@ describe('Firestore refs in documents', async () => {
     await promise.value
     expect(data.value).toEqual({ a: [aRef.path, bRef.path, cRef.path] })
     await updateDoc(docRef, { a: [aRef, cRef] })
+    await sleep(20)
     await promise.value
 
     expect(data.value).toEqual({ a: [aRef.path, cRef.path] })
