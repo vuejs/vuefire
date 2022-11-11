@@ -78,11 +78,11 @@ export interface VueFireOptions {
  */
 export function VueFire(
   app: App,
-  { firebaseApp, modules: services = [] }: VueFireOptions
+  { firebaseApp, modules = [] }: VueFireOptions
 ) {
   app.provide(_FirebaseAppInjectionKey, firebaseApp)
 
-  for (const firebaseModule of services) {
+  for (const firebaseModule of modules) {
     app.use(firebaseModule.bind(null, firebaseApp))
   }
 }
