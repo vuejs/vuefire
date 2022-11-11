@@ -84,6 +84,12 @@ declare module 'vue-router/auto/routes' {
       Record<never, never>,
       Record<never, never>
     >
+    '/storage': RouteRecordInfo<
+      '/storage',
+      '/storage',
+      Record<never, never>,
+      Record<never, never>
+    >
     '/todos': RouteRecordInfo<
       '/todos',
       '/todos',
