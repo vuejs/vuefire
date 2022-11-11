@@ -1,3 +1,10 @@
+# [3.0.0-alpha.7](https://github.com/vuejs/vuefire/compare/v3.0.0-alpha.6...v3.0.0-alpha.7) (2022-11-11)
+
+### Features
+
+- **app-check:** useAppCheckToken() ([95ea119](https://github.com/vuejs/vuefire/commit/95ea119f8dabc929d4484452dcb37c77a2733734))
+- **storage:** useStorageTask (will be renamed) ([5dddcf2](https://github.com/vuejs/vuefire/commit/5dddcf264673e130ab0c8a2f9399dd4febaada8c))
+
 # [3.0.0-alpha.6](https://github.com/vuejs/vuefire/compare/v3.0.0-alpha.5...v3.0.0-alpha.6) (2022-11-10)
 
 ### Features
