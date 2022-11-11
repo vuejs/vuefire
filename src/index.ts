@@ -55,6 +55,9 @@ export { usePendingPromises } from './ssr/plugin'
 // App Check
 export { VueFireAppCheck, useAppCheckToken } from './app-check'
 
+// Storage
+export { useStorage, useStorageTask } from './storage'
+
 /**
  * Options for VueFire Vue plugin.
  */
