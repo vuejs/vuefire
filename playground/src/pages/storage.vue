@@ -1,8 +1,12 @@
 <script lang="ts" setup>
 import { computed, ref, watch } from 'vue'
 import { useFileDialog } from '@vueuse/core'
-import { useStorage, useStorageTask } from 'vuefire'
-import { ref as storageRef, type StorageReference } from 'firebase/storage'
+import { useCurrentUser, useStorage, useStorageObject } from 'vuefire'
+import {
+  deleteObject,
+  ref as storageRef,
+  type StorageReference,
+} from 'firebase/storage'
 
 const filename = ref<string>()
 const { files, open, reset } = useFileDialog()
@@ -17,14 +21,23 @@ watch(
   }
 )
 
+const user = useCurrentUser()
+
 const storage = useStorage()
+const storageBucket = storageRef(storage, 'demo/' + user.value?.uid || '')
+const storageSource = computed(() =>
+  filename.value ? storageRef(storageBucket, filename.value) : null
+)
 
-const storageBucket = storageRef(storage, 'demo')
-const storageSource = ref<StorageReference>()
-// automatically compute the data
-
-const { progress, url, error, snapshot, uploadTask, data } =
-  useStorageTask(storageSource)
+const {
+  uploadProgress: progress,
+  url,
+  uploadError: error,
+  snapshot,
+  uploadTask,
+  metadata,
+  upload,
+} = useStorageObject(storageSource)
 
 // TODO: move to tests
 // useStorageTask(storageSource, null).data
@@ -32,8 +45,10 @@ const { progress, url, error, snapshot, uploadTask, data } =
 // useStorageTask(storageSource, new Blob()).data
 
 function uploadPicture() {
-  storageSource.value = storageRef(storageBucket, filename.value)
-  data.value = files.value?.item(0)
+  const data = files.value?.item(0)
+  if (data) {
+    upload(data)
+  }
 }
 </script>
 
@@ -86,10 +101,11 @@ function uploadPicture() {
     <img :src="url" />
   </p>
   <p v-if="snapshot">File: {{ snapshot.ref.name }}</p>
+  <pre>{{ metadata }}</pre>
 
   <p v-if="storageSource">Select a new file to simply update it</p>
   <p v-else>Clear the input to delete the file.</p>
-  <button @click="data = null" :disabled="!data || !storageSource">
+  <button @click="deleteObject(storageSource!)" :disabled="!storageSource">
     Delete the picture
   </button>
 </template>

@@ -3,29 +3,23 @@ import {
   StorageReference,
   updateMetadata,
   uploadBytesResumable,
-  uploadString,
-  uploadBytes,
   deleteObject,
   getDownloadURL,
   getMetadata,
-  getBlob,
-  getBytes,
-  list,
-  listAll,
   UploadMetadata,
   UploadTask,
   UploadTaskSnapshot,
   StorageError,
+  SettableMetadata,
 } from 'firebase/storage'
 import {
   computed,
-  ComputedRef,
+  getCurrentInstance,
   getCurrentScope,
   isRef,
   onScopeDispose,
-  Ref,
+  onServerPrefetch,
   ref,
-  ShallowRef,
   shallowRef,
   unref,
   watch,
@@ -43,108 +37,130 @@ export function useStorage(name?: string) {
   return getStorage(useFirebaseApp(name))
 }
 
-const START_UPLOAD_EMPTY_VALUES = [null, null, null] as [null, null, null]
-
 /**
- * Result of `
- */
-export interface UseUploadTask {
-  /**
-   * The current `UploadTask`. Falsy if no upload task is in progress.
-   */
-  uploadTask: ShallowRef<_Nullable<UploadTask>>
-
-  /**
-   * The current `UploadTaskSnapshot` for the current task. Falsy if there is no current task.
-   */
-  snapshot: ShallowRef<_Nullable<UploadTaskSnapshot>>
-
-  /**
-   * Error, if any, of the current task.
-   */
-  error: ShallowRef<_Nullable<StorageError>>
-
-  /**
-   * The progress of the current or last upload task. `null` if there isn't one.
-   */
-  progress: ComputedRef<number | null>
-
-  /**
-   * The download URL of the current or last upload task. `null` while the task is in progress.
-   */
-  url: Ref<_Nullable<string>>
-}
-
-export interface UseUploadTaskNoData extends UseUploadTask {
-  /**
-   * Data to upload. When changed to a different value, a new upload will take place. If set to `null`, it will delete
-   * the storage object.
-   */
-  data: ShallowRef<_Nullable<Blob | Uint8Array | ArrayBuffer>>
-}
-
-/**
- * Creates an upload task for Firebase Storage. It automatically cancels, restarts, and updates the progress of the
- * task.
+ * Retrieves a reactive download URL of a `StorageReference`. Updates automatically if the `StorageReference` changes.
  *
- * @param storageRef - the storage reference
- * @param data - the data to upload
- * @param metadata - the metadata to upload
+ * @param storageRef - StorageReference
  */
-export function useStorageTask(
-  storageRef: _MaybeRef<_Nullable<StorageReference>>,
-  data: Blob | Uint8Array | ArrayBuffer,
-  metadata?: _MaybeRef<UploadMetadata>
-): UseUploadTask
-export function useStorageTask(
-  storageRef: _MaybeRef<_Nullable<StorageReference>>,
-  data: Ref<_Nullable<Blob | Uint8Array | ArrayBuffer>>,
-  metadata?: _MaybeRef<UploadMetadata>
-): UseUploadTask
-export function useStorageTask(
-  storageRef: _MaybeRef<_Nullable<StorageReference>>,
-  // allow passing null or undefined to still pass the metadata
-  // this version creates a local data ref to let the user control when to update/delete the data
-  data?: null | undefined,
-  metadata?: _MaybeRef<UploadMetadata>
-): UseUploadTaskNoData
-export function useStorageTask(
-  storageRef: _MaybeRef<_Nullable<StorageReference>>,
-  data: _MaybeRef<_Nullable<Blob | Uint8Array | ArrayBuffer>>,
-  metadata?: _MaybeRef<UploadMetadata>
-): UseUploadTask
-export function useStorageTask(
-  storageRef: _MaybeRef<_Nullable<StorageReference>>,
-  data: _MaybeRef<_Nullable<Blob | Uint8Array | ArrayBuffer>> = shallowRef<
-    Blob | Uint8Array | ArrayBuffer | null
-  >(),
-  metadata: _MaybeRef<UploadMetadata> = {}
+export function useStorageUrl(
+  storageRef: _MaybeRef<_Nullable<StorageReference>>
 ) {
+  const url = ref<string | null>()
+  const promise = ref<Promise<string | null>>(Promise.resolve(null))
+
+  function refresh() {
+    const storageSource = unref(storageRef)
+    if (storageSource) {
+      promise.value = getDownloadURL(storageSource).then(
+        (downloadUrl) => (url.value = downloadUrl)
+      )
+    } else {
+      promise.value = Promise.resolve((url.value = null))
+    }
+    return promise.value
+  }
+
+  refresh()
+  if (isRef(storageRef)) {
+    watch(storageRef, refresh)
+  }
+
+  if (getCurrentInstance()) {
+    // TODO: rework API to allow adding with a custom group key and key
+    // addPendingPromise(promise)
+    onServerPrefetch(() => promise.value)
+  }
+
+  return { url, refresh, promise }
+}
+
+/**
+ * Returns a reactive version of the metadata of a `StorageReference`. Updates automatically if the `StorageReference`
+ * changes.
+ *
+ * @param storageRef - StorageReference
+ */
+export function useStorageMetadata(
+  storageRef: _MaybeRef<_Nullable<StorageReference>>
+) {
+  // TODO: retrieve global data from  local store
+  const metadata = shallowRef<UploadMetadata | null>()
+  const promise = shallowRef<Promise<UploadMetadata | null>>(
+    Promise.resolve(null)
+  )
+
+  function refresh() {
+    const storageSource = unref(storageRef)
+    if (storageSource) {
+      promise.value = getMetadata(storageSource).then(
+        (data) => (metadata.value = data)
+      )
+    } else {
+      promise.value = Promise.resolve((metadata.value = null))
+    }
+    return promise.value
+  }
+
+  function update(newMetadata: SettableMetadata) {
+    const storageSource = unref(storageRef)
+    if (storageSource) {
+      promise.value = updateMetadata(storageSource, newMetadata).then(
+        (newData) => {
+          return (metadata.value = newData)
+        }
+      )
+    } else {
+      // TODO: DEV warning
+    }
+    return promise.value
+  }
+
+  refresh()
+  if (isRef(storageRef)) {
+    watch(storageRef, refresh)
+  }
+
+  if (getCurrentInstance()) {
+    // TODO: rework API to allow adding with a custom group key and key
+    // addPendingPromise(promise)
+    onServerPrefetch(() => promise.value)
+  }
+
+  return { metadata, update, refresh, promise }
+}
+
+/**
+ * Reactive information (url, metadata) of a `StorageReference`. Allows updating and deleting the storage object.
+ *
+ * @param storageRef - StorageReference
+ */
+export function useStorageObject(
+  storageRef: _MaybeRef<_Nullable<StorageReference>>
+) {
+  const { url, refresh: refreshUrl } = useStorageUrl(storageRef)
+  const {
+    metadata,
+    update: updateMetadata,
+    refresh: refreshMetadata,
+  } = useStorageMetadata(storageRef)
+
   const uploadTask = shallowRef<UploadTask | null>()
   const snapshot = shallowRef<UploadTaskSnapshot | null>()
-  const error = shallowRef<StorageError | null>()
-  const url = ref<string | null>()
+  const uploadError = shallowRef<StorageError | null>()
 
-  const progress = computed(() => {
+  const uploadProgress = computed(() => {
     const snap = unref(snapshot)
     return snap ? snap.bytesTransferred / snap.totalBytes : null
   })
 
+  // unsubscribe from the task
   let unsub = noop
-  function startUpload(
-    // these are the current values we just don't need them since we call `startUpload()` in 2 different ways, it's
-    // easier to get the values from the refs manually
-    _: any = [],
-    [previousStorageSource, previousData, previousMetadata]: [
-      _Nullable<StorageReference>,
-      // TODO: handle null value to delete
-      _Nullable<Blob | Uint8Array | ArrayBuffer>,
-      _Nullable<UploadMetadata>
-    ] = START_UPLOAD_EMPTY_VALUES
+
+  function upload(
+    newData: Blob | Uint8Array | ArrayBuffer,
+    newMetadata?: UploadMetadata
   ) {
     const storageSource = unref(storageRef)
-    const newData = unref(data)
-    const newMetadata = unref(metadata)
     const currentTask = unref(uploadTask)
 
     // cancel previous task
@@ -152,69 +168,66 @@ export function useStorageTask(
       currentTask.cancel()
     }
 
-    error.value = null
+    uploadError.value = null
     snapshot.value = null
     uploadTask.value = null
     url.value = null
+    metadata.value = null
     unsub()
 
-    if (storageSource && (newData || previousData)) {
-      // we only need to update the metadata
-      if (previousData === newData && previousStorageSource === storageSource) {
-        updateMetadata(storageSource, newMetadata)
-        // TODO: we probably need to update the metadata here
-      } else if (!newData) {
-        // if there was previously some data and this is the same storage ref, we need to delete the data
-        if (previousData) {
-          deleteObject(storageSource)
-        } else {
-          // otherwise, we need to get the data
-          getDownloadURL(storageSource).then((downloadUrl) => {
-            url.value = downloadUrl
-          })
-          // TODO: get metadata and create a metadata ref
-        }
-      } else {
-        const newTask = uploadBytesResumable(
-          storageSource,
-          newData,
-          newMetadata
-        )
-        uploadTask.value = newTask
-        snapshot.value = newTask.snapshot
+    if (storageSource) {
+      const newTask = uploadBytesResumable(storageSource, newData, newMetadata)
+      uploadTask.value = newTask
+      snapshot.value = newTask.snapshot
 
-        unsub = newTask.on('state_changed', (newSnapshot) => {
-          snapshot.value = newSnapshot
-        })
+      unsub = newTask.on('state_changed', (newSnapshot) => {
+        snapshot.value = newSnapshot
+      })
 
-        newTask.then(() => {
-          uploadTask.value = null
-          unsub()
-          // set the url after the task is complete
-          getDownloadURL(newTask.snapshot.ref).then((downloadUrl) => {
-            url.value = downloadUrl
-          })
-        })
+      newTask.then((finalSnapshot) => {
+        uploadTask.value = null
+        unsub()
+        metadata.value = finalSnapshot.metadata
+        // get the new download URL
+        refreshUrl()
+      })
 
-        newTask.catch((err) => {
-          unsub()
-          uploadTask.value = null
-          error.value = err
-        })
-      }
+      newTask.catch((err) => {
+        unsub()
+        uploadTask.value = null
+        uploadError.value = err
+      })
     }
   }
 
-  if (isRef(storageRef) || isRef(data) || isRef(metadata)) {
-    watch(
-      () => [unref(storageRef), unref(data), unref(metadata)] as const,
-      // @ts-expect-error: vue type bug?
-      startUpload,
-      { immediate: true }
-    )
-  } else {
-    // it's fine on server since the storageRef or the data should be null
-    startUpload()
+  function _deleteObject() {
+    const storageSource = unref(storageRef)
+    if (storageSource) {
+      deleteObject(storageSource)
+      metadata.value = null
+      url.value = null
+      unsub()
+      snapshot.value = null
+      uploadTask.value = null
+    }
+  }
+
+  function refresh() {
+    return Promise.all([refreshUrl(), refreshMetadata()])
+  }
+
+  if (isRef(storageRef)) {
+    watch(storageRef, (storageSource) => {
+      if (!storageSource) {
+        if (uploadTask.value) {
+          unsub()
+          uploadTask.value.cancel()
+        }
+        uploadTask.value = null
+        snapshot.value = null
+      }
+      refresh()
+    })
   }
 
   // remove the task subscription
@@ -223,18 +236,17 @@ export function useStorageTask(
   }
 
   return {
-    uploadTask,
+    url,
+    metadata,
     snapshot,
 
-    error,
-    progress,
+    uploadTask,
+    uploadError,
+    uploadProgress,
+    upload,
+    updateMetadata,
 
-    url,
-    data,
-    // TODO: expose metadata directly so it doesn't have to be an update
-    // metadata,
-
-    // TODO: expose a method refresh to refresh url and metadata
-    // refresh,
+    refresh,
+    // promise,
   }
 }
