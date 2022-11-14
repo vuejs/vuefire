@@ -137,15 +137,6 @@ export default defineConfig({
           ],
         },
         {
-          text: 'API',
-          items: [
-            {
-              text: 'API Reference',
-              link: '/api/',
-            },
-          ],
-        },
-        {
           text: 'Cookbook',
           items: [
             {
@@ -159,6 +150,15 @@ export default defineConfig({
             {
               text: 'Binding to existing refs',
               link: '/cookbook/subscriptions-external',
+            },
+          ],
+        },
+        {
+          text: 'API',
+          items: [
+            {
+              text: 'API Reference',
+              link: '/api/',
             },
           ],
         },
