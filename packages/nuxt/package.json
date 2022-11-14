@@ -27,15 +27,15 @@
     "dev:prepare": "nuxt-module-build --stub && nuxi prepare playground"
   },
   "dependencies": {
-    "@nuxt/kit": "^3.0.0-rc.12"
+    "@nuxt/kit": "3.0.0-rc.13"
   },
   "devDependencies": {
-    "@firebase/app-types": "^0.8.0",
+    "@firebase/app-types": "^0.8.1",
     "@nuxt/module-builder": "^0.2.0",
-    "@nuxt/schema": "^3.0.0-rc.12",
+    "@nuxt/schema": "3.0.0-rc.13",
     "@nuxtjs/eslint-config-typescript": "^11.0.0",
-    "eslint": "^8.26.0",
-    "firebase": "^9.12.1",
+    "eslint": "^8.27.0",
+    "firebase": "^9.14.0",
     "nuxt": "^3.0.0-rc.12",
     "vuefire": "workspace:*"
   }
