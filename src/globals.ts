@@ -1,12 +1,6 @@
 import { FirebaseApp } from 'firebase/app'
 import { App, EffectScope, effectScope } from 'vue'
 
-/**
- * Internal scope for globals
- * @internal
- */
-const scope = effectScope(true)
-
 // @internal
 const scopeMap = new WeakMap<FirebaseApp, EffectScope>()
 
