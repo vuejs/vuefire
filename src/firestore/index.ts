@@ -8,6 +8,7 @@ import {
   getFirestore,
 } from 'firebase/firestore'
 import {
+  getCurrentInstance,
   getCurrentScope,
   isRef,
   onScopeDispose,
@@ -31,6 +32,7 @@ import {
   _Nullable,
   _RefWithState,
 } from '../shared'
+import { getInitialValue } from '../ssr/initialState'
 import { addPendingPromise } from '../ssr/plugin'
 import { firestoreUnbinds } from './optionsApi'
 import {
@@ -51,6 +53,12 @@ export interface _UseFirestoreRefOptions extends FirestoreRefOptions {
    * Use the `target` ref instead of creating one.
    */
   target?: Ref<unknown>
+
+  /**
+   * Optional key to handle SSR hydration. **Necessary for Queries** or when the same source is used in multiple places
+   * with different converters.
+   */
+  ssrKey?: string
 }
 
 /**
@@ -68,14 +76,16 @@ export function _useFirestoreRef(
 ) {
   let _unbind: UnbindWithReset = noop
   const options = Object.assign({}, firestoreOptions, localOptions)
+  const initialSourceValue = unref(docOrCollectionRef)
 
+  const data = options.target || ref<unknown | null>()
+  // set the initial value from SSR even if the ref comes from outside
+  data.value = getInitialValue('f', options.ssrKey, initialSourceValue)
   // TODO: allow passing pending and error refs as option for when this is called using the options api
-  const data = options.target || ref<unknown | null>(options.initialValue)
   const pending = ref(true)
   const error = ref<FirestoreError>()
   // force the type since its value is set right after and undefined isn't possible
   const promise = shallowRef() as ShallowRef<Promise<unknown | null>>
-  let isPromiseAdded = false
   const hasCurrentScope = getCurrentScope()
   let removePendingPromise = noop
 
@@ -112,12 +122,6 @@ export function _useFirestoreRef(
       )
     })
 
-    // only add the first promise to the pending ones
-    if (!isPromiseAdded && docRefValue) {
-      // TODO: is there a way to make this only for the first render?
-      removePendingPromise = addPendingPromise(p, docRefValue)
-      isPromiseAdded = true
-    }
     promise.value = p
 
     p.catch((reason: FirestoreError) => {
@@ -136,6 +140,12 @@ export function _useFirestoreRef(
     bindFirestoreRef()
   }
 
+  // only add the first promise to the pending ones
+  // TODO: can we make this tree shakeable?
+  if (initialSourceValue) {
+    removePendingPromise = addPendingPromise(promise.value, initialSourceValue)
+  }
+
   // TODO: SSR serialize the values for Nuxt to expose them later and use them
   // as initial values while specifying a wait: true to only swap objects once
   // Firebase has done its initial sync. Also, on server, you don't need to
@@ -145,9 +155,11 @@ export function _useFirestoreRef(
   // TODO: warn else
   if (hasCurrentScope) {
     onScopeDispose(unbind)
-    // wait for the promise during SSR
-    // TODO: configurable
-    onServerPrefetch(() => promise.value)
+    if (getCurrentInstance()) {
+      // wait for the promise during SSR
+      // TODO: configurable
+      onServerPrefetch(() => promise.value)
+    }
   }
 
   // TODO: rename to stop

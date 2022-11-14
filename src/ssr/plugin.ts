@@ -7,6 +7,7 @@ import {
 } from 'firebase/firestore'
 import { useFirebaseApp, _FirebaseAppInjectionKey } from '../app'
 import { getDataSourcePath, noop } from '../shared'
+import { setInitialValue } from './initialState'
 
 export const appPendingPromises = new WeakMap<
   FirebaseApp,
@@ -33,9 +34,15 @@ export function addPendingPromise(
   }
   const pendingPromises = appPendingPromises.get(app)!
 
-  ssrKey = getDataSourcePath(dataSource)
-  if (ssrKey) {
-    pendingPromises.set(ssrKey, promise)
+  const key = ssrKey || getDataSourcePath(dataSource)
+  if (key) {
+    pendingPromises.set(key, promise)
+
+    // TODO: skip this outside of SSR
+    promise.then((value) => {
+      // TODO: figure out 'f', probably based on the type of dataSource
+      setInitialValue('f', value, key! /* dataSource */)
+    })
   } else {
     // TODO: warn if in SSR context in other contexts than vite
     if (process.env.NODE_ENV !== 'production' /* && import.meta.env?.SSR */) {
@@ -43,7 +50,7 @@ export function addPendingPromise(
     }
   }
 
-  return ssrKey ? () => pendingPromises.delete(ssrKey!) : noop
+  return key ? () => pendingPromises.delete(key!) : noop
 }
 
 /**

@@ -11,6 +11,8 @@ import type { Ref, ShallowRef } from 'vue-demi'
 
 export const noop = () => {}
 
+export const isClient = typeof window !== 'undefined'
+
 // FIXME: replace any with unknown or T generics
 
 export interface OperationsType {
@@ -124,21 +126,9 @@ export function isFirestoreDataReference<T = unknown>(
   return isDocumentRef(source) || isCollectionRef(source)
 }
 
-// The Firestore SDK has an undocumented _query
-// object that has a method to generate a hash for a query,
-// which we need for useObservable
-// https://github.com/firebase/firebase-js-sdk/blob/5beb23cd47312ffc415d3ce2ae309cc3a3fde39f/packages/firestore/src/core/query.ts#L221
-// @internal
-export interface _FirestoreQueryWithId<T = DocumentData>
-  extends FirestoreQuery<T> {
-  _query: {
-    canonicalId(): string
-  }
-}
-
 export function isFirestoreQuery(
   source: unknown
-): source is _FirestoreQueryWithId<unknown> {
+): source is FirestoreQuery<unknown> {
   return isObject(source) && source.type === 'query'
 }
 

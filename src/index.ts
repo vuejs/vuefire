@@ -51,6 +51,7 @@ export { useCurrentUser, VueFireAuth, useFirebaseAuth } from './auth'
 
 // SSR
 export { usePendingPromises } from './ssr/plugin'
+export { useSSRInitialState } from './ssr/initialState'
 
 // App Check
 export { VueFireAppCheck, useAppCheckToken } from './app-check'
