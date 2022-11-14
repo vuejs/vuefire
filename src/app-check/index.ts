@@ -17,7 +17,7 @@ export function useAppCheckToken() {
 export function VueFireAppCheck(options: AppCheckOptions) {
   return (firebaseApp: FirebaseApp, app: App) => {
     const appCheck = initializeAppCheck(firebaseApp, options)
-    const token = getGlobalScope(app, firebaseApp).run(() => ref<string>())!
+    const token = getGlobalScope(firebaseApp, app).run(() => ref<string>())!
     onTokenChanged(appCheck, (newToken) => {
       token.value = newToken.token
     })

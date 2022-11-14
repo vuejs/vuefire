@@ -17,7 +17,7 @@ modules: [VueFireAuth()]`)
   }
 
   return (firebaseApp: FirebaseApp, app: App) => {
-    const user = getGlobalScope(app, firebaseApp).run(() =>
+    const user = getGlobalScope(firebaseApp, app).run(() =>
       shallowRef<User | null | undefined>()
     )!
     // userMap.set(app, user)

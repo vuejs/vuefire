@@ -11,7 +11,7 @@ const scopeMap = new WeakMap<FirebaseApp, EffectScope>()
  * @param app - Vue App
  * @returns
  */
-export function getGlobalScope(app: App, firebaseApp: FirebaseApp) {
+export function getGlobalScope(firebaseApp: FirebaseApp, app: App) {
   // we use the firebaseApp as a key because we are more likely to have access to it and it's supposed to be also unique
   // per app since it contains user data.
   if (!scopeMap.has(firebaseApp)) {
