@@ -73,7 +73,7 @@ export interface VueFireOptions {
    * Array of VueFire modules that should be added to the application. e.g. `[VueFireAuth, VueFireDatabase]`. Remember
    * to import them from `vuefire`.
    */
-  modules?: Array<(firebaseApp: FirebaseApp | undefined, app: App) => void>
+  modules?: Array<(firebaseApp: FirebaseApp, app: App) => void>
 }
 
 /**

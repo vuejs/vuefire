@@ -5,7 +5,7 @@ import {
   onTokenChanged,
 } from 'firebase/app-check'
 import { App, inject, InjectionKey, Ref, ref } from 'vue'
-import { scope } from '../globals'
+import { getGlobalScope } from '../globals'
 
 export const AppCheckTokenInjectSymbol: InjectionKey<Ref<string | undefined>> =
   Symbol('app-check-token')
@@ -15,9 +15,9 @@ export function useAppCheckToken() {
 }
 
 export function VueFireAppCheck(options: AppCheckOptions) {
-  return (firebaseApp: FirebaseApp | undefined, app: App) => {
+  return (firebaseApp: FirebaseApp, app: App) => {
     const appCheck = initializeAppCheck(firebaseApp, options)
-    const token = scope.run(() => ref<string>())!
+    const token = getGlobalScope(app, firebaseApp).run(() => ref<string>())!
     onTokenChanged(appCheck, (newToken) => {
       token.value = newToken.token
     })

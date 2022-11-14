@@ -2,7 +2,7 @@ import { FirebaseApp } from 'firebase/app'
 import { getAuth, User } from 'firebase/auth'
 import { App, shallowRef } from 'vue'
 import { useFirebaseApp } from '../app'
-import { scope } from '../globals'
+import { getGlobalScope } from '../globals'
 import { AuthUserInjectSymbol, setupOnAuthStateChanged } from './user'
 
 export { setupOnAuthStateChanged, useCurrentUser } from './user'
@@ -16,8 +16,10 @@ modules: [VueFireAuth()]`)
     }
   }
 
-  return (firebaseApp: FirebaseApp | undefined, app: App) => {
-    const user = scope.run(() => shallowRef<User | null | undefined>())!
+  return (firebaseApp: FirebaseApp, app: App) => {
+    const user = getGlobalScope(app, firebaseApp).run(() =>
+      shallowRef<User | null | undefined>()
+    )!
     // userMap.set(app, user)
     app.provide(AuthUserInjectSymbol, user)
     setupOnAuthStateChanged(user, firebaseApp)
