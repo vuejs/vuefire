@@ -1,14 +1,26 @@
-import { defineNuxtPlugin } from '#app'
+import { usePendingPromises, VueFire, useSSRInitialState } from 'vuefire'
+import { initializeApp } from 'firebase/app'
+import { defineNuxtPlugin } from '#imports'
 
 export default defineNuxtPlugin(async (nuxtApp) => {
-  // TODO: create the plugin that stores the promises with data
+  // TODO: initialize firebase app from config
+  const firebaseApp = initializeApp()
+
+  nuxtApp.vueApp.use(
+    // @ts-expect-error: nuxt type bug?
+    VueFire,
+    {
+      firebaseApp,
+    }
+  )
 
   if (process.server) {
-    await 2 // TODO: wait for promises to resolve
-
-    // nuxtApp.payload.firebaseState = ...
-  } else {
-    // hydrate the plugin state from nuxtApp.payload.firebaseState
+    await usePendingPromises()
+    // TODO: pass the firebaseApp
+    nuxtApp.payload.vuefire = useSSRInitialState()
+  } else if (nuxtApp.payload?.vuefire) {
+    // hydrate the plugin state from nuxtApp.payload.vuefire
+    useSSRInitialState(nuxtApp.payload.vuefire)
   }
 
   return {

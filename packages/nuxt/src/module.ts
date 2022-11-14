@@ -1,7 +1,7 @@
 import { fileURLToPath } from 'node:url'
 import { resolve } from 'path'
 import { addPlugin, defineNuxtModule } from '@nuxt/kit'
-import { FirebaseOptions } from '@firebase/app-types'
+import { type FirebaseOptions } from '@firebase/app-types'
 
 export interface VueFireNuxtModuleOptions {
   optionsApiPlugin: boolean

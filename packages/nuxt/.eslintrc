@@ -15,6 +15,7 @@
     "comma-dangle": [
       "error",
       "always-multiline"
-    ]
+    ],
+    "vue/require-v-for-key": "off",
   }
 }

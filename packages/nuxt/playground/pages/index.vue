@@ -2,7 +2,14 @@
   <div>
     <ul>
       <li>
-        <NuxtLink to="/database">Database</NuxtLink>
+        <NuxtLink to="/database">
+          Database
+        </NuxtLink>
+      </li>
+      <li>
+        <NuxtLink to="/firestore">
+          Firestore
+        </NuxtLink>
       </li>
     </ul>
   </div>

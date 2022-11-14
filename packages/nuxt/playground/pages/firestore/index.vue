@@ -3,7 +3,7 @@ const router = useRouter()
 
 const routes = router
   .getRoutes()
-  .filter(record => record.path.startsWith('/database/'))
+  .filter(record => record.path.startsWith('/firestore/'))
   .map((record) => {
     return {
       name: record.name,
