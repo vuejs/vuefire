@@ -20,9 +20,6 @@ const store = createStore({
   }),
 })
 
-// @ts-expect-error: ok
-self.FIREBASE_APPCHECK_DEBUG_TOKEN = true
-
 const app = createApp(App)
 app
   .use(createPinia())
@@ -31,9 +28,10 @@ app
     modules: [
       VueFireAuth(),
       VueFireAppCheck({
+        debug: process.env.NODE_ENV !== 'production',
         isTokenAutoRefreshEnabled: true,
         provider: new ReCaptchaV3Provider(
-          '6LfJ0vgiAAAAAHheQE7GQVdG_c9m8xipBESx_SKI'
+          '6LfJ0vgiAAAAAHheQE7GQVdG_c9m8xipBESx_SKI',
         ),
       }),
     ],

@@ -20,7 +20,7 @@ VueFire requires Firebase JS SDK >= 9 but **is compatible with Vue 2 and Vue 3**
 
 ## Usage
 
-VueFire expects you to use the existing APIs from Firebase as much as possible. It doesn't expose any configs to initialize your app or get the database/firestore instances. You should follow the official Firebase documentation for that. We do have [some recommendations](#TODO) for a Vue project and [a Nuxt module](#TODO) to help you get started.
+VueFire expects you to use the existing APIs from Firebase as much as possible. It doesn't expose any configs to initialize your app or get the database/firestore instances. You should follow the official Firebase documentation for that. We do have [some recommendations](#TODO) for a Vue project and [a Nuxt module](../cookbook/nuxt.md) to help you get started.
 
 Most of the time, you should gather collection references in one of your files and export them but **to keep examples short, we will always create the database references whenever necessary** instead of gathering them in one place. We will also consider that we have access to some globals (you usually import them from the file where you initialize your Firebase app):
 
@@ -30,7 +30,7 @@ import { getFirestore } from 'firebase/firestore'
 import { getDatabase } from 'firebase/database'
 // ... other firebase imports
 
-export const firebase = initializeApp({
+export const firebaseApp = initializeApp({
   // your application settings
 })
 export const database = getFirestore(firebase)
@@ -41,6 +41,31 @@ export const firestore = getDataBase(firebase)
 :::tip
 Note that we will refer to `database` and `firestore` as `db` in examples where only one of them is used.
 :::
+
+### Setup
+
+First, install the VueFire Vue plugin. It will allow you to add extra modules like [Storage](./storage.md) or [Auth](./auth.md) to your app.
+
+```ts
+import { createApp } from 'vue'
+import { VueFire, VueFireAuth } from 'vuefire'
+import App from './App.vue'
+// the file we created above with `database`, `firestore` and other exports
+import { firebaseApp } from './firebase'
+
+const app = createApp(App)
+app
+  .use(VueFire, {
+    // imported above but could also just be created here
+    firebaseApp,
+    modules: [
+      // we will see other modules later on
+      VueFireAuth(),
+    ],
+  })
+
+app.mount('#app')
+```
 
 ### Composition API
 
