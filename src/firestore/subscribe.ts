@@ -38,13 +38,18 @@ export interface FirestoreRefOptions extends _DataSourceOptions {
    * @inheritDoc {SnapshotListenOptions}
    */
   snapshotListenOptions?: SnapshotListenOptions
+
+  /**
+   * Default Firestore converter to use with snapshots.
+   */
+  converter?: FirestoreDataConverter<unknown>
 }
 
 /**
  * Type of the global options for firestore refs. Some values cannot be `undefined`.
  * @internal
  */
-export interface _GlobalFirestoreRefOptions extends FirestoreRefOptions {
+interface _DefaultsFirestoreRefOptions extends FirestoreRefOptions {
   /**
    * @defaultValue `false`
    */
@@ -65,13 +70,13 @@ export interface _GlobalFirestoreRefOptions extends FirestoreRefOptions {
   converter: FirestoreDataConverter<unknown>
 }
 
-const DEFAULT_OPTIONS: _GlobalFirestoreRefOptions = {
+const DEFAULT_OPTIONS: _DefaultsFirestoreRefOptions = {
   reset: false,
   wait: true,
   maxRefDepth: 2,
   converter: firestoreDefaultConverter,
 }
-export { DEFAULT_OPTIONS as firestoreOptions }
+export { DEFAULT_OPTIONS as firestoreOptionsDefaults }
 
 interface FirestoreSubscription {
   unsub: () => void
@@ -89,7 +94,7 @@ function unsubscribeAll(subs: Record<string, FirestoreSubscription>) {
 }
 
 function updateDataFromDocumentSnapshot<T>(
-  options: _GlobalFirestoreRefOptions,
+  options: _DefaultsFirestoreRefOptions,
   target: Ref<T>,
   path: string,
   snapshot: DocumentSnapshot<T>,
@@ -120,7 +125,7 @@ interface SubscribeToDocumentParameter {
 
 function subscribeToDocument(
   { ref, target, path, depth, resolve, ops }: SubscribeToDocumentParameter,
-  options: _GlobalFirestoreRefOptions
+  options: _DefaultsFirestoreRefOptions
 ) {
   const subs = Object.create(null)
   const unbind = onSnapshot(ref, (snapshot) => {
@@ -151,7 +156,7 @@ function subscribeToDocument(
 // first one is calling the other on every ref and subscribeToDocument may call
 // updateDataFromDocumentSnapshot which may call subscribeToRefs as well
 function subscribeToRefs(
-  options: _GlobalFirestoreRefOptions,
+  options: _DefaultsFirestoreRefOptions,
   target: Ref<unknown>,
   path: string | number,
   subs: Record<string, FirestoreSubscription>,

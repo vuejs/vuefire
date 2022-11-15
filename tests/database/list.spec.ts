@@ -33,8 +33,8 @@ describe('Database lists', () => {
       template: 'no',
       setup() {
         data = useList(ref, options)
-        const { data: list, pending, error, promise, unbind } = data
-        return { list, pending, error, promise, unbind }
+        const { data: list, pending, error, promise, stop } = data
+        return { list, pending, error, promise, stop }
       },
     })
 
@@ -47,7 +47,7 @@ describe('Database lists', () => {
       pending: data.pending,
       error: data.error,
       promise: data.promise,
-      unbind: data.unbind,
+      stop: data.stop,
     }
   }
 
@@ -118,7 +118,7 @@ describe('Database lists', () => {
   })
 
   it('unbinds when the component is unmounted', async () => {
-    const { data, listRef, unbind } = factory()
+    const { data, listRef, stop: unbind } = factory()
 
     await push(listRef, { name: 'a' })
 

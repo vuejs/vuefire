@@ -3,7 +3,12 @@ import {
   indexForKey,
   DatabaseSnapshotSerializer,
 } from './utils'
-import { OperationsType, ResetOption, _DataSourceOptions } from '../shared'
+import {
+  noop,
+  OperationsType,
+  ResetOption,
+  _DataSourceOptions,
+} from '../shared'
 import { ref, Ref, unref } from 'vue-demi'
 import type { Query, DatabaseReference } from 'firebase/database'
 import {
@@ -14,12 +19,17 @@ import {
   onChildRemoved,
 } from 'firebase/database'
 
-// TODO: rename to match where it's used
+/**
+ * Global option type when binding one database reference
+ */
 export interface _DatabaseRefOptions extends _DataSourceOptions {
   serialize?: DatabaseSnapshotSerializer
 }
 
-export interface _GlobalDatabaseRefOptions extends _DatabaseRefOptions {
+/**
+ * Global defaults type override options for all database bindings.
+ */
+interface _DefaultsDatabaseRefOptions extends _DatabaseRefOptions {
   /**
    * @defaultValue `false`
    */
@@ -32,14 +42,13 @@ export interface _GlobalDatabaseRefOptions extends _DatabaseRefOptions {
   serialize: DatabaseSnapshotSerializer
 }
 
-const DEFAULT_OPTIONS: _GlobalDatabaseRefOptions = {
+const DEFAULT_OPTIONS: _DefaultsDatabaseRefOptions = {
   reset: false,
   serialize: createRecordFromDatabaseSnapshot,
   wait: true,
 }
 
-// TODO: rename rtdbDefaults databaseDefaults
-export { DEFAULT_OPTIONS as rtdbOptions }
+export { DEFAULT_OPTIONS as databaseOptionsDefaults }
 
 interface CommonBindOptionsParameter {
   target: Ref<any>

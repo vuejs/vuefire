@@ -35,8 +35,8 @@ describe('Firestore refs in documents', async () => {
         data =
           // split for ts
           useDocument(ref, options)
-        const { data: list, pending, error, promise, unbind } = data
-        return { list, pending, error, promise, unbind }
+        const { data: list, pending, error, promise, stop } = data
+        return { list, pending, error, promise, stop }
       },
     })
 
@@ -48,7 +48,7 @@ describe('Firestore refs in documents', async () => {
       pending: data.pending,
       error: data.error,
       promise: data.promise,
-      unbind: data.unbind,
+      stop: data.stop,
     }
   }
 

@@ -6,7 +6,7 @@ import type {
 } from 'firebase/firestore'
 import { App, ComponentPublicInstance, effectScope, toRef } from 'vue'
 import { isVue3 } from 'vue-demi'
-import { FirestoreRefOptions, _GlobalFirestoreRefOptions } from './subscribe'
+import { FirestoreRefOptions } from './subscribe'
 import { internalUnbind, _useFirestoreRef } from '.'
 import { ResetOption, UnbindWithReset, _FirestoreDataSource } from '../shared'
 import { FirebaseApp } from 'firebase/app'
@@ -27,8 +27,7 @@ export const firestoreUnbinds = new WeakMap<
  * Options for the Firebase Database Plugin that enables the Options API such as `$firestoreBind` and
  * `$firestoreUnbind`.
  */
-export interface FirestorePluginOptions
-  extends Partial<_GlobalFirestoreRefOptions> {
+export interface FirestorePluginOptions extends FirestoreRefOptions {
   /**
    * @deprecated: was largely unused and not very useful. Please open an issue with use cases if you need this.
    */
@@ -41,7 +40,7 @@ export interface FirestorePluginOptions
 }
 
 const firestorePluginDefaults: Readonly<
-  Required<Omit<FirestorePluginOptions, keyof _GlobalFirestoreRefOptions>>
+  Required<Omit<FirestorePluginOptions, keyof FirestoreRefOptions>>
 > = {
   bindName: '$firestoreBind',
   unbindName: '$firestoreUnbind',
@@ -104,7 +103,7 @@ export const firestorePlugin = function firestorePlugin(
       effectScope()
     )!
 
-    const { promise, unbind: _unbind } = scope.run(() =>
+    const { promise, stop: _unbind } = scope.run(() =>
       _useFirestoreRef(docOrCollectionRef, {
         target,
         ...options,

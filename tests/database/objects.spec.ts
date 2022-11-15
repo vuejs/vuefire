@@ -28,8 +28,8 @@ describe('Database objects', () => {
       template: 'no',
       setup() {
         data = useObject(ref, options)
-        const { data: item, pending, error, promise, unbind } = data
-        return { item, pending, error, promise, unbind }
+        const { data: item, pending, error, promise, stop } = data
+        return { item, pending, error, promise, stop }
       },
     })
 
@@ -41,7 +41,7 @@ describe('Database objects', () => {
       pending: data.pending,
       error: data.error,
       promise: data.promise,
-      unbind: data.unbind,
+      stop: data.stop,
     }
   }
 

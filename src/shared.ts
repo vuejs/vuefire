@@ -1,11 +1,12 @@
 import { DatabaseReference, Query as DatabaseQuery } from 'firebase/database'
-import type {
+import {
   CollectionReference,
   DocumentData,
   DocumentReference,
   DocumentSnapshot,
   Query as FirestoreQuery,
   QuerySnapshot,
+  Timestamp,
 } from 'firebase/firestore'
 import type { Ref, ShallowRef } from 'vue-demi'
 
@@ -33,7 +34,7 @@ export interface OperationsType {
 export type ResetOption = boolean | (() => unknown)
 
 /**
- * Return type of `$rtdbBind()` and `$firestoreBind()`
+ * Return type of `$databaseBind()` and `$firestoreBind()`
  */
 export type UnbindWithReset = (reset?: ResetOption) => void
 
@@ -94,7 +95,7 @@ export function isObject(o: any): o is Record<any, unknown> {
  * Checks if a variable is a Date
  * @param o
  */
-export function isTimestamp(o: any): o is Date {
+export function isTimestamp(o: any): o is Timestamp {
   return o.toDate
 }
 
@@ -206,7 +207,7 @@ export interface _RefWithState<T, E = Error> extends Ref<T> {
   /**
    * Stops listening to the data changes and stops the Vue watcher.
    */
-  unbind: (reset?: ResetOption) => void
+  stop: (reset?: ResetOption) => void
 }
 
 /**

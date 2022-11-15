@@ -15,7 +15,6 @@ import {
   UseDocumentOptions,
   _RefFirestore,
 } from '../../src'
-import { FirebaseError } from 'firebase/app'
 
 describe(
   'Firestore documents',
@@ -38,8 +37,8 @@ describe(
           data =
             // split for ts
             useDocument(ref, options)
-          const { data: item, pending, error, promise, unbind } = data
-          return { item, pending, error, promise, unbind }
+          const { data: item, pending, error, promise, stop } = data
+          return { item, pending, error, promise, stop }
         },
       })
 
@@ -51,7 +50,7 @@ describe(
         pending: data.pending,
         error: data.error,
         promise: data.promise,
-        unbind: data.unbind,
+        stop: data.stop,
       }
     }
 
@@ -91,7 +90,7 @@ describe(
     })
 
     it('manually unbinds a document', async () => {
-      const { itemRef, data, unbind } = factory()
+      const { itemRef, data, stop: unbind } = factory()
 
       await setDoc(itemRef, { name: 'a' })
       expect(data.value).toEqual({ name: 'a' })

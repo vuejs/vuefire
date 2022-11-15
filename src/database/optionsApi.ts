@@ -6,13 +6,12 @@ import { useFirebaseApp } from '../app'
 import { getGlobalScope } from '../globals'
 import { ResetOption, UnbindWithReset } from '../shared'
 import { internalUnbind, _useDatabaseRef } from './index'
-import { _DatabaseRefOptions, _GlobalDatabaseRefOptions } from './subscribe'
+import { _DatabaseRefOptions } from './subscribe'
 
 /**
- * Options for the Firebase Database Plugin that enables the Options API such as `$rtdbBind` and `$rtdbUnbind`.
+ * Options for the Firebase Database Plugin that enables the Options API such as `$databaseBind` and `$databaseUnbind`.
  */
-export interface DatabasePluginOptions
-  extends Partial<_GlobalDatabaseRefOptions> {
+export interface DatabasePluginOptions extends _DatabaseRefOptions {
   /**
    * @deprecated: was largely unused and not very useful. Please open an issue with use cases if you need this.
    */
@@ -25,7 +24,7 @@ export interface DatabasePluginOptions
 }
 
 const databasePluginDefaults: Readonly<
-  Required<Omit<DatabasePluginOptions, keyof _GlobalDatabaseRefOptions>>
+  Required<Omit<DatabasePluginOptions, keyof _DatabaseRefOptions>>
 > = {
   bindName: '$databaseBind',
   unbindName: '$databaseUnbind',
@@ -109,7 +108,7 @@ export function databasePlugin(
       effectScope()
     )!
 
-    const { promise, unbind: _unbind } = scope.run(() =>
+    const { promise, stop: _unbind } = scope.run(() =>
       _useDatabaseRef(source, { target, ...options })
     )!
 

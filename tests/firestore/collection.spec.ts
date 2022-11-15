@@ -40,8 +40,8 @@ describe(
           data =
             // split for ts
             useCollection(ref, options)
-          const { data: list, pending, error, promise, unbind } = data
-          return { list, pending, error, promise, unbind }
+          const { data: list, pending, error, promise, stop } = data
+          return { list, pending, error, promise, stop }
         },
       })
 
@@ -54,7 +54,7 @@ describe(
         pending: data.pending,
         error: data.error,
         promise: data.promise,
-        unbind: data.unbind,
+        stop: data.stop,
       }
     }
 
@@ -76,8 +76,8 @@ describe(
             ref,
             options
           )
-          const { data: list, pending, error, promise, unbind } = data
-          return { list, pending, error, promise, unbind }
+          const { data: list, pending, error, promise, stop } = data
+          return { list, pending, error, promise, stop }
         },
       })
 
@@ -88,7 +88,7 @@ describe(
         pending: data.pending,
         error: data.error,
         promise: data.promise,
-        unbind: data.unbind,
+        stop: data.stop,
       }
     }
 
@@ -187,7 +187,7 @@ describe(
     })
 
     it('can be manually unbound', async () => {
-      const { listRef, data, unbind } = factory()
+      const { listRef, data, stop: unbind } = factory()
 
       await addDoc(listRef, { name: 'a' })
       expect(data.value).toHaveLength(1)

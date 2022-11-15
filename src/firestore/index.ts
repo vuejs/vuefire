@@ -38,7 +38,7 @@ import { firestoreUnbinds } from './optionsApi'
 import {
   bindCollection,
   bindDocument,
-  firestoreOptions,
+  firestoreOptionsDefaults,
   FirestoreRefOptions,
 } from './subscribe'
 
@@ -63,8 +63,8 @@ export function _useFirestoreRef(
   >,
   localOptions?: _UseFirestoreRefOptions
 ) {
-  let _unbind: UnbindWithReset = noop
-  const options = Object.assign({}, firestoreOptions, localOptions)
+  let unbind: UnbindWithReset = noop
+  const options = Object.assign({}, firestoreOptionsDefaults, localOptions)
   const initialSourceValue = unref(docOrCollectionRef)
 
   const data = options.target || ref<unknown | null>()
@@ -83,12 +83,12 @@ export function _useFirestoreRef(
 
     const p = new Promise<unknown | null>((resolve, reject) => {
       // stop the previous subscription
-      _unbind(options.reset)
+      unbind(options.reset)
       // skip if the ref is null or undefined
       // we still want to create the new promise
       if (!docRefValue) {
-        _unbind = noop
-        // TODO: maybe we shouldn't resolve this at all?
+        unbind = noop
+        // resolve to avoid an ever pending promise
         return resolve(null)
       }
 
@@ -100,7 +100,7 @@ export function _useFirestoreRef(
       }
 
       // FIXME: force once on server
-      _unbind = (isDocumentRef(docRefValue) ? bindDocument : bindCollection)(
+      unbind = (isDocumentRef(docRefValue) ? bindDocument : bindCollection)(
         // @ts-expect-error: cannot type with the ternary
         data,
         docRefValue,
@@ -142,7 +142,7 @@ export function _useFirestoreRef(
   // should take an option like once: true to not setting up any listener
 
   if (hasCurrentScope) {
-    onScopeDispose(unbind)
+    onScopeDispose(stop)
     if (getCurrentInstance()) {
       // wait for the promise during SSR
       // TODO: configurable ssrKey: false to disable this
@@ -150,11 +150,10 @@ export function _useFirestoreRef(
     }
   }
 
-  // TODO: rename to stop
-  function unbind(reset: ResetOption = options.reset) {
+  function stop(reset: ResetOption = options.reset) {
     stopWatcher()
     removePendingPromise()
-    _unbind(reset)
+    unbind(reset)
   }
 
   // allow to destructure the returned value

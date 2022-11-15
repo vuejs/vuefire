@@ -26,7 +26,7 @@ describe('Firestore: Options API', () => {
       })
     }
 
-    it('allows customizing $rtdbBind', () => {
+    it('allows customizing $firestoreBind', () => {
       const wrapper = factory({
         bindName: '$myBind',
         unbindName: '$myUnbind',

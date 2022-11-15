@@ -17,7 +17,7 @@ const component = defineComponent({
 describe('RTDB: plugin options', () => {
   const { databaseRef, push } = setupDatabaseRefs()
 
-  describe('$rtdbBind', () => {
+  describe('$databaseBind', () => {
     function factory(pluginOptions?: DatabasePluginOptions) {
       return mount(component, {
         global: {
@@ -26,7 +26,7 @@ describe('RTDB: plugin options', () => {
       })
     }
 
-    it('allows customizing $rtdbBind', () => {
+    it('allows customizing $databaseBind', () => {
       const wrapper = factory({
         bindName: '$myBind',
         unbindName: '$myUnbind',
@@ -41,7 +41,7 @@ describe('RTDB: plugin options', () => {
 
       const itemListRef = databaseRef()
 
-      const p = vm.$rtdbBind('itemList', itemListRef)
+      const p = vm.$databaseBind('itemList', itemListRef)
       await push(itemListRef, { text: 'foo' })
 
       expect(serialize).toHaveBeenCalledTimes(1)
@@ -61,7 +61,7 @@ describe('RTDB: plugin options', () => {
         bar: 'bar',
       }))
 
-      vm.$rtdbBind('itemList', items, { serialize: spy })
+      vm.$databaseBind('itemList', items, { serialize: spy })
       await push(items, { text: 'foo' })
 
       expect(serialize).not.toHaveBeenCalled()

@@ -26,7 +26,7 @@ import { databaseUnbinds } from './optionsApi'
 import {
   bindAsArray,
   bindAsObject,
-  rtdbOptions,
+  databaseOptionsDefaults,
   _DatabaseRefOptions,
 } from './subscribe'
 import {
@@ -54,8 +54,8 @@ export function _useDatabaseRef(
   reference: _MaybeRef<_Nullable<DatabaseReference | Query>>,
   localOptions: UseDatabaseRefOptions = {}
 ) {
-  let _unbind!: UnbindWithReset
-  const options = Object.assign({}, rtdbOptions, localOptions)
+  let unbind!: UnbindWithReset
+  const options = Object.assign({}, databaseOptionsDefaults, localOptions)
   const initialSourceValue = unref(reference)
 
   const data = options.target || ref<unknown | null>()
@@ -74,13 +74,13 @@ export function _useDatabaseRef(
 
     const p = new Promise<unknown | null>((resolve, reject) => {
       if (!referenceValue) {
-        _unbind = noop
+        unbind = noop
         // resolve to avoid an ever pending promise
         return resolve(null)
       }
 
       if (Array.isArray(data.value)) {
-        _unbind = bindAsArray(
+        unbind = bindAsArray(
           {
             target: data,
             collection: referenceValue,
@@ -91,7 +91,7 @@ export function _useDatabaseRef(
           options
         )
       } else {
-        _unbind = bindAsObject(
+        unbind = bindAsObject(
           {
             target: data,
             document: referenceValue,
@@ -132,7 +132,7 @@ export function _useDatabaseRef(
   }
 
   if (hasCurrentScope) {
-    onScopeDispose(unbind)
+    onScopeDispose(stop)
 
     // wait for the promise on SSR
     if (getCurrentInstance()) {
@@ -140,22 +140,20 @@ export function _useDatabaseRef(
     }
   }
 
-  // TODO: rename to stop
-  function unbind(reset: ResetOption = options.reset) {
+  function stop(reset: ResetOption = options.reset) {
     stopWatcher()
     removePendingPromise()
-    _unbind(reset)
+    unbind(reset)
   }
 
   return Object.defineProperties(data as _RefDatabase<unknown>, {
     // allow destructuring without interfering with the ref itself
     data: { get: () => data },
     error: { get: () => error },
-    pending: { get: () => error },
-
+    pending: { get: () => pending },
     promise: { get: () => promise },
-    unbind: { get: () => unbind },
-  }) as _RefDatabase<unknown | null>
+    stop: { get: () => stop },
+  })
 }
 
 export function internalUnbind(
