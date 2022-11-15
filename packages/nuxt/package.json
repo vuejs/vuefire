@@ -10,7 +10,8 @@
       "require": "./dist/module.cjs"
     }
   },
-  "main": "./dist/module.mjs",
+  "main": "./dist/module.cjs",
+  "module": "./dist/module.mjs",
   "types": "./dist/types.d.ts",
   "files": [
     "dist"
@@ -28,6 +29,11 @@
   },
   "dependencies": {
     "@nuxt/kit": "^3.0.0-rc.13"
+  },
+  "peerDependencies": {
+    "firebase": "^9.0.0",
+    "@firebase/app-types": ">=0.8.1",
+    "vuefire": "^3.0.0-0"
   },
   "devDependencies": {
     "@firebase/app-types": "^0.8.1",
