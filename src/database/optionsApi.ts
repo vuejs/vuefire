@@ -1,7 +1,9 @@
 import { FirebaseApp } from 'firebase/app'
 import { DatabaseReference, DataSnapshot, Query } from 'firebase/database'
-import { App, ComponentPublicInstance, toRef } from 'vue'
+import { App, ComponentPublicInstance, effectScope, toRef } from 'vue'
 import { isVue3 } from 'vue-demi'
+import { useFirebaseApp } from '../app'
+import { getGlobalScope } from '../globals'
 import { ResetOption, UnbindWithReset } from '../shared'
 import { internalUnbind, _useDatabaseRef } from './index'
 import {
@@ -49,7 +51,7 @@ export const rtdbUnbinds = new WeakMap<
 export function databasePlugin(
   app: App,
   pluginOptions?: DatabasePluginOptions,
-  firebaseApp?: FirebaseApp,
+  firebaseApp?: FirebaseApp
 ) {
   // TODO: implement
   // const strategies = Vue.config.optionMergeStrategies
@@ -64,7 +66,7 @@ export function databasePlugin(
 
   GlobalTarget[unbindName] = function rtdbUnbind(
     key: string,
-    reset?: ResetOption,
+    reset?: ResetOption
   ) {
     internalUnbind(key, rtdbUnbinds.get(this), reset)
     delete this.$firebaseRefs[key]
@@ -75,7 +77,7 @@ export function databasePlugin(
     this: ComponentPublicInstance,
     key: string,
     source: DatabaseReference | Query,
-    userOptions?: _DatabaseRefOptions,
+    userOptions?: _DatabaseRefOptions
   ) {
     const options = Object.assign({}, globalOptions, userOptions)
     const target = toRef(this.$data as any, key)
@@ -88,8 +90,19 @@ export function databasePlugin(
       unbinds[key](options.reset)
     }
 
-    // FIXME: Create a single scopeEffect per instance that wraps thin call and stop the effect scope when `unbind()` is called
-    const { promise, unbind } = _useDatabaseRef(source, { target, ...options })
+    const scope = getGlobalScope(firebaseApp || useFirebaseApp(), app).run(() =>
+      effectScope()
+    )!
+
+    const { promise, unbind: _unbind } = scope.run(() =>
+      _useDatabaseRef(source, { target, ...options })
+    )!
+
+    // override the unbind to also free th variables created
+    const unbind: UnbindWithReset = (reset) => {
+      _unbind(reset)
+      scope.stop()
+    }
     unbinds[key] = unbind
 
     // we make it readonly for the user but we must change it. Maybe there is a way to have an internal type here but expose a readonly type through a d.ts
@@ -117,7 +130,7 @@ export function databasePlugin(
           // ts
           key,
           bindings[key],
-          globalOptions,
+          globalOptions
         )
       }
     },
@@ -151,7 +164,7 @@ export function databasePlugin(
  * ```
  */
 export function VueFireDatabaseOptionsAPI(
-  pluginOptions?: DatabasePluginOptions,
+  pluginOptions?: DatabasePluginOptions
 ) {
   return (firebaseApp: FirebaseApp, app: App) => {
     return databasePlugin(app, pluginOptions, firebaseApp)
@@ -172,7 +185,7 @@ declare module '@vue/runtime-core' {
     $rtdbBind(
       name: string,
       reference: DatabaseReference | Query,
-      options?: _DatabaseRefOptions,
+      options?: _DatabaseRefOptions
     ): Promise<DataSnapshot>
 
     /**
