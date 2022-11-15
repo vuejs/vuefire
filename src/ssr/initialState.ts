@@ -54,7 +54,8 @@ type FirestoreDataSource =
 export function getInitialValue(
   type: 'f' | 'r',
   ssrKey?: string | undefined,
-  dataSource?: _Nullable<FirestoreDataSource>
+  dataSource?: _Nullable<FirestoreDataSource>,
+  fallbackValue?: unknown
 ) {
   const initialState: Record<string, unknown> = useSSRInitialState()[type] || {}
   const key = ssrKey || getFirestoreSourceKey(dataSource)
@@ -63,7 +64,7 @@ export function getInitialValue(
 
   // returns undefined if no key, otherwise initial state or undefined
   // undefined should be treated as no initial state
-  return key && initialState[key]
+  return key && key in initialState ? initialState[key] : fallbackValue
 }
 
 export function setInitialValue(

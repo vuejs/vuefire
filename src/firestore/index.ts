@@ -80,7 +80,12 @@ export function _useFirestoreRef(
 
   const data = options.target || ref<unknown | null>()
   // set the initial value from SSR even if the ref comes from outside
-  data.value = getInitialValue('f', options.ssrKey, initialSourceValue)
+  data.value = getInitialValue(
+    'f',
+    options.ssrKey,
+    initialSourceValue,
+    data.value
+  )
   // TODO: allow passing pending and error refs as option for when this is called using the options api
   const pending = ref(true)
   const error = ref<FirestoreError>()
