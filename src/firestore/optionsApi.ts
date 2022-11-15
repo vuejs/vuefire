@@ -15,6 +15,8 @@ import {
 } from './subscribe'
 import { internalUnbind, _useFirestoreRef } from '.'
 import { ResetOption, UnbindWithReset } from '../shared'
+import { firebaseApp } from '../../tests/utils'
+import { FirebaseApp } from 'firebase/app'
 
 export type VueFirestoreObject = Record<
   string,
@@ -50,13 +52,15 @@ const firestorePluginDefaults: Readonly<
 /**
  * Install this plugin to add `$firestoreBind` and `$firestoreUnbind` functions. Note this plugin is not necessary if
  * you exclusively use the Composition API (`useDocument()` and `useCollection()`).
+ * @deprecated Use `VueFire` and `VueFireFirestoreOptionsAPI` with the `modules` option instead.b
  *
  * @param app
  * @param pluginOptions
  */
 export const firestorePlugin = function firestorePlugin(
   app: App,
-  pluginOptions?: FirestorePluginOptions
+  pluginOptions?: FirestorePluginOptions,
+  firebaseApp?: FirebaseApp,
 ) {
   // const strategies = app.config.optionMergeStrategies
   // TODO: implement
@@ -65,7 +69,7 @@ export const firestorePlugin = function firestorePlugin(
   const globalOptions = Object.assign(
     {},
     firestorePluginDefaults,
-    pluginOptions
+    pluginOptions,
   )
   const { bindName, unbindName } = globalOptions
 
@@ -75,7 +79,7 @@ export const firestorePlugin = function firestorePlugin(
 
   GlobalTarget[unbindName] = function firestoreUnbind(
     key: string,
-    reset?: FirestoreRefOptions['reset']
+    reset?: FirestoreRefOptions['reset'],
   ) {
     internalUnbind(key, firestoreUnbinds.get(this), reset)
     delete this.$firestoreRefs[key]
@@ -88,7 +92,7 @@ export const firestorePlugin = function firestorePlugin(
       | Query<unknown>
       | CollectionReference<unknown>
       | DocumentReference<unknown>,
-    userOptions?: FirestoreRefOptions
+    userOptions?: FirestoreRefOptions,
   ) {
     const options = Object.assign({}, globalOptions, userOptions)
     const target = toRef(this.$data as any, key)
@@ -127,7 +131,7 @@ export const firestorePlugin = function firestorePlugin(
           key,
           // @ts-expect-error: FIXME: there is probably a wrong type in global properties
           refs[key],
-          globalOptions
+          globalOptions,
         )
       }
     },
@@ -145,6 +149,29 @@ export const firestorePlugin = function firestorePlugin(
   })
 }
 
+/**
+ * VueFire Firestore Module to be added to the `VueFire` Vue plugin options.
+ *
+ * @example
+ *
+ * ```ts
+ * import { createApp } from 'vue'
+ * import { VueFire, VueFireFirestoreOptionsAPI } from 'vuefire'
+ *
+ * const app = createApp(App)
+ * app.use(VueFire, {
+ *   modules: [VueFireFirestoreOptionsAPI()],
+ * })
+ * ```
+ */
+export function VueFireFirestoreOptionsAPI(
+  pluginOptions?: FirestorePluginOptions,
+) {
+  return (firebaseApp: FirebaseApp, app: App) => {
+    return firestorePlugin(app, pluginOptions, firebaseApp)
+  }
+}
+
 declare module '@vue/runtime-core' {
   export interface ComponentCustomProperties {
     /**
@@ -158,7 +185,7 @@ declare module '@vue/runtime-core' {
       name: string,
       // TODO: create proper overloads with generics like in the composition API
       reference: Query<unknown> | CollectionReference<unknown>,
-      options?: FirestoreRefOptions
+      options?: FirestoreRefOptions,
       // TODO: match the promise with the type of internalBind
     ): Promise<DocumentData[]>
 
@@ -166,7 +193,7 @@ declare module '@vue/runtime-core' {
       name: string,
       // TODO: create proper overloads with generics like in the composition API
       reference: DocumentReference<unknown>,
-      options?: FirestoreRefOptions
+      options?: FirestoreRefOptions,
     ): Promise<DocumentData>
 
     /**

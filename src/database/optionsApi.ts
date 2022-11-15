@@ -1,3 +1,4 @@
+import { FirebaseApp } from 'firebase/app'
 import { DatabaseReference, DataSnapshot, Query } from 'firebase/database'
 import { App, ComponentPublicInstance, toRef } from 'vue'
 import { isVue3 } from 'vue-demi'
@@ -27,49 +28,6 @@ const databasePluginDefaults: Readonly<
   unbindName: '$rtdbUnbind',
 }
 
-declare module '@vue/runtime-core' {
-  export interface ComponentCustomProperties {
-    /**
-     * Binds a reference
-     *
-     * @param name
-     * @param reference
-     * @param options
-     */
-    $rtdbBind(
-      name: string,
-      reference: DatabaseReference | Query,
-      options?: _DatabaseRefOptions
-    ): Promise<DataSnapshot>
-
-    /**
-     * Unbinds a bound reference
-     */
-    $rtdbUnbind: (name: string, reset?: ResetOption) => void
-
-    /**
-     * Bound database references
-     */
-    $firebaseRefs: Readonly<Record<string, DatabaseReference>>
-    // _firebaseSources: Readonly<
-    //   Record<string, Reference | Query>
-    // >
-    /**
-     * Existing unbind functions that get automatically called when the component is unmounted
-     * @internal
-     */
-    // _firebaseUnbinds: Readonly<
-    //   Record<string, UnbindWithReset>
-    // >
-  }
-  export interface ComponentCustomOptions {
-    /**
-     * Calls `$rtdbBind` at created
-     */
-    firebase?: FirebaseOption
-  }
-}
-
 export type VueFirebaseObject = Record<string, Query | DatabaseReference>
 export type FirebaseOption = VueFirebaseObject | (() => VueFirebaseObject)
 
@@ -83,12 +41,15 @@ export const rtdbUnbinds = new WeakMap<
  * you use the Options API. If you **exclusively use the Composition API** (e.g. `useObject()` and `useList()`), you
  * should not add it.
  *
+ * @deprecated Use `VueFire` and `VueFireDatabaseOptionsAPI` with the `modules` option instead.
+ *
  * @param app
  * @param pluginOptions
  */
 export function databasePlugin(
   app: App,
-  pluginOptions?: DatabasePluginOptions
+  pluginOptions?: DatabasePluginOptions,
+  firebaseApp?: FirebaseApp,
 ) {
   // TODO: implement
   // const strategies = Vue.config.optionMergeStrategies
@@ -103,7 +64,7 @@ export function databasePlugin(
 
   GlobalTarget[unbindName] = function rtdbUnbind(
     key: string,
-    reset?: ResetOption
+    reset?: ResetOption,
   ) {
     internalUnbind(key, rtdbUnbinds.get(this), reset)
     delete this.$firebaseRefs[key]
@@ -114,7 +75,7 @@ export function databasePlugin(
     this: ComponentPublicInstance,
     key: string,
     source: DatabaseReference | Query,
-    userOptions?: _DatabaseRefOptions
+    userOptions?: _DatabaseRefOptions,
   ) {
     const options = Object.assign({}, globalOptions, userOptions)
     const target = toRef(this.$data as any, key)
@@ -156,7 +117,7 @@ export function databasePlugin(
           // ts
           key,
           bindings[key],
-          globalOptions
+          globalOptions,
         )
       }
     },
@@ -174,4 +135,70 @@ export function databasePlugin(
   })
 }
 
+/**
+ * VueFire Database Module to be added to the `VueFire` Vue plugin options.
+ *
+ * @example
+ *
+ * ```ts
+ * import { createApp } from 'vue'
+ * import { VueFire, VueFireDatabaseOptionsAPI } from 'vuefire'
+ *
+ * const app = createApp(App)
+ * app.use(VueFire, {
+ *   modules: [VueFireDatabaseOptionsAPI()],
+ * })
+ * ```
+ */
+export function VueFireDatabaseOptionsAPI(
+  pluginOptions?: DatabasePluginOptions,
+) {
+  return (firebaseApp: FirebaseApp, app: App) => {
+    return databasePlugin(app, pluginOptions, firebaseApp)
+  }
+}
+
 type Mutable<T> = { -readonly [P in keyof T]: T[P] }
+
+declare module '@vue/runtime-core' {
+  export interface ComponentCustomProperties {
+    /**
+     * Binds a reference
+     *
+     * @param name
+     * @param reference
+     * @param options
+     */
+    $rtdbBind(
+      name: string,
+      reference: DatabaseReference | Query,
+      options?: _DatabaseRefOptions,
+    ): Promise<DataSnapshot>
+
+    /**
+     * Unbinds a bound reference
+     */
+    $rtdbUnbind: (name: string, reset?: ResetOption) => void
+
+    /**
+     * Bound database references
+     */
+    $firebaseRefs: Readonly<Record<string, DatabaseReference>>
+    // _firebaseSources: Readonly<
+    //   Record<string, Reference | Query>
+    // >
+    /**
+     * Existing unbind functions that get automatically called when the component is unmounted
+     * @internal
+     */
+    // _firebaseUnbinds: Readonly<
+    //   Record<string, UnbindWithReset>
+    // >
+  }
+  export interface ComponentCustomOptions {
+    /**
+     * Calls `$rtdbBind` at created
+     */
+    firebase?: FirebaseOption
+  }
+}
