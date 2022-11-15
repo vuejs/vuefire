@@ -67,6 +67,22 @@ app
 app.mount('#app')
 ```
 
+This will give you access to some convenient composables like `useFirebaseApp()`, `useFirestore()` and `useDatabase()` in your components:
+
+```vue
+<script setup>
+import { useFirestore } from 'vuefire'
+
+const db = useFirestore()
+</script>
+
+<template>
+  <div>
+    ...
+  </div>
+</template>
+```
+
 ### Composition API
 
 VueFire exposes a few [composables](https://vuejs.org/guide/reusability/composables.html#composables) to create reactive variables from Firebase references.
