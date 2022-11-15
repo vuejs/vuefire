@@ -26,6 +26,21 @@ export interface VueFireAppCheckOptions extends AppCheckOptions {
   debug?: boolean
 }
 
+/**
+ * VueFire AppCheck Module to be added to the `VueFire` Vue plugin options.
+ *
+ * @example
+ *
+ * ```ts
+ * import { createApp } from 'vue'
+ * import { VueFire, VueFireAppCheck } from 'vuefire'
+ *
+ * const app = createApp(App)
+ * app.use(VueFire, {
+ *   modules: [VueFireAppCheck()],
+ * })
+ * ```
+ */
 export function VueFireAppCheck(options: VueFireAppCheckOptions) {
   return (firebaseApp: FirebaseApp, app: App) => {
     // provide this even on the server for simplicity of usage
