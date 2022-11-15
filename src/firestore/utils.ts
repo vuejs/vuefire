@@ -23,10 +23,7 @@ export const firestoreDefaultConverter: FirestoreDataConverter<VueFirestoreDocum
     fromFirestore(snapshot, options) {
       return snapshot.exists()
         ? (Object.defineProperties(snapshot.data(options)!, {
-            id: {
-              // TODO: can the `id` change? If so this should be a get
-              value: snapshot.id,
-            },
+            id: { value: snapshot.id },
             // TODO: check if worth adding or should be through an option
             // $meta: {
             //   value: snapshot.metadata,
@@ -38,7 +35,7 @@ export const firestoreDefaultConverter: FirestoreDataConverter<VueFirestoreDocum
   }
 
 export function extractRefs(
-  // FIXME: unknown
+  // TODO: should be unknown instead of DocumentData
   doc: DocumentData,
   oldDoc: DocumentData | void,
   subs: Record<string, { path: string; data: () => DocumentData | null }>
@@ -83,7 +80,9 @@ export function extractRefs(
         // TODO: check and remove
         // Firestore < 4.13
         ref instanceof Date ||
+        // TODO: instanceof Timestamp?
         isTimestamp(ref) ||
+        // TODO: same?
         isGeoPoint(ref)
       ) {
         data[key] = ref

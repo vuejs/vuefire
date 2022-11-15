@@ -75,7 +75,7 @@ export function _useDatabaseRef(
     const p = new Promise<unknown | null>((resolve, reject) => {
       if (!referenceValue) {
         _unbind = noop
-        // TODO: maybe we shouldn't resolve this at all?
+        // resolve to avoid an ever pending promise
         return resolve(null)
       }
 
@@ -147,7 +147,8 @@ export function _useDatabaseRef(
     _unbind(reset)
   }
 
-  return Object.defineProperties(data, {
+  return Object.defineProperties(data as _RefDatabase<unknown>, {
+    // allow destructuring without interfering with the ref itself
     data: { get: () => data },
     error: { get: () => error },
     pending: { get: () => error },
@@ -166,9 +167,6 @@ export function internalUnbind(
     unbinds[key](reset)
     delete unbinds[key]
   }
-  // TODO: move to $firestoreUnbind
-  // delete vm._firebaseSources[key]
-  // delete vm._firebaseUnbinds[key]
 }
 
 export type UseListOptions = UseDatabaseRefOptions

@@ -73,6 +73,8 @@ export function databasePlugin(
     internalUnbind(key, databaseUnbinds.get(this), reset)
     // @ts-expect-error: readonly for the users
     delete this.$firebaseRefs[key]
+    // delete this._firebaseSources[key]
+    // delete this._firebaseUnbinds[key]
   }
 
   GlobalTarget[bindName] = function databaseBind(

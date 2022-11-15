@@ -70,7 +70,7 @@ export function _useFirestoreRef(
   const data = options.target || ref<unknown | null>()
   // set the initial value from SSR even if the ref comes from outside
   data.value = getInitialValue(initialSourceValue, options.ssrKey, data.value)
-  // TODO: allow passing pending and error refs as option for when this is called using the options api
+
   const pending = ref(true)
   const error = ref<FirestoreError>()
   // force the type since its value is set right after and undefined isn't possible
@@ -141,12 +141,11 @@ export function _useFirestoreRef(
   // create sync, you can read only once the whole thing so maybe we
   // should take an option like once: true to not setting up any listener
 
-  // TODO: warn else
   if (hasCurrentScope) {
     onScopeDispose(unbind)
     if (getCurrentInstance()) {
       // wait for the promise during SSR
-      // TODO: configurable
+      // TODO: configurable ssrKey: false to disable this
       onServerPrefetch(() => promise.value)
     }
   }
@@ -159,26 +158,13 @@ export function _useFirestoreRef(
   }
 
   // allow to destructure the returned value
-  Object.defineProperties(data, {
-    error: {
-      get: () => error,
-    },
-    data: {
-      get: () => data,
-    },
-    pending: {
-      get: () => pending,
-    },
-    promise: {
-      get: () => promise,
-    },
-    unbind: {
-      get: () => unbind,
-    },
+  return Object.defineProperties(data as _RefFirestore<unknown>, {
+    error: { get: () => error },
+    data: { get: () => data },
+    pending: { get: () => pending },
+    promise: { get: () => promise },
+    stop: { get: () => stop },
   })
-
-  // no unwrapRef to have a simpler type
-  return data as _RefFirestore<unknown>
 }
 
 export interface UseCollectionOptions extends _UseFirestoreRefOptions {}
@@ -194,7 +180,6 @@ export function useCollection<
   // explicit generic as unknown to allow arbitrary types like numbers or strings
   R extends CollectionReference<unknown> | Query<unknown>
 >(
-  // TODO: add MaybeRef
   collectionRef: _MaybeRef<_Nullable<R>>,
   options?: UseCollectionOptions
 ): _RefFirestore<_InferReferenceType<R>[]>
@@ -224,7 +209,7 @@ export function useCollection<T>(
   }) as _RefFirestore<VueFirestoreQueryData<T>>
 }
 
-// TODO: split document and collection into two different parts
+// TODO: split document and collection into two different files
 
 export interface UseDocumentOptions extends _UseFirestoreRefOptions {}
 

@@ -212,14 +212,13 @@ function subscribeToRefs(
   })
 }
 
-// TODO: get rid of the any
 interface CommonBindOptionsParameter {
   // vm: Record<string, any>
-  target: Ref<any>
+  target: Ref<unknown>
   // key: string
   // Override this property in necessary functions
-  resolve: (value: any) => void
-  reject: (error: any) => void
+  resolve: (value: unknown) => void
+  reject: (error: unknown) => void
   ops: OperationsType
 }
 
@@ -318,8 +317,8 @@ export function bindCollection<T = unknown>(
           validDocs[docChanges[i].doc.id] = true
         }
 
-        resolve = ({ id }) => {
-          if (id in validDocs) {
+        resolve = (data) => {
+          if (data && (data as any).id in validDocs) {
             if (++count >= expectedItems) {
               // if wait is true, finally set the array
               if (options.wait) {
@@ -382,8 +381,6 @@ export function bindDocument<T>(
 ) {
   const options = Object.assign({}, DEFAULT_OPTIONS, extraOptions) // fill default values
   const key = 'value'
-  // TODO: warning check if key exists?
-  // const boundRefs = Object.create(null)
 
   const subs: Record<string, FirestoreSubscription> = Object.create(null)
   // bind here the function so it can be resolved anywhere

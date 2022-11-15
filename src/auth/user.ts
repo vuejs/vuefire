@@ -10,7 +10,7 @@ export const AuthUserInjectSymbol: InjectionKey<Ref<User | null | undefined>> =
  * authenticated or when the user logs out. The ref is undefined when the user is not yet loaded.
  */
 export function useCurrentUser() {
-  // TODO: warn no current instance
+  // TODO: warn no current instance in DEV
   return inject(AuthUserInjectSymbol)!
 }
 

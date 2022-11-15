@@ -1,6 +1,5 @@
 import type { FirebaseApp } from 'firebase/app'
 import type { App } from 'vue'
-import { databasePlugin } from '../dist'
 import { _FirebaseAppInjectionKey } from './app'
 
 // Database

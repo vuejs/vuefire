@@ -12,7 +12,6 @@ export const _FirebaseAppInjectionKey: InjectionKey<FirebaseApp> =
  * @returns the firebase app
  */
 export function useFirebaseApp(name?: string): FirebaseApp {
-  // TODO: warn no current scope
   return (
     (getCurrentInstance() &&
       inject(

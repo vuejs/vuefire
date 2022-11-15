@@ -26,7 +26,7 @@ export function VueFireAuth(_app?: never) {
   //                        ^
   // app: never to prevent the user from just passing `VueFireAuth` without calling the function
 
-  // TODO: refactor to share across modules
+  // TODO: Hopefully we should be able to remove this with the next Vue release
   if (process.env.NODE_ENV !== 'production') {
     if (_app != null) {
       console.warn(`Did you forget to call the VueFireAuth function? It should look like

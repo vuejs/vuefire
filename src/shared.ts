@@ -13,7 +13,7 @@ export const noop = () => {}
 
 export const isClient = typeof window !== 'undefined'
 
-// FIXME: replace any with unknown or T generics
+// TODO: replace any with unknown or T generics if possible and worth
 
 export interface OperationsType {
   set<T extends object = Record<any, unknown>>(
@@ -50,7 +50,6 @@ export type TODO = any
  * @param path
  */
 export function walkGet(obj: Record<string, any>, path: string): any {
-  // TODO: development warning when target[key] does not exist
   return path.split('.').reduce((target, key) => target[key], obj)
 }
 
@@ -73,7 +72,6 @@ export function walkSet<T extends object = Record<any, unknown>>(
   const key = keys.pop()!
   const target: any = keys.reduce(
     (target, key) =>
-      // TODO: dev errors
       // @ts-expect-error:
       target[key],
     obj
@@ -185,11 +183,29 @@ export type _FirestoreDataSource =
  * @internal
  */
 export interface _RefWithState<T, E = Error> extends Ref<T> {
+  /**
+   * Realtime data wrapped in a Vue `ref`
+   */
   get data(): Ref<T>
+
+  /**
+   * Reactive Error if the firebase operation fails
+   */
   get error(): Ref<E | undefined>
+
+  /**
+   * Reactive loading state
+   */
   get pending(): Ref<boolean>
 
+  /**
+   * Reactive promise that resolves when the data is loaded or rejects if there is an error
+   */
   get promise(): ShallowRef<Promise<T>>
+
+  /**
+   * Stops listening to the data changes and stops the Vue watcher.
+   */
   unbind: (reset?: ResetOption) => void
 }
 

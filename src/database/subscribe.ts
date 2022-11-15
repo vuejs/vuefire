@@ -121,6 +121,7 @@ export function bindAsArray(
       ops.add(array, index, options.serialize(snapshot))
     }
     // TODO: cancelcallback
+    // reject,
   )
 
   const removeChildRemovedListener = onChildRemoved(
@@ -158,13 +159,14 @@ export function bindAsArray(
     // TODO: cancelcallback
   )
 
-  const removeValueListener = onValue(
+  // in case the removeValueListener() is called before onValue returns
+  let removeValueListener = noop
+  removeValueListener = onValue(
     collection,
     (data) => {
       const array = unref(arrayRef)
       if (options.wait) ops.set(target, key, array)
       resolve(data)
-      // FIXME: this can be called before it's initialized
       removeValueListener()
     },
     reject
