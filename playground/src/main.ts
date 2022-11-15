@@ -31,7 +31,7 @@ app
         debug: process.env.NODE_ENV !== 'production',
         isTokenAutoRefreshEnabled: true,
         provider: new ReCaptchaV3Provider(
-          '6LfJ0vgiAAAAAHheQE7GQVdG_c9m8xipBESx_SKI',
+          '6LfJ0vgiAAAAAHheQE7GQVdG_c9m8xipBESx_SKI'
         ),
       }),
     ],
