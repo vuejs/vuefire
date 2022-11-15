@@ -6,40 +6,41 @@ import { useFirebaseApp } from '../app'
 import { getGlobalScope } from '../globals'
 import { ResetOption, UnbindWithReset } from '../shared'
 import { internalUnbind, _useDatabaseRef } from './index'
-import {
-  bindAsArray,
-  bindAsObject,
-  rtdbOptions,
-  _DatabaseRefOptions,
-  _GlobalDatabaseRefOptions,
-} from './subscribe'
+import { _DatabaseRefOptions, _GlobalDatabaseRefOptions } from './subscribe'
 
 /**
  * Options for the Firebase Database Plugin that enables the Options API such as `$rtdbBind` and `$rtdbUnbind`.
  */
 export interface DatabasePluginOptions
   extends Partial<_GlobalDatabaseRefOptions> {
+  /**
+   * @deprecated: was largely unused and not very useful. Please open an issue with use cases if you need this.
+   */
   bindName?: string
+
+  /**
+   * @deprecated: was largely unused and not very useful. Please open an issue with use cases if you need this.
+   */
   unbindName?: string
 }
 
 const databasePluginDefaults: Readonly<
   Required<Omit<DatabasePluginOptions, keyof _GlobalDatabaseRefOptions>>
 > = {
-  bindName: '$rtdbBind',
-  unbindName: '$rtdbUnbind',
+  bindName: '$databaseBind',
+  unbindName: '$databaseUnbind',
 }
 
 export type VueFirebaseObject = Record<string, Query | DatabaseReference>
 export type FirebaseOption = VueFirebaseObject | (() => VueFirebaseObject)
 
-export const rtdbUnbinds = new WeakMap<
+export const databaseUnbinds = new WeakMap<
   object,
   Record<string, UnbindWithReset>
 >()
 
 /**
- * Install this plugin if you want to add `$rtdbBind` and `$rtdbUnbind` functions. Note this plugin is only necessary if
+ * Install this plugin if you want to add `$databaseBind` and `$databaseUnbind` functions. Note this plugin is only necessary if
  * you use the Options API. If you **exclusively use the Composition API** (e.g. `useObject()` and `useList()`), you
  * should not add it.
  *
@@ -64,16 +65,17 @@ export function databasePlugin(
     ? app.config.globalProperties
     : (app as any).prototype
 
-  GlobalTarget[unbindName] = function rtdbUnbind(
+  GlobalTarget[unbindName] = function databaseUnbind(
+    this: ComponentPublicInstance,
     key: string,
     reset?: ResetOption
   ) {
-    internalUnbind(key, rtdbUnbinds.get(this), reset)
+    internalUnbind(key, databaseUnbinds.get(this), reset)
+    // @ts-expect-error: readonly for the users
     delete this.$firebaseRefs[key]
   }
 
-  // add $rtdbBind and $rtdbUnbind methods
-  GlobalTarget[bindName] = function rtdbBind(
+  GlobalTarget[bindName] = function databaseBind(
     this: ComponentPublicInstance,
     key: string,
     source: DatabaseReference | Query,
@@ -81,15 +83,26 @@ export function databasePlugin(
   ) {
     const options = Object.assign({}, globalOptions, userOptions)
     const target = toRef(this.$data as any, key)
-    if (!rtdbUnbinds.has(this)) {
-      rtdbUnbinds.set(this, {})
+    if (!databaseUnbinds.has(this)) {
+      databaseUnbinds.set(this, {})
     }
-    const unbinds = rtdbUnbinds.get(this)!
+    const unbinds = databaseUnbinds.get(this)!
 
     if (unbinds[key]) {
       unbinds[key](options.reset)
     }
 
+    // add the old rtdb* methods if the user was using the defaults
+    if (pluginOptions) {
+      if (!pluginOptions.bindName) {
+        GlobalTarget['$rtdbBind'] = GlobalTarget[bindName]
+      }
+      if (!pluginOptions.unbindName) {
+        GlobalTarget['$rtdbUnbind'] = GlobalTarget[unbindName]
+      }
+    }
+
+    // we create a local scope to avoid leaking the effect since it's created outside of the component
     const scope = getGlobalScope(firebaseApp || useFirebaseApp(), app).run(() =>
       effectScope()
     )!
@@ -117,6 +130,7 @@ export function databasePlugin(
     beforeCreate(this: ComponentPublicInstance) {
       this.$firebaseRefs = Object.create(null)
     },
+
     created(this: ComponentPublicInstance) {
       let bindings = this.$options.firebase
       if (typeof bindings === 'function') {
@@ -136,7 +150,7 @@ export function databasePlugin(
     },
 
     beforeUnmount(this: ComponentPublicInstance) {
-      const unbinds = rtdbUnbinds.get(this)
+      const unbinds = databaseUnbinds.get(this)
       if (unbinds) {
         for (const key in unbinds) {
           unbinds[key]()
@@ -149,7 +163,8 @@ export function databasePlugin(
 }
 
 /**
- * VueFire Database Module to be added to the `VueFire` Vue plugin options.
+ * VueFire Database Module to be added to the `VueFire` Vue plugin options. If you **exclusively use the Composition
+ * API** (e.g. `useObject()` and `useList()`), you should not add it.
  *
  * @example
  *
@@ -182,6 +197,16 @@ declare module '@vue/runtime-core' {
      * @param reference
      * @param options
      */
+    $databaseBind(
+      name: string,
+      reference: DatabaseReference | Query,
+      options?: _DatabaseRefOptions
+    ): Promise<DataSnapshot>
+
+    /**
+     * {@inheritDoc ComponentCustomProperties.$databaseBind}
+     * @deprecated Use `$databaseBind` instead.
+     */
     $rtdbBind(
       name: string,
       reference: DatabaseReference | Query,
@@ -190,6 +215,12 @@ declare module '@vue/runtime-core' {
 
     /**
      * Unbinds a bound reference
+     */
+    $databaseUnbind: (name: string, reset?: ResetOption) => void
+
+    /**
+     * {@inheritDoc ComponentCustomProperties.$databaseUnbind}
+     * @deprecated Use `$databaseUnbind` instead.
      */
     $rtdbUnbind: (name: string, reset?: ResetOption) => void
 
@@ -210,7 +241,7 @@ declare module '@vue/runtime-core' {
   }
   export interface ComponentCustomOptions {
     /**
-     * Calls `$rtdbBind` at created
+     * Calls `$databaseBind` at created
      */
     firebase?: FirebaseOption
   }

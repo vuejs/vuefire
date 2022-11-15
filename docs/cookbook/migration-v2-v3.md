@@ -11,6 +11,24 @@ Therefore, these are the requirements to upgrade to VueFire v3:
 
 VueFire 3 introduces a Composition API that is more flexible and powerful than the Options API. However, it keeps the existing Options API as close as possible to the existing version in v2. Internally, it is implemented as a wrapper around the Composition API.
 
+Terms starting with _rtdb_ are now prefixed with _database_ to match the Firebase SDK. For example, `rtdbBindAsArray` is now `databaseBindAsArray`. The ones starting with _rtdb_ are still available but marked as deprecated.
+
+## Deprecations
+
+The `firestorePlugin` and `rtdbPlugin` are now deprecated in favor of _modules_. They are still available but will be removed in the next major version. You should use `VueFire`, `VueFireFirestoreOptionsAPI` and `VueFireDatabaseOptionsAPI` instead:
+
+```diff
+ const app = createApp({})
+
+ // for firestore
+-app.use(firestorePlugin)
++app.use(VueFire, { modules: [VueFireFirestoreOptionsAPI] })
+
+ // for database
+-app.use(rtdbPlugin)
++app.use(VueFire, { modules: [VueFireFirestoreOptionsAPI] })
+````
+
 ## Breaking changes
 
 ### Removal of `serialize` option for Firestore

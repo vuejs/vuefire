@@ -1,5 +1,6 @@
 import type { FirebaseApp } from 'firebase/app'
 import type { App } from 'vue'
+import { databasePlugin } from '../dist'
 import { _FirebaseAppInjectionKey } from './app'
 
 // Database
@@ -28,7 +29,12 @@ export type {
 } from './firestore'
 
 // Database options API
-export { databasePlugin } from './database/optionsApi'
+export {
+  databasePlugin,
+  // To ease migration
+  databasePlugin as rtdbPlugin,
+  VueFireDatabaseOptionsAPI,
+} from './database/optionsApi'
 export type {
   DatabasePluginOptions,
   VueFirebaseObject,
@@ -36,7 +42,10 @@ export type {
 } from './database/optionsApi'
 
 // Firestore options API
-export { firestorePlugin } from './firestore/optionsApi'
+export {
+  firestorePlugin,
+  VueFireFirestoreOptionsAPI,
+} from './firestore/optionsApi'
 export type {
   FirestorePluginOptions,
   VueFirestoreObject,

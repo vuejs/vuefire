@@ -22,7 +22,7 @@ import {
   _Nullable,
   _RefWithState,
 } from '../shared'
-import { rtdbUnbinds } from './optionsApi'
+import { databaseUnbinds } from './optionsApi'
 import {
   bindAsArray,
   bindAsObject,
@@ -203,7 +203,7 @@ export function useObject<T = unknown>(
 }
 
 export const unbind = (target: Ref, reset?: ResetOption) =>
-  internalUnbind('', rtdbUnbinds.get(target), reset)
+  internalUnbind('', databaseUnbinds.get(target), reset)
 
 /**
  * Retrieves the Database instance.
