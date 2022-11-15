@@ -88,7 +88,11 @@ const usersRef = collection(db, 'users').withConverter({
 
 The `$bind` method is now called `$firestoreBind` to avoid conflicts with other libraries. In the same way, `$unbind` is now called `$firestoreUnbind`.
 
-The `$rtdbBind` and `$rtdbUnbind` methods are unchanged.
+### Rename `$rtdbBind` to `$databaseBind`
+
+The `$rtdbBind` method is now called `$databaseBind` to have a consistent naming that aligns with the Firebase SDK. In the same way, `$rtdbUnbind` is now called `$databaseUnbind`.
+
+Note that for compatibility reasons, the `$rtdbBind` and `$rtdbUnbind` methods are still available but marked as deprecated.
 
 ## Vuexfire
 

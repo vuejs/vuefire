@@ -7,7 +7,7 @@ This pages assumes you have read the [Realtime Data](./realtime-data.md) page an
 There are two ways of using Realtime Data with VueFire:
 
 - Declarative binding with the `firebase`/`firestore` option
-- Programmatic binding with the injected methods `$rtdbBind`/`$firestoreBind`
+- Programmatic binding with the injected methods `$databaseBind`/`$firestoreBind`
 
 Once you _bind_, VueFire will keep the local version synchronized with the remote Database. However, this synchronization **is only one-way**. Do not modify the local variable (e.g. doing `this.user.name = 'John'`), because (a) it will not change the remote Database and (b) it can be overwritten at any time by VueFire. To [write changes to the Database](./writing-data.md), use the Firebase JS SDK. In other words, **treat the local variable as read-only**.
 
@@ -76,7 +76,7 @@ You must declare properties with their initial values in `data`. **For the RTDB,
 
 ## Programmatic binding
 
-If you need to change the bound reference while the application is running, e.g. to display a different user profile, or different product detail page, _Declarative binding_ isn't enough. This can be achieved through the `$rtdbBind`/`$firestoreBind` methods:
+If you need to change the bound reference while the application is running, e.g. to display a different user profile, or different product detail page, _Declarative binding_ isn't enough. This can be achieved through the `$databaseBind`/`$firestoreBind` methods:
 
 <FirebaseExample>
 
@@ -97,7 +97,7 @@ export default {
       // call it upon creation too
       immediate: true,
       handler(id) {
-        this.$rtdbBind('user', dbRef(users, id))
+        this.$databaseBind('user', dbRef(users, id))
       },
     },
   },
@@ -133,7 +133,7 @@ export default {
 With the approach above, `user` will always be bound to the user defined by the prop `id`
 
 :::tip
-No need to call `$rtdbUnbind`/`$firestoreUnbind` as `$rtdbBind`/`$firestoreBind` will automatically unbind any existing binding on the provided key. Upon component removal, all bindings are removed as well, so no need to use `$rtdbUnbind`/`$firestoreUnbind` in `unmounted` hooks.
+No need to call `$databaseUnbind`/`$firestoreUnbind` as `$databaseBind`/`$firestoreBind` will automatically unbind any existing binding on the provided key. Upon component removal, all bindings are removed as well, so no need to use `$databaseUnbind`/`$firestoreUnbind` in `unmounted` hooks.
 :::
 
 If you need to wait for a binding to be ready before doing something, you can _await_ the returned Promise:
@@ -141,13 +141,13 @@ If you need to wait for a binding to be ready before doing something, you can _a
 <FirebaseExample>
 
 ```js
-this.$rtdbBind('user', dbRef(users, this.id).then(user => {
+this.$databaseBind('user', dbRef(users, this.id).then(user => {
   // user will be an object if this.user was set to anything but an array
   // and it will point to the same property declared in data:
   // this.user === user
 })
 
-this.$rtdbBind('documents', query(documents, orderByChild('creator'), equalTo(this.id))).then(documents => {
+this.$databaseBind('documents', query(documents, orderByChild('creator'), equalTo(this.id))).then(documents => {
   // documents will be an array if this.documents was initially set to an array
   // and it will point to the same property declared in data:
   // this.documents === documents
@@ -176,8 +176,8 @@ While VueFire will automatically unbind any reference bound in a component whene
 
 ```js
 // unsubscribe from Database updates
-this.$rtdbUnbind('user')
-this.$rtdbUnbind('documents')
+this.$databaseUnbind('user')
+this.$databaseUnbind('documents')
 ```
 
 ```js
@@ -194,21 +194,21 @@ By default, VueFire **will not reset** the property, you can customize this beha
 
 ```js
 // default behavior
-this.$rtdbUnbind('user')
+this.$databaseUnbind('user')
 // same as
-this.$rtdbUnbind('user', false)
+this.$databaseUnbind('user', false)
 // this.user === { name: 'Eduardo' }
 
 // using a boolean value for reset to keep current value
-this.$rtdbUnbind('user', true)
+this.$databaseUnbind('user', true)
 // this.user === null
 
 // using the function syntax to customize the value
-this.$rtdbUnbind('user', () => ({ name: 'unregistered' }))
+this.$databaseUnbind('user', () => ({ name: 'unregistered' }))
 // this.user === { name: 'unregistered' }
 
 // for references bound as arrays, they are reset to an empty array by default instead of `null`
-this.$rtdbUnbind('documents')
+this.$databaseUnbind('documents')
 // this.documents === []
 ```
 
@@ -239,8 +239,8 @@ It's also possible to customize this behavior when _binding_ by using the `reset
 
 ```js
 // using a boolean value for reset
-await this.$rtdbBind('user', userRef)
-this.$rtdbBind('user', otherUserRef, { reset: true })
+await this.$databaseBind('user', userRef)
+this.$databaseBind('user', otherUserRef, { reset: true })
 // while the user is fetched
 // this.user === null
 ```
