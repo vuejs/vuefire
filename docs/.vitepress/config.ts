@@ -126,6 +126,10 @@ export default defineConfig({
               text: 'Realtime Data',
               link: '/guide/realtime-data',
             },
+            {
+              text: 'Options API',
+              link: '/guide/options-api-realtime-data',
+            },
             // {
             //   text: 'Querying the database',
             //   link: '/guide/querying',
