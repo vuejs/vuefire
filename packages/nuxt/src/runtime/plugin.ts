@@ -11,7 +11,7 @@ export default defineNuxtPlugin(async (nuxtApp) => {
     VueFire,
     {
       firebaseApp,
-    },
+    }
   )
 
   if (process.server) {
