@@ -17,8 +17,6 @@ import {
 // TODO: rename to match where it's used
 export interface _DatabaseRefOptions extends _DataSourceOptions {
   serialize?: DatabaseSnapshotSerializer
-
-  initialValue?: unknown
 }
 
 export interface _GlobalDatabaseRefOptions extends _DatabaseRefOptions {

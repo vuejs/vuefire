@@ -128,7 +128,7 @@ export function isFirestoreDataReference<T = unknown>(
 
 export function isFirestoreQuery(
   source: unknown
-): source is FirestoreQuery<unknown> {
+): source is FirestoreQuery<unknown> & { path: undefined } { // makes some types so much easier
   return isObject(source) && source.type === 'query'
 }
 
@@ -197,6 +197,17 @@ export type _MaybeRef<T> = T | Ref<T>
  * @internal
  */
 export interface _DataSourceOptions {
+  /**
+   * Use the `target` ref instead of creating one.
+   */
+  target?: Ref<unknown>
+
+  /**
+   * Optional key to handle SSR hydration. **Necessary for Queries** or when the same source is used in multiple places
+   * with different converters.
+   */
+  ssrKey?: string
+
   /**
    * If true, the data will be reset when the data source is unbound. Pass a function to specify a custom reset value.
    */

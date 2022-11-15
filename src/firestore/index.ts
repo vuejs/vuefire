@@ -48,18 +48,7 @@ export const ops: OperationsType = {
   remove: (array, index) => array.splice(index, 1),
 }
 
-export interface _UseFirestoreRefOptions extends FirestoreRefOptions {
-  /**
-   * Use the `target` ref instead of creating one.
-   */
-  target?: Ref<unknown>
-
-  /**
-   * Optional key to handle SSR hydration. **Necessary for Queries** or when the same source is used in multiple places
-   * with different converters.
-   */
-  ssrKey?: string
-}
+export interface _UseFirestoreRefOptions extends FirestoreRefOptions {}
 
 /**
  * Internal version of `useDocument()` and `useCollection()`.
@@ -80,12 +69,7 @@ export function _useFirestoreRef(
 
   const data = options.target || ref<unknown | null>()
   // set the initial value from SSR even if the ref comes from outside
-  data.value = getInitialValue(
-    'f',
-    options.ssrKey,
-    initialSourceValue,
-    data.value
-  )
+  data.value = getInitialValue(initialSourceValue, options.ssrKey, data.value)
   // TODO: allow passing pending and error refs as option for when this is called using the options api
   const pending = ref(true)
   const error = ref<FirestoreError>()

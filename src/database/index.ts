@@ -8,6 +8,8 @@ import {
   unref,
   watch,
   isRef,
+  getCurrentInstance,
+  onServerPrefetch,
 } from 'vue-demi'
 import { DatabaseReference, getDatabase, Query } from 'firebase/database'
 import {
@@ -34,6 +36,7 @@ import {
 } from './utils'
 import { addPendingPromise } from '../ssr/plugin'
 import { useFirebaseApp } from '../app'
+import { getInitialValue } from '../ssr/initialState'
 
 export { databasePlugin } from './optionsApi'
 
@@ -45,23 +48,24 @@ const ops: OperationsType = {
   remove: (array, index) => array.splice(index, 1),
 }
 
-export interface UseDatabaseRefOptions extends _DatabaseRefOptions {
-  target?: Ref<unknown>
-}
+export interface UseDatabaseRefOptions extends _DatabaseRefOptions {}
 
 export function _useDatabaseRef(
   reference: _MaybeRef<_Nullable<DatabaseReference | Query>>,
   localOptions: UseDatabaseRefOptions = {}
 ) {
-  const options = Object.assign({}, rtdbOptions, localOptions)
   let _unbind!: UnbindWithReset
+  const options = Object.assign({}, rtdbOptions, localOptions)
+  const initialSourceValue = unref(reference)
 
-  const data = options.target || ref<unknown | null>(options.initialValue)
+  const data = options.target || ref<unknown | null>()
+  // set the initial value from SSR even if the ref comes from outside
+  data.value = getInitialValue(initialSourceValue, options.ssrKey, data.value)
+
   const error = ref<Error>()
   const pending = ref(true)
   // force the type since its value is set right after and undefined isn't possible
   const promise = shallowRef() as ShallowRef<Promise<unknown | null>>
-  let isPromiseAdded = false
   const hasCurrentScope = getCurrentScope()
   let removePendingPromise = noop
 
@@ -100,11 +104,6 @@ export function _useDatabaseRef(
       }
     })
 
-    // only add the first promise to the pending ones
-    if (!isPromiseAdded && referenceValue) {
-      removePendingPromise = addPendingPromise(p, referenceValue)
-      isPromiseAdded = true
-    }
     promise.value = p
 
     p.catch((reason) => {
@@ -127,8 +126,18 @@ export function _useDatabaseRef(
     bindDatabaseRef()
   }
 
+  // only add the first promise to the pending ones
+  if (initialSourceValue) {
+    removePendingPromise = addPendingPromise(promise.value, initialSourceValue)
+  }
+
   if (hasCurrentScope) {
     onScopeDispose(unbind)
+
+    // wait for the promise on SSR
+    if (getCurrentInstance()) {
+      onServerPrefetch(() => promise.value)
+    }
   }
 
   // TODO: rename to stop

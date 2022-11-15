@@ -1,4 +1,5 @@
 import { FirebaseApp } from 'firebase/app'
+import { DatabaseReference, Query as DatabaseQuery } from 'firebase/database'
 import {
   CollectionReference,
   DocumentReference,
@@ -6,7 +7,12 @@ import {
 } from 'firebase/firestore'
 import { InjectionKey } from 'vue'
 import { useFirebaseApp } from '../app'
-import { isFirestoreQuery, _Nullable } from '../shared'
+import {
+  isDatabaseReference,
+  isFirestoreDataReference,
+  isFirestoreQuery,
+  _Nullable,
+} from '../shared'
 
 export interface SSRStore {
   // firestore data
@@ -52,37 +58,56 @@ type FirestoreDataSource =
   | FirestoreQuery<unknown>
 
 export function getInitialValue(
-  type: 'f' | 'r',
-  ssrKey?: string | undefined,
-  dataSource?: _Nullable<FirestoreDataSource>,
-  fallbackValue?: unknown
+  dataSource: _Nullable<
+    FirestoreDataSource | DatabaseReference | DatabaseQuery
+  >,
+  ssrKey: string | undefined,
+  fallbackValue: unknown
 ) {
-  const initialState: Record<string, unknown> = useSSRInitialState()[type] || {}
-  const key = ssrKey || getFirestoreSourceKey(dataSource)
+  if (!dataSource) return fallbackValue
+
+  const [sourceType, path] = getDataSourceInfo(dataSource)
+  if (!sourceType) return fallbackValue
+
+  const initialState: Record<string, unknown> =
+    useSSRInitialState()[sourceType] || {}
+  const key = ssrKey || path
 
   // TODO: warn for queries on the client if there are other keys and this is during hydration
 
-  // returns undefined if no key, otherwise initial state or undefined
-  // undefined should be treated as no initial state
+  // returns the fallback value if no key, otherwise initial state
   return key && key in initialState ? initialState[key] : fallbackValue
 }
 
-export function setInitialValue(
-  type: 'f' | 'r',
-  value: unknown,
-  ssrKey?: string | undefined,
-  dataSource?: _Nullable<FirestoreDataSource>
+export function deferInitialValueSetup(
+  dataSource: _Nullable<
+    FirestoreDataSource | DatabaseReference | DatabaseQuery
+  >,
+  ssrKey: string | undefined | null,
+  promise: Promise<unknown>
 ) {
-  const initialState: Record<string, unknown> = useSSRInitialState()[type]
-  const key = ssrKey || getFirestoreSourceKey(dataSource)
+  if (!dataSource) return
+
+  const [sourceType, path] = getDataSourceInfo(dataSource)
+  if (!sourceType) return
+
+  const initialState: Record<string, unknown> = useSSRInitialState()[sourceType]
+  const key = ssrKey || path
 
   if (key) {
-    initialState[key] = value
+    promise.then((value) => {
+      initialState[key] = value
+    })
+    return key
   }
 }
 
-function getFirestoreSourceKey(
-  source: _Nullable<FirestoreDataSource>
-): string | undefined {
-  return !source || isFirestoreQuery(source) ? undefined : source.path
+function getDataSourceInfo(
+  dataSource: FirestoreDataSource | DatabaseReference | DatabaseQuery
+) {
+  return isFirestoreDataReference(dataSource) || isFirestoreQuery(dataSource)
+    ? (['f', dataSource.path] as const)
+    : isDatabaseReference(dataSource)
+    ? (['r', dataSource.toString()] as const)
+    : []
 }

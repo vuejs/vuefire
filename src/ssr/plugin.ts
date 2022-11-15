@@ -7,7 +7,7 @@ import {
 } from 'firebase/firestore'
 import { useFirebaseApp, _FirebaseAppInjectionKey } from '../app'
 import { getDataSourcePath, noop } from '../shared'
-import { setInitialValue } from './initialState'
+import { deferInitialValueSetup } from './initialState'
 
 export const appPendingPromises = new WeakMap<
   FirebaseApp,
@@ -20,7 +20,6 @@ export function clearPendingPromises(app: FirebaseApp) {
 
 export function addPendingPromise(
   promise: Promise<unknown>,
-  // TODO: should this just be ssrKey? and let functions infer the path?
   dataSource:
     | DocumentReference<unknown>
     | FirestoreQuery<unknown>
@@ -34,15 +33,10 @@ export function addPendingPromise(
   }
   const pendingPromises = appPendingPromises.get(app)!
 
-  const key = ssrKey || getDataSourcePath(dataSource)
+  // TODO: skip this outside of SSR
+  const key = deferInitialValueSetup(dataSource, ssrKey, promise)
   if (key) {
     pendingPromises.set(key, promise)
-
-    // TODO: skip this outside of SSR
-    promise.then((value) => {
-      // TODO: figure out 'f', probably based on the type of dataSource
-      setInitialValue('f', value, key! /* dataSource */)
-    })
   } else {
     // TODO: warn if in SSR context in other contexts than vite
     if (process.env.NODE_ENV !== 'production' /* && import.meta.env?.SSR */) {

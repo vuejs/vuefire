@@ -32,8 +32,6 @@ export interface FirestoreRefOptions extends _DataSourceOptions {
    */
   maxRefDepth?: number
 
-  initialValue?: unknown
-
   snapshotOptions?: SnapshotOptions
 
   /**
