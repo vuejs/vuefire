@@ -240,17 +240,17 @@ It's also possible to customize this behavior when _binding_ by using the `reset
 ```js
 // using a boolean value for reset
 await this.$rtdbBind('user', userRef)
-this.$rtdbBind('user', otherUserRef, { reset: false })
+this.$rtdbBind('user', otherUserRef, { reset: true })
 // while the user is fetched
-// this.user === { name: 'Eduardo' }
+// this.user === null
 ```
 
 ```js
 // using a boolean value for reset
 await this.$firestoreBind('user', userRef)
-this.$firestoreBind('user', otherUserRef, { reset: false })
+this.$firestoreBind('user', otherUserRef, { reset: true })
 // while the user is fetched
-// this.user === { name: 'Eduardo' }
+// this.user === null
 ```
 
 </FirebaseExample>
