@@ -128,7 +128,8 @@ export function isFirestoreDataReference<T = unknown>(
 
 export function isFirestoreQuery(
   source: unknown
-): source is FirestoreQuery<unknown> & { path: undefined } { // makes some types so much easier
+): source is FirestoreQuery<unknown> & { path: undefined } {
+  // makes some types so much easier
   return isObject(source) && source.type === 'query'
 }
 
@@ -174,6 +175,11 @@ export function callOnceWithArg<T, K>(
     }
   }
 }
+
+export type _FirestoreDataSource =
+  | DocumentReference<unknown>
+  | CollectionReference<unknown>
+  | FirestoreQuery<unknown>
 
 /**
  * @internal

@@ -11,6 +11,7 @@ import {
   isDatabaseReference,
   isFirestoreDataReference,
   isFirestoreQuery,
+  _FirestoreDataSource,
   _Nullable,
 } from '../shared'
 
@@ -52,14 +53,9 @@ export function useSSRInitialState(
   return initialStatesMap.get(firebaseApp)!
 }
 
-type FirestoreDataSource =
-  | DocumentReference<unknown>
-  | CollectionReference<unknown>
-  | FirestoreQuery<unknown>
-
 export function getInitialValue(
   dataSource: _Nullable<
-    FirestoreDataSource | DatabaseReference | DatabaseQuery
+    _FirestoreDataSource | DatabaseReference | DatabaseQuery
   >,
   ssrKey: string | undefined,
   fallbackValue: unknown
@@ -81,7 +77,7 @@ export function getInitialValue(
 
 export function deferInitialValueSetup(
   dataSource: _Nullable<
-    FirestoreDataSource | DatabaseReference | DatabaseQuery
+    _FirestoreDataSource | DatabaseReference | DatabaseQuery
   >,
   ssrKey: string | undefined | null,
   promise: Promise<unknown>
@@ -103,7 +99,7 @@ export function deferInitialValueSetup(
 }
 
 function getDataSourceInfo(
-  dataSource: FirestoreDataSource | DatabaseReference | DatabaseQuery
+  dataSource: _FirestoreDataSource | DatabaseReference | DatabaseQuery
 ) {
   return isFirestoreDataReference(dataSource) || isFirestoreQuery(dataSource)
     ? (['f', dataSource.path] as const)

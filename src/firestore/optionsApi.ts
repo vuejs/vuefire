@@ -6,28 +6,17 @@ import type {
 } from 'firebase/firestore'
 import { App, ComponentPublicInstance, effectScope, toRef } from 'vue'
 import { isVue3 } from 'vue-demi'
-import {
-  bindCollection,
-  bindDocument,
-  firestoreOptions,
-  FirestoreRefOptions,
-  _GlobalFirestoreRefOptions,
-} from './subscribe'
+import { FirestoreRefOptions, _GlobalFirestoreRefOptions } from './subscribe'
 import { internalUnbind, _useFirestoreRef } from '.'
-import { ResetOption, UnbindWithReset } from '../shared'
-import { firebaseApp } from '../../tests/utils'
+import { ResetOption, UnbindWithReset, _FirestoreDataSource } from '../shared'
 import { FirebaseApp } from 'firebase/app'
 import { getGlobalScope } from '../globals'
 import { useFirebaseApp } from '../app'
 
-export type VueFirestoreObject = Record<
-  string,
-  DocumentReference<unknown> | Query<unknown> | CollectionReference<unknown>
->
-
-export type FirestoreOption = VueFirestoreObject | (() => VueFirestoreObject)
-
 // TODO: this should be an entry point to generate the corresponding .d.ts file that only gets included if the plugin is imported
+
+export type VueFirestoreObject = Record<string, _FirestoreDataSource>
+export type FirestoreOption = VueFirestoreObject | (() => VueFirestoreObject)
 
 export const firestoreUnbinds = new WeakMap<
   object,
@@ -40,7 +29,14 @@ export const firestoreUnbinds = new WeakMap<
  */
 export interface FirestorePluginOptions
   extends Partial<_GlobalFirestoreRefOptions> {
+  /**
+   * @deprecated: was largely unused and not very useful. Please open an issue with use cases if you need this.
+   */
   bindName?: string
+
+  /**
+   * @deprecated: was largely unused and not very useful. Please open an issue with use cases if you need this.
+   */
   unbindName?: string
 }
 
@@ -90,10 +86,7 @@ export const firestorePlugin = function firestorePlugin(
   GlobalTarget[bindName] = function firestoreBind(
     this: ComponentPublicInstance,
     key: string,
-    docOrCollectionRef:
-      | Query<unknown>
-      | CollectionReference<unknown>
-      | DocumentReference<unknown>,
+    docOrCollectionRef: _FirestoreDataSource,
     userOptions?: FirestoreRefOptions
   ) {
     const options = Object.assign({}, globalOptions, userOptions)
@@ -195,20 +188,17 @@ declare module '@vue/runtime-core' {
      * @param reference
      * @param options
      */
-    $firestoreBind(
+    $firestoreBind<T = DocumentData>(
       name: string,
-      // TODO: create proper overloads with generics like in the composition API
-      reference: Query<unknown> | CollectionReference<unknown>,
+      reference: Query<T> | CollectionReference<T>,
       options?: FirestoreRefOptions
-      // TODO: match the promise with the type of internalBind
-    ): Promise<DocumentData[]>
+    ): Promise<T[]>
 
-    $firestoreBind(
+    $firestoreBind<T = DocumentData>(
       name: string,
-      // TODO: create proper overloads with generics like in the composition API
-      reference: DocumentReference<unknown>,
+      reference: DocumentReference<T>,
       options?: FirestoreRefOptions
-    ): Promise<DocumentData>
+    ): Promise<T>
 
     /**
      * Unbinds a bound reference
