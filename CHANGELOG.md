@@ -1,3 +1,28 @@
+# [3.0.0-alpha.8](https://github.com/vuejs/vuefire/compare/v3.0.0-alpha.7...v3.0.0-alpha.8) (2022-11-15)
+
+### Bug Fixes
+
+- **app-check:** run only in client ([384085e](https://github.com/vuejs/vuefire/commit/384085edbe2e39dc05d9ad78e0600e647805116e))
+- **options-api:** cleanup variables ([5d244b7](https://github.com/vuejs/vuefire/commit/5d244b75e579ea3feda9aa3beee5c6e39680f791))
+- **ssr:** fallback value in firestore ([57cdd82](https://github.com/vuejs/vuefire/commit/57cdd824be1439a636655a02c75978f857ba36ba))
+
+### Code Refactoring
+
+- rename `unbind()` to `stop()` ([37d3f67](https://github.com/vuejs/vuefire/commit/37d3f67eda2206df4ca346028e6fb573f89e7960))
+
+### Features
+
+- add modules for options api ([908f6c3](https://github.com/vuejs/vuefire/commit/908f6c3e6890dff8dfd165e368e47ba2c95711ba))
+- **ssr:** database and firestore ([eca3031](https://github.com/vuejs/vuefire/commit/eca3031cbd9abbbdbdb98f30f1efdd995354bb41))
+- **storage:** url, metadata and upload tasks ([b5fa6b9](https://github.com/vuejs/vuefire/commit/b5fa6b9404a2a0f9c2c34293cdff78994dd438bf))
+
+### BREAKING CHANGES
+
+- Composables like `useDocument()` no longer return an
+  `unbind()` method. The method is now named `stop()` to better reflect
+  that they also stop the Vue watcher on top of stopping the Firebase data
+  subscription.
+
 # [3.0.0-alpha.7](https://github.com/vuejs/vuefire/compare/v3.0.0-alpha.6...v3.0.0-alpha.7) (2022-11-11)
 
 ### Features
