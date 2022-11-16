@@ -58,9 +58,9 @@ importers:
   packages/nuxt:
     specifiers:
       '@firebase/app-types': ^0.8.1
-      '@nuxt/kit': 3.0.0-rc.13
+      '@nuxt/kit': ^3.0.0-rc.13
       '@nuxt/module-builder': ^0.2.0
-      '@nuxt/schema': 3.0.0-rc.13
+      '@nuxt/schema': ^3.0.0-rc.13
       '@nuxtjs/eslint-config-typescript': ^11.0.0
       eslint: ^8.27.0
       firebase: ^9.14.0
@@ -9825,7 +9825,7 @@ packages:
   /unctx/2.0.2:
     resolution: {integrity: sha512-3lcXTlDoOaguRVC1GqG3mrawy17yoycSAQDDnUayQYZ17v9to+Gn6Zyssroc/GD2ppJ0wF5V8adOcKkrNKVWow==}
     dependencies:
-      acorn: 8.8.0
+      acorn: 8.8.1
       estree-walker: 3.0.1
       magic-string: 0.26.7
       unplugin: 0.9.6
