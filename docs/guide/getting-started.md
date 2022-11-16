@@ -20,7 +20,7 @@ VueFire requires Firebase JS SDK >= 9 but **is compatible with Vue 2 and Vue 3**
 
 ## Usage
 
-VueFire expects you to use the existing APIs from Firebase as much as possible. It doesn't expose any configs to initialize your app or get the database/firestore instances. You should follow the official Firebase documentation for that. We do have [some recommendations](#TODO) for a Vue project and [a Nuxt module](../cookbook/nuxt.md) to help you get started.
+VueFire expects you to use the existing APIs from Firebase as much as possible. It doesn't expose any configs to initialize your app or get the database/firestore instances. You should follow the official Firebase documentation for that. We do have [some recommendations](#TODO) for a Vue project and [a Nuxt module](./nuxt.md) to help you get started.
 
 Most of the time, you should gather collection references in one of your files and export them but **to keep examples short, we will always create the database references whenever necessary** instead of gathering them in one place. We will also consider that we have access to some globals (you usually import them from the file where you initialize your Firebase app):
 
