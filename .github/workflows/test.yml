@@ -60,7 +60,7 @@ jobs:
             ${{ runner.os }}-
 
       - name: Install
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
 
       - name: Install firebase-tools
         run: pnpm add -g firebase-tools
