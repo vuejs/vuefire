@@ -44,6 +44,7 @@ const VueFireModule: NuxtModule<VueFireNuxtModuleOptions> =
 
     setup(options, nuxt) {
       const runtimeDir = fileURLToPath(new URL('./runtime', import.meta.url))
+      console.log('TOEHUNTOEUHNTUEHoT')
       nuxt.options.build.transpile.push(runtimeDir)
       // TODO: check for individual options
       addPlugin(resolve(runtimeDir, 'plugin'))
