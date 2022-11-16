@@ -5,7 +5,12 @@ import { type NuxtModule } from '@nuxt/schema'
 import { type FirebaseOptions } from '@firebase/app-types'
 
 export interface VueFireNuxtModuleOptions {
-  optionsApiPlugin: boolean
+  /**
+   * Should we add the `VueFireFirestoreOptionsAPI` and `VueFireRealtimeDatabaseOptionsAPI` modules?. Pass `true` to add
+   * both, or `'firestore'` or `'realtime-database'` to add only one. Pass false to disable.
+   * @default false
+   */
+  optionsApiPlugin?: boolean | 'firestore' | 'database'
 
   config: FirebaseOptions
   /**
@@ -39,11 +44,9 @@ const VueFireModule: NuxtModule<VueFireNuxtModuleOptions> =
 
     setup(options, nuxt) {
       const runtimeDir = fileURLToPath(new URL('./runtime', import.meta.url))
-      if (options.optionsApiPlugin) {
-        nuxt.options.build.transpile.push(runtimeDir)
-        // TODO: check for individual options
-        addPlugin(resolve(runtimeDir, 'plugin'))
-      }
+      nuxt.options.build.transpile.push(runtimeDir)
+      // TODO: check for individual options
+      addPlugin(resolve(runtimeDir, 'plugin'))
     },
   })
 
