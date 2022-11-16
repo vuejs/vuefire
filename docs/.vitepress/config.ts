@@ -130,6 +130,14 @@ export default defineConfig({
               text: 'Options API',
               link: '/guide/options-api-realtime-data',
             },
+            {
+              text: 'SSR',
+              link: '/guide/ssr',
+            },
+            {
+              text: 'Nuxt',
+              link: '/guide/nuxt',
+            },
             // {
             //   text: 'Querying the database',
             //   link: '/guide/querying',
