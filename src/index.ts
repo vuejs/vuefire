@@ -86,9 +86,7 @@ export interface VueFireOptions {
 }
 
 /**
- * Still under development.
- *
- * @experimental
+ * VueFire Vue plugin.
  */
 export function VueFire(
   app: App,
