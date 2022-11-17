@@ -1,3 +1,10 @@
+# [3.0.0-alpha.9](https://github.com/vuejs/vuefire/compare/v3.0.0-alpha.8...v3.0.0-alpha.9) (2022-11-17)
+
+### Features
+
+- **auth:** getCurrentUser() ([8bd023a](https://github.com/vuejs/vuefire/commit/8bd023acb714d2d5408ab4331df8ce43f9585854))
+- **storage:** handle ssr ([b846d56](https://github.com/vuejs/vuefire/commit/b846d5626cab3acd5611609a786335f86aa1ca8a))
+
 # [3.0.0-alpha.8](https://github.com/vuejs/vuefire/compare/v3.0.0-alpha.7...v3.0.0-alpha.8) (2022-11-15)
 
 ### Bug Fixes
