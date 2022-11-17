@@ -1,6 +1,13 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
-import { firestorePlugin, VueFire, VueFireAuth, VueFireAppCheck } from 'vuefire'
+import {
+  VueFire,
+  VueFireAuth,
+  VueFireAppCheck,
+  VueFireFirestoreOptionsAPI,
+  VueFireDatabaseOptionsAPI,
+  getCurrentUser,
+} from 'vuefire'
 import App from './App.vue'
 import { createFirebaseApp } from './firebase'
 import { createWebHistory, createRouter } from 'vue-router/auto'
@@ -9,6 +16,10 @@ import { ReCaptchaV3Provider } from 'firebase/app-check'
 
 const router = createRouter({
   history: createWebHistory(),
+})
+
+router.beforeEach(async () => {
+  await getCurrentUser()
 })
 
 const store = createStore({
@@ -34,9 +45,10 @@ app
           '6LfJ0vgiAAAAAHheQE7GQVdG_c9m8xipBESx_SKI'
         ),
       }),
+      VueFireDatabaseOptionsAPI(),
+      VueFireFirestoreOptionsAPI(),
     ],
   })
-  .use(firestorePlugin)
   .use(store)
   .use(router)
 

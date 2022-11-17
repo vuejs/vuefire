@@ -55,7 +55,12 @@ export type {
 export { useFirebaseApp } from './app'
 
 // Auth
-export { useCurrentUser, VueFireAuth, useFirebaseAuth } from './auth'
+export {
+  useCurrentUser,
+  VueFireAuth,
+  useFirebaseAuth,
+  getCurrentUser,
+} from './auth'
 
 // SSR
 export { usePendingPromises } from './ssr/plugin'

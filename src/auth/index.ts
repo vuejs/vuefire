@@ -5,7 +5,7 @@ import { useFirebaseApp } from '../app'
 import { getGlobalScope } from '../globals'
 import { AuthUserInjectSymbol, setupOnAuthStateChanged } from './user'
 
-export { setupOnAuthStateChanged, useCurrentUser } from './user'
+export { useCurrentUser, getCurrentUser } from './user'
 
 /**
  * VueFire Auth Module to be added to the `VueFire` Vue plugin options.
