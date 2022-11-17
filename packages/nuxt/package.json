@@ -8,7 +8,8 @@
     ".": {
       "import": "./dist/module.mjs",
       "require": "./dist/module.cjs"
-    }
+    },
+    "./templates/*": "./templates/*"
   },
   "main": "./dist/module.cjs",
   "module": "./dist/module.mjs",
@@ -28,7 +29,7 @@
     "dev:prepare": "nuxt-module-build --stub && nuxi prepare playground"
   },
   "dependencies": {
-    "@nuxt/kit": "^3.0.0-rc.14"
+    "@nuxt/kit": "^3.0.0"
   },
   "peerDependencies": {
     "@firebase/app-types": ">=0.8.1",
@@ -38,11 +39,11 @@
   "devDependencies": {
     "@firebase/app-types": "^0.8.1",
     "@nuxt/module-builder": "^0.2.1",
-    "@nuxt/schema": "^3.0.0-rc.14",
+    "@nuxt/schema": "^3.0.0",
     "@nuxtjs/eslint-config-typescript": "^11.0.0",
     "eslint": "^8.27.0",
     "firebase": "^9.14.0",
-    "nuxt": "^3.0.0-rc.14",
+    "nuxt": "^3.0.0",
     "vuefire": "workspace:*"
   }
 }

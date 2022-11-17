@@ -1,7 +1,12 @@
 import { fileURLToPath } from 'node:url'
-import { resolve } from 'path'
-import { addPlugin, defineNuxtModule } from '@nuxt/kit'
-import { type NuxtModule } from '@nuxt/schema'
+import { normalize } from 'node:path'
+import {
+  addPlugin,
+  addPluginTemplate,
+  createResolver,
+  defineNuxtModule,
+} from '@nuxt/kit'
+import type { NuxtModule } from '@nuxt/schema'
 import { type FirebaseOptions } from '@firebase/app-types'
 
 export interface VueFireNuxtModuleOptions {
@@ -13,12 +18,13 @@ export interface VueFireNuxtModuleOptions {
   optionsApiPlugin?: boolean | 'firestore' | 'database'
 
   config: FirebaseOptions
+
   /**
    * Optional name passed to `firebase.initializeApp(config, name)`
    */
   appName?: string
 
-  services: {
+  services?: {
     auth?: boolean
     firestore?: boolean
     database?: boolean
@@ -26,13 +32,14 @@ export interface VueFireNuxtModuleOptions {
   }
 }
 
-const VueFireModule: NuxtModule<VueFireNuxtModuleOptions> =
+// Manual to avoid build error
+const VueFire: NuxtModule<VueFireNuxtModuleOptions> =
   defineNuxtModule<VueFireNuxtModuleOptions>({
     meta: {
       name: 'vuefire',
       configKey: 'vuefire',
       compatibility: {
-        nuxt: '^3.0.0-0',
+        nuxt: '^3.0.0',
       },
     },
 
@@ -43,12 +50,45 @@ const VueFireModule: NuxtModule<VueFireNuxtModuleOptions> =
     },
 
     setup(options, nuxt) {
+      const { resolve } = createResolver(import.meta.url)
       const runtimeDir = fileURLToPath(new URL('./runtime', import.meta.url))
-      console.log('TOEHUNTOEUHNTUEHoT')
+      const templatesDir = fileURLToPath(
+        new URL('../templates', import.meta.url)
+      )
+
+      // Let plugins and the user access the firebase config within the app
+      nuxt.options.appConfig.firebaseConfig = options.config
+
+      if (Object.keys(options.config).length === 0) {
+        throw new Error(
+          '[VueFire]: Missing firebase config. Provide it to the VueFire module options.'
+        )
+      }
+
+      // nuxt.options.build.transpile.push(templatesDir)
       nuxt.options.build.transpile.push(runtimeDir)
-      // TODO: check for individual options
+
       addPlugin(resolve(runtimeDir, 'plugin'))
+
+      // const p = normalize(resolve(templatesDir, 'plugin.js'))
+      // console.log('[VueFire]: adding', p)
+      // addPluginTemplate({
+      //   src: normalize(resolve(templatesDir, 'plugin.js')),
+
+      //   options: {
+      //     ...options,
+      //   },
+      // })
     },
   })
 
-export default VueFireModule
+export default VueFire
+
+declare module '@nuxt/schema' {
+  export interface AppConfig {
+    /**
+     * Firebase config to initialize the app.
+     */
+    firebaseConfig: FirebaseOptions
+  }
+}
