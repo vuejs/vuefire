@@ -5,12 +5,14 @@ import {
   DocumentReference,
   Query as FirestoreQuery,
 } from 'firebase/firestore'
+import { StorageReference } from 'firebase/storage'
 import { InjectionKey } from 'vue'
 import { useFirebaseApp } from '../app'
 import {
   isDatabaseReference,
   isFirestoreDataReference,
   isFirestoreQuery,
+  isStorageReference,
   _FirestoreDataSource,
   _Nullable,
 } from '../shared'
@@ -21,10 +23,10 @@ export interface SSRStore {
   // rtdb data
   r: Record<string, unknown>
 
-  // storage
-  s: Record<string, unknown>
+  // storage urls and metadata
+  s: Record<string, string>
 
-  // auth data
+  // auth user
   u: Record<string, unknown>
 }
 
@@ -55,7 +57,7 @@ export function useSSRInitialState(
 
 export function getInitialValue(
   dataSource: _Nullable<
-    _FirestoreDataSource | DatabaseReference | DatabaseQuery
+    _FirestoreDataSource | DatabaseReference | DatabaseQuery | StorageReference
   >,
   ssrKey: string | undefined,
   fallbackValue: unknown
@@ -77,7 +79,7 @@ export function getInitialValue(
 
 export function deferInitialValueSetup(
   dataSource: _Nullable<
-    _FirestoreDataSource | DatabaseReference | DatabaseQuery
+    _FirestoreDataSource | DatabaseReference | DatabaseQuery | StorageReference
   >,
   ssrKey: string | undefined | null,
   promise: Promise<unknown>
@@ -99,11 +101,17 @@ export function deferInitialValueSetup(
 }
 
 function getDataSourceInfo(
-  dataSource: _FirestoreDataSource | DatabaseReference | DatabaseQuery
+  dataSource:
+    | _FirestoreDataSource
+    | DatabaseReference
+    | DatabaseQuery
+    | StorageReference
 ) {
   return isFirestoreDataReference(dataSource) || isFirestoreQuery(dataSource)
     ? (['f', dataSource.path] as const)
     : isDatabaseReference(dataSource)
     ? (['r', dataSource.toString()] as const)
+    : isStorageReference(dataSource)
+    ? (['s', dataSource.toString()] as const)
     : []
 }

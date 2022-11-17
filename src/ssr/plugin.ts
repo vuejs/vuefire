@@ -5,6 +5,7 @@ import {
   DocumentReference,
   Query as FirestoreQuery,
 } from 'firebase/firestore'
+import { StorageReference } from 'firebase/storage'
 import { useFirebaseApp, _FirebaseAppInjectionKey } from '../app'
 import { getDataSourcePath, noop } from '../shared'
 import { deferInitialValueSetup } from './initialState'
@@ -24,7 +25,8 @@ export function addPendingPromise(
     | DocumentReference<unknown>
     | FirestoreQuery<unknown>
     | CollectionReference<unknown>
-    | DatabaseQuery,
+    | DatabaseQuery
+    | StorageReference,
   ssrKey?: string | null | undefined
 ) {
   const app = useFirebaseApp()

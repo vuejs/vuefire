@@ -11,6 +11,7 @@ import {
   UploadTaskSnapshot,
   StorageError,
   SettableMetadata,
+  FullMetadata,
 } from 'firebase/storage'
 import {
   computed,
@@ -26,6 +27,8 @@ import {
 } from 'vue'
 import { useFirebaseApp } from '../app'
 import { noop, _MaybeRef, _Nullable } from '../shared'
+import { getInitialValue } from '../ssr/initialState'
+import { addPendingPromise } from '../ssr/plugin'
 
 /**
  * Retrieves the Storage instance.
@@ -45,8 +48,15 @@ export function useStorage(name?: string) {
 export function useStorageUrl(
   storageRef: _MaybeRef<_Nullable<StorageReference>>
 ) {
+  const initialSourceValue = unref(storageRef)
   const url = ref<string | null>()
+  url.value = getInitialValue(
+    initialSourceValue,
+    undefined,
+    url.value
+  ) as string
   const promise = ref<Promise<string | null>>(Promise.resolve(null))
+  let removePendingPromise = noop
 
   function refresh() {
     const storageSource = unref(storageRef)
@@ -65,9 +75,15 @@ export function useStorageUrl(
     watch(storageRef, refresh)
   }
 
+  // SSR
+  if (initialSourceValue) {
+    removePendingPromise = addPendingPromise(promise.value, initialSourceValue)
+  }
+
+  if (getCurrentScope()) {
+    onScopeDispose(removePendingPromise)
+  }
   if (getCurrentInstance()) {
-    // TODO: rework API to allow adding with a custom group key and key
-    // addPendingPromise(promise)
     onServerPrefetch(() => promise.value)
   }
 
@@ -83,11 +99,20 @@ export function useStorageUrl(
 export function useStorageMetadata(
   storageRef: _MaybeRef<_Nullable<StorageReference>>
 ) {
-  // TODO: retrieve global data from  local store
-  const metadata = shallowRef<UploadMetadata | null>()
-  const promise = shallowRef<Promise<UploadMetadata | null>>(
+  const initialSourceValue = unref(storageRef)
+  const metadata = shallowRef<FullMetadata | null>()
+  if (initialSourceValue) {
+    metadata.value = getInitialValue(
+      initialSourceValue,
+      // 'm ' is a prefix to differentiate from urls since both are stored in the same object
+      'm ' + initialSourceValue.toString(),
+      metadata.value
+    ) as FullMetadata
+  }
+  const promise = shallowRef<Promise<FullMetadata | null>>(
     Promise.resolve(null)
   )
+  let removePendingPromise = noop
 
   function refresh() {
     const storageSource = unref(storageRef)
@@ -120,9 +145,15 @@ export function useStorageMetadata(
     watch(storageRef, refresh)
   }
 
+  // SSR
+  if (initialSourceValue) {
+    removePendingPromise = addPendingPromise(promise.value, initialSourceValue)
+  }
+
+  if (getCurrentScope()) {
+    onScopeDispose(removePendingPromise)
+  }
   if (getCurrentInstance()) {
-    // TODO: rework API to allow adding with a custom group key and key
-    // addPendingPromise(promise)
     onServerPrefetch(() => promise.value)
   }
 

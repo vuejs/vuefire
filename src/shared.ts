@@ -8,6 +8,7 @@ import {
   QuerySnapshot,
   Timestamp,
 } from 'firebase/firestore'
+import { StorageReference } from 'firebase/storage'
 import type { Ref, ShallowRef } from 'vue-demi'
 
 export const noop = () => {}
@@ -154,6 +155,10 @@ export function isDatabaseReference(
   source: any
 ): source is DatabaseReference | DatabaseQuery {
   return isObject(source) && 'ref' in source
+}
+
+export function isStorageReference(source: any): source is StorageReference {
+  return isObject(source) && typeof source.bucket === 'string'
 }
 
 /**
