@@ -131,6 +131,10 @@ export default defineConfig({
               link: '/guide/options-api-realtime-data',
             },
             {
+              text: 'Authentication',
+              link: '/guide/auth',
+            },
+            {
               text: 'SSR',
               link: '/guide/ssr',
             },
