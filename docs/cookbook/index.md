@@ -6,7 +6,7 @@ Here are some recipes that you may find useful. If you find a usecase that is mi
 
 - [Prototyping](./prototyping.md)
 - [Using Firebase Database and Firestore together](./rtdb-and-firestore.md)
-- [Server Side Rendering](./ssr.md)
+- [Vuex](./vuex.md)
 
 ## Useful links
 
