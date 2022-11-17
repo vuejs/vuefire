@@ -1,8 +1,9 @@
 # Server Side Rendering (SSR)
 
-:::tip
+<!-- NOTE: hide until it works -->
+<!-- :::tip
 If you are using Nuxt.js, read the [Nuxt guide](./nuxt.md) instead, most of the things are already configured for you.
-:::
+::: -->
 
 When doing SSR (Server Side Rendering) you want to wait for the data on the server to serialize it and retrieve it on the client side where it will displayed. VueFire already waits for the data for you if you use the composables within components:
 

@@ -134,10 +134,11 @@ export default defineConfig({
               text: 'SSR',
               link: '/guide/ssr',
             },
-            {
-              text: 'Nuxt',
-              link: '/guide/nuxt',
-            },
+            // NOTE: hide until it works
+            // {
+            //   text: 'Nuxt',
+            //   link: '/guide/nuxt',
+            // },
             // {
             //   text: 'Querying the database',
             //   link: '/guide/querying',

@@ -1,6 +1,6 @@
 # Nuxt.js
 
-:::warn
+:::warning
 The Nuxt module and this docs are a WIP. Things might not work yet.
 :::
 
