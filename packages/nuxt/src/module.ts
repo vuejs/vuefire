@@ -68,7 +68,9 @@ const VueFire: NuxtModule<VueFireNuxtModuleOptions> =
       // nuxt.options.build.transpile.push(templatesDir)
       nuxt.options.build.transpile.push(runtimeDir)
 
-      addPlugin(resolve(runtimeDir, 'plugin'))
+      nuxt.hook('modules:done', () => {
+        addPlugin(resolve(runtimeDir, 'plugin'))
+      })
 
       // const p = normalize(resolve(templatesDir, 'plugin.js'))
       // console.log('[VueFire]: adding', p)
