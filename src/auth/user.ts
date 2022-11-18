@@ -10,9 +10,9 @@ import {
 } from 'firebase/auth'
 import { inject, InjectionKey, Ref } from 'vue-demi'
 import { useFirebaseApp } from '../app'
-import type { _Nullable } from '../shared'
+import type { _MaybeRef, _Nullable } from '../shared'
 
-export const AuthUserInjectSymbol: InjectionKey<Ref<User | null | undefined>> =
+export const AuthUserInjectSymbol: InjectionKey<Ref<_Nullable<User>>> =
   Symbol('user')
 
 /**
@@ -22,6 +22,46 @@ export const AuthUserInjectSymbol: InjectionKey<Ref<User | null | undefined>> =
 export function useCurrentUser() {
   // TODO: warn no current instance in DEV
   return inject(AuthUserInjectSymbol)!
+}
+
+/**
+ * Updates the current user profile and updates the current user state. This function internally calls `updateProfile()`
+ * from 'firebase/auth' and then updates the current user state.
+ *
+ * @param user - the user to update
+ * @param profile - the new profile information
+ */
+export function updateCurrentUserProfile(profile: {
+  displayName?: _Nullable<string>
+  photoURL?: _Nullable<string>
+}) {
+  return getCurrentUser().then((user) => {
+    if (user) {
+      return updateProfile(user, profile).then(() => user.reload())
+    }
+  })
+}
+
+export function updateCurrentUserEmail(
+  newEmail: string,
+  credential: AuthCredential
+) {
+  return getCurrentUser()
+    .then((user) => {
+      if (user) {
+        // TODO: Maybe this whole function should be dropped since it depends on reauthenticating first or we should let the user do it. Otherwise, we need a way to retrieve the credential token when logging in
+        reauthenticateWithCredential(user, credential)
+      }
+      return user
+    })
+    .then((user) => {
+      if (user) {
+        return updateEmail(user, newEmail).then(() => {
+          // @ts-expect-error: readonly property
+          user.email = newEmail
+        })
+      }
+    })
 }
 
 // @internal

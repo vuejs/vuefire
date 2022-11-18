@@ -1,4 +1,5 @@
 import { initializeApp } from 'firebase/app'
+import { GoogleAuthProvider } from 'firebase/auth'
 
 export function createFirebaseApp() {
   return initializeApp({
@@ -12,3 +13,5 @@ export function createFirebaseApp() {
     measurementId: 'G-RL4BTWXKJ7',
   })
 }
+
+export const googleAuthProvider = new GoogleAuthProvider()

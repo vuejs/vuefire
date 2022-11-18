@@ -247,3 +247,10 @@ export interface _DataSourceOptions {
    */
   wait?: boolean
 }
+
+/**
+ * Make all properties in T writable.
+ */
+export type _Mutable<T> = {
+  -readonly [P in keyof T]: T[P]
+}

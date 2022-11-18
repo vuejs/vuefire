@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { googleAuthProvider } from '@/firebase'
 import {
   createUserWithEmailAndPassword,
   EmailAuthProvider,
@@ -8,12 +9,22 @@ import {
   signInWithPopup,
   signInWithRedirect,
   signOut,
+  GoogleAuthProvider,
+  updateCurrentUser,
+  updateProfile,
+  AuthCredential,
+  getRedirectResult,
 } from 'firebase/auth'
 import { ref } from 'vue'
-import { useCurrentUser, useFirebaseAuth } from 'vuefire'
+import {
+  updateCurrentUserProfile,
+  useCurrentUser,
+  useFirebaseAuth,
+} from 'vuefire'
 
 const auth = useFirebaseAuth()
 const user = useCurrentUser()
+let credential: AuthCredential | null = null
 
 // new user
 const email = ref('')
@@ -21,7 +32,8 @@ const password = ref('')
 function signUp() {
   // link to an existing anonymous account
   if (user.value?.isAnonymous) {
-    const credential = EmailAuthProvider.credential(email.value, password.value)
+    credential = EmailAuthProvider.credential(email.value, password.value)
+
     return linkWithCredential(user.value, credential).then(() => {
       return signInWithEmailAndPassword(auth, email.value, password.value)
     })
@@ -30,6 +42,37 @@ function signUp() {
   // create a regular account
   return createUserWithEmailAndPassword(auth, email.value, password.value)
 }
+
+function signinPopup() {
+  return signInWithPopup(auth, googleAuthProvider).then((result) => {
+    const googleCredential = GoogleAuthProvider.credentialFromResult(result)
+    credential = googleCredential
+    const token = googleCredential?.accessToken
+    console.log('Got Google token', token)
+    console.log('Got googleCredential', googleCredential)
+  })
+}
+
+async function changeUserImage() {
+  if (user.value) {
+    await updateCurrentUserProfile({
+      photoURL: 'https://i.pravatar.cc/150?u=' + Date.now(),
+    })
+
+    // updateCurrentUserEmail('hello@esm.dev')
+  }
+}
+
+function signinRedirect() {
+  signInWithRedirect(auth, googleAuthProvider)
+}
+
+getRedirectResult(auth).then((creds) => {
+  console.log('got creds', creds)
+  if (creds) {
+    // credential = creds.user.
+  }
+})
 </script>
 
 <template>
@@ -37,6 +80,10 @@ function signUp() {
     <h1>Auth playground</h1>
     <button @click="signOut(auth)">SignOut</button>
     <button @click="signInAnonymously(auth)">Anonymous signIn</button>
+    <button @click="signinPopup()">Signin Google (popup)</button>
+    <button @click="signinRedirect()">Signin Google (redirect)</button>
+    <button @click="changeUserImage">Change User picture</button>
+
     <form @submit.prevent="signUp()">
       <fieldset>
         <legend>New User</legend>
@@ -64,6 +111,14 @@ function signUp() {
         <button>Signin</button>
       </fieldset>
     </form>
+
+    <p v-if="user">
+      Name: {{ user.displayName }} <br />
+      <img v-if="user.photoURL" :src="user.photoURL" />
+    </p>
+
+    <hr />
+
     <p>Current User:</p>
     <pre>{{ user }}</pre>
   </main>

@@ -3,9 +3,15 @@ import { getAuth, User } from 'firebase/auth'
 import { App, ref, shallowRef } from 'vue-demi'
 import { useFirebaseApp } from '../app'
 import { getGlobalScope } from '../globals'
+import { _Nullable } from '../shared'
 import { AuthUserInjectSymbol, setupOnAuthStateChanged } from './user'
 
-export { useCurrentUser, getCurrentUser } from './user'
+export {
+  useCurrentUser,
+  getCurrentUser,
+  updateCurrentUserProfile,
+  updateCurrentUserEmail,
+} from './user'
 
 /**
  * VueFire Auth Module to be added to the `VueFire` Vue plugin options.
@@ -36,7 +42,7 @@ modules: [VueFireAuth()]`)
 
   return (firebaseApp: FirebaseApp, app: App) => {
     const user = getGlobalScope(firebaseApp, app).run(() =>
-      shallowRef<User | null | undefined>()
+      ref<_Nullable<User>>()
     )!
     // userMap.set(app, user)
     app.provide(AuthUserInjectSymbol, user)

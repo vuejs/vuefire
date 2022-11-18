@@ -60,6 +60,7 @@ export {
   VueFireAuth,
   useFirebaseAuth,
   getCurrentUser,
+  updateCurrentUserProfile,
 } from './auth'
 
 // SSR
