@@ -6,7 +6,7 @@ import {
   Query as FirestoreQuery,
 } from 'firebase/firestore'
 import { StorageReference } from 'firebase/storage'
-import { InjectionKey } from 'vue'
+import { InjectionKey } from 'vue-demi'
 import { useFirebaseApp } from '../app'
 import {
   isDatabaseReference,

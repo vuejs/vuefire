@@ -4,7 +4,7 @@ import {
   AppCheckOptions,
   onTokenChanged,
 } from 'firebase/app-check'
-import { App, inject, InjectionKey, Ref, ref } from 'vue'
+import { App, inject, InjectionKey, Ref, ref } from 'vue-demi'
 import { getGlobalScope } from '../globals'
 import { isClient } from '../shared'
 

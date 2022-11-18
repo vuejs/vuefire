@@ -1,6 +1,14 @@
 import type { FirebaseApp } from 'firebase/app'
-import { getAuth, onIdTokenChanged, User } from 'firebase/auth'
-import { inject, InjectionKey, Ref } from 'vue'
+import {
+  getAuth,
+  onIdTokenChanged,
+  User,
+  updateEmail,
+  updateProfile,
+  reauthenticateWithCredential,
+  AuthCredential,
+} from 'firebase/auth'
+import { inject, InjectionKey, Ref } from 'vue-demi'
 import { useFirebaseApp } from '../app'
 import type { _Nullable } from '../shared'
 

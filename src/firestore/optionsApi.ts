@@ -4,7 +4,7 @@ import type {
   DocumentData,
   DocumentReference,
 } from 'firebase/firestore'
-import { App, ComponentPublicInstance, effectScope, toRef } from 'vue'
+import { App, ComponentPublicInstance, effectScope, toRef } from 'vue-demi'
 import { isVue3 } from 'vue-demi'
 import { FirestoreRefOptions } from './subscribe'
 import { internalUnbind, _useFirestoreRef } from '.'

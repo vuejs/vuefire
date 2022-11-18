@@ -1,5 +1,5 @@
 import { FirebaseApp } from 'firebase/app'
-import { App, EffectScope, effectScope } from 'vue'
+import { App, EffectScope, effectScope } from 'vue-demi'
 
 // @internal
 const scopeMap = new WeakMap<FirebaseApp, EffectScope>()

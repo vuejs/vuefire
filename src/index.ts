@@ -1,5 +1,5 @@
 import type { FirebaseApp } from 'firebase/app'
-import type { App } from 'vue'
+import type { App } from 'vue-demi'
 import { _FirebaseAppInjectionKey } from './app'
 
 // Database

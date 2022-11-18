@@ -24,7 +24,7 @@ import {
   shallowRef,
   unref,
   watch,
-} from 'vue'
+} from 'vue-demi'
 import { useFirebaseApp } from '../app'
 import { noop, _MaybeRef, _Nullable } from '../shared'
 import { getInitialValue } from '../ssr/initialState'

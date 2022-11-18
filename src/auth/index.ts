@@ -1,6 +1,6 @@
 import { FirebaseApp } from 'firebase/app'
 import { getAuth, User } from 'firebase/auth'
-import { App, shallowRef } from 'vue'
+import { App, ref, shallowRef } from 'vue-demi'
 import { useFirebaseApp } from '../app'
 import { getGlobalScope } from '../globals'
 import { AuthUserInjectSymbol, setupOnAuthStateChanged } from './user'

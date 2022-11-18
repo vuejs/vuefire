@@ -1,6 +1,6 @@
 import { FirebaseApp } from 'firebase/app'
 import { DatabaseReference, DataSnapshot, Query } from 'firebase/database'
-import { App, ComponentPublicInstance, effectScope, toRef } from 'vue'
+import { App, ComponentPublicInstance, effectScope, toRef } from 'vue-demi'
 import { isVue3 } from 'vue-demi'
 import { useFirebaseApp } from '../app'
 import { getGlobalScope } from '../globals'
