@@ -7,6 +7,7 @@ import {
   ResetOption,
   _DataSourceOptions,
   noop,
+  _ResolveRejectFn,
 } from '../shared'
 import { ref, Ref, unref } from 'vue-demi'
 import type {
@@ -99,9 +100,9 @@ function updateDataFromDocumentSnapshot<T>(
   path: string,
   snapshot: DocumentSnapshot<T>,
   subs: Record<string, FirestoreSubscription>,
-  ops: CommonBindOptionsParameter['ops'],
+  ops: OperationsType,
   depth: number,
-  resolve: CommonBindOptionsParameter['resolve']
+  resolve: _ResolveRejectFn
 ) {
   const [data, refs] = extractRefs(
     // @ts-expect-error: FIXME: use better types
@@ -119,7 +120,7 @@ interface SubscribeToDocumentParameter {
   path: string
   depth: number
   resolve: () => void
-  ops: CommonBindOptionsParameter['ops']
+  ops: OperationsType
   ref: DocumentReference
 }
 
@@ -161,9 +162,9 @@ function subscribeToRefs(
   path: string | number,
   subs: Record<string, FirestoreSubscription>,
   refs: Record<string, DocumentReference>,
-  ops: CommonBindOptionsParameter['ops'],
+  ops: OperationsType,
   depth: number,
-  resolve: CommonBindOptionsParameter['resolve']
+  resolve: _ResolveRejectFn
 ) {
   const refKeys = Object.keys(refs)
   const missingKeys = Object.keys(subs).filter(
@@ -217,22 +218,12 @@ function subscribeToRefs(
   })
 }
 
-interface CommonBindOptionsParameter {
-  // vm: Record<string, any>
-  target: Ref<unknown>
-  // key: string
-  // Override this property in necessary functions
-  resolve: (value: unknown) => void
-  reject: (error: unknown) => void
-  ops: OperationsType
-}
-
 export function bindCollection<T = unknown>(
   target: Ref<unknown[]>,
   collection: CollectionReference<T> | Query<T>,
-  ops: CommonBindOptionsParameter['ops'],
-  resolve: CommonBindOptionsParameter['resolve'],
-  reject: CommonBindOptionsParameter['reject'],
+  ops: OperationsType,
+  resolve: _ResolveRejectFn,
+  reject: _ResolveRejectFn,
   extraOptions?: FirestoreRefOptions
 ) {
   // FIXME: can be removed now
@@ -367,10 +358,6 @@ export function bindCollection<T = unknown>(
   }
 }
 
-interface BindDocumentParameter extends CommonBindOptionsParameter {
-  document: DocumentReference
-}
-
 /**
  * Binds a Document to a property of vm
  * @param param0
@@ -379,9 +366,9 @@ interface BindDocumentParameter extends CommonBindOptionsParameter {
 export function bindDocument<T>(
   target: Ref<unknown>,
   document: DocumentReference<T>,
-  ops: BindDocumentParameter['ops'],
-  resolve: BindDocumentParameter['resolve'],
-  reject: BindDocumentParameter['reject'],
+  ops: OperationsType,
+  resolve: _ResolveRejectFn,
+  reject: _ResolveRejectFn,
   extraOptions?: FirestoreRefOptions
 ) {
   const options = Object.assign({}, DEFAULT_OPTIONS, extraOptions) // fill default values

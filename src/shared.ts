@@ -254,3 +254,12 @@ export interface _DataSourceOptions {
 export type _Mutable<T> = {
   -readonly [P in keyof T]: T[P]
 }
+
+/**
+ * helper type to get the type of a promise
+ *
+ * @internal
+ */
+export interface _ResolveRejectFn {
+  (value: unknown): void
+}
