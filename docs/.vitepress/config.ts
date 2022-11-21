@@ -105,6 +105,10 @@ export default defineConfig({
             text: 'Contributing ',
             link: contributing,
           },
+          {
+            text: 'VueFire 2.x ',
+            link: 'https://v2.vuefire.vuejs.org',
+          },
         ],
       },
     ],
