@@ -155,6 +155,22 @@ describe(
       expect(wrapper.vm.list).toContainEqual({ name: 'cc' })
     })
 
+    it('fetches once', async () => {
+      const listRef = collection<{ name: string }>()
+      await addDoc(listRef, { name: 'a' })
+      const { wrapper, promise, data } = factory<{ name: string }>({
+        ref: listRef,
+        options: { once: true },
+      })
+
+      await promise.value
+
+      expect(wrapper.vm.list).toEqual([{ name: 'a' }])
+      await addDoc(listRef, { name: 'd' })
+      expect(wrapper.vm.list).toEqual([{ name: 'a' }])
+      expect(data.value).toEqual([{ name: 'a' }])
+    })
+
     it('can add an array with null to the collection', async () => {
       const { wrapper, listRef, data } = factory<{
         list: Array<number | null>

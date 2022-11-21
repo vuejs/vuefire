@@ -65,6 +65,22 @@ describe(
       expect(data.value).toEqual({ name: 'b' })
     })
 
+    it('fetches once', async () => {
+      const itemRef = doc<{ name: string }>()
+      await setDoc(itemRef, { name: 'a' })
+      const { wrapper, data, promise } = factory({
+        ref: itemRef,
+        options: { once: true },
+      })
+
+      await promise.value
+
+      expect(data.value).toEqual({ name: 'a' })
+      await updateDoc(itemRef, { name: 'b' })
+      expect(wrapper.vm.item).toEqual({ name: 'a' })
+      expect(data.value).toEqual({ name: 'a' })
+    })
+
     it('stays null if document does not exists', async () => {
       const { wrapper, data, promise } = factory()
 

@@ -18,9 +18,11 @@ import type {
   DocumentSnapshot,
   FirestoreDataConverter,
   Query,
+  QuerySnapshot,
   SnapshotListenOptions,
   SnapshotOptions,
 } from 'firebase/firestore'
+import { getDoc, getDocs } from 'firebase/firestore'
 import { onSnapshot } from 'firebase/firestore'
 
 /**
@@ -33,6 +35,15 @@ export interface FirestoreRefOptions extends _DataSourceOptions {
    */
   maxRefDepth?: number
 
+  /**
+   * Should the data be fetched once rather than subscribing to changes.
+   * @experimental Still under development
+   */
+  once?: boolean
+
+  /**
+   * @inheritDoc {SnapshotOptions}
+   */
   snapshotOptions?: SnapshotOptions
 
   /**
@@ -102,7 +113,8 @@ function updateDataFromDocumentSnapshot<T>(
   subs: Record<string, FirestoreSubscription>,
   ops: OperationsType,
   depth: number,
-  resolve: _ResolveRejectFn
+  resolve: _ResolveRejectFn,
+  reject: _ResolveRejectFn
 ) {
   const [data, refs] = extractRefs(
     // @ts-expect-error: FIXME: use better types
@@ -112,7 +124,17 @@ function updateDataFromDocumentSnapshot<T>(
     subs
   )
   ops.set(target, path, data)
-  subscribeToRefs(options, target, path, subs, refs, ops, depth, resolve)
+  subscribeToRefs(
+    options,
+    target,
+    path,
+    subs,
+    refs,
+    ops,
+    depth,
+    resolve,
+    reject
+  )
 }
 
 interface SubscribeToDocumentParameter {
@@ -120,32 +142,66 @@ interface SubscribeToDocumentParameter {
   path: string
   depth: number
   resolve: () => void
+  reject: _ResolveRejectFn
   ops: OperationsType
   ref: DocumentReference
 }
 
 function subscribeToDocument(
-  { ref, target, path, depth, resolve, ops }: SubscribeToDocumentParameter,
+  {
+    ref,
+    target,
+    path,
+    depth,
+    resolve,
+    reject,
+    ops,
+  }: SubscribeToDocumentParameter,
   options: _DefaultsFirestoreRefOptions
 ) {
   const subs = Object.create(null)
-  const unbind = onSnapshot(ref, (snapshot) => {
-    if (snapshot.exists()) {
-      updateDataFromDocumentSnapshot(
-        options,
-        target,
-        path,
-        snapshot,
-        subs,
-        ops,
-        depth,
-        resolve
-      )
-    } else {
-      ops.set(target, path, null)
-      resolve()
-    }
-  })
+  let unbind = noop
+
+  if (options.once) {
+    getDoc(ref).then((snapshot) => {
+      if (snapshot.exists()) {
+        updateDataFromDocumentSnapshot(
+          options,
+          target,
+          path,
+          snapshot,
+          subs,
+          ops,
+          depth,
+          resolve,
+          reject
+        )
+      } else {
+        ops.set(target, path, null)
+        resolve()
+      }
+    })
+    // TODO: catch?
+  } else {
+    unbind = onSnapshot(ref, (snapshot) => {
+      if (snapshot.exists()) {
+        updateDataFromDocumentSnapshot(
+          options,
+          target,
+          path,
+          snapshot,
+          subs,
+          ops,
+          depth,
+          resolve,
+          reject
+        )
+      } else {
+        ops.set(target, path, null)
+        resolve()
+      }
+    })
+  }
 
   return () => {
     unbind()
@@ -164,7 +220,8 @@ function subscribeToRefs(
   refs: Record<string, DocumentReference>,
   ops: OperationsType,
   depth: number,
-  resolve: _ResolveRejectFn
+  resolve: _ResolveRejectFn,
+  reject: _ResolveRejectFn
 ) {
   const refKeys = Object.keys(refs)
   const missingKeys = Object.keys(subs).filter(
@@ -210,6 +267,7 @@ function subscribeToRefs(
           depth,
           ops,
           resolve: deepResolve.bind(null, docPath),
+          reject,
         },
         options
       ),
@@ -236,6 +294,7 @@ export function bindCollection<T = unknown>(
   let arrayRef = ref(wait ? [] : target[key])
   const originalResolve = resolve
   let isResolved: boolean
+  let stopOnSnapshot = noop
 
   // contain ref subscriptions of objects
   // arraySubs is a mirror of array
@@ -260,15 +319,20 @@ export function bindCollection<T = unknown>(
         refs,
         ops,
         0,
-        resolve.bind(null, doc)
+        resolve.bind(null, doc),
+        reject
       )
     },
     modified: ({ oldIndex, newIndex, doc }: DocumentChange<T>) => {
       const array = unref(arrayRef)
       const subs = arraySubs[oldIndex]
       const oldData = array[oldIndex]
-      // @ts-expect-error: FIXME: Better types
-      const [data, refs] = extractRefs(doc.data(snapshotOptions), oldData, subs)
+      const [data, refs] = extractRefs(
+        // @ts-expect-error: FIXME: Better types
+        doc.data(snapshotOptions),
+        oldData,
+        subs
+      )
       // only move things around after extracting refs
       // only move things around after extracting refs
       arraySubs.splice(newIndex, 0, subs)
@@ -282,7 +346,8 @@ export function bindCollection<T = unknown>(
         refs,
         ops,
         0,
-        resolve
+        resolve,
+        reject
       )
     },
     removed: ({ oldIndex }: DocumentChange<T>) => {
@@ -292,61 +357,63 @@ export function bindCollection<T = unknown>(
     },
   }
 
-  const stopOnSnapshot = onSnapshot(
-    collection,
-    (snapshot) => {
-      // console.log('pending', metadata.hasPendingWrites)
-      // docs.forEach(d => console.log('doc', d, '\n', 'data', d.data()))
-      // NOTE: this will only be triggered once and it will be with all the documents
-      // from the query appearing as added
-      // (https://firebase.google.com/docs/firestore/query-data/listen#view_changes_between_snapshots)
+  function onSnapshotCallback(snapshot: QuerySnapshot<T>) {
+    // console.log('pending', metadata.hasPendingWrites)
+    // docs.forEach(d => console.log('doc', d, '\n', 'data', d.data()))
+    // NOTE: this will only be triggered once and it will be with all the documents
+    // from the query appearing as added
+    // (https://firebase.google.com/docs/firestore/query-data/listen#view_changes_between_snapshots)
 
-      const docChanges = snapshot.docChanges(snapshotListenOptions)
+    const docChanges = snapshot.docChanges(snapshotListenOptions)
 
-      if (!isResolved && docChanges.length) {
-        // isResolved is only meant to make sure we do the check only once
-        isResolved = true
-        let count = 0
-        const expectedItems = docChanges.length
-        const validDocs = Object.create(null)
-        for (let i = 0; i < expectedItems; i++) {
-          validDocs[docChanges[i].doc.id] = true
-        }
+    if (!isResolved && docChanges.length) {
+      // isResolved is only meant to make sure we do the check only once
+      isResolved = true
+      let count = 0
+      const expectedItems = docChanges.length
+      const validDocs = Object.create(null)
+      for (let i = 0; i < expectedItems; i++) {
+        validDocs[docChanges[i].doc.id] = true
+      }
 
-        resolve = (data) => {
-          if (data && (data as any).id in validDocs) {
-            if (++count >= expectedItems) {
-              // if wait is true, finally set the array
-              if (options.wait) {
-                ops.set(target, key, unref(arrayRef))
-                // use the proxy object
-                // arrayRef = target.value
-              }
-              originalResolve(unref(arrayRef))
-              // reset resolve to noop
-              resolve = noop
+      resolve = (data) => {
+        if (data && (data as any).id in validDocs) {
+          if (++count >= expectedItems) {
+            // if wait is true, finally set the array
+            if (options.wait) {
+              ops.set(target, key, unref(arrayRef))
+              // use the proxy object
+              // arrayRef = target.value
             }
+            originalResolve(unref(arrayRef))
+            // reset resolve to noop
+            resolve = noop
           }
         }
       }
-      docChanges.forEach((c) => {
-        change[c.type](c)
-      })
+    }
+    docChanges.forEach((c) => {
+      change[c.type](c)
+    })
 
-      // resolves when array is empty
-      // since this can only happen once, there is no need to guard against it
-      // being called multiple times
-      if (!docChanges.length) {
-        if (options.wait) {
-          ops.set(target, key, unref(arrayRef))
-          // use the proxy object
-          // arrayRef = target.value
-        }
-        resolve(unref(arrayRef))
+    // resolves when array is empty
+    // since this can only happen once, there is no need to guard against it
+    // being called multiple times
+    if (!docChanges.length) {
+      if (options.wait) {
+        ops.set(target, key, unref(arrayRef))
+        // use the proxy object
+        // arrayRef = target.value
       }
-    },
-    reject
-  )
+      resolve(unref(arrayRef))
+    }
+  }
+
+  if (options.once) {
+    getDocs(collection).then(onSnapshotCallback).catch(reject)
+  } else {
+    stopOnSnapshot = onSnapshot(collection, onSnapshotCallback, reject)
+  }
 
   return (reset?: FirestoreRefOptions['reset']) => {
     stopOnSnapshot()
@@ -378,27 +445,32 @@ export function bindDocument<T>(
   // bind here the function so it can be resolved anywhere
   // this is specially useful for refs
   resolve = callOnceWithArg(resolve, () => walkGet(target, key))
-  const stopOnSnapshot = onSnapshot(
-    document,
-    (snapshot) => {
-      if (snapshot.exists()) {
-        updateDataFromDocumentSnapshot(
-          options,
-          target,
-          key,
-          snapshot,
-          subs,
-          ops,
-          0,
-          resolve
-        )
-      } else {
-        ops.set(target, key, null)
-        resolve(null)
-      }
-    },
-    reject
-  )
+  let stopOnSnapshot = noop
+
+  function onSnapshotCallback(snapshot: DocumentSnapshot<T>) {
+    if (snapshot.exists()) {
+      updateDataFromDocumentSnapshot(
+        options,
+        target,
+        key,
+        snapshot,
+        subs,
+        ops,
+        0,
+        resolve,
+        reject
+      )
+    } else {
+      ops.set(target, key, null)
+      resolve(null)
+    }
+  }
+
+  if (options.once) {
+    getDoc(document).then(onSnapshotCallback).catch(reject)
+  } else {
+    stopOnSnapshot = onSnapshot(document, onSnapshotCallback, reject)
+  }
 
   return (reset?: FirestoreRefOptions['reset']) => {
     stopOnSnapshot()
