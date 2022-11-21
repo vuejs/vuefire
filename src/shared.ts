@@ -52,7 +52,7 @@ export type TODO = any
  * @param path
  */
 export function walkGet(obj: Record<string, any>, path: string): any {
-  return path.split('.').reduce((target, key) => target[key], obj)
+  return path.split('.').reduce((target, key) => target && target[key], obj)
 }
 
 /**
@@ -75,9 +75,11 @@ export function walkSet<T extends object = Record<any, unknown>>(
   const target: any = keys.reduce(
     (target, key) =>
       // @ts-expect-error:
-      target[key],
+      target && target[key],
     obj
   )
+
+  if (target == null) return
 
   return Array.isArray(target)
     ? target.splice(Number(key), 1, value)
