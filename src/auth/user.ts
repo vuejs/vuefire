@@ -12,16 +12,28 @@ import { inject, InjectionKey, Ref } from 'vue-demi'
 import { useFirebaseApp } from '../app'
 import type { _MaybeRef, _Nullable } from '../shared'
 
-export const AuthUserInjectSymbol: InjectionKey<Ref<_Nullable<User>>> =
-  Symbol('user')
+/**
+ * Maps an application to a user
+ * @internal
+ */
+export const authUserMap = new WeakMap<FirebaseApp, Ref<_Nullable<User>>>()
 
 /**
  * Returns a shallowRef of the currently authenticated user in the firebase app. The ref is null if no user is
  * authenticated or when the user logs out. The ref is undefined when the user is not yet loaded.
+ * @param name - name of the application
  */
-export function useCurrentUser() {
-  // TODO: warn no current instance in DEV
-  return inject(AuthUserInjectSymbol)!
+export function useCurrentUser(name?: string) {
+  // TODO: write a test
+  if (
+    process.env.NODE_ENV !== 'production' &&
+    !authUserMap.has(useFirebaseApp(name))
+  ) {
+    throw new Error(
+      `[VueFire] useCurrentUser() called before the VueFireAuth module was added to the VueFire plugin. This will fail in production.`
+    )
+  }
+  return authUserMap.get(useFirebaseApp())!
 }
 
 /**

@@ -4,7 +4,7 @@ import { App, ref, shallowRef } from 'vue-demi'
 import { useFirebaseApp } from '../app'
 import { getGlobalScope } from '../globals'
 import { _Nullable } from '../shared'
-import { AuthUserInjectSymbol, setupOnAuthStateChanged } from './user'
+import { authUserMap, setupOnAuthStateChanged } from './user'
 
 export {
   useCurrentUser,
@@ -44,8 +44,7 @@ modules: [VueFireAuth()]`)
     const user = getGlobalScope(firebaseApp, app).run(() =>
       ref<_Nullable<User>>()
     )!
-    // userMap.set(app, user)
-    app.provide(AuthUserInjectSymbol, user)
+    authUserMap.set(firebaseApp, user)
     setupOnAuthStateChanged(user, firebaseApp)
   }
 }
