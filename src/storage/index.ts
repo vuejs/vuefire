@@ -56,14 +56,16 @@ export function useStorageUrl(
     url.value
   ) as string
   const promise = ref<Promise<string | null>>(Promise.resolve(null))
+  // TODO: pending and error states?
   let removePendingPromise = noop
 
   function refresh() {
     const storageSource = unref(storageRef)
     if (storageSource) {
-      promise.value = getDownloadURL(storageSource).then(
-        (downloadUrl) => (url.value = downloadUrl)
-      )
+      promise.value = getDownloadURL(storageSource)
+        .then((downloadUrl) => (url.value = downloadUrl))
+        // TODO: refactor with error states
+        .catch(() => null)
     } else {
       promise.value = Promise.resolve((url.value = null))
     }
@@ -117,9 +119,10 @@ export function useStorageMetadata(
   function refresh() {
     const storageSource = unref(storageRef)
     if (storageSource) {
-      promise.value = getMetadata(storageSource).then(
-        (data) => (metadata.value = data)
-      )
+      promise.value = getMetadata(storageSource)
+        .then((data) => (metadata.value = data))
+        // TODO: refactor with error states
+        .catch(() => null)
     } else {
       promise.value = Promise.resolve((metadata.value = null))
     }
@@ -215,19 +218,19 @@ export function useStorageObject(
         snapshot.value = newSnapshot
       })
 
-      newTask.then((finalSnapshot) => {
-        uploadTask.value = null
-        unsub()
-        metadata.value = finalSnapshot.metadata
-        // get the new download URL
-        refreshUrl()
-      })
-
-      newTask.catch((err) => {
-        unsub()
-        uploadTask.value = null
-        uploadError.value = err
-      })
+      return newTask
+        .then((finalSnapshot) => {
+          metadata.value = finalSnapshot.metadata
+          // get the new download URL
+          refreshUrl()
+        })
+        .catch((err) => {
+          uploadError.value = err
+        })
+        .finally(() => {
+          unsub()
+          uploadTask.value = null
+        })
     }
   }
 

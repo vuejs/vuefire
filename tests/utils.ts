@@ -30,21 +30,59 @@ import {
   SetOptions,
   WithFieldValue,
 } from 'firebase/firestore'
+import {
+  connectStorageEmulator,
+  getStorage,
+  ref as storageRef,
+  StorageReference,
+  deleteObject,
+  listAll,
+} from 'firebase/storage'
 import { afterAll, beforeAll } from 'vitest'
 import { nextTick } from 'vue'
 import { isCollectionRef, isDocumentRef } from '../src/shared'
 
-export const firebaseApp = initializeApp({ projectId: 'vue-fire-store' })
+export const firebaseApp = initializeApp({
+  projectId: 'vue-fire-store',
+  storageBucket: 'vue-fire-store.appspot.com',
+})
 export const firestore = getFirestore(firebaseApp)
 export const database = getDatabase(firebaseApp)
+export const storage = getStorage(firebaseApp)
 
 connectFirestoreEmulator(firestore, 'localhost', 8080)
 connectDatabaseEmulator(database, 'localhost', 8081)
+connectStorageEmulator(storage, 'localhost', 9199)
 
 let _id = 0
 
+// Storage
+export function setupStorageRefs() {
+  const bucket = `tests/${Date.now()}-${_id++}/`
+  function _storageRef(
+    storageRefOrPath?: string | StorageReference,
+    path?: string
+  ): StorageReference {
+    const _storage =
+      (typeof storageRefOrPath === 'string' ? storage : storageRefOrPath) ||
+      storage
+    const _path =
+      (typeof storageRefOrPath === 'string' ? storageRefOrPath : path) ||
+      `test/${_id++}.jpg`
+    return storageRef(_storage, bucket + _path)
+  }
+
+  afterAll(async () => {
+    const list = await listAll(storageRef(storage, bucket))
+    await Promise.all(list.items.map((item) => deleteObject(item)))
+  })
+
+  return { storageRef: _storageRef }
+}
+
 // Firestore
-export function setupFirestoreRefs() {
+// TODO: use the id in all tests to try if it makes them more stable
+export function setupFirestoreRefs(id?: string) {
   const testId = _id++
   const testsCollection = collection(firestore, `__tests`)
   const itemRef = doc(testsCollection)
@@ -65,9 +103,11 @@ export function setupFirestoreRefs() {
       deleteDoc(itemRef),
       ...[...docsToClean].map((doc) => deleteDoc(doc)),
     ])
+
     await Promise.all(
       [...collectionsToClean].map((collection) => clearCollection(collection))
     )
+
     await clearCollection(forDocRefs)
     // must be done after the cleanup of its docs
     await deleteDoc(forCollectionRefs)
