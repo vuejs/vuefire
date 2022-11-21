@@ -22,7 +22,7 @@ let {
 } = args
 
 // NOTE: while in dev
-optionTag = optionTag || 'next'
+// optionTag = optionTag || 'next'
 
 // const preId =
 //   args.preid ||
