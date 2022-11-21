@@ -1,3 +1,14 @@
+# [3.0.0-alpha.10](https://github.com/vuejs/vuefire/compare/v3.0.0-alpha.9...v3.0.0-alpha.10) (2022-11-21)
+
+### Bug Fixes
+
+- resilient walkSet and walkGet ([80879d1](https://github.com/vuejs/vuefire/commit/80879d1e925a1c186f47d7b29c5838b8af40a358))
+
+### Features
+
+- **auth:** update current profile info ([ae90bed](https://github.com/vuejs/vuefire/commit/ae90bed8f80de7449673e6a145079e3e17318540))
+- **firestore:** fetch once option ([094f6a5](https://github.com/vuejs/vuefire/commit/094f6a561b713e94027c73ea4560062493b09be4))
+
 # [3.0.0-alpha.9](https://github.com/vuejs/vuefire/compare/v3.0.0-alpha.8...v3.0.0-alpha.9) (2022-11-17)
 
 ### Features
