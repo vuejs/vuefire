@@ -7,6 +7,7 @@ import {
   noop,
   OperationsType,
   ResetOption,
+  TODO,
   _DataSourceOptions,
   _ResolveRejectFn,
 } from '../shared'
@@ -56,19 +57,6 @@ const DEFAULT_OPTIONS: _DatabaseRefOptionsWithDefaults = {
 
 export { DEFAULT_OPTIONS as databaseOptionsDefaults }
 
-interface CommonBindOptionsParameter {
-  target: Ref<any>
-  resolve: _ResolveRejectFn
-  reject: _ResolveRejectFn
-  ops: OperationsType
-}
-
-// TODO: refactor using normal arguments instead of an array to improve size
-
-interface BindAsObjectParameter extends CommonBindOptionsParameter {
-  document: DatabaseReference | Query
-}
-
 /**
  * Binds a Firebase Database reference as an object
  * @param param0
@@ -76,7 +64,11 @@ interface BindAsObjectParameter extends CommonBindOptionsParameter {
  * @returns a function to be called to stop listening for changes
  */
 export function bindAsObject(
-  { target, document, resolve, reject, ops }: BindAsObjectParameter,
+  target: Ref<unknown>,
+  document: DatabaseReference | Query,
+  resolve: _ResolveRejectFn,
+  reject: _ResolveRejectFn,
+  ops: OperationsType,
   extraOptions: _DatabaseRefOptions = DEFAULT_OPTIONS
 ) {
   const key = 'value'
@@ -102,10 +94,6 @@ export function bindAsObject(
   }
 }
 
-interface BindAsArrayParameter extends CommonBindOptionsParameter {
-  collection: DatabaseReference | Query
-}
-
 /**
  * Binds a RTDB reference or query as an array
  * @param param0
@@ -113,7 +101,11 @@ interface BindAsArrayParameter extends CommonBindOptionsParameter {
  * @returns a function to be called to stop listening for changes
  */
 export function bindAsArray(
-  { target, collection, resolve, reject, ops }: BindAsArrayParameter,
+  target: Ref<TODO>,
+  collection: DatabaseReference | Query,
+  resolve: _ResolveRejectFn,
+  reject: _ResolveRejectFn,
+  ops: OperationsType,
   extraOptions: _DatabaseRefOptions = DEFAULT_OPTIONS
 ) {
   const options = Object.assign({}, DEFAULT_OPTIONS, extraOptions)
@@ -128,9 +120,8 @@ export function bindAsArray(
       const array = unref(arrayRef)
       const index = prevKey ? indexForKey(array, prevKey) + 1 : 0
       ops.add(array, index, options.serialize(snapshot))
-    }
-    // TODO: cancelcallback
-    // reject,
+    },
+    reject
   )
 
   const removeChildRemovedListener = onChildRemoved(
@@ -139,8 +130,8 @@ export function bindAsArray(
     (snapshot) => {
       const array = unref(arrayRef)
       ops.remove(array, indexForKey(array, snapshot.key))
-    }
-    // TODO: cancelcallback
+    },
+    reject
   )
 
   const removeChildChangedListener = onChildChanged(
@@ -152,8 +143,8 @@ export function bindAsArray(
         indexForKey(array, snapshot.key),
         options.serialize(snapshot)
       )
-    }
-    // TODO: cancelcallback
+    },
+    reject
   )
 
   const removeChildMovedListener = onChildMoved(
@@ -164,8 +155,8 @@ export function bindAsArray(
       const oldRecord = ops.remove(array, index)[0]
       const newIndex = prevKey ? indexForKey(array, prevKey) + 1 : 0
       ops.add(array, newIndex, oldRecord)
-    }
-    // TODO: cancelcallback
+    },
+    reject
   )
 
   // in case the removeValueListener() is called before onValue returns
