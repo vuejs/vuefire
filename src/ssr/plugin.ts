@@ -42,7 +42,7 @@ export function addPendingPromise(
   } else {
     // TODO: warn if in SSR context in other contexts than vite
     if (process.env.NODE_ENV !== 'production' /* && import.meta.env?.SSR */) {
-      console.warn('[VueFire]: Could not get the path of the data source')
+      console.warn('[VueFire SSR]: Could not get the path of the data source')
     }
   }
 

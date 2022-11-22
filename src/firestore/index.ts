@@ -132,7 +132,11 @@ export function _useFirestoreRef(
   // only add the first promise to the pending ones
   // TODO: can we make this tree shakeable?
   if (initialSourceValue) {
-    removePendingPromise = addPendingPromise(promise.value, initialSourceValue)
+    removePendingPromise = addPendingPromise(
+      promise.value,
+      initialSourceValue,
+      options.ssrKey
+    )
   }
 
   // TODO: SSR serialize the values for Nuxt to expose them later and use them

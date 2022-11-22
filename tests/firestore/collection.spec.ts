@@ -307,10 +307,12 @@ describe(
     }
 
     it('can be bound to a ref of a query', async () => {
-      const { showFinished, listToDisplay } = await createFilteredLists()
+      const { showFinished, listToDisplay, listRef } =
+        await createFilteredLists()
 
       const { wrapper, data, promise } = factoryQuery({
         ref: listToDisplay,
+        options: { ssrKey: 'list' },
       })
 
       await promise.value
