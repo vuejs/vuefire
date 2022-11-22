@@ -155,6 +155,10 @@ export default defineConfig({
             //   text: 'Writing to the database',
             //   link: '/guide/writing-data',
             // },
+            {
+              text: 'Global Options',
+              link: '/guide/global-options',
+            },
           ],
         },
         {

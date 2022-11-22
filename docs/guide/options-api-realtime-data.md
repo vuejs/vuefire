@@ -28,6 +28,25 @@ app.use(VueFire, {
 })
 ```
 
+You can pass global options to the modules but note **these options are limited to the Options API usage**.They do not affect composition API calls such as `useDocument()` and `useObject()`. [Check the global options](./global-options.md) to see how you can override those.
+
+```ts
+app.use(VueFire, {
+  modules: [
+    VueFireFirestoreOptionsAPI({
+      // same behavior as vuefire v2
+      reset: true,
+      wait: false,
+    }),
+    VueFireDatabaseOptionsAPI({
+      // same behavior as vuefire v2
+      reset: true,
+      wait: false,
+    }),
+  ]
+})
+```
+
 ## Declarative binding
 
 Any Database Reference provided in a `firebase`/`firestore` option will be bound at creation (after Vue's `beforeMount` hook) to the specified key on the component. In the following example we bind a Collection of Documents to our `documents` property. The key provided in the `firebase`/`firestore` option (`documents`) must be initialized in the `data` of the component:

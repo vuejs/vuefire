@@ -94,6 +94,27 @@ The `$rtdbBind` method is now called `$databaseBind` to have a consistent naming
 
 Note that for compatibility reasons, the `$rtdbBind` and `$rtdbUnbind` methods are still available but marked as deprecated.
 
+### Default changes to `reset` and `wait`
+
+The default value of `reset` is now `false` and the default value of `wait` is now `true`. This should be seen as an enhancement as it makes it easier to load new _documents_ or _collections_ without affecting the view while data is being fetched for the first time from Firebase. If you wish the old behavior, you can enforce these settings globally:
+
+```ts
+app.use(VueFire, {
+  modules: [
+    VueFireFirestoreOptionsAPI({
+      // same behavior as vuefire v2
+      reset: true,
+      wait: false,
+    }),
+    VueFireDatabaseOptionsAPI({
+      // same behavior as vuefire v2
+      reset: true,
+      wait: false,
+    }),
+  ]
+})
+```
+
 ## Vuexfire
 
 :::tip
