@@ -4,6 +4,7 @@ import { _FirebaseAppInjectionKey } from './app'
 
 // Database
 export { useList, useObject, useDatabase } from './database'
+export { databaseOptionsDefaults as globalDatabaseOptions } from './database/subscribe'
 export type {
   UseListOptions,
   UseObjectOptions,
@@ -18,6 +19,7 @@ export type {
 
 // Firestore
 export { useCollection, useDocument, useFirestore } from './firestore'
+export { firestoreOptionsDefaults as globalFirestoreOptions } from './firestore/subscribe'
 export { firestoreDefaultConverter } from './firestore/utils'
 export type {
   UseCollectionOptions,
@@ -82,6 +84,9 @@ export {
  * Options for VueFire Vue plugin.
  */
 export interface VueFireOptions {
+  /**
+   * The firebase app used by VueFire and associated with the different modules.
+   */
   firebaseApp: FirebaseApp
 
   /**

@@ -6,7 +6,7 @@ import type {
 } from 'firebase/firestore'
 import { App, ComponentPublicInstance, effectScope, toRef } from 'vue-demi'
 import { isVue3 } from 'vue-demi'
-import { FirestoreRefOptions } from './subscribe'
+import { firestoreOptionsDefaults, FirestoreRefOptions } from './subscribe'
 import { internalUnbind, _useFirestoreRef } from '.'
 import { ResetOption, UnbindWithReset, _FirestoreDataSource } from '../shared'
 import { FirebaseApp } from 'firebase/app'

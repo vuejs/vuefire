@@ -36,12 +36,6 @@ export interface FirestoreRefOptions extends _DataSourceOptions {
   maxRefDepth?: number
 
   /**
-   * Should the data be fetched once rather than subscribing to changes.
-   * @experimental Still under development
-   */
-  once?: boolean
-
-  /**
    * @inheritDoc {SnapshotOptions}
    */
   snapshotOptions?: SnapshotOptions
@@ -61,7 +55,7 @@ export interface FirestoreRefOptions extends _DataSourceOptions {
  * Type of the global options for firestore refs. Some values cannot be `undefined`.
  * @internal
  */
-interface _DefaultsFirestoreRefOptions extends FirestoreRefOptions {
+interface _FirestoreRefOptionsWithDefaults extends FirestoreRefOptions {
   /**
    * @defaultValue `false`
    */
@@ -82,7 +76,10 @@ interface _DefaultsFirestoreRefOptions extends FirestoreRefOptions {
   converter: FirestoreDataConverter<unknown>
 }
 
-const DEFAULT_OPTIONS: _DefaultsFirestoreRefOptions = {
+/**
+ * Global default options
+ */
+const DEFAULT_OPTIONS: _FirestoreRefOptionsWithDefaults = {
   reset: false,
   wait: true,
   maxRefDepth: 2,
@@ -106,7 +103,7 @@ function unsubscribeAll(subs: Record<string, FirestoreSubscription>) {
 }
 
 function updateDataFromDocumentSnapshot<T>(
-  options: _DefaultsFirestoreRefOptions,
+  options: _FirestoreRefOptionsWithDefaults,
   target: Ref<T>,
   path: string,
   snapshot: DocumentSnapshot<T>,
@@ -157,7 +154,7 @@ function subscribeToDocument(
     reject,
     ops,
   }: SubscribeToDocumentParameter,
-  options: _DefaultsFirestoreRefOptions
+  options: _FirestoreRefOptionsWithDefaults
 ) {
   const subs = Object.create(null)
   let unbind = noop
@@ -213,7 +210,7 @@ function subscribeToDocument(
 // first one is calling the other on every ref and subscribeToDocument may call
 // updateDataFromDocumentSnapshot which may call subscribeToRefs as well
 function subscribeToRefs(
-  options: _DefaultsFirestoreRefOptions,
+  options: _FirestoreRefOptionsWithDefaults,
   target: Ref<unknown>,
   path: string | number,
   subs: Record<string, FirestoreSubscription>,

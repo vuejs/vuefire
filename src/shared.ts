@@ -224,6 +224,7 @@ export type _MaybeRef<T> = T | Ref<T>
 
 /**
  * Base options for the data source options in both Firestore and Realtime Database.
+ *
  * @internal
  */
 export interface _DataSourceOptions {
@@ -248,6 +249,12 @@ export interface _DataSourceOptions {
    * nested refs.
    */
   wait?: boolean
+
+  /**
+   * Should the data be fetched once rather than subscribing to changes.
+   * @experimental Still under development
+   */
+  once?: boolean
 }
 
 /**

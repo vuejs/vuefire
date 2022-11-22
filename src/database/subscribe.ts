@@ -8,6 +8,7 @@ import {
   OperationsType,
   ResetOption,
   _DataSourceOptions,
+  _ResolveRejectFn,
 } from '../shared'
 import { ref, Ref, unref } from 'vue-demi'
 import type { Query, DatabaseReference } from 'firebase/database'
@@ -21,15 +22,20 @@ import {
 
 /**
  * Global option type when binding one database reference
+ * @internal
  */
 export interface _DatabaseRefOptions extends _DataSourceOptions {
+  /**
+   * Function to transform snapshots into data. By default it will
+   */
   serialize?: DatabaseSnapshotSerializer
 }
 
 /**
  * Global defaults type override options for all database bindings.
+ * @internal
  */
-interface _DefaultsDatabaseRefOptions extends _DatabaseRefOptions {
+interface _DatabaseRefOptionsWithDefaults extends _DatabaseRefOptions {
   /**
    * @defaultValue `false`
    */
@@ -42,7 +48,7 @@ interface _DefaultsDatabaseRefOptions extends _DatabaseRefOptions {
   serialize: DatabaseSnapshotSerializer
 }
 
-const DEFAULT_OPTIONS: _DefaultsDatabaseRefOptions = {
+const DEFAULT_OPTIONS: _DatabaseRefOptionsWithDefaults = {
   reset: false,
   serialize: createRecordFromDatabaseSnapshot,
   wait: true,
@@ -52,8 +58,8 @@ export { DEFAULT_OPTIONS as databaseOptionsDefaults }
 
 interface CommonBindOptionsParameter {
   target: Ref<any>
-  resolve: (value: any) => void
-  reject: (error: any) => void
+  resolve: _ResolveRejectFn
+  reject: _ResolveRejectFn
   ops: OperationsType
 }
 
