@@ -81,26 +81,20 @@ export function bindAsObject(
 ) {
   const key = 'value'
   const options = Object.assign({}, DEFAULT_OPTIONS, extraOptions)
-  const unsub = onValue(
+
+  const unsubscribe = onValue(
     document,
     (snapshot) => {
-      resolve(snapshot)
-      unsub()
+      const value = options.serialize(snapshot)
+      ops.set(target, key, value)
+      // resolve the promise
+      resolve(value)
     },
     reject
   )
-  // FIXME: Use only one onValue and
-  const listener = onValue(
-    document,
-    (snapshot) => {
-      ops.set(target, key, options.serialize(snapshot))
-    }
-    // TODO: allow passing a cancel callback
-    // cancelCallback
-  )
 
   return (reset?: ResetOption) => {
-    listener()
+    unsubscribe()
     if (reset !== false) {
       const value = typeof reset === 'function' ? reset() : null
       ops.set(target, key, value)
