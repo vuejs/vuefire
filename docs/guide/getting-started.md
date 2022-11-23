@@ -7,9 +7,9 @@ Before using VueFire, make sure you have a Firebase account and a project setup 
 In order to get started make sure to install the latest version of `vuefire` as well as `firebase`:
 
 ```sh
-yarn add vuefire@next firebase
+yarn add vuefire firebase
 # or
-npm install vuefire@next firebase
+npm install vuefire firebase
 ```
 
 :::warning
