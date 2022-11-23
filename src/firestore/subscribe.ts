@@ -281,14 +281,17 @@ export function bindCollection<T = unknown>(
   reject: _ResolveRejectFn,
   extraOptions?: FirestoreRefOptions
 ) {
-  // FIXME: can be removed now
   const options = Object.assign({}, DEFAULT_OPTIONS, extraOptions) // fill default values
 
-  const { snapshotListenOptions, snapshotOptions, wait } = options
+  const { snapshotListenOptions, snapshotOptions, wait, once } = options
 
+  // TODO: remove ops
   const key = 'value'
+  // with wait we delay changes to the target until all values are resolved
+  // let arrayRef = wait ? ref([]) : target
+  // FIXME:
+  let arrayRef = ref(wait ? [] : target.value)
   if (!wait) ops.set(target, key, [])
-  let arrayRef = ref(wait ? [] : target[key])
   const originalResolve = resolve
   let isResolved: boolean
   let stopOnSnapshot = noop
@@ -378,10 +381,10 @@ export function bindCollection<T = unknown>(
         if (data && (data as any).id in validDocs) {
           if (++count >= expectedItems) {
             // if wait is true, finally set the array
-            if (options.wait) {
+            if (wait) {
               ops.set(target, key, unref(arrayRef))
-              // use the proxy object
-              // arrayRef = target.value
+              // FIXME: use the proxy object
+              // arrayRef = target
             }
             originalResolve(unref(arrayRef))
             // reset resolve to noop
@@ -400,18 +403,19 @@ export function bindCollection<T = unknown>(
     // since this can only happen once, there is no need to guard against it
     // being called multiple times
     if (!docChanges.length) {
-      if (options.wait) {
+      if (wait) {
         ops.set(target, key, unref(arrayRef))
-        // use the proxy object
+        // FIXME: use the proxy object
         // arrayRef = target.value
       }
       resolve(unref(arrayRef))
     }
   }
 
-  if (options.once) {
+  if (once) {
     getDocs(collection).then(onSnapshotCallback).catch(reject)
   } else {
+    // we need a way to detect when the data is fully loaded
     stopOnSnapshot = onSnapshot(collection, onSnapshotCallback, reject)
   }
 
