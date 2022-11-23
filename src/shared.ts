@@ -246,7 +246,7 @@ export interface _DataSourceOptions {
 
   /**
    * If true, wait until the data is loaded before setting the data for the first time. For Firestore, this includes
-   * nested refs.
+   * nested refs. This is only useful for lists and collections. Objects and documents do not need this.
    */
   wait?: boolean
 
