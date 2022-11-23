@@ -354,6 +354,7 @@ export function bindCollection<T = unknown>(
     },
   }
 
+  // callback to get all the data at once and know when it's ready
   function onSnapshotCallback(snapshot: QuerySnapshot<T>) {
     // console.log('pending', metadata.hasPendingWrites)
     // docs.forEach(d => console.log('doc', d, '\n', 'data', d.data()))
@@ -389,6 +390,8 @@ export function bindCollection<T = unknown>(
         }
       }
     }
+
+    // call each change individually
     docChanges.forEach((c) => {
       change[c.type](c)
     })
