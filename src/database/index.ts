@@ -81,22 +81,14 @@ export function _useDatabaseRef(
 
       if (Array.isArray(data.value)) {
         unbind = bindAsArray(
-          data,
+          data as Ref<any>,
           referenceValue,
           resolve,
           reject,
-          ops,
           options
         )
       } else {
-        unbind = bindAsObject(
-          data,
-          referenceValue,
-          resolve,
-          reject,
-          ops,
-          options
-        )
+        unbind = bindAsObject(data, referenceValue, resolve, reject, options)
       }
     })
 

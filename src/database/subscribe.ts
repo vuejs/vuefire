@@ -2,6 +2,7 @@ import {
   createRecordFromDatabaseSnapshot,
   indexForKey,
   DatabaseSnapshotSerializer,
+  VueDatabaseQueryData,
 } from './utils'
 import {
   noop,
@@ -9,17 +10,19 @@ import {
   ResetOption,
   TODO,
   _DataSourceOptions,
+  _MaybeRef,
   _ResolveRejectFn,
 } from '../shared'
 import { ref, Ref, unref } from 'vue-demi'
-import type { Query, DatabaseReference } from 'firebase/database'
 import {
   onValue,
   onChildAdded,
   onChildChanged,
   onChildMoved,
   onChildRemoved,
+  get,
 } from 'firebase/database'
+import type { Query, DatabaseReference, DataSnapshot } from 'firebase/database'
 
 /**
  * Global option type when binding one database reference
@@ -68,28 +71,30 @@ export function bindAsObject(
   document: DatabaseReference | Query,
   resolve: _ResolveRejectFn,
   reject: _ResolveRejectFn,
-  ops: OperationsType,
-  extraOptions: _DatabaseRefOptions = DEFAULT_OPTIONS
+  extraOptions?: _DatabaseRefOptions
 ) {
-  const key = 'value'
   const options = Object.assign({}, DEFAULT_OPTIONS, extraOptions)
 
-  const unsubscribe = onValue(
-    document,
-    (snapshot) => {
-      const value = options.serialize(snapshot)
-      ops.set(target, key, value)
-      // resolve the promise
-      resolve(value)
-    },
-    reject
-  )
+  let unsubscribe = noop
+
+  function onValueCallback(snapshot: DataSnapshot) {
+    const value = options.serialize(snapshot)
+    target.value = value
+    // resolve the promise
+    resolve(value)
+  }
+
+  if (options.once) {
+    get(document).then(onValueCallback).catch(reject)
+  } else {
+    unsubscribe = onValue(document, onValueCallback, reject)
+  }
 
   return (reset?: ResetOption) => {
     unsubscribe()
     if (reset !== false) {
       const value = typeof reset === 'function' ? reset() : null
-      ops.set(target, key, value)
+      target.value = value
     }
   }
 }
@@ -101,85 +106,112 @@ export function bindAsObject(
  * @returns a function to be called to stop listening for changes
  */
 export function bindAsArray(
-  target: Ref<TODO>,
+  target: Ref<ReturnType<DatabaseSnapshotSerializer>[]>,
   collection: DatabaseReference | Query,
   resolve: _ResolveRejectFn,
   reject: _ResolveRejectFn,
-  ops: OperationsType,
-  extraOptions: _DatabaseRefOptions = DEFAULT_OPTIONS
+  extraOptions?: _DatabaseRefOptions
 ) {
   const options = Object.assign({}, DEFAULT_OPTIONS, extraOptions)
-  const key = 'value'
 
-  if (!options.wait) ops.set(target, key, [])
-  let arrayRef = ref(options.wait ? [] : target[key])
+  let arrayRef: _MaybeRef<ReturnType<DatabaseSnapshotSerializer>[]> =
+    options.wait ? [] : target
+  // by default we wait, if not, set the value to an empty array so it can be populated correctly
+  if (!options.wait) {
+    target.value = []
+  }
 
-  const removeChildAddedListener = onChildAdded(
-    collection,
-    (snapshot, prevKey) => {
-      const array = unref(arrayRef)
-      const index = prevKey ? indexForKey(array, prevKey) + 1 : 0
-      ops.add(array, index, options.serialize(snapshot))
-    },
-    reject
-  )
-
-  const removeChildRemovedListener = onChildRemoved(
-    collection,
-
-    (snapshot) => {
-      const array = unref(arrayRef)
-      ops.remove(array, indexForKey(array, snapshot.key))
-    },
-    reject
-  )
-
-  const removeChildChangedListener = onChildChanged(
-    collection,
-    (snapshot) => {
-      const array = unref(arrayRef)
-      ops.set(
-        array,
-        indexForKey(array, snapshot.key),
-        options.serialize(snapshot)
-      )
-    },
-    reject
-  )
-
-  const removeChildMovedListener = onChildMoved(
-    collection,
-    (snapshot, prevKey) => {
-      const array = unref(arrayRef)
-      const index = indexForKey(array, snapshot.key)
-      const oldRecord = ops.remove(array, index)[0]
-      const newIndex = prevKey ? indexForKey(array, prevKey) + 1 : 0
-      ops.add(array, newIndex, oldRecord)
-    },
-    reject
-  )
-
+  // setup the callbacks to noop for options.once
+  let removeChildAddedListener = noop
+  let removeChildChangedListener = noop
+  let removeChildRemovedListener = noop
+  let removeChildMovedListener = noop
   // in case the removeValueListener() is called before onValue returns
   let removeValueListener = noop
-  removeValueListener = onValue(
-    collection,
-    (data) => {
-      const array = unref(arrayRef)
-      if (options.wait) ops.set(target, key, array)
-      resolve(data)
-      removeValueListener()
-    },
-    reject
-  )
+
+  if (options.once) {
+    get(collection)
+      .then((data) => {
+        const array: ReturnType<DatabaseSnapshotSerializer>[] = []
+        data.forEach((snapshot) => {
+          array.push(options.serialize(snapshot))
+        })
+        resolve((target.value = array))
+      })
+      .catch(reject)
+  } else {
+    removeChildAddedListener = onChildAdded(
+      collection,
+      (snapshot, prevKey) => {
+        const array = unref(arrayRef)
+        const index = prevKey ? indexForKey(array, prevKey) + 1 : 0
+        array.splice(index, 0, options.serialize(snapshot))
+      },
+      reject
+    )
+
+    removeChildRemovedListener = onChildRemoved(
+      collection,
+
+      (snapshot) => {
+        const array = unref(arrayRef)
+        array.splice(indexForKey(array, snapshot.key), 1)
+      },
+      reject
+    )
+
+    removeChildChangedListener = onChildChanged(
+      collection,
+      (snapshot) => {
+        const array = unref(arrayRef)
+        array.splice(
+          indexForKey(array, snapshot.key),
+          1,
+          options.serialize(snapshot)
+        )
+      },
+      reject
+    )
+
+    removeChildMovedListener = onChildMoved(
+      collection,
+      (snapshot, prevKey) => {
+        const array = unref(arrayRef)
+        const index = indexForKey(array, snapshot.key)
+        const oldRecord = array.splice(index, 1)[0]
+        const newIndex = prevKey ? indexForKey(array, prevKey) + 1 : 0
+        array.splice(newIndex, 0, oldRecord)
+      },
+      reject
+    )
+
+    // we use this to know when the initial data has been loaded
+    removeValueListener = onValue(
+      collection,
+      () => {
+        const array = unref(arrayRef)
+        if (options.wait) {
+          target.value = array
+          // switch to the target so all changes happen into the target
+          arrayRef = target
+        }
+        resolve(array)
+        removeValueListener()
+      },
+      reject
+    )
+  }
 
   return (reset?: ResetOption) => {
+    removeValueListener()
     removeChildAddedListener()
     removeChildRemovedListener()
     removeChildChangedListener()
     removeChildMovedListener()
     if (reset !== false) {
       const value = typeof reset === 'function' ? reset() : []
-      ops.set(target, key, value)
+      // we trust the user to return an array
+      target.value = value as any
     }
   }
 }

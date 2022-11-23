@@ -1,15 +1,16 @@
+import { isObject } from '../shared'
 import type { DataSnapshot } from 'firebase/database'
-import { isObject, _RefWithState } from '../shared'
+import type { _RefWithState } from '../shared'
 
 /**
- * Convert firebase Database snapshot into a bindable data record.
+ * Convert firebase Database snapshot of a ref **that exists** into a bindable data record.
  *
  * @param snapshot
  * @return
  */
 export function createRecordFromDatabaseSnapshot(
   snapshot: DataSnapshot
-): VueDatabaseDocumentData<unknown> {
+): NonNullable<VueDatabaseDocumentData<unknown>> {
   const value: unknown = snapshot.val()
   const res: unknown = isObject(value)
     ? value
@@ -22,7 +23,9 @@ export function createRecordFromDatabaseSnapshot(
   return res
 }
 
-export type DatabaseSnapshotSerializer = typeof createRecordFromDatabaseSnapshot
+export interface DatabaseSnapshotSerializer<T = unknown> {
+  (snapshot: DataSnapshot): NonNullable<VueDatabaseDocumentData<T>>
+}
 
 /**
  * Find the index for an object with given key.
@@ -32,7 +35,7 @@ export type DatabaseSnapshotSerializer = typeof createRecordFromDatabaseSnapshot
  * @return the index where the key was found
  */
 export function indexForKey(
-  array: VueDatabaseQueryData,
+  array: NonNullable<VueDatabaseDocumentData>[],
   key: string | null | number
 ): number {
   for (let i = 0; i < array.length; i++) {
@@ -60,5 +63,5 @@ export type VueDatabaseDocumentData<T = unknown> =
  * Same as VueDatabaseDocumentData but for a query.
  */
 export type VueDatabaseQueryData<T = unknown> = Array<
-  Exclude<VueDatabaseDocumentData<T>, null>
+  NonNullable<VueDatabaseDocumentData<T>>
 >
