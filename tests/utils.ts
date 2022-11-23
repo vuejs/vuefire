@@ -55,6 +55,8 @@ connectDatabaseEmulator(database, 'localhost', 8081)
 connectStorageEmulator(storage, 'localhost', 9199)
 
 let _id = 0
+// wait this ms time after each operation to avoid race conditions
+const SLEEP_TIME = 30
 
 // Storage
 export function setupStorageRefs() {
@@ -147,6 +149,7 @@ export function setupFirestoreRefs(id?: string) {
 
   async function _addDoc(...args: Parameters<typeof addDoc>) {
     const d = await addDoc(...args)
+    await sleep(SLEEP_TIME)
     await nextTick()
     return d
   }
@@ -154,12 +157,14 @@ export function setupFirestoreRefs(id?: string) {
   const _setDoc: typeof setDoc = async (...args: any[]) => {
     // @ts-expect-error: not a tuple
     const d = await setDoc(...args)
+    await sleep(SLEEP_TIME)
     await nextTick()
     return d
   }
 
   async function _deleteDoc(...args: Parameters<typeof deleteDoc>) {
     const d = await deleteDoc(...args)
+    await sleep(SLEEP_TIME)
     await nextTick()
     return d
   }
@@ -167,6 +172,7 @@ export function setupFirestoreRefs(id?: string) {
   const _updateDoc: typeof updateDoc = async (...args: any[]) => {
     // @ts-expect-error: not a tuple
     const d = await updateDoc(...args)
+    await sleep(SLEEP_TIME)
     await nextTick()
     return d
   }
@@ -238,18 +244,21 @@ export function setupDatabaseRefs() {
 
   const _set: typeof databaseSet = async (ref, options) => {
     const d = await databaseSet(ref, options)
+    sleep(SLEEP_TIME)
     await nextTick()
     return d
   }
 
   const _update: typeof databaseUpdate = async (ref, options) => {
     const d = await databaseUpdate(ref, options)
+    sleep(SLEEP_TIME)
     await nextTick()
     return d
   }
 
   const _remove: typeof databaseRemove = async (ref) => {
     const d = await databaseRemove(ref)
+    sleep(SLEEP_TIME)
     await nextTick()
     return d
   }
@@ -258,6 +267,7 @@ export function setupDatabaseRefs() {
   const _push: typeof databasePush = async (...args: any[]) => {
     // @ts-expect-error: not a tuple
     const d = await databasePush(...args)
+    sleep(SLEEP_TIME)
     await nextTick()
     return d
   }
