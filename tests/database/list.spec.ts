@@ -57,6 +57,23 @@ describe('Database lists', () => {
     expect(wrapper.vm.list).toEqual([])
   })
 
+  it('fetches once', async () => {
+    const listRef = databaseRef()
+    await push(listRef, { name: 'a' })
+    await push(listRef, { name: 'b' })
+
+    const { wrapper, promise } = factory({
+      ref: listRef,
+      options: { once: true },
+    })
+
+    await promise.value
+    expect(wrapper.vm.list).toHaveLength(2)
+
+    await push(listRef, { name: 'c' })
+    expect(wrapper.vm.list).toHaveLength(2)
+  })
+
   it('add items to the list', async () => {
     const { wrapper, data, listRef } = factory()
 

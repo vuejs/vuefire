@@ -66,6 +66,22 @@ describe('Database objects', () => {
     expect(wrapper.vm.item).toEqual(undefined)
   })
 
+  it('fetches once', async () => {
+    const itemRef = databaseRef()
+    await set(itemRef, { name: 'a' })
+    const { wrapper, promise } = factory({
+      ref: itemRef,
+      options: { once: true },
+    })
+
+    await promise.value
+
+    expect(wrapper.vm.item).toEqual({ name: 'a' })
+
+    await set(itemRef, { name: 'b' })
+    expect(wrapper.vm.item).toEqual({ name: 'a' })
+  })
+
   it('can be bound to a Vue ref', async () => {
     const aRef = databaseRef()
     const bRef = databaseRef()
