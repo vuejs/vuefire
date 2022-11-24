@@ -282,7 +282,7 @@ export interface _ResolveRejectFn {
 export function isSSR(): boolean {
   return (
     !!inject(ssrContextKey, null) ||
-    //
+    // in case the function is called outside of a composable
     // @ts-expect-error
     import.meta.env?.SSR
   )
