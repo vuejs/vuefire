@@ -13,6 +13,7 @@ import {
 } from 'vue-demi'
 import { DatabaseReference, getDatabase, Query } from 'firebase/database'
 import {
+  isSSR,
   noop,
   OperationsType,
   ResetOption,
@@ -56,6 +57,12 @@ export function _useDatabaseRef(
 ) {
   let unbind!: UnbindWithReset
   const options = Object.assign({}, databaseOptionsDefaults, localOptions)
+
+  // During SSR, we should only get data once
+  if (isSSR()) {
+    options.once = true
+  }
+
   const initialSourceValue = unref(reference)
 
   const data = options.target || ref<unknown | null>()
