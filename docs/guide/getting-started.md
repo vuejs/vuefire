@@ -33,7 +33,7 @@ import { getDatabase } from 'firebase/database'
 export const firebaseApp = initializeApp({
   // your application settings
 })
-export const database = getDataBase(firebase)
+export const database = getDatabase(firebase)
 export const firestore = getFirestore(firebase)
 // ... other firebase exports
 ```
