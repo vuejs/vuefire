@@ -1,6 +1,6 @@
 import { usePendingPromises, VueFire, useSSRInitialState } from 'vuefire'
 import { initializeApp } from 'firebase/app'
-import { defineNuxtPlugin, useAppConfig } from '#imports'
+import { defineNuxtPlugin, useAppConfig } from '#app'
 import { connectFirestoreEmulator, getFirestore } from 'firebase/firestore'
 import { connectDatabaseEmulator, getDatabase } from 'firebase/database'
 
