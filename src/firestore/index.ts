@@ -23,6 +23,7 @@ import {
 import { useFirebaseApp } from '../app'
 import {
   isDocumentRef,
+  isSSR,
   noop,
   OperationsType,
   ResetOption,
@@ -66,6 +67,10 @@ export function _useFirestoreRef(
   let unbind: UnbindWithReset = noop
   const options = Object.assign({}, firestoreOptionsDefaults, localOptions)
   const initialSourceValue = unref(docOrCollectionRef)
+
+  if (isSSR()) {
+    options.once = true
+  }
 
   const data = options.target || ref<unknown | null>()
   // set the initial value from SSR even if the ref comes from outside

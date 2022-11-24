@@ -9,6 +9,7 @@ import {
   Timestamp,
 } from 'firebase/firestore'
 import { StorageReference } from 'firebase/storage'
+import { inject, ssrContextKey } from 'vue-demi'
 import type { Ref, ShallowRef } from 'vue-demi'
 
 export const noop = () => {}
@@ -271,4 +272,18 @@ export type _Mutable<T> = {
  */
 export interface _ResolveRejectFn {
   (value: unknown): void
+}
+
+/**
+ * Check if we are in an SSR environment within a composable. Used to force `options.once` to `true`.
+ *
+ * @internal
+ */
+export function isSSR(): boolean {
+  return (
+    !!inject(ssrContextKey, null) ||
+    //
+    // @ts-expect-error
+    import.meta.env?.SSR
+  )
 }
