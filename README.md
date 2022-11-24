@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://vuefire.vuejs.org" target="_blank" rel="noopener noreferrer">
-    <img width="100" src="https://vuefire.vuejs.org/vuefire-logo.svg" alt="VueFire logo">
+    <img width="100" src="https://vuefire.vuejs.org/logo.svg" alt="VueFire logo">
   </a>
 </p>
 <br/>
