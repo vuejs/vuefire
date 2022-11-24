@@ -18,7 +18,13 @@
     ],
     "comma-dangle": [
       "error",
-      "es5"
+      {
+        "arrays": "only-multiline",
+        "objects": "only-multiline",
+        "imports": "only-multiline",
+        "exports": "only-multiline",
+        "functions": "only-multiline"
+      }
     ],
     "vue/require-v-for-key": "off",
   }
