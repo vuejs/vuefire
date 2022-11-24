@@ -40,7 +40,7 @@
     "test:unit": "vitest --coverage",
     "firebase:emulators": "firebase emulators:start",
     "test:dev": "vitest",
-    "test": "pnpm run lint && pnpm run test:types && pnpm run test:unit run && pnpm run build"
+    "test": "pnpm run lint && pnpm run test:types && pnpm run build && pnpm run test:unit run"
   },
   "keywords": [
     "vue",
@@ -85,7 +85,7 @@
     "semver": "^7.3.8",
     "typedoc": "^0.23.21",
     "typedoc-plugin-markdown": "^3.13.6",
-    "typescript": "~4.8.4",
+    "typescript": "~4.9.3",
     "unbuild": "^1.0.1",
     "vitepress": "1.0.0-alpha.29",
     "vitest": "^0.25.3",
