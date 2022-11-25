@@ -1,3 +1,17 @@
+# [3.0.0-alpha.11](https://github.com/vuejs/vuefire/compare/v3.0.0-alpha.10...v3.0.0-alpha.11) (2022-11-25)
+
+### Bug Fixes
+
+- avoid warning isSSR ([197b036](https://github.com/vuejs/vuefire/commit/197b03623e1fc5e968bf767f29854e81415cb12d))
+- **ssr:** use ssrKey in firestore ([25d86ca](https://github.com/vuejs/vuefire/commit/25d86cac1bb230ac3478aebab92062f6a6f3632c))
+
+### Features
+
+- add global options ([5137a99](https://github.com/vuejs/vuefire/commit/5137a990b790cbee0366aef83a00a4c50865f135))
+- **database:** add once option ([0c321fb](https://github.com/vuejs/vuefire/commit/0c321fbf6366d8dd7958768f2c9265bafeae1497))
+- **database:** once on server ([c4eb143](https://github.com/vuejs/vuefire/commit/c4eb1432fe11aba1cc5dda107a61ee214d8d70aa))
+- **firestore:** force once option during SSR ([397a8de](https://github.com/vuejs/vuefire/commit/397a8de8cc80b37b441fb9f1b40b04234deb1984))
+
 # [3.0.0-alpha.10](https://github.com/vuejs/vuefire/compare/v3.0.0-alpha.9...v3.0.0-alpha.10) (2022-11-21)
 
 ### Bug Fixes
