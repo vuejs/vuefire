@@ -19,7 +19,7 @@
 - Built for Firebase 9 for optimal tree shaking
 - Automatically listen for changes in nested references
 
-[**📚 Documentation**](https://v3.vuefire.vuejs.org/)
+[**📚 Documentation**](https://vuefire.vuejs.org/)
 
 ## Roadmap
 
@@ -35,7 +35,7 @@ npm install vuefire
 
 ## Usage
 
-[Getting Started](https://v3.vuefire.vuejs.org/guide/getting-started.html)
+[Getting Started](https://vuefire.vuejs.org/guide/getting-started.html)
 
 ## Related
 
