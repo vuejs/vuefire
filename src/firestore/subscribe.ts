@@ -289,8 +289,6 @@ export function bindCollection<T = unknown>(
   // TODO: remove ops
   const key = 'value'
   // with wait we delay changes to the target until all values are resolved
-  // let arrayRef = wait ? ref([]) : target
-  // FIXME:
   let arrayRef = ref(wait ? [] : target.value)
   if (!wait) ops.set(target, key, [])
   const originalResolve = resolve
@@ -384,8 +382,7 @@ export function bindCollection<T = unknown>(
             // if wait is true, finally set the array
             if (wait) {
               ops.set(target, key, unref(arrayRef))
-              // FIXME: use the proxy object
-              // arrayRef = target
+              arrayRef = target
             }
             originalResolve(unref(arrayRef))
             // reset resolve to noop
@@ -406,8 +403,7 @@ export function bindCollection<T = unknown>(
     if (!docChanges.length) {
       if (wait) {
         ops.set(target, key, unref(arrayRef))
-        // FIXME: use the proxy object
-        // arrayRef = target.value
+        arrayRef = target
       }
       resolve(unref(arrayRef))
     }

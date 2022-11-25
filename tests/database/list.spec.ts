@@ -7,7 +7,7 @@ import {
   _RefDatabase,
 } from '../../src'
 import { expectType, tds, setupDatabaseRefs, database } from '../utils'
-import { computed, nextTick, ref, unref, type Ref } from 'vue'
+import { computed, nextTick, ref, unref, watch, type Ref } from 'vue'
 import {
   DatabaseReference,
   orderByChild,
@@ -286,6 +286,40 @@ describe('Database lists', () => {
     expect(data.value).toContainEqual({ name: 'a' })
     expect(data.value).toContainEqual({ name: 'b' })
     expect(error.value).toBeUndefined()
+  })
+
+  it('can provide a target ref to the composable', async () => {
+    const dataRef = databaseRef()
+    await push(dataRef, { name: 'a' })
+    await push(dataRef, { name: 'b' })
+    const target = ref([])
+    let changeCount = 0
+    watch(
+      () => target.value,
+      (newData) => {
+        changeCount++
+      },
+      { deep: true, flush: 'sync' }
+    )
+    const { promise, data } = factory({
+      ref: dataRef,
+      options: { target },
+    })
+
+    await promise.value
+
+    expect(changeCount).toBe(1)
+    expect(data.value).toHaveLength(2)
+    expect(data.value).toContainEqual({ name: 'a' })
+    expect(data.value).toContainEqual({ name: 'b' })
+    expect(data.value).toEqual(target.value)
+
+    await push(dataRef, { name: 'c' })
+    expect(data.value).toHaveLength(3)
+    expect(data.value).toContainEqual({ name: 'a' })
+    expect(data.value).toContainEqual({ name: 'b' })
+    expect(data.value).toContainEqual({ name: 'c' })
+    expect(data.value).toEqual(target.value)
   })
 
   tds(() => {

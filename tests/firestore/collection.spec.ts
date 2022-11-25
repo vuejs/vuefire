@@ -9,7 +9,7 @@ import {
   where,
 } from 'firebase/firestore'
 import { expectType, setupFirestoreRefs, tds, firestore } from '../utils'
-import { computed, nextTick, ref, unref, type Ref } from 'vue'
+import { computed, nextTick, ref, unref, watch, type Ref } from 'vue'
 import { _InferReferenceType, _RefFirestore } from '../../src/firestore'
 import {
   useCollection,
@@ -351,6 +351,41 @@ describe(
       await promise.value
       // it stays the same
       expect(data.value).toHaveLength(3)
+    })
+
+    it('can provide a target ref to the composable', async () => {
+      const dataRef = collection()
+      await addDoc(dataRef, { name: 'a' })
+      await addDoc(dataRef, { name: 'b' })
+      const target = ref([])
+      let changeCount = 0
+      watch(
+        () => target.value,
+        (newData) => {
+          changeCount++
+        },
+        { deep: true, flush: 'sync' }
+      )
+
+      const { promise, data } = factory({
+        ref: dataRef,
+        options: { target, wait: true },
+      })
+
+      await promise.value
+
+      expect(changeCount).toBe(1)
+      expect(data.value).toHaveLength(2)
+      expect(data.value).toContainEqual({ name: 'a' })
+      expect(data.value).toContainEqual({ name: 'b' })
+      expect(data.value).toEqual(target.value)
+
+      await addDoc(dataRef, { name: 'c' })
+      expect(data.value).toHaveLength(3)
+      expect(data.value).toContainEqual({ name: 'a' })
+      expect(data.value).toContainEqual({ name: 'b' })
+      expect(data.value).toContainEqual({ name: 'c' })
+      expect(data.value).toEqual(target.value)
     })
 
     tds(() => {
