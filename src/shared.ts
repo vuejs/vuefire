@@ -9,7 +9,7 @@ import {
   Timestamp,
 } from 'firebase/firestore'
 import { StorageReference } from 'firebase/storage'
-import { inject, ssrContextKey } from 'vue-demi'
+import { getCurrentInstance, inject, ssrContextKey } from 'vue-demi'
 import type { Ref, ShallowRef } from 'vue-demi'
 
 export const noop = () => {}
@@ -280,5 +280,5 @@ export interface _ResolveRejectFn {
  * @internal
  */
 export function isSSR(): boolean {
-  return !!inject(ssrContextKey, null)
+  return !!(getCurrentInstance() && inject(ssrContextKey, null))
 }
