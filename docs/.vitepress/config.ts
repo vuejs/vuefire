@@ -84,11 +84,12 @@ export default defineConfig({
     //   placement: 'vuefirevuejsorg',
     // },
 
-    // algolia: {
-    //   apiKey: '0d5c32429ddf401270cbc9b4e24c4532',
-    //   indexName: 'vuefire',
-    //   // algoliaOptions: { facetFilters: ['tags:guide,api'] },
-    // },
+    algolia: {
+      appId: 'O9WVPRF35B',
+      apiKey: '7f026cbac6640bcf8b3f4c5f6f592d7b',
+      indexName: 'vuefire',
+      // algoliaOptions: { facetFilters: ['tags:guide,api'] },
+    },
 
     nav: [
       { text: 'Guide', link: '/guide/' },
