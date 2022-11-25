@@ -49,7 +49,12 @@ export const ops: OperationsType = {
   remove: (array, index) => array.splice(index, 1),
 }
 
-export interface _UseFirestoreRefOptions extends FirestoreRefOptions {}
+export interface _UseFirestoreRefOptions extends FirestoreRefOptions {
+  /**
+   * @deprecated: use `.withConverter()` instead
+   */
+  converter?: any
+}
 
 /**
  * Internal version of `useDocument()` and `useCollection()`.

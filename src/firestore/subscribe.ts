@@ -71,7 +71,8 @@ interface _FirestoreRefOptionsWithDefaults extends FirestoreRefOptions {
   maxRefDepth: number
 
   /**
-   * Default Firestore converter to use with snapshots.
+   * Default Firestore converter to use with snapshots. Make sure to reuse the original serializer to add the object id.
+   * See https://vuefire.vuejs.org/guide/global-options.html
    */
   converter: FirestoreDataConverter<unknown>
 }
