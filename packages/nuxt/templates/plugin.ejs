@@ -1,17 +1,49 @@
-// @ts-check import { usePendingPromises, VueFire, useSSRInitialState } from
-'vuefire' import { initializeApp } from 'firebase/app' import {
-defineNuxtPlugin, toRaw, useAppConfig, useRuntimeConfig } from '#imports' import
-{ connectFirestoreEmulator, getFirestore } from 'firebase/firestore' import {
-connectDatabaseEmulator, getDatabase } from 'firebase/database' export default
-defineNuxtPlugin((nuxtApp) => { const appConfig = useAppConfig() const
-firebaseConfig = toRaw(appConfig).firebaseConfig console.log('Initializing
-Firebase app...', firebaseConfig) const firebaseApp =
-initializeApp(firebaseConfig) console.log('initialized firebase app',
-!!firebaseApp) // connectFirestoreEmulator(getFirestore(firebaseApp),
-'localhost', 8080) // connectDatabaseEmulator(getDatabase(firebaseApp),
-'localhost', 8081) nuxtApp.vueApp.use(VueFire, { firebaseApp, services: [ <%
-if(options.services.auth) { %> // Auth <% } %> ] }) if (process.server) { //
-TODO: pass the firebaseApp nuxtApp.payload.vuefire =
-useSSRInitialState(undefined, firebaseApp) } else if (nuxtApp.payload?.vuefire)
-{ // hydrate the plugin state from nuxtApp.payload.vuefire
-useSSRInitialState(nuxtApp.payload.vuefire, firebaseApp) } return {} })
+import { usePendingPromises, VueFire, useSSRInitialState } from 'vuefire'
+import { initializeApp } from 'firebase/app'
+import {
+  defineNuxtPlugin,
+  useAppConfig,
+  useRuntimeConfig,
+} from '#app'
+import {
+  connectFirestoreEmulator,
+  getFirestore,
+} from 'firebase/firestore'
+import {
+connectDatabaseEmulator,
+getDatabase,
+} from 'firebase/database'
+import {
+  toRaw,
+} from 'vue-demi'
+
+export default defineNuxtPlugin((nuxtApp) => {
+  const appConfig = useAppConfig()
+  const firebaseConfig = toRaw(appConfig).firebaseConfig
+  console.log('Initializing Firebase app...', firebaseConfig)
+
+  const firebaseApp = initializeApp(firebaseConfig)
+  console.log('initialized firebase app', !!firebaseApp)
+
+  // connectFirestoreEmulator(getFirestore(firebaseApp), 'localhost', 8080)
+  // connectDatabaseEmulator(getDatabase(firebaseApp), 'localhost', 8081)
+
+  nuxtApp.vueApp.use(VueFire, {
+    firebaseApp,
+    services: [
+    <% if(options.services.auth) { %>
+      // Auth
+    <% } %>
+    ],
+  })
+
+  if (process.server) {
+    // TODO: pass the firebaseApp
+    nuxtApp.payload.vuefire = useSSRInitialState(undefined, firebaseApp)
+  } else if (nuxtApp.payload?.vuefire) {
+    // hydrate the plugin state from nuxtApp.payload.vuefire
+    useSSRInitialState(nuxtApp.payload.vuefire, firebaseApp)
+  }
+
+  return {}
+})

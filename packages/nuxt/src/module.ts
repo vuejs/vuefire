@@ -69,18 +69,16 @@ const VueFire: NuxtModule<VueFireNuxtModuleOptions> =
       nuxt.options.build.transpile.push(runtimeDir)
 
       nuxt.hook('modules:done', () => {
-        addPlugin(resolve(runtimeDir, 'plugin'))
+        // addPlugin(resolve(runtimeDir, 'plugin'))
+
+        addPluginTemplate({
+          src: normalize(resolve(templatesDir, 'plugin.ejs')),
+
+          options: {
+            ...options,
+          },
+        })
       })
-
-      // const p = normalize(resolve(templatesDir, 'plugin.js'))
-      // console.log('[VueFire]: adding', p)
-      // addPluginTemplate({
-      //   src: normalize(resolve(templatesDir, 'plugin.js')),
-
-      //   options: {
-      //     ...options,
-      //   },
-      // })
     },
   })
 

@@ -6,28 +6,33 @@ import { connectDatabaseEmulator, getDatabase } from 'firebase/database'
 
 export default defineNuxtPlugin((nuxtApp) => {
   // TODO: initialize firebase app from config
+  const appConfig = useAppConfig()
 
   console.log('initializing firebase app')
 
-  const firebaseApp = initializeApp({
-    // FIXME: hard coded until the templates are fixed in nuxt
-    apiKey: 'AIzaSyAkUKe36TPWL2eZTshgk-Xl4bY_R5SB97U',
-    authDomain: 'vue-fire-store.firebaseapp.com',
-    databaseURL: 'https://vue-fire-store.firebaseio.com',
-    projectId: 'vue-fire-store',
-    storageBucket: 'vue-fire-store.appspot.com',
-    messagingSenderId: '998674887640',
-    appId: '1:998674887640:web:1e2bb2cc3e5eb2fc3478ad',
-    measurementId: 'G-RL4BTWXKJ7',
-  })
+  const firebaseApp = initializeApp(appConfig.firebaseConfig)
 
   console.log('initialized app')
 
+  // TODO: if emulator
   // connectFirestoreEmulator(getFirestore(firebaseApp), 'localhost', 8080)
   // connectDatabaseEmulator(getDatabase(firebaseApp), 'localhost', 8081)
 
   nuxtApp.vueApp.use(VueFire, {
     firebaseApp,
+    modules: [
+      // TODO: conditionally add modules (template)
+      // VueFireAuth(),
+      // VueFireAppCheck({
+      //   // debug: process.env.NODE_ENV !== 'production',
+      //   isTokenAutoRefreshEnabled: true,
+      //   provider: new ReCaptchaV3Provider(
+      //     '6LfJ0vgiAAAAAHheQE7GQVdG_c9m8xipBESx_SKI'
+      //   ),
+      // }),
+      // VueFireDatabaseOptionsAPI(),
+      // VueFireFirestoreOptionsAPI(),
+    ],
   })
 
   if (process.server) {
