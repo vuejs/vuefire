@@ -176,6 +176,33 @@ describe('Database lists', () => {
       await wrapper.unmount()
       expect(data.value).toEqual('reset')
     })
+
+    it('skips resetting by default when manually reset', async () => {
+      const { listRef, data, stop } = factory()
+
+      await push(listRef, { name: 'a' })
+      expect(data.value).toHaveLength(1)
+      stop()
+      expect(data.value).toHaveLength(1)
+    })
+
+    it('resets by default when manually reset', async () => {
+      const { listRef, data, stop } = factory()
+
+      await push(listRef, { name: 'a' })
+      expect(data.value).toHaveLength(1)
+      stop(true)
+      expect(data.value).toHaveLength(0)
+    })
+
+    it('can be reset to a specific value when manually reset', async () => {
+      const { listRef, data, stop } = factory()
+
+      await push(listRef, { name: 'a' })
+      expect(data.value).toHaveLength(1)
+      stop(() => [1])
+      expect(data.value).toEqual([1])
+    })
   })
 
   it('awaits before setting the value if wait', async () => {

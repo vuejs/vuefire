@@ -418,7 +418,7 @@ export function bindCollection<T = unknown>(
 
   return (reset?: FirestoreRefOptions['reset']) => {
     stopOnSnapshot()
-    if (reset !== false) {
+    if (reset) {
       const value = typeof reset === 'function' ? reset() : []
       ops.set(target, key, value)
     }
@@ -475,7 +475,7 @@ export function bindDocument<T>(
 
   return (reset?: FirestoreRefOptions['reset']) => {
     stopOnSnapshot()
-    if (reset !== false) {
+    if (reset) {
       const value = typeof reset === 'function' ? reset() : null
       ops.set(target, key, value)
     }

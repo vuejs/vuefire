@@ -93,7 +93,7 @@ export function bindAsObject(
 
   return (reset?: ResetOption) => {
     unsubscribe()
-    if (reset !== false) {
+    if (reset) {
       const value = typeof reset === 'function' ? reset() : null
       target.value = value
     }
@@ -209,7 +209,7 @@ export function bindAsArray(
     removeChildRemovedListener()
     removeChildChangedListener()
     removeChildMovedListener()
-    if (reset !== false) {
+    if (reset) {
       const value = typeof reset === 'function' ? reset() : []
       // we trust the user to return an array
       target.value = value as any
