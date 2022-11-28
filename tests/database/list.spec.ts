@@ -364,8 +364,13 @@ describe('Database lists', () => {
   tds(() => {
     const db = database
     const databaseRef = _databaseRef
-    expectType<Ref<unknown[]>>(useList(databaseRef(db, 'todos')))
-    expectType<Ref<number[]>>(useList<number>(databaseRef(db, 'todos')))
+    expectType<Ref<VueDatabaseQueryData>>(useList(databaseRef(db, 'todos')))
+    expectType<string | undefined>(
+      useList(databaseRef(db, 'todos')).value?.[0]?.id
+    )
+    expectType<Ref<VueDatabaseQueryData<number>>>(
+      useList<number>(databaseRef(db, 'todos'))
+    )
 
     // TODO: tests for id field
   })

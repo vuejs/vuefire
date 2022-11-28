@@ -8,7 +8,7 @@ import {
 } from 'firebase/firestore'
 import { expectType, setupFirestoreRefs, tds, firestore } from '../utils'
 import { nextTick, ref, shallowRef, unref, type Ref } from 'vue'
-import { _MaybeRef } from '../../src/shared'
+import { _MaybeRef, _Nullable } from '../../src/shared'
 import {
   useDocument,
   VueFirestoreDocumentData,
@@ -243,14 +243,17 @@ describe(
         finished: boolean
       }
 
-      expectType<Ref<DocumentData | null>>(useDocument(itemRef))
+      expectType<Ref<DocumentData | null | undefined>>(useDocument(itemRef))
       // @ts-expect-error
       expectType<Ref<number | null>>(useDocument(itemRef))
 
       // Adds the id
       // FIXME: this one is any but the test passes
-      expectType<string>(useDocument(doc(db, 'todos', '1')).value.id)
+      expectType<string>(useDocument(doc(db, 'todos', '1')).value?.id)
       expectType<string>(useDocument<TodoI>(doc(db, 'todos', '1')).value!.id)
+      expectType<_Nullable<TodoI>>(
+        useDocument<TodoI>(doc(db, 'todos', '1')).value
+      )
       expectType<string>(useDocument<unknown>(doc(db, 'todos', '1')).value!.id)
       useDocument(
         doc(db, 'todos').withConverter<TodoI>({
@@ -261,10 +264,12 @@ describe(
           toFirestore: (todo) => todo,
         })
         // @ts-expect-error: no id with custom converter
-      ).value.id
+      ).value?.id
 
-      expectType<Ref<number | null>>(useDocument<number>(itemRef))
-      expectType<Ref<number | null>>(useDocument<number>(itemRef).data)
+      expectType<Ref<number | null | undefined>>(useDocument<number>(itemRef))
+      expectType<Ref<number | null | undefined>>(
+        useDocument<number>(itemRef).data
+      )
       // @ts-expect-error
       expectType<Ref<string | null>>(useDocument<number>(itemRef))
 
@@ -272,17 +277,23 @@ describe(
         toFirestore: (data) => ({ n: data }),
         fromFirestore: (snap, options) => snap.data(options).n as number,
       })
-      expectType<Ref<number>>(useDocument(refWithConverter))
-      expectType<Ref<number>>(useDocument(refWithConverter).data)
+      expectType<Ref<number | number | undefined>>(
+        useDocument(refWithConverter)
+      )
+      expectType<Ref<number | number | undefined>>(
+        useDocument(refWithConverter).data
+      )
       // should not be null
-      useDocument(refWithConverter).value.toFixed(14)
+      useDocument(refWithConverter).value?.toFixed(14)
       // @ts-expect-error: string is not assignable to number
       expectType<Ref<string>>(useDocument(refWithConverter))
       // @ts-expect-error: no id when a custom converter is used
       useDocument(refWithConverter).value.id
 
       // destructuring
-      expectType<Ref<DocumentData | null>>(useDocument(itemRef).data)
+      expectType<Ref<DocumentData | null | undefined>>(
+        useDocument(itemRef).data
+      )
       expectType<Ref<FirestoreError | undefined>>(useDocument(itemRef).error)
       expectType<Ref<boolean>>(useDocument(itemRef).pending)
     })

@@ -2,7 +2,6 @@ import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import {
   UseDatabaseRefOptions,
-  useList,
   useObject,
   VueDatabaseDocumentData,
   _RefDatabase,
@@ -196,7 +195,13 @@ describe('Database objects', () => {
   tds(() => {
     const db = database
     const databaseRef = _databaseRef
-    expectType<Ref<unknown[]>>(useList(databaseRef(db, 'todos')))
-    expectType<Ref<number[]>>(useList<number>(databaseRef(db, 'todos')))
+    expectType<Ref<unknown>>(useObject(databaseRef(db, 'todo')))
+    expectType<Ref<{ name: string } | null | undefined>>(
+      useObject<{ name: string }>(databaseRef(db, 'todo'))
+    )
+    expectType<undefined | string>(useObject(databaseRef(db, 'todo')).value?.id)
+    expectType<Ref<number | null | undefined>>(
+      useObject<number>(databaseRef(db, 'todo'))
+    )
   })
 })

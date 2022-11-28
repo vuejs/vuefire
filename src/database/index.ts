@@ -190,15 +190,23 @@ export function useList<T = unknown>(
   }) as _RefDatabase<VueDatabaseQueryData<T>>
 }
 
+/**
+ * Creates a reactive variable connected to the database as an object. If the reference is a primitive, it will be
+ * converted to an object containing a `$value` property with the primitive value and an `id` property with the
+ * reference's key.
+ *
+ * @param reference - Reference or query to the database
+ * @param options - optional options
+ */
 export function useObject<T = unknown>(
   reference: _MaybeRef<DatabaseReference>,
   options?: UseObjectOptions
 ): _RefDatabase<VueDatabaseDocumentData<T> | undefined> {
-  const data = ref<T>() as Ref<T | undefined>
+  const data = ref<T | null>()
   return _useDatabaseRef(reference, {
     target: data,
     ...options,
-  }) as _RefDatabase<VueDatabaseDocumentData<T> | undefined>
+  }) as _RefDatabase<VueDatabaseDocumentData<T>>
 }
 
 export const unbind = (target: Ref, reset?: ResetOption) =>

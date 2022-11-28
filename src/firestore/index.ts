@@ -250,7 +250,7 @@ export function useDocument<
 >(
   documentRef: _MaybeRef<_Nullable<R>>,
   options?: UseDocumentOptions
-): _RefFirestore<_InferReferenceType<R>> // this one can't be null or should be specified in the converter
+): _RefFirestore<_InferReferenceType<R> | undefined> // this one can't be null or should be specified in the converter
 
 /**
  * Creates a reactive collection (usually an array) of documents from a collection ref or a query from Firestore.
@@ -263,14 +263,12 @@ export function useDocument<
 export function useDocument<T>(
   documentRef: _MaybeRef<_Nullable<DocumentReference>>,
   options?: UseDocumentOptions
-): _RefFirestore<VueFirestoreDocumentData<T>>
+): _RefFirestore<VueFirestoreDocumentData<T> | undefined>
 
 export function useDocument<T>(
   documentRef: _MaybeRef<_Nullable<DocumentReference<unknown>>>,
   options?: UseDocumentOptions
-):
-  | _RefFirestore<VueFirestoreDocumentData<T> | null>
-  | _RefFirestore<VueFirestoreDocumentData<T> | null> {
+): _RefFirestore<VueFirestoreDocumentData<T> | undefined> {
   // no unwrapRef to have a simpler type
   return _useFirestoreRef(documentRef, options) as _RefFirestore<
     VueFirestoreDocumentData<T>
