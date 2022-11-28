@@ -42,14 +42,6 @@ import { getInitialValue } from '../ssr/initialState'
 
 export { databasePlugin } from './optionsApi'
 
-// TODO: if we allow passing them locally, we could also add the create and reset to allow creating other data structures like a Map
-
-const ops: OperationsType = {
-  set: (target, key, value) => walkSet(target, key, value),
-  add: (array, index, data) => array.splice(index, 0, data),
-  remove: (array, index) => array.splice(index, 1),
-}
-
 export interface UseDatabaseRefOptions extends _DatabaseRefOptions {}
 
 export function _useDatabaseRef(
@@ -114,12 +106,6 @@ export function _useDatabaseRef(
     }).finally(() => {
       pending.value = false
     })
-
-    // TODO: SSR serialize the values for Nuxt to expose them later and use them
-    // as initial values while specifying a wait: true to only swap objects once
-    // Firebase has done its initial sync. Also, on server, you don't need to
-    // create sync, you can read only once the whole thing so maybe _useDatabaseRef
-    // should take an option like once: true to not setting up any listener
   }
 
   let stopWatcher = noop
