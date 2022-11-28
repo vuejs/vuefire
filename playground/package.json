@@ -11,7 +11,7 @@
     "type-check": "vue-tsc --noEmit"
   },
   "dependencies": {
-    "pinia": "^2.0.26",
+    "pinia": "^2.0.27",
     "vue": "^3.2.45",
     "vue-router": "^4.1.6",
     "vuefire": "workspace:*",

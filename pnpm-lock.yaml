@@ -14,7 +14,7 @@ importers:
       firebase: ^9.14.0
       focus-visible: ^5.2.0
       happy-dom: ^7.7.0
-      lint-staged: ^13.0.3
+      lint-staged: ^13.0.4
       minimist: ^1.2.7
       p-series: ^3.0.0
       prettier: ^2.8.0
@@ -41,7 +41,7 @@ importers:
       firebase: 9.14.0
       focus-visible: 5.2.0
       happy-dom: 7.7.0
-      lint-staged: 13.0.3_enquirer@2.3.6
+      lint-staged: 13.0.4_enquirer@2.3.6
       minimist: 1.2.7
       p-series: 3.0.0
       prettier: 2.8.0
@@ -89,7 +89,7 @@ importers:
       '@vue/tsconfig': ^0.1.3
       '@vueuse/core': ^9.6.0
       npm-run-all: ^4.1.5
-      pinia: ^2.0.26
+      pinia: ^2.0.27
       typescript: ~4.9.3
       unplugin-vue-router: ^0.2.3
       vite: ^3.2.4
@@ -99,7 +99,7 @@ importers:
       vuefire: workspace:*
       vuex: ^4.1.0
     dependencies:
-      pinia: 2.0.26_mgnvym7yiazkylwwogi5r767ue
+      pinia: 2.0.27_mgnvym7yiazkylwwogi5r767ue
       vue: 3.2.45
       vue-router: 4.1.6_vue@3.2.45
       vuefire: link:..
@@ -2735,11 +2735,6 @@ packages:
     dependencies:
       color-convert: 2.0.1
 
-  /ansi-styles/6.1.1:
-    resolution: {integrity: sha512-qDOv24WjnYuL+wbwHdlsYZFy+cgPtrYw0Tn7GLORicQp9BkQLzrgI3Pm4VyR9ERZ41YTn7KlMPuL1n05WdZvmg==}
-    engines: {node: '>=12'}
-    dev: true
-
   /ansi-styles/6.2.1:
     resolution: {integrity: sha512-bN798gFfQX+viw3R7yrGWRqnrN2oRkEkUjjl4JNn4E8GxxbjtG3FbrEIIY3l8/hrwUwIeCZvi4QuOTP4MErVug==}
     engines: {node: '>=12'}
@@ -3728,7 +3723,7 @@ packages:
       postcss: ^8.2.15
     dependencies:
       cssnano-preset-default: 5.2.13_postcss@8.4.19
-      lilconfig: 2.0.5
+      lilconfig: 2.0.6
       postcss: 8.4.19
       yaml: 1.10.2
     dev: true
@@ -6292,8 +6287,8 @@ packages:
       immediate: 3.0.6
     dev: true
 
-  /lilconfig/2.0.5:
-    resolution: {integrity: sha512-xaYmXZtTHPAw5m+xLN8ab9C+3a8YmV3asNSPOATITbtwrfbwaLJj8h66H1WMIpALCkqsIzK3h7oQ+PdX+LQ9Eg==}
+  /lilconfig/2.0.6:
+    resolution: {integrity: sha512-9JROoBW7pobfsx+Sq2JsASvCo6Pfo6WWoUW79HuB1BCoBXD4PLWJPqDF6fNj67pqBYTbAHkE57M1kS/+L1neOg==}
     engines: {node: '>=10'}
     dev: true
 
@@ -6310,8 +6305,8 @@ packages:
       uc.micro: 1.0.6
     optional: true
 
-  /lint-staged/13.0.3_enquirer@2.3.6:
-    resolution: {integrity: sha512-9hmrwSCFroTSYLjflGI8Uk+GWAwMB4OlpU4bMJEAT5d/llQwtYKoim4bLOyLCuWFAhWEupE0vkIFqtw/WIsPug==}
+  /lint-staged/13.0.4_enquirer@2.3.6:
+    resolution: {integrity: sha512-HxlHCXoYRsq9QCby5wFozmZW00hMs/9e3l+/dz6Qr8Kle4UH0kJTdABAbqhzG+3pcG6QjL9kz7NgGBfph+a5dw==}
     engines: {node: ^14.13.1 || >=16.0.0}
     hasBin: true
     dependencies:
@@ -6320,8 +6315,8 @@ packages:
       commander: 9.4.1
       debug: 4.3.4
       execa: 6.1.0
-      lilconfig: 2.0.5
-      listr2: 4.0.5_enquirer@2.3.6
+      lilconfig: 2.0.6
+      listr2: 5.0.5_enquirer@2.3.6
       micromatch: 4.0.5
       normalize-path: 3.0.0
       object-inspect: 1.12.2
@@ -6346,9 +6341,9 @@ packages:
       ufo: 1.0.0
     dev: true
 
-  /listr2/4.0.5_enquirer@2.3.6:
-    resolution: {integrity: sha512-juGHV1doQdpNT3GSTs9IUN43QJb7KHdF9uqg7Vufs/tG9VTzpFphqF4pm/ICdAABGQxsyNn9CiYA3StkI6jpwA==}
-    engines: {node: '>=12'}
+  /listr2/5.0.5_enquirer@2.3.6:
+    resolution: {integrity: sha512-DpBel6fczu7oQKTXMekeprc0o3XDgGMkD7JNYyX+X0xbwK+xgrx9dcyKoXKqpLSUvAWfmoePS7kavniOcq3r4w==}
+    engines: {node: ^14.13.1 || >=16.0.0}
     peerDependencies:
       enquirer: '>= 2.3.0 < 3'
     peerDependenciesMeta:
@@ -7538,8 +7533,8 @@ packages:
     engines: {node: '>=4'}
     dev: true
 
-  /pinia/2.0.26_mgnvym7yiazkylwwogi5r767ue:
-    resolution: {integrity: sha512-tSxZNUcMGxQOvKZRjPKXxd2+/2NZhRF/CoYVE/+K6uE/Z3v1Oi4fcQFpxu5nMB1dCchjXUZ+lz0tBxV5ntwmQQ==}
+  /pinia/2.0.27_mgnvym7yiazkylwwogi5r767ue:
+    resolution: {integrity: sha512-nOnXP0OFeL8R4WjAHsterU+11vptda643gH02xKNtSCDPiRzVfRYodOLihLDoa0gL1KKuQKV+KOzEgdt3YvqEw==}
     peerDependencies:
       '@vue/composition-api': ^1.4.0
       typescript: '>=4.4.4'
@@ -8545,7 +8540,7 @@ packages:
     resolution: {integrity: sha512-FC+lgizVPfie0kkhqUScwRu1O/lF6NOgJmlCgK+/LYxDCTk8sGelYaHDhFcDN+Sn3Cv+3VSa4Byeo+IMCzpMgQ==}
     engines: {node: '>=12'}
     dependencies:
-      ansi-styles: 6.1.1
+      ansi-styles: 6.2.1
       is-fullwidth-code-point: 4.0.0
     dev: true
 
