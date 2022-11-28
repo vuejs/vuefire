@@ -7,7 +7,7 @@ import {
   FirestoreError,
 } from 'firebase/firestore'
 import { expectType, setupFirestoreRefs, tds, firestore } from '../utils'
-import { nextTick, shallowRef, unref, type Ref } from 'vue'
+import { nextTick, ref, shallowRef, unref, type Ref } from 'vue'
 import { _MaybeRef } from '../../src/shared'
 import {
   useDocument,
@@ -15,11 +15,13 @@ import {
   UseDocumentOptions,
   _RefFirestore,
 } from '../../src'
+import { mockWarn } from '../vitest-mock-warn'
 
 describe(
   'Firestore documents',
   () => {
     const { doc, deleteDoc, setDoc, updateDoc } = setupFirestoreRefs()
+    mockWarn()
 
     function factory<T = DocumentData>({
       options,
@@ -63,6 +65,16 @@ describe(
       await updateDoc(itemRef, { name: 'b' })
       expect(wrapper.vm.item).toEqual({ name: 'b' })
       expect(data.value).toEqual({ name: 'b' })
+    })
+
+    it('warns if target is the result of useDocument', async () => {
+      const target = ref()
+      const { data, itemRef } = factory({ options: { target } })
+
+      expect(data).toBe(target)
+
+      expect(() => useDocument(itemRef, { target })).not.toThrow()
+      expect(/FAIL/).toHaveBeenWarned()
     })
 
     it('fetches once', async () => {

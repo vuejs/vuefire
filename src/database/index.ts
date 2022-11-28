@@ -13,6 +13,7 @@ import {
 } from 'vue-demi'
 import { DatabaseReference, getDatabase, Query } from 'firebase/database'
 import {
+  checkWrittenTarget,
   isSSR,
   noop,
   OperationsType,
@@ -57,15 +58,22 @@ export function _useDatabaseRef(
 ) {
   let unbind!: UnbindWithReset
   const options = Object.assign({}, databaseOptionsDefaults, localOptions)
+  const initialSourceValue = unref(reference)
+  const data = options.target || ref<unknown | null>()
+
+  // dev only warning
+  if (process.env.NODE_ENV !== 'production') {
+    // is the target a ref that has already been passed to useDocument() and therefore can't be extended anymore
+    if (options.target && checkWrittenTarget(data, 'useObject()/useList()')) {
+      return data
+    }
+  }
 
   // During SSR, we should only get data once
   if (isSSR()) {
     options.once = true
   }
 
-  const initialSourceValue = unref(reference)
-
-  const data = options.target || ref<unknown | null>()
   // set the initial value from SSR even if the ref comes from outside
   data.value = getInitialValue(initialSourceValue, options.ssrKey, data.value)
 

@@ -11,9 +11,11 @@ import { expectType, tds, setupDatabaseRefs, database } from '../utils'
 import { computed, nextTick, ref, shallowRef, unref, type Ref } from 'vue'
 import { DatabaseReference, ref as _databaseRef } from 'firebase/database'
 import { _MaybeRef, _Nullable } from '../../src/shared'
+import { mockWarn } from '../vitest-mock-warn'
 
 describe('Database objects', () => {
   const { databaseRef, set, update, remove } = setupDatabaseRefs()
+  mockWarn()
 
   function factory<T = unknown>({
     options,
@@ -54,6 +56,16 @@ describe('Database objects', () => {
     expect(wrapper.vm.item).toMatchObject({ name: 'a' })
     await update(itemRef, { name: 'b' })
     expect(wrapper.vm.item).toMatchObject({ name: 'b' })
+  })
+
+  it('warns if target is the result of another composable', async () => {
+    const target = ref()
+    const { data, itemRef } = factory({ options: { target } })
+
+    expect(data).toBe(target)
+
+    expect(() => useObject(itemRef, { target })).not.toThrow()
+    expect(/FAIL/).toHaveBeenWarned()
   })
 
   // TODO: right now this creates an object with a .value property equal to null

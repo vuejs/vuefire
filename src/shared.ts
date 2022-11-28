@@ -274,3 +274,22 @@ export interface _ResolveRejectFn {
 export function isSSR(): boolean {
   return !!(getCurrentInstance() && inject(ssrContextKey, null))
 }
+
+/**
+ * Checks and warns if a data ref has already bee overwritten by useDocument() and others.
+ *
+ * @internal
+ */
+export function checkWrittenTarget(
+  data: Ref<unknown>,
+  fnName: string
+): boolean {
+  if (Object.getOwnPropertyDescriptor(data, 'data')?.get?.() === data) {
+    console.warn(`[VueFire] the passed "options.target" is already the returned value of "${fnName}". If you want to subscribe to a different data source, pass a reactive variable to "${fnName}" instead:
+https://vuefire.vuejs.org/guide/realtime-data.html#declarative-realtime-data
+This will FAIL in production.`)
+    return true
+  }
+
+  return false
+}

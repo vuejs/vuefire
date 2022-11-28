@@ -16,9 +16,11 @@ import {
   ref as _databaseRef,
 } from 'firebase/database'
 import { _MaybeRef } from '../../src/shared'
+import { mockWarn } from '../vitest-mock-warn'
 
 describe('Database lists', () => {
   const { databaseRef, push, set, remove, update } = setupDatabaseRefs()
+  mockWarn()
 
   function factory<T = unknown>({
     options,
@@ -72,6 +74,16 @@ describe('Database lists', () => {
 
     await push(listRef, { name: 'c' })
     expect(wrapper.vm.list).toHaveLength(2)
+  })
+
+  it('warns if target is the result of useDocument', async () => {
+    const target = ref()
+    const { data, listRef } = factory({ options: { target } })
+
+    expect(data).toBe(target)
+
+    expect(() => useList(listRef, { target })).not.toThrow()
+    expect(/FAIL/).toHaveBeenWarned()
   })
 
   it('add items to the list', async () => {

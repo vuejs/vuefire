@@ -22,6 +22,7 @@ import {
 } from 'vue-demi'
 import { useFirebaseApp } from '../app'
 import {
+  checkWrittenTarget,
   isDocumentRef,
   isSSR,
   noop,
@@ -72,12 +73,23 @@ export function _useFirestoreRef(
   let unbind: UnbindWithReset = noop
   const options = Object.assign({}, firestoreOptionsDefaults, localOptions)
   const initialSourceValue = unref(docOrCollectionRef)
+  const data = options.target || ref<unknown | null>()
+
+  // dev only warning
+  if (process.env.NODE_ENV !== 'production') {
+    // is the target a ref that has already been passed to useDocument() and therefore can't be extended anymore
+    if (
+      options.target &&
+      checkWrittenTarget(data, 'useDocument()/useCollection()')
+    ) {
+      return data
+    }
+  }
 
   if (isSSR()) {
     options.once = true
   }
 
-  const data = options.target || ref<unknown | null>()
   // set the initial value from SSR even if the ref comes from outside
   data.value = getInitialValue(initialSourceValue, options.ssrKey, data.value)
 

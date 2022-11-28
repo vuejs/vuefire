@@ -17,12 +17,15 @@ import {
   VueFirestoreQueryData,
 } from '../../src'
 import { _MaybeRef, _Nullable } from '../../src/shared'
+import { mockWarn } from '../vitest-mock-warn'
 
 describe(
   'Firestore collections',
   () => {
     const { collection, query, addDoc, setDoc, updateDoc, deleteDoc } =
       setupFirestoreRefs()
+
+    mockWarn()
 
     function factory<T = DocumentData>({
       options,
@@ -92,19 +95,6 @@ describe(
       }
     }
 
-    function sortedList<
-      A extends Array<Record<any, unknown>>,
-      K extends keyof A[any]
-    >(list: A, key: K) {
-      return list.slice().sort((a, b) => {
-        const aVal = a[key]
-        const bVal = b[key]
-        return typeof aVal === 'string' && typeof bVal === 'string'
-          ? aVal.localeCompare(bVal)
-          : 0
-      })
-    }
-
     it('add items to the collection', async () => {
       const { wrapper, listRef } = factory<{ name: string }>()
 
@@ -115,6 +105,16 @@ describe(
       expect(wrapper.vm.list).toContainEqual({ name: 'a' })
       expect(wrapper.vm.list).toContainEqual({ name: 'b' })
       expect(wrapper.vm.list).toContainEqual({ name: 'c' })
+    })
+
+    it('warns if target is the result of useDocument', async () => {
+      const target = ref()
+      const { data, listRef } = factory({ options: { target } })
+
+      expect(data).toBe(target)
+
+      expect(() => useCollection(listRef, { target })).not.toThrow()
+      expect(/FAIL/).toHaveBeenWarned()
     })
 
     it('delete items from the collection', async () => {
