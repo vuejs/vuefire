@@ -160,7 +160,9 @@ export type UseListOptions = UseDatabaseRefOptions
 export type UseObjectOptions = UseDatabaseRefOptions
 
 /**
- * Creates a reactive variable connected to the database.
+ * Creates a reactive variable connected to the database as an array. Each element in the array will contain an `id`
+ * property. Note that if you override the `serialize` option, it should **also set an `id` property** in order for this
+ * to work.
  *
  * @param reference - Reference or query to the database
  * @param options - optional options
