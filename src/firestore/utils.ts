@@ -5,8 +5,9 @@ import {
   DocumentData,
   GeoPoint,
   FirestoreDataConverter,
+  Timestamp,
 } from 'firebase/firestore'
-import { isTimestamp, isObject, isDocumentRef, TODO } from '../shared'
+import { isObject, isDocumentRef, TODO } from '../shared'
 import { VueFirestoreDocumentData } from '.'
 
 export type FirestoreReference = Query | DocumentReference | CollectionReference
@@ -80,8 +81,7 @@ export function extractRefs(
         // TODO: check and remove
         // Firestore < 4.13
         ref instanceof Date ||
-        // TODO: instanceof Timestamp?
-        isTimestamp(ref) ||
+        ref instanceof Timestamp ||
         // TODO: same?
         isGeoPoint(ref)
       ) {

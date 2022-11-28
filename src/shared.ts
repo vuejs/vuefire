@@ -16,8 +16,6 @@ export const noop = () => {}
 
 export const isClient = typeof window !== 'undefined'
 
-// TODO: replace any with unknown or T generics if possible and worth
-
 export interface OperationsType {
   set<T extends object = Record<any, unknown>>(
     target: T,
@@ -52,7 +50,7 @@ export type TODO = any
  * @param obj
  * @param path
  */
-export function walkGet(obj: Record<string, any>, path: string): any {
+export function walkGet(obj: Record<string, TODO>, path: string): TODO {
   return path.split('.').reduce((target, key) => target && target[key], obj)
 }
 
@@ -91,16 +89,8 @@ export function walkSet<T extends object = Record<any, unknown>>(
  * Checks if a variable is an object
  * @param o
  */
-export function isObject(o: any): o is Record<any, unknown> {
-  return o && typeof o === 'object'
-}
-
-/**
- * Checks if a variable is a Date
- * @param o
- */
-export function isTimestamp(o: any): o is Timestamp {
-  return o.toDate
+export function isObject(o: unknown): o is Record<any, unknown> {
+  return !!o && typeof o === 'object'
 }
 
 /**
@@ -108,7 +98,7 @@ export function isTimestamp(o: any): o is Timestamp {
  * @param o
  */
 export function isDocumentRef<T = DocumentData>(
-  o: any
+  o: unknown
 ): o is DocumentReference<T> {
   return isObject(o) && o.type === 'document'
 }
@@ -118,13 +108,13 @@ export function isDocumentRef<T = DocumentData>(
  * @param o
  */
 export function isCollectionRef<T = DocumentData>(
-  o: any
+  o: unknown
 ): o is CollectionReference<T> {
   return isObject(o) && o.type === 'collection'
 }
 
 export function isFirestoreDataReference<T = unknown>(
-  source: any
+  source: unknown
 ): source is CollectionReference<T> | DocumentReference<T> {
   return isDocumentRef(source) || isCollectionRef(source)
 }
@@ -155,12 +145,14 @@ export function getDataSourcePath(
 }
 
 export function isDatabaseReference(
-  source: any
+  source: unknown
 ): source is DatabaseReference | DatabaseQuery {
   return isObject(source) && 'ref' in source
 }
 
-export function isStorageReference(source: any): source is StorageReference {
+export function isStorageReference(
+  source: unknown
+): source is StorageReference {
   return isObject(source) && typeof source.bucket === 'string'
 }
 
