@@ -83,8 +83,7 @@ export function extractRefs(
         // Firestore < 4.13
         ref instanceof Date ||
         ref instanceof Timestamp ||
-        // TODO: same?
-        isGeoPoint(ref)
+        ref instanceof GeoPoint
       ) {
         data[key] = ref
       } else if (isDocumentRef(ref)) {
@@ -127,8 +126,4 @@ export function extractRefs(
   recursiveExtract(doc, oldDoc, '', dataAndRefs)
 
   return dataAndRefs
-}
-
-function isGeoPoint(value: unknown): value is GeoPoint {
-  return isObject(value) && 'latitude' in value && 'longitude' in value
 }
