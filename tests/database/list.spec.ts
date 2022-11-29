@@ -76,6 +76,23 @@ describe('Database lists', () => {
     expect(wrapper.vm.list).toHaveLength(2)
   })
 
+  it('fills the array with $value for primitives', async () => {
+    const itemRef = databaseRef()
+    await push(itemRef, 'a')
+    await push(itemRef, 'b')
+    await push(itemRef, 'c')
+
+    const { wrapper, promise } = factory({ ref: itemRef })
+
+    await promise.value
+
+    expect(wrapper.vm.list).toMatchObject([
+      { $value: 'a', id: expect.any(String) },
+      { $value: 'b', id: expect.any(String) },
+      { $value: 'c', id: expect.any(String) },
+    ])
+  })
+
   it('warns if target is the result of useDocument', async () => {
     const target = ref()
     const { data, listRef } = factory({ options: { target } })

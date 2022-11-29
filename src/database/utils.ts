@@ -10,21 +10,25 @@ import type { _RefWithState } from '../shared'
  */
 export function createRecordFromDatabaseSnapshot(
   snapshot: DataSnapshot
-): NonNullable<VueDatabaseDocumentData<unknown>> {
-  const value: unknown = snapshot.val()
-  const res: unknown = isObject(value)
-    ? value
-    : (Object.defineProperty({}, '.value', { value }) as unknown)
-  // TODO: Transform the return type to be T directly (value different from object)
-  // since we have a ref, we can set any value now
+): VueDatabaseDocumentData<unknown> {
+  if (!snapshot.exists()) return null
 
-  Object.defineProperty(res, 'id', { value: snapshot.key })
-  // @ts-expect-error: id added just above
-  return res
+  const value: unknown = snapshot.val()
+  return isObject(value)
+    ? (Object.defineProperty(value, 'id', {
+        // allow destructuring without interfering without using the `id` property
+        value: snapshot.key,
+      }) as VueDatabaseDocumentData<unknown>)
+    : {
+        // if the value is a primitive we can just return a regular object, it's easier to debug
+        // @ts-expect-error: $value doesn't exist
+        $value: value,
+        id: snapshot.key,
+      }
 }
 
 export interface DatabaseSnapshotSerializer<T = unknown> {
-  (snapshot: DataSnapshot): NonNullable<VueDatabaseDocumentData<T>>
+  (snapshot: DataSnapshot): VueDatabaseDocumentData<T>
 }
 
 /**

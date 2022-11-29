@@ -107,7 +107,7 @@ export function bindAsObject(
  * @returns a function to be called to stop listening for changes
  */
 export function bindAsArray(
-  target: Ref<ReturnType<DatabaseSnapshotSerializer>[]>,
+  target: Ref<VueDatabaseQueryData>,
   collection: DatabaseReference | Query,
   resolve: _ResolveRejectFn,
   reject: _ResolveRejectFn,
@@ -115,8 +115,7 @@ export function bindAsArray(
 ) {
   const options = Object.assign({}, DEFAULT_OPTIONS, extraOptions)
 
-  let arrayRef: _MaybeRef<ReturnType<DatabaseSnapshotSerializer>[]> =
-    options.wait ? [] : target
+  let arrayRef: _MaybeRef<VueDatabaseQueryData> = options.wait ? [] : target
   // by default we wait, if not, set the value to an empty array so it can be populated correctly
   if (!options.wait) {
     target.value = []
@@ -133,9 +132,10 @@ export function bindAsArray(
   if (options.once) {
     get(collection)
       .then((data) => {
-        const array: ReturnType<DatabaseSnapshotSerializer>[] = []
+        const array: VueDatabaseQueryData = []
         data.forEach((snapshot) => {
-          array.push(options.serialize(snapshot))
+          // cannot be null because it exists
+          array.push(options.serialize(snapshot)!)
         })
         resolve((target.value = array))
       })
@@ -146,7 +146,8 @@ export function bindAsArray(
       (snapshot, prevKey) => {
         const array = unref(arrayRef)
         const index = prevKey ? indexForKey(array, prevKey) + 1 : 0
-        array.splice(index, 0, options.serialize(snapshot))
+        // cannot be null because it exists
+        array.splice(index, 0, options.serialize(snapshot)!)
       },
       reject
     )
@@ -168,7 +169,8 @@ export function bindAsArray(
         array.splice(
           indexForKey(array, snapshot.key),
           1,
-          options.serialize(snapshot)
+          // cannot be null because it exists
+          options.serialize(snapshot)!
         )
       },
       reject

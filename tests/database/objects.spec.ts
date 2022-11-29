@@ -8,7 +8,7 @@ import {
 } from '../../src'
 import { expectType, tds, setupDatabaseRefs, database } from '../utils'
 import { computed, nextTick, ref, shallowRef, unref, type Ref } from 'vue'
-import { DatabaseReference, ref as _databaseRef } from 'firebase/database'
+import { DatabaseReference, get, ref as _databaseRef } from 'firebase/database'
 import { _MaybeRef, _Nullable } from '../../src/shared'
 import { mockWarn } from '../vitest-mock-warn'
 
@@ -67,14 +67,36 @@ describe('Database objects', () => {
     expect(/FAIL/).toHaveBeenWarned()
   })
 
-  // TODO: right now this creates an object with a .value property equal to null
-  it.todo('stays null if it does not exist', async () => {
+  it('stays null if it does not exist', async () => {
     const { wrapper, itemRef } = factory()
 
-    expect(wrapper.vm.item).toEqual(undefined)
-
     await remove(itemRef)
-    expect(wrapper.vm.item).toEqual(undefined)
+    expect(wrapper.vm.item).toBe(null)
+  })
+
+  it('retrieves an object with $value for primitives', async () => {
+    const itemRef = databaseRef()
+    await set(itemRef, 24)
+
+    const { wrapper, promise } = factory({ ref: itemRef })
+
+    await promise.value
+
+    expect(wrapper.vm.item).toMatchObject({
+      $value: 24,
+      id: itemRef.key,
+    })
+  })
+
+  it('keeps arrays as is', async () => {
+    const itemRef = databaseRef()
+    await set(itemRef, ['a', 'b', 'c'])
+
+    const { wrapper, promise } = factory({ ref: itemRef })
+
+    await promise.value
+
+    expect(wrapper.vm.item).toMatchObject(['a', 'b', 'c'])
   })
 
   it('fetches once', async () => {
@@ -121,23 +143,32 @@ describe('Database objects', () => {
     expect(wrapper.vm.item).toEqual(undefined)
   })
 
-  // TODO: not implemented yet
+  // TODO: is it possible to make the forbidden path actually forbidden?
   it.todo('rejects when error', async () => {
     const { promise, error } = factory({
       ref: _databaseRef(database, 'forbidden'),
     })
 
+    // this should output an error but it doesn't
+    // figure out what needs to be changed in database.rules.json
+    await get(_databaseRef(database, 'forbidden'))
+      .then((data) => {
+        console.log('resolved', data.val())
+      })
+      .catch((err) => {
+        console.log('catch', err)
+      })
+
     await expect(promise.value).rejects.toThrow()
     expect(error.value).toBeTruthy()
   })
 
-  // TODO:
-  it.todo('resolves when ready', async () => {
+  it('resolves when ready', async () => {
     const item = databaseRef()
     await update(item, { name: 'a' })
     const { promise, data } = factory({ ref: item })
 
-    await expect(promise.value).resolves
+    await expect(promise.value).resolves.toEqual({ name: 'a' })
     expect(data.value).toEqual({ name: 'a' })
   })
 

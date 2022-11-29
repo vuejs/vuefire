@@ -257,6 +257,24 @@ useDocument(doc(db, 'users/1'), { maxRefDepth: 1 })
 
 Read more about [writing References to the Database](./writing-data.md#references) in the [writing data](./writing-data.md) section.
 
+### Primitive values (Database only)
+
+In Realtime Database, you can _push_ primitive values like strings, numbers, booleans, etc. When calling `useList()` on a database ref containing primitive values, **you will get a slightly different value**. Instead of an array of values, you will get an array of objects **with a `$value` and an `id` property**. This is because VueFire needs to keep track of the key of each value in order to add, update, or remove them.
+
+```js
+import { ref as databaseRef, push } from 'firebase/database'
+
+const numbersRef = databaseRef(db, 'numbers')
+// add some numbers
+push(numbersRef, 24)
+push(numbersRef, 7)
+push(numbersRef, 10)
+
+const numberList = useList(numbersRef)
+// [{ $value: 24, id: '...' }, { $value: 7, id: '...' }, { $value: 10, id: '...' }]
+// note the order might be different
+```
+
 ## TypeScript
 
 Usually, the different composables accept a generic to enforce the type of the documents:
@@ -274,6 +292,8 @@ const settings = useDocument<Settings>(doc(collection(db, 'settings'), 'someId')
 ```
 
 </FirebaseExample>
+
+Note this is only a type annotation, it does not perform any runtime validation.
 
 ### Firestore `.withConverter()`
 
