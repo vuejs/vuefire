@@ -54,6 +54,14 @@ export function updateCurrentUserProfile(profile: {
   })
 }
 
+/**
+ * Updates the current user and synchronizes the current user state. This function internally calls `updateEmail()`
+ *
+ * @experimental
+ *
+ * @param newEmail - the new email address
+ * @param credential -
+ */
 export function updateCurrentUserEmail(
   newEmail: string,
   credential: AuthCredential
@@ -61,7 +69,8 @@ export function updateCurrentUserEmail(
   return getCurrentUser()
     .then((user) => {
       if (user) {
-        // TODO: Maybe this whole function should be dropped since it depends on reauthenticating first or we should let the user do it. Otherwise, we need a way to retrieve the credential token when logging in
+        // TODO: Maybe this whole function should be dropped since it depends on re-authenticating first or we should
+        // let the user do it. Otherwise, we need a way to retrieve the credential token when logging in
         reauthenticateWithCredential(user, credential)
       }
       return user

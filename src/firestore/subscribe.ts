@@ -161,44 +161,49 @@ function subscribeToDocument(
   let unbind = noop
 
   if (options.once) {
-    getDoc(ref).then((snapshot) => {
-      if (snapshot.exists()) {
-        updateDataFromDocumentSnapshot(
-          options,
-          target,
-          path,
-          snapshot,
-          subs,
-          ops,
-          depth,
-          resolve,
-          reject
-        )
-      } else {
-        ops.set(target, path, null)
-        resolve()
-      }
-    })
-    // TODO: catch?
+    getDoc(ref)
+      .then((snapshot) => {
+        if (snapshot.exists()) {
+          updateDataFromDocumentSnapshot(
+            options,
+            target,
+            path,
+            snapshot,
+            subs,
+            ops,
+            depth,
+            resolve,
+            reject
+          )
+        } else {
+          ops.set(target, path, null)
+          resolve()
+        }
+      })
+      .catch(reject)
   } else {
-    unbind = onSnapshot(ref, (snapshot) => {
-      if (snapshot.exists()) {
-        updateDataFromDocumentSnapshot(
-          options,
-          target,
-          path,
-          snapshot,
-          subs,
-          ops,
-          depth,
-          resolve,
-          reject
-        )
-      } else {
-        ops.set(target, path, null)
-        resolve()
-      }
-    })
+    unbind = onSnapshot(
+      ref,
+      (snapshot) => {
+        if (snapshot.exists()) {
+          updateDataFromDocumentSnapshot(
+            options,
+            target,
+            path,
+            snapshot,
+            subs,
+            ops,
+            depth,
+            resolve,
+            reject
+          )
+        } else {
+          ops.set(target, path, null)
+          resolve()
+        }
+      },
+      reject
+    )
   }
 
   return () => {
@@ -274,6 +279,8 @@ function subscribeToRefs(
   })
 }
 
+// TODO: Remove ops and use just a getter function to be able to retrieve the current target ref and make things work with wait as well
+
 export function bindCollection<T = unknown>(
   target: Ref<unknown[]>,
   collection: CollectionReference<T> | Query<T>,
@@ -286,7 +293,6 @@ export function bindCollection<T = unknown>(
 
   const { snapshotListenOptions, snapshotOptions, wait, once } = options
 
-  // TODO: remove ops
   const key = 'value'
   // with wait we delay changes to the target until all values are resolved
   let arrayRef = ref(wait ? [] : target.value)

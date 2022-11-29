@@ -26,6 +26,7 @@ export const firestoreDefaultConverter: FirestoreDataConverter<VueFirestoreDocum
         ? (Object.defineProperties(snapshot.data(options)!, {
             id: { value: snapshot.id },
             // TODO: check if worth adding or should be through an option
+            // It could also be an example in the docs about converters
             // $meta: {
             //   value: snapshot.metadata,
             // },

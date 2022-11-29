@@ -152,7 +152,6 @@ export function _useFirestoreRef(
   }
 
   // only add the first promise to the pending ones
-  // TODO: can we make this tree shakeable?
   if (initialSourceValue) {
     removePendingPromise = addPendingPromise(
       promise.value,
@@ -160,20 +159,14 @@ export function _useFirestoreRef(
       options.ssrKey
     )
   }
-
-  // TODO: SSR serialize the values for Nuxt to expose them later and use them
-  // as initial values while specifying a wait: true to only swap objects once
-  // Firebase has done its initial sync. Also, on server, you don't need to
-  // create sync, you can read only once the whole thing so maybe we
-  // should take an option like once: true to not setting up any listener
+  if (getCurrentInstance()) {
+    // wait for the promise during SSR
+    // TODO: configurable ssrKey: false to disable this
+    onServerPrefetch(() => promise.value)
+  }
 
   if (hasCurrentScope) {
     onScopeDispose(stop)
-    if (getCurrentInstance()) {
-      // wait for the promise during SSR
-      // TODO: configurable ssrKey: false to disable this
-      onServerPrefetch(() => promise.value)
-    }
   }
 
   function stop(reset: ResetOption = options.reset) {

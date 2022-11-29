@@ -137,8 +137,8 @@ export function useStorageMetadata(
           return (metadata.value = newData)
         }
       )
-    } else {
-      // TODO: DEV warning
+    } else if (process.env.NODE_ENV !== 'production') {
+      console.warn('[VueFire]: "update()" called with no storage source.')
     }
     return promise.value
   }
