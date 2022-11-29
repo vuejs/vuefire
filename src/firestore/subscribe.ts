@@ -117,7 +117,7 @@ function updateDataFromDocumentSnapshot<T>(
   const [data, refs] = extractRefs(
     // @ts-expect-error: FIXME: use better types
     // Pass snapshot options
-    snapshot.data(),
+    snapshot.data(options.snapshotOptions),
     walkGet(target, path),
     subs
   )
