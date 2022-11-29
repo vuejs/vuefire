@@ -2,7 +2,7 @@
 
 If you find yourself passing around the same options to `useDocument()`, `useObject()`, ..., you can use the global options to avoid repeating yourself:
 
-<FirestoreExample>
+<FirebaseExample>
 
 ```ts
 import { globalDatabaseOptions } from 'vuefire'
@@ -16,13 +16,13 @@ import { globalFirestoreOptions } from 'vuefire'
 globalFirestoreOptions.converter = ...
 ```
 
-</FirestoreExample>
+</FirebaseExample>
 
 Changing these options will affect all calls to `useDocument()`, `useObject()`, ... in your application **and the Options API usage** as well (`$firestoreBind()`, `$rtdbBind()`).
 
-In both scenarios, you need to make sure the returned objects contain their original `id` so other VueFire functionalities can work correctly. The easies way to do this is by reusing the default `serialize`/`converter`:
+In both scenarios, **you need to make sure the returned objects contain their original `id`** so other VueFire functionalities can work correctly. The easies way to do this is by reusing the default `serialize`/`converter`:
 
-<FirestoreExample>
+<FirebaseExample>
 
 ```ts
 import { globalDatabaseOptions } from 'vuefire'
@@ -51,4 +51,4 @@ globalFirestoreOptions.converter = {
 }
 ```
 
-</FirestoreExample>
+</FirebaseExample>

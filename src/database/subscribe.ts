@@ -30,8 +30,8 @@ import type { Query, DatabaseReference, DataSnapshot } from 'firebase/database'
  */
 export interface _DatabaseRefOptions extends _DataSourceOptions {
   /**
-   * Function to transform snapshots into data. Make sure to reuse the original serializer to add the object id. See
-   * https://vuefire.vuejs.org/guide/global-options.html
+   * Function to transform snapshots into data. **Make sure to reuse the original serializer to add the object `id`**.
+   * See https://vuefire.vuejs.org/guide/global-options.html
    */
   serialize?: DatabaseSnapshotSerializer
 }
