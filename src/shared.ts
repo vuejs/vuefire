@@ -93,6 +93,16 @@ export function isObject(o: unknown): o is Record<any, unknown> {
   return !!o && typeof o === 'object'
 }
 
+const ObjectPrototype = Object.prototype
+/**
+ *  Check if an object is a plain js object. Differently from `isObject()`, this excludes class instances.
+ *
+ * @param obj - object to check
+ */
+export function isPOJO(obj: unknown): obj is Record<any, unknown> {
+  return isObject(obj) && Object.getPrototypeOf(obj) === ObjectPrototype
+}
+
 /**
  * Checks if a variable is a Firestore Document Reference
  * @param o

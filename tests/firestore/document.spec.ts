@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import {
+  addDoc,
   doc as originalDoc,
   DocumentData,
   DocumentReference,
@@ -8,7 +9,7 @@ import {
 } from 'firebase/firestore'
 import { expectType, setupFirestoreRefs, tds, firestore } from '../utils'
 import { nextTick, ref, shallowRef, unref, type Ref } from 'vue'
-import { _MaybeRef, _Nullable } from '../../src/shared'
+import { isPOJO, _MaybeRef, _Nullable } from '../../src/shared'
 import {
   useDocument,
   VueFirestoreDocumentData,
@@ -145,6 +146,39 @@ describe(
       await expect(unref(promise)).resolves.toEqual(expect.anything())
       expect(data.value).toEqual({ name: 'a' })
       expect(error.value).toBeUndefined()
+    })
+
+    it('can use a custom converter', async () => {
+      class MyName {
+        private _name: string
+        constructor(name: string) {
+          this._name = name
+        }
+
+        get name() {
+          return this._name
+        }
+
+        set name(_newName: string) {
+          // do nothing
+        }
+      }
+      const itemRef = doc().withConverter<MyName>({
+        toFirestore: (data) => ({ name: data.name }),
+        fromFirestore: (snap) => new MyName(snap.get('name')),
+      })
+      await setDoc(itemRef, new MyName('a'))
+
+      const { wrapper, data, promise } = factory({ ref: itemRef })
+
+      await promise.value
+
+      expect(wrapper.vm.item).toHaveProperty('name', 'a')
+      expect(isPOJO(wrapper.vm.item)).toBe(false)
+
+      // should respect the setter
+      wrapper.vm.item!.name = 'b'
+      expect(wrapper.vm.item).toHaveProperty('name', 'a')
     })
 
     describe('reset option', () => {

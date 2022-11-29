@@ -7,7 +7,7 @@ import {
   FirestoreDataConverter,
   Timestamp,
 } from 'firebase/firestore'
-import { isObject, isDocumentRef, TODO } from '../shared'
+import { isObject, isDocumentRef, TODO, isPOJO } from '../shared'
 import { VueFirestoreDocumentData } from '.'
 
 export type FirestoreReference = Query | DocumentReference | CollectionReference
@@ -42,7 +42,7 @@ export function extractRefs(
   oldDoc: DocumentData | void,
   subs: Record<string, { path: string; data: () => DocumentData | null }>
 ): [DocumentData, Record<string, DocumentReference>] {
-  if (!isObject(doc)) return [doc, {}]
+  if (!isPOJO(doc)) return [doc, {}]
 
   const dataAndRefs: [DocumentData, Record<string, DocumentReference>] = [
     {},
@@ -115,6 +115,7 @@ export function extractRefs(
           refs,
         ])
       } else if (isObject(ref)) {
+        // dive into nested refs
         data[key] = {}
         recursiveExtract(ref, oldDoc[key], path + key + '.', [data[key], refs])
       } else {
