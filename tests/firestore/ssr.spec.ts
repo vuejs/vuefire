@@ -44,7 +44,7 @@ describe('Firestore SSR', async () => {
         await promise.value
         return { data }
       },
-      ({ data }) => data.name
+      ({ data }) => data?.name
     )
 
     expect(await renderToString(app)).toBe(`<p>a</p>`)
@@ -58,7 +58,7 @@ describe('Firestore SSR', async () => {
         const data = useDocument(docRef)
         return { data }
       },
-      ({ data }) => data.name
+      ({ data }) => data?.name
     )
 
     expect(await renderToString(app)).toBe(`<p>hello</p>`)

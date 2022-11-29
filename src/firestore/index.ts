@@ -69,7 +69,7 @@ export function _useFirestoreRef(
     >
   >,
   localOptions?: _UseFirestoreRefOptions
-) {
+): _RefFirestore<unknown> {
   let unbind: UnbindWithReset = noop
   const options = Object.assign({}, firestoreOptionsDefaults, localOptions)
   const initialSourceValue = unref(docOrCollectionRef)
@@ -82,7 +82,7 @@ export function _useFirestoreRef(
       options.target &&
       checkWrittenTarget(data, 'useDocument()/useCollection()')
     ) {
-      return data
+      return data as _RefFirestore<unknown>
     }
   }
 

@@ -47,7 +47,7 @@ export interface UseDatabaseRefOptions extends _DatabaseRefOptions {}
 export function _useDatabaseRef(
   reference: _MaybeRef<_Nullable<DatabaseReference | Query>>,
   localOptions: UseDatabaseRefOptions = {}
-) {
+): _RefDatabase<unknown> {
   let unbind!: UnbindWithReset
   const options = Object.assign({}, databaseOptionsDefaults, localOptions)
   const initialSourceValue = unref(reference)
@@ -57,7 +57,7 @@ export function _useDatabaseRef(
   if (process.env.NODE_ENV !== 'production') {
     // is the target a ref that has already been passed to useDocument() and therefore can't be extended anymore
     if (options.target && checkWrittenTarget(data, 'useObject()/useList()')) {
-      return data
+      return data as _RefDatabase<unknown>
     }
   }
 
