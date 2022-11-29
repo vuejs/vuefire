@@ -82,7 +82,7 @@ export const createApp = ViteSSG(
 )
 ```
 
-Web Security is a broad topic that we cannot cover here. We recommend you te read these resources to dive deeper:
+Web Security is a broad topic that we cannot cover here. We recommend you to read these resources to dive deeper:
 
 - [State Serialization in vite-ssg](https://github.com/antfu/vite-ssg#state-serialization)
 - [SSR Best practices for Vue.js](https://vuejs.org/guide/best-practices/security.html#server-side-rendering-ssr)
