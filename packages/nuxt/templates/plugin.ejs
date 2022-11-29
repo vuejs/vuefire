@@ -20,10 +20,8 @@ import {
 export default defineNuxtPlugin((nuxtApp) => {
   const appConfig = useAppConfig()
   const firebaseConfig = toRaw(appConfig).firebaseConfig
-  console.log('Initializing Firebase app...', firebaseConfig)
 
   const firebaseApp = initializeApp(firebaseConfig)
-  console.log('initialized firebase app', !!firebaseApp)
 
   // connectFirestoreEmulator(getFirestore(firebaseApp), 'localhost', 8080)
   // connectDatabaseEmulator(getDatabase(firebaseApp), 'localhost', 8081)

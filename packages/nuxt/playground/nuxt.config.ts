@@ -1,6 +1,11 @@
 import { fileURLToPath } from 'node:url'
-import { defineNuxtConfig } from 'nuxt/config'
-import VueFire from '../'
+import { resolve } from 'node:path'
+import VueFire from 'nuxt-vuefire'
+
+// we need the root node modules where packages are hoisted
+const nodeModules = fileURLToPath(
+  new URL('../../../node_modules', import.meta.url)
+)
 
 export default defineNuxtConfig({
   app: {
@@ -9,8 +14,8 @@ export default defineNuxtConfig({
   },
 
   alias: {
+    // import the dev version directly
     vuefire: fileURLToPath(new URL('../../../src/index.ts', import.meta.url)),
-    'nuxt-vuefire': fileURLToPath(new URL('../src/module.ts', import.meta.url)),
   },
 
   modules: [
@@ -34,4 +39,27 @@ export default defineNuxtConfig({
       },
     ],
   ],
+
+  // NOTE: temporary workaround that cannot be put within the nuxt-vuefire module
+  hooks: {
+    // cannot be added in nuxt's resolve.alias
+    'vite:extendConfig': (config, { isServer }) => {
+      if (isServer) {
+        config.resolve ??= {}
+        config.resolve.alias ??= {}
+        // @ts-ignore
+        config.resolve.alias['firebase/firestore'] = resolve(
+          nodeModules,
+          'firebase/firestore/dist/index.mjs'
+        )
+        // @ts-ignore
+        config.resolve.alias['@firebase/firestore'] = resolve(
+          nodeModules,
+          '@firebase/firestore/dist/index.node.mjs'
+        )
+
+        // add any other firebase alias you need
+      }
+    },
+  },
 })

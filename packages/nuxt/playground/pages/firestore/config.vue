@@ -9,21 +9,23 @@ const configRef = doc(db, 'configs', 'jORwjIykFo2NmkdzTkhU')
 const isDoneFetching = ref(false)
 const isAllDoneFetching = ref(false)
 
-getDoc(configRef).then((data) => {
-  console.log('got data once', data)
-})
-
-const { data: config, promise } = useDocument(configRef, { wait: true })
+const { data: config, promise } = useDocument(configRef)
 // const { data: hey } = useDocument(configRef)
 
-promise.value.then((data) => {
-  console.log('one', data)
-  isDoneFetching.value = true
-})
+onMounted(() => {
+  promise.value.then((data) => {
+    if (process.client) {
+      console.log(data)
+    }
+    isDoneFetching.value = true
+  })
 
-usePendingPromises().then((data) => {
-  console.log(data)
-  isAllDoneFetching.value = true
+  usePendingPromises().then((data) => {
+    if (process.client) {
+      console.log(data)
+    }
+    isAllDoneFetching.value = true
+  })
 })
 </script>
 

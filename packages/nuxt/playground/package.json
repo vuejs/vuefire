@@ -1,4 +1,19 @@
 {
   "private": true,
-  "name": "my-module-playground"
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "devDependencies": {
+    "nuxt": "^3.0.0"
+  },
+  "dependencies": {
+    "@firebase/app-types": "^0.8.1",
+    "firebase": "^9.14.0",
+    "nuxt-vuefire": "workspace:*",
+    "vuefire": "workspace:*"
+  }
 }
