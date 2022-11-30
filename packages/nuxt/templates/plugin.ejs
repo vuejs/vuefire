@@ -37,8 +37,6 @@ export default defineNuxtPlugin((nuxtApp) => {
 
   const firebaseApp = initializeApp(firebaseConfig)
 
-  console.log('appcheck debug', appConfig.appCheck.debug)
-
   // TODO: emulator option
   // connectFirestoreEmulator(getFirestore(firebaseApp), 'localhost', 8080)
   // connectDatabaseEmulator(getDatabase(firebaseApp), 'localhost', 8081)
@@ -51,9 +49,12 @@ export default defineNuxtPlugin((nuxtApp) => {
     <% } %>
     <% if(options.appCheck) { %>
       VueFireAppCheck({
-        debug: <%= options.appCheck.debug %>,
-        isTokenAutoRefreshEnabled: <%= options.appCheck.isTokenAutoRefreshEnabled %>,
-        provider: new ReCaptchaV3Provider('<%= options.appCheck.key %>'),
+        ...appConfig.vuefireOptions.appCheck,
+        provider: process.isClient
+          ? new ReCaptchaV3Provider('<%= options.appCheck.key %>')
+          : new CustomProvider({
+            getToken: () => Promise.resolve({ token: '', expireTimeMillis: 1 })
+          }),
       }),
     <% } %>
     ],

@@ -12,7 +12,7 @@ export const AppCheckTokenInjectSymbol: InjectionKey<Ref<string | undefined>> =
   Symbol('app-check-token')
 
 /**
- * The current app-check token as a `Ref`. Note this is undefined on the server.
+ * The current app-check token as a `Ref`. Note this ref is always undefined on the server.
  */
 export function useAppCheckToken() {
   return inject(AppCheckTokenInjectSymbol)!
@@ -47,7 +47,7 @@ export function VueFireAppCheck(options: VueFireAppCheckOptions) {
     const token = getGlobalScope(firebaseApp, app).run(() => ref<string>())!
     app.provide(AppCheckTokenInjectSymbol, token)
 
-    // AppCheck is client only as it relies on browser apis
+    // AppCheck requires special treatment on the server
     if (!isClient) return
 
     if (options.debug) {

@@ -1,6 +1,5 @@
 import { fileURLToPath } from 'node:url'
 import { resolve } from 'node:path'
-import VueFire from 'nuxt-vuefire'
 
 // we need the root node modules where packages are hoisted
 const nodeModules = fileURLToPath(
@@ -15,6 +14,9 @@ export default defineNuxtConfig({
 
   alias: {
     // import the dev version directly
+    'vuefire/server': fileURLToPath(
+      new URL('../../../src/server/index.ts', import.meta.url)
+    ),
     vuefire: fileURLToPath(new URL('../../../src/index.ts', import.meta.url)),
   },
 
@@ -40,6 +42,18 @@ export default defineNuxtConfig({
           messagingSenderId: '998674887640',
           appId: '1:998674887640:web:1e2bb2cc3e5eb2fc3478ad',
           measurementId: 'G-RL4BTWXKJ7',
+        },
+
+        admin: {
+          config: {},
+          serviceAccount: resolve(
+            fileURLToPath(
+              new URL(
+                './vue-fire-store-firebase-adminsdk.json',
+                import.meta.url
+              )
+            )
+          ),
         },
       },
     ],

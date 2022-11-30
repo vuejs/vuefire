@@ -8,6 +8,7 @@ import {
 } from '@nuxt/kit'
 import type { NuxtModule } from '@nuxt/schema'
 import type { FirebaseOptions } from '@firebase/app-types'
+import type { AppOptions, ServiceAccount } from 'firebase-admin'
 import type { NuxtVueFireAppCheckOptions } from './app-check'
 
 export interface VueFireNuxtModuleOptions {
@@ -18,15 +19,36 @@ export interface VueFireNuxtModuleOptions {
    */
   optionsApiPlugin?: boolean | 'firestore' | 'database'
 
+  /**
+   * Firebase Options passed to `firebase/app`'s `initializeApp()`.
+   */
   config?: FirebaseOptions
+
+  /**
+   * Firebase Admin Options.
+   */
+  admin?: {
+    /**
+     * Firebase Admin Options passed to `firebase-admin`'s `initializeApp()`. Required if you are using the auth, or the
+     * app-check module.
+     */
+    config: Omit<AppOptions, 'credential'>
+
+    /**
+     * Firebase Admin Service Account passed to `firebase-admin`'s `initializeApp()`. Required if you are adding an adminConfig
+     */
+    serviceAccount: string | ServiceAccount
+  }
 
   /**
    * Optional name passed to `firebase.initializeApp(config, name)`
    */
-  appName?: string
+  // TODO: is this useful?
+  // appName?: string
 
   /**
-   * Enables AppCheck
+   * Enables AppCheck on the client and server. Note you only need to pass the options for the client, on the server,
+   * the configuration will be handled automatically.
    */
   appCheck?: NuxtVueFireAppCheckOptions
 
@@ -67,10 +89,24 @@ const VueFire: NuxtModule<VueFireNuxtModuleOptions> =
 
       // Let plugins and the user access the firebase config within the app
       nuxt.options.appConfig.firebaseConfig = options.config
-      nuxt.options.appConfig.appCheck = options.appCheck
+      nuxt.options.appConfig.vuefireOptions = options
 
       // nuxt.options.build.transpile.push(templatesDir)
       nuxt.options.build.transpile.push(runtimeDir)
+
+      if (nuxt.options.ssr && options.admin) {
+        // check the provided config is valid
+        if (options.auth || options.appCheck) {
+          if (!options.admin.config || !options.admin.serviceAccount) {
+            throw new Error(
+              '[VueFire]: Missing firebase "admin" config. Provide an "admin" option to the VueFire module options. This is necessary to use the auth or app-check module.'
+            )
+          }
+          nuxt.options.appConfig.firebaseAdmin = options.admin
+        }
+
+        addPlugin(resolve(runtimeDir, '2.admin-plugin.server.ts'))
+      }
 
       nuxt.hook('modules:done', () => {
         // addPlugin(resolve(runtimeDir, 'plugin'))
@@ -101,8 +137,17 @@ declare module '@nuxt/schema' {
     firebaseConfig: FirebaseOptions
 
     /**
-     * AppCheck options passed to VueFire module.
+     * VueFireNuxt options used within plugins.
+     * @internal
      */
-    appCheck?: NuxtVueFireAppCheckOptions
+    vuefireOptions: Pick<VueFireNuxtModuleOptions, 'appCheck' | 'auth'>
+
+    /**
+     * Firebase Admin options passed to VueFire module. Only available on the server.
+     */
+    firebaseAdmin?: {
+      config: Omit<AppOptions, 'credential'>
+      serviceAccount: string | ServiceAccount
+    }
   }
 }
