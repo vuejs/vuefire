@@ -1,4 +1,12 @@
-import { usePendingPromises, VueFire, useSSRInitialState } from 'vuefire'
+import {
+  usePendingPromises,
+  VueFire,
+
+  useSSRInitialState,
+
+  // TODO: conditional imports
+  VueFireAppCheck,
+} from 'vuefire'
 import { initializeApp } from 'firebase/app'
 import {
   defineNuxtPlugin,
@@ -16,6 +24,12 @@ getDatabase,
 import {
   toRaw,
 } from 'vue-demi'
+import {
+  // TODO: conditional imports
+  ReCaptchaV3Provider,
+  ReCaptchaEnterpriseProvider,
+  CustomProvider,
+} from 'firebase/app-check'
 
 export default defineNuxtPlugin((nuxtApp) => {
   const appConfig = useAppConfig()
@@ -23,14 +37,24 @@ export default defineNuxtPlugin((nuxtApp) => {
 
   const firebaseApp = initializeApp(firebaseConfig)
 
+  console.log('appcheck debug', appConfig.appCheck.debug)
+
+  // TODO: emulator option
   // connectFirestoreEmulator(getFirestore(firebaseApp), 'localhost', 8080)
   // connectDatabaseEmulator(getDatabase(firebaseApp), 'localhost', 8081)
 
   nuxtApp.vueApp.use(VueFire, {
     firebaseApp,
-    services: [
-    <% if(options.services.auth) { %>
+    modules: [
+    <% if(options.auth) { %>
       // Auth
+    <% } %>
+    <% if(options.appCheck) { %>
+      VueFireAppCheck({
+        debug: <%= options.appCheck.debug %>,
+        isTokenAutoRefreshEnabled: <%= options.appCheck.isTokenAutoRefreshEnabled %>,
+        provider: new ReCaptchaV3Provider('<%= options.appCheck.key %>'),
+      }),
     <% } %>
     ],
   })

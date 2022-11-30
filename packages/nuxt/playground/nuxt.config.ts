@@ -21,11 +21,16 @@ export default defineNuxtConfig({
   modules: [
     //
     [
-      VueFire,
+      '../src/module.ts',
       {
-        services: {
-          auth: true,
+        auth: true,
+        appCheck: {
+          debug: process.env.NODE_ENV !== 'production',
+          isTokenAutoRefreshEnabled: true,
+          provider: 'RecaptchaV3',
+          key: '6LfJ0vgiAAAAAHheQE7GQVdG_c9m8xipBESx_SKI',
         },
+
         config: {
           apiKey: 'AIzaSyAkUKe36TPWL2eZTshgk-Xl4bY_R5SB97U',
           authDomain: 'vue-fire-store.firebaseapp.com',

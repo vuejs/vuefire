@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const todos = []
+const todos = ref<{ title: string, id: string }[]>([])
 </script>
 
 <template>
@@ -7,7 +7,9 @@ const todos = []
     <h1>Todos</h1>
     <ul>
       <li v-for="todo in todos" :key="todo.id">
-        <NuxtLink :to="`/database/todos/${todo.id}`">{{ todo.title }}</NuxtLink>
+        <NuxtLink :to="`/database/todos/${todo.id}`">
+          {{ todo.title }}
+        </NuxtLink>
       </li>
     </ul>
   </div>

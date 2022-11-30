@@ -7,7 +7,8 @@ import {
   defineNuxtModule,
 } from '@nuxt/kit'
 import type { NuxtModule } from '@nuxt/schema'
-import { type FirebaseOptions } from '@firebase/app-types'
+import type { FirebaseOptions } from '@firebase/app-types'
+import type { NuxtVueFireAppCheckOptions } from './app-check'
 
 export interface VueFireNuxtModuleOptions {
   /**
@@ -17,19 +18,22 @@ export interface VueFireNuxtModuleOptions {
    */
   optionsApiPlugin?: boolean | 'firestore' | 'database'
 
-  config: FirebaseOptions
+  config?: FirebaseOptions
 
   /**
    * Optional name passed to `firebase.initializeApp(config, name)`
    */
   appName?: string
 
-  services?: {
-    auth?: boolean
-    firestore?: boolean
-    database?: boolean
-    storage?: boolean
-  }
+  /**
+   * Enables AppCheck
+   */
+  appCheck?: NuxtVueFireAppCheckOptions
+
+  /**
+   * Enables Authentication
+   */
+  auth?: boolean
 }
 
 // Manual to avoid build error
@@ -45,11 +49,16 @@ const VueFire: NuxtModule<VueFireNuxtModuleOptions> =
 
     defaults: {
       optionsApiPlugin: false,
-      config: {},
-      services: {},
     },
 
     setup(options, nuxt) {
+      // ensure provided options are valid
+      if (!options.config) {
+        throw new Error(
+          '[VueFire]: Missing firebase config. Provide a "config" option to the VueFire module options.'
+        )
+      }
+
       const { resolve } = createResolver(import.meta.url)
       const runtimeDir = fileURLToPath(new URL('./runtime', import.meta.url))
       const templatesDir = fileURLToPath(
@@ -58,12 +67,7 @@ const VueFire: NuxtModule<VueFireNuxtModuleOptions> =
 
       // Let plugins and the user access the firebase config within the app
       nuxt.options.appConfig.firebaseConfig = options.config
-
-      if (Object.keys(options.config).length === 0) {
-        throw new Error(
-          '[VueFire]: Missing firebase config. Provide it to the VueFire module options.'
-        )
-      }
+      nuxt.options.appConfig.appCheck = options.appCheck
 
       // nuxt.options.build.transpile.push(templatesDir)
       nuxt.options.build.transpile.push(runtimeDir)
@@ -83,6 +87,11 @@ const VueFire: NuxtModule<VueFireNuxtModuleOptions> =
   })
 
 export default VueFire
+export type {
+  NuxtVueFireAppCheckOptions,
+  NuxtVueFireAppCheckOptionsReCaptchaV3,
+  NuxtVueFireAppCheckOptionsReCaptchaEnterprise,
+} from './app-check'
 
 declare module '@nuxt/schema' {
   export interface AppConfig {
@@ -90,5 +99,10 @@ declare module '@nuxt/schema' {
      * Firebase config to initialize the app.
      */
     firebaseConfig: FirebaseOptions
+
+    /**
+     * AppCheck options passed to VueFire module.
+     */
+    appCheck?: NuxtVueFireAppCheckOptions
   }
 }
