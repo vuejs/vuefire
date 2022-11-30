@@ -71,6 +71,7 @@ export { useSSRInitialState } from './ssr/initialState'
 
 // App Check
 export { VueFireAppCheck, useAppCheckToken } from './app-check'
+export type { VueFireAppCheckOptions } from './app-check'
 
 // Storage
 export {
