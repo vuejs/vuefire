@@ -10,6 +10,10 @@
     ".": {
       "import": "./dist/index.mjs",
       "require": "./dist/index.cjs"
+    },
+    "./server": {
+      "import": "./dist/server/index.mjs",
+      "require": "./dist/server/index.cjs"
     }
   },
   "main": "./dist/index.cjs",
@@ -76,6 +80,7 @@
     "enquirer": "^2.3.6",
     "execa": "^6.1.0",
     "firebase": "^9.14.0",
+    "firebase-admin": "^11.3.0",
     "focus-visible": "^5.2.0",
     "happy-dom": "^7.7.0",
     "lint-staged": "^13.0.4",
