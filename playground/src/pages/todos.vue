@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { Todo } from '@/demos/TodoList/types'
+import TodoItem from '@/demos/TodoList/components/TodoItem.vue'
 import {
   addDoc,
   collection,
@@ -12,12 +14,6 @@ import {
 import { ref } from 'vue'
 import { useCollection, useFirestore } from 'vuefire'
 
-interface Todo {
-  created: Date
-  finished: boolean
-  text: string
-}
-
 // TODO: expose some kind of type to make this posssible
 // type TodoData = _VueFireQueryData<Todo>
 
@@ -25,7 +21,11 @@ const db = useFirestore()
 const todosRef = collection(db, 'todos')
 const todosWithConverterRef = collection(db, 'todos').withConverter<Todo>({
   toFirestore(todoModel) {
-    const { id, ...todo } = todoModel
+    const {
+      // @ts-expect-error: it might not exist
+      id,
+      ...todo
+    } = todoModel
     return todo
   },
   fromFirestore(snapshot, options) {
@@ -55,14 +55,13 @@ function addTodo() {
   }
 }
 
-function updateTodoText(todo: Todo, newText: string) {
-  updateDoc(doc(db, 'todos', todo.id), {
-    text: newText,
-  })
+function updateTodo(id: string, newTodo: Todo) {
+  // NOTE: the copy shouldn't be necessary...
+  updateDoc(doc(todosRef, id), { ...newTodo })
 }
 
-function removeTodo(todo: Todo) {
-  deleteDoc(doc(db, 'todos', todo.id))
+function removeTodo(id: string) {
+  deleteDoc(doc(db, 'todos', id))
 }
 
 function toggleTodos() {
@@ -77,12 +76,12 @@ function toggleTodos() {
     <button>Add Todo</button>
   </form>
   <ul>
-    <li v-for="todo in todos">
-      <input
-        :value="todo.text"
-        @input="updateTodoText(todo, $event.target.value)"
-      />
-      <button @click="removeTodo(todo)">X</button>
-    </li>
+    <TodoItem
+      v-for="todo in todos"
+      :key="todo.id"
+      :todo="todo"
+      @remove="removeTodo"
+      @update:todo="updateTodo"
+    />
   </ul>
 </template>

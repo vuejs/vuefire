@@ -1,4 +1,4 @@
-import { createApp } from 'vue'
+import { createApp, nextTick } from 'vue'
 import { createPinia } from 'pinia'
 import {
   VueFire,
@@ -33,13 +33,19 @@ const store = createStore({
 
 const app = createApp(App)
 app
+  .directive('focus', {
+    mounted: async (el) => {
+      await nextTick()
+      el.focus()
+    },
+  })
   .use(createPinia())
   .use(VueFire, {
     firebaseApp: createFirebaseApp(),
     modules: [
       VueFireAuth(),
       VueFireAppCheck({
-        // debug: process.env.NODE_ENV !== 'production',
+        debug: process.env.NODE_ENV !== 'production',
         isTokenAutoRefreshEnabled: true,
         provider: new ReCaptchaV3Provider(
           '6LfJ0vgiAAAAAHheQE7GQVdG_c9m8xipBESx_SKI'
