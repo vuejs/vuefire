@@ -38,6 +38,7 @@
     "@firebase/app-types": ">=0.8.1",
     "firebase": "^9.0.0",
     "firebase-admin": "^11.3.0",
+    "firebase-functions": "^4.1.0",
     "vuefire": ">=3.0.0-alpha.12"
   },
   "peerDependenciesMeta": {
@@ -45,6 +46,9 @@
       "optional": true
     },
     "firebase-admin": {
+      "optional": true
+    },
+    "firebase-functions": {
       "optional": true
     }
   },
@@ -56,6 +60,7 @@
     "eslint": "^8.28.0",
     "firebase": "^9.14.0",
     "firebase-admin": "^11.3.0",
+    "firebase-functions": "^4.1.0",
     "nuxt": "^3.0.0",
     "vuefire": "workspace:*"
   }

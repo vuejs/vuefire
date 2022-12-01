@@ -1,5 +1,6 @@
 import admin from 'firebase-admin'
 import { VueFireAppCheckServer } from 'vuefire/server'
+import { config } from 'firebase-functions'
 import { defineNuxtPlugin, useAppConfig } from '#app'
 
 export default defineNuxtPlugin((nuxtApp) => {
@@ -16,7 +17,11 @@ export default defineNuxtPlugin((nuxtApp) => {
   if (!admin.apps.length) {
     const adminApp = admin.initializeApp({
       ...firebaseAdmin.config,
-      credential: admin.credential.cert(firebaseAdmin.serviceAccount),
+      credential:
+        process.env.NODE_ENV === 'production'
+          ? // when deployed we get direct access to the config
+            config().firebase
+          : admin.credential.cert(firebaseAdmin.serviceAccount),
     })
 
     if (vuefireOptions.appCheck) {
