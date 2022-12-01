@@ -94,6 +94,10 @@ const VueFire: NuxtModule<VueFireNuxtModuleOptions> =
 
       // nuxt.options.build.transpile.push(templatesDir)
       nuxt.options.build.transpile.push(runtimeDir)
+      // FIXME: this is a workaround because of the resolve issue with firebase
+      // without this, we use different firebase packages within vuefire and nuxt-vuefire
+      nuxt.options.build.transpile.push('vuefire')
+      nuxt.options.build.transpile.push('vuefire/server')
 
       if (nuxt.options.ssr && options.admin) {
         // check the provided config is valid

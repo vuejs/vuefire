@@ -47,16 +47,14 @@ export default defineNuxtPlugin((nuxtApp) => {
   <% } %>
 
   <% if(options.appCheck) { %>
-  if (process.client) {
-    modules.push(VueFireAppCheck({
-      ...appConfig.vuefireOptions.appCheck,
-      provider: '<%= options.appCheck.provider %>' === 'ReCaptchaV3'
-        ? new ReCaptchaV3Provider('<%= options.appCheck.key %>')
-        : new CustomProvider({
-          getToken: () => Promise.resolve({ token: '', expireTimeMillis: 1 })
-        }),
-    }))
-  }
+  modules.push(VueFireAppCheck({
+    ...appConfig.vuefireOptions.appCheck,
+    provider: '<%= options.appCheck.provider %>' === 'ReCaptchaV3'
+      ? new ReCaptchaV3Provider('<%= options.appCheck.key %>')
+      : new CustomProvider({
+        getToken: () => Promise.resolve({ token: '', expireTimeMillis: 1 })
+      }),
+  }))
   <% } %>
 
   nuxtApp.vueApp.use(VueFire, {
