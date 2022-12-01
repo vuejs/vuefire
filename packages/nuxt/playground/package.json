@@ -1,4 +1,5 @@
 {
+  "name": "nuxt-vuefire-playground",
   "private": true,
   "scripts": {
     "build": "nuxt build",
@@ -7,6 +8,7 @@
     "preview": "nuxt preview"
   },
   "devDependencies": {
+    "firebase-functions": "^4.1.0",
     "nuxt": "^3.0.0"
   },
   "dependencies": {
