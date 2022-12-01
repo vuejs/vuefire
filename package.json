@@ -82,6 +82,7 @@
     "firebase": "^9.14.0",
     "firebase-admin": "^11.3.0",
     "focus-visible": "^5.2.0",
+    "globby": "^13.1.2",
     "happy-dom": "^7.7.0",
     "lint-staged": "^13.0.4",
     "minimist": "^1.2.7",
