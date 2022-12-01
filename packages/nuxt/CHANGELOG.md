@@ -1,3 +1,10 @@
+## [0.0.3](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.0.2...nuxt-vuefire@0.0.3) (2022-12-01)
+
+### Bug Fixes
+
+- **nuxt:** remove postinstall script ([bda52ee](https://github.com/vuejs/vuefire/commit/bda52ee6e7dc24764a2d4b7873e3d7af0ee2d592))
+- **nuxt:** use env config in prod ([e4d7978](https://github.com/vuejs/vuefire/commit/e4d7978bf816ca8a20058a2413c7bbad3970c8b7))
+
 ## 0.0.2 (2022-12-01)
 
 ### Bug Fixes
