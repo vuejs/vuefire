@@ -180,23 +180,24 @@ async function main() {
   step('\nUpdating versions in package.json files...')
   await updateVersions(pkgWithVersions)
 
-  step('\nUpdating lock...')
+  step('Updating lock...')
   await runIfNotDry(`pnpm`, ['install'])
 
   step('\nGenerating changelogs...')
   for (const pkg of pkgWithVersions) {
-    step(` -> ${pkg.name} (${pkg.path})`)
-    step('\n  Generating Changelog...')
+    step(`-> ${chalk.bold(pkg.name)} (${pkg.path})`)
+    step(chalk.dim('Generating Changelog...'))
     await runIfNotDry(`pnpm`, ['run', 'changelog'], { cwd: pkg.path })
-    step('\n  Formatting Changelog...')
+    step(chalk.dim('Formatting Changelog...'))
     await runIfNotDry(`pnpm`, ['exec', 'prettier', '--write', 'CHANGELOG.md'], {
       cwd: pkg.path,
     })
-    step('\n  Copying License...')
+    step(chalk.dim('Copying LICENSE...'))
     await fs.copyFile(
       resolve(__dirname, '../LICENSE'),
       resolve(pkg.path, 'LICENSE')
     )
+    step(chalk.dim(`Done with ${chalk.bold(pkg.name)}`))
   }
 
   const { yes: isChangelogCorrect } = await prompt({
@@ -241,8 +242,9 @@ async function main() {
   step('\nCreating tags...')
   let versionsToPush = []
   for (const pkg of pkgWithVersions) {
-    const tagName =
-      pkg.name === 'vuefire' ? `v${pkg.version}` : `${pkg.name}@${pkg.version}`
+    const tagName = `${pkg.name}@${pkg.version}`
+    // NOTE: cannot do this because it won't work with the changelog generator
+    // pkg.name === 'vuefire' ? `v${pkg.version}` : `${pkg.name}@${pkg.version}`
     versionsToPush.push(`refs/tags/${tagName}`)
     await runIfNotDry('git', ['tag', tagName])
   }
