@@ -1,12 +1,13 @@
 import minimist from 'minimist'
-import { promises as fs } from 'fs'
-import { join, resolve, dirname } from 'path'
-import { fileURLToPath } from 'url'
+import fs from 'node:fs/promises'
+import { join, resolve, dirname } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import chalk from 'chalk'
 import semver from 'semver'
 import enquirer from 'enquirer'
 import { execa } from 'execa'
 import pSeries from 'p-series'
+import { globby } from 'globby'
 
 const { prompt } = enquirer
 
@@ -179,13 +180,23 @@ async function main() {
   step('\nUpdating versions in package.json files...')
   await updateVersions(pkgWithVersions)
 
+  step('\nUpdating lock...')
+  await runIfNotDry(`pnpm`, ['install'])
+
   step('\nGenerating changelogs...')
   for (const pkg of pkgWithVersions) {
     step(` -> ${pkg.name} (${pkg.path})`)
+    step('\n  Generating Changelog...')
     await runIfNotDry(`pnpm`, ['run', 'changelog'], { cwd: pkg.path })
+    step('\n  Formatting Changelog...')
     await runIfNotDry(`pnpm`, ['exec', 'prettier', '--write', 'CHANGELOG.md'], {
       cwd: pkg.path,
     })
+    step('\n  Copying License...')
+    await fs.copyFile(
+      resolve(__dirname, '../LICENSE'),
+      resolve(pkg.path, 'LICENSE')
+    )
   }
 
   const { yes: isChangelogCorrect } = await prompt({
@@ -208,7 +219,14 @@ async function main() {
   const { stdout } = await run('git', ['diff'], { stdio: 'pipe' })
   if (stdout) {
     step('\nCommitting changes...')
-    await runIfNotDry('git', ['add', 'CHANGELOG.md', 'package.json'])
+    await runIfNotDry('git', [
+      'add',
+      'package.json',
+      'CHANGELOG.md',
+      'packages/*/CHANGELOG.md',
+      'packages/*/package.json',
+      'pnpm-lock.yaml',
+    ])
     await runIfNotDry('git', [
       'commit',
       '-m',
@@ -226,7 +244,7 @@ async function main() {
     const tagName =
       pkg.name === 'vuefire' ? `v${pkg.version}` : `${pkg.name}@${pkg.version}`
     versionsToPush.push(`refs/tags/${tagName}`)
-    await runIfNotDry('git', ['tag', `${tagName}`])
+    await runIfNotDry('git', ['tag', tagName])
   }
 
   step('\nPublishing packages...')
@@ -287,11 +305,11 @@ async function publishPackage(pkg) {
       [
         'publish',
         ...(optionTag ? ['--tag', optionTag] : []),
+        ...(skipCleanGitCheck ? ['--no-git-checks'] : []),
         '--access',
         'public',
         '--publish-branch',
         EXPECTED_BRANCH,
-        ...(skipCleanGitCheck ? ['--no-git-checks'] : []),
       ],
       {
         cwd: pkg.path,
@@ -333,10 +351,11 @@ async function getChangedPackages() {
     )
     lastTag = stdout
   }
-  // const folders = await globby(join(__dirname, '../packages/*'), {
-  //   onlyFiles: false,
-  // })
-  const folders = ['./']
+  const folders = await globby(join(__dirname, '../packages/*'), {
+    onlyFiles: false,
+  })
+  // add the root package
+  folders.push('./')
 
   const pkgs = await Promise.all(
     folders.map(async (folder) => {
@@ -351,10 +370,10 @@ async function getChangedPackages() {
             lastTag,
             '--',
             // apparently {src,package.json} doesn't work
-            join(folder, 'client.d.ts'),
-            join(folder, 'client.d.ts'),
             join(folder, 'src'),
             join(folder, 'package.json'),
+            // nuxt
+            join(folder, 'templates'),
           ],
           { stdio: 'pipe' }
         )
