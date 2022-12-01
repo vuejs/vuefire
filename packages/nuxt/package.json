@@ -24,6 +24,7 @@
   "funding": "https://github.com/sponsors/posva",
   "scripts": {
     "prepack": "nuxt-module-build",
+    "build": "pnpm run prepack",
     "dev": "nuxi dev playground",
     "dev:build": "nuxi build playground",
     "postinstall": "nuxt-module-build --stub"
