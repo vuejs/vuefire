@@ -1,3 +1,9 @@
+# [3.0.0-alpha.13](https://github.com/vuejs/vuefire/compare/vuefire@3.0.0-alpha.12...vuefire@3.0.0-alpha.13) (2022-12-01)
+
+### Bug Fixes
+
+- **ssr:** appcheck force app ([cd5168a](https://github.com/vuejs/vuefire/commit/cd5168a3f70b3d775d7e735aabc97d4b7878a3b0))
+
 # [3.0.0-alpha.12](https://github.com/vuejs/vuefire/compare/v3.0.0-alpha.11...vuefire@3.0.0-alpha.12) (2022-12-01)
 
 ### Bug Fixes

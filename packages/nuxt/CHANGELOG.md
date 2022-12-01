@@ -1,3 +1,9 @@
+## [0.0.5](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.0.4...nuxt-vuefire@0.0.5) (2022-12-01)
+
+### Bug Fixes
+
+- **ssr:** appcheck force app ([cd5168a](https://github.com/vuejs/vuefire/commit/cd5168a3f70b3d775d7e735aabc97d4b7878a3b0))
+
 ## [0.0.4](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.0.3...nuxt-vuefire@0.0.4) (2022-12-01)
 
 ### Bug Fixes
