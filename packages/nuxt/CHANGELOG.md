@@ -1,3 +1,9 @@
+## [0.0.6](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.0.5...nuxt-vuefire@0.0.6) (2022-12-01)
+
+### Bug Fixes
+
+- transpile vuefire ([61d3358](https://github.com/vuejs/vuefire/commit/61d335804b256e8c4c80903cd9cb6cf11b3a24fd))
+
 ## [0.0.5](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.0.4...nuxt-vuefire@0.0.5) (2022-12-01)
 
 ### Bug Fixes
