@@ -1,4 +1,5 @@
 import type { app } from 'firebase-admin'
+import type { FirebaseApp } from 'firebase/app'
 import { CustomProvider, initializeAppCheck } from 'firebase/app-check'
 
 /**
@@ -6,12 +7,12 @@ import { CustomProvider, initializeAppCheck } from 'firebase/app-check'
  * client.
  *
  * @param adminApp - firebase-admin app
- * @param appId - appId option passed to firebase/app initializeApp()
+ * @param firebaseApp - firebase/app initializeApp()
  * @param param2 options
  */
 export function VueFireAppCheckServer(
   adminApp: app.App,
-  appId: string,
+  firebaseApp: FirebaseApp,
   {
     // default to 1 week
     ttlMillis = 604_800_000,
@@ -19,12 +20,13 @@ export function VueFireAppCheckServer(
     ttlMillis?: number
   } = {}
 ) {
-  initializeAppCheck(undefined, {
+  initializeAppCheck(firebaseApp, {
     provider: new CustomProvider({
       getToken: () =>
         adminApp
           .appCheck()
-          .createToken(appId, { ttlMillis })
+          // NOTE: appId is checked on the server plugin
+          .createToken(firebaseApp.options.appId!, { ttlMillis })
           .then(({ token, ttlMillis: expireTimeMillis }) => ({
             token,
             expireTimeMillis,

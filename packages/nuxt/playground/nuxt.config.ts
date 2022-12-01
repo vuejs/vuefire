@@ -14,8 +14,11 @@ export default defineNuxtConfig({
 
   alias: {
     // import the dev version directly
-    vuefire: fileURLToPath(new URL('../../../src/index.ts', import.meta.url)),
+    'vuefire/server': fileURLToPath(
+      new URL('../../../src/server/index.ts', import.meta.url)
+    ),
     'vuefire/*': fileURLToPath(new URL('../../../src/*', import.meta.url)),
+    vuefire: fileURLToPath(new URL('../../../src/index.ts', import.meta.url)),
   },
 
   modules: [
@@ -45,12 +48,7 @@ export default defineNuxtConfig({
         admin: {
           config: {},
           serviceAccount: resolve(
-            fileURLToPath(
-              new URL(
-                './vue-fire-store-firebase-adminsdk.json',
-                import.meta.url
-              )
-            )
+            fileURLToPath(new URL('./service-account.json', import.meta.url))
           ),
         },
       },

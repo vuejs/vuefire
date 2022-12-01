@@ -105,20 +105,20 @@ const VueFire: NuxtModule<VueFireNuxtModuleOptions> =
           }
           nuxt.options.appConfig.firebaseAdmin = options.admin
         }
-
-        addPlugin(resolve(runtimeDir, '2.admin-plugin.server'))
       }
 
       nuxt.hook('modules:done', () => {
-        // addPlugin(resolve(runtimeDir, 'plugin'))
-
+        // plugin are added in reverse order
         addPluginTemplate({
           src: normalize(resolve(templatesDir, 'plugin.ejs')),
 
           options: {
             ...options,
+            ssr: nuxt.options.ssr,
           },
         })
+        addPlugin(resolve(runtimeDir, 'plugins/admin.server'))
+        addPlugin(resolve(runtimeDir, 'plugins/app'))
       })
     },
   })
