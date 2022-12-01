@@ -25,6 +25,7 @@
   "scripts": {
     "prepack": "nuxt-module-build",
     "build": "pnpm run prepack",
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 1",
     "dev": "nuxi dev playground",
     "dev:build": "nuxi build playground",
     "postinstall": "nuxt-module-build --stub"
