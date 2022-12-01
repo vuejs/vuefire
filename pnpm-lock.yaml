@@ -99,21 +99,6 @@ importers:
     devDependencies:
       nuxt: 3.0.0
 
-  packages/playground-nuxt:
-    specifiers:
-      '@firebase/app-types': ^0.8.1
-      firebase: ^9.14.0
-      nuxt: ^3.0.0
-      nuxt-vuefire: workspace:*
-      vuefire: workspace:*
-    dependencies:
-      '@firebase/app-types': 0.8.1
-      firebase: 9.14.0
-      nuxt-vuefire: link:../nuxt
-      vuefire: link:../..
-    devDependencies:
-      nuxt: 3.0.0
-
   playground:
     specifiers:
       '@firebase/app-types': ^0.8.1
