@@ -19,8 +19,9 @@ export default defineBuildConfig({
     'firebase/firestore',
     'firebase/database',
     'firebase/storage',
-    '@firebase/firestore-types',
+    '@firebase/app-types',
     '@firebase/database-types',
+    '@firebase/firestore-types',
     'firebase-admin',
   ],
 
