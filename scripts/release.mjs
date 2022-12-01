@@ -299,6 +299,8 @@ function updateDeps(pkg, depType, updatedPackages) {
 async function publishPackage(pkg) {
   step(`Publishing ${pkg.name}...`)
 
+  const errors = []
+
   try {
     await runIfNotDry(
       'pnpm',
@@ -323,8 +325,17 @@ async function publishPackage(pkg) {
     if (e.stderr.match(/previously published/)) {
       console.log(chalk.red(`Skipping already published: ${pkg.name}`))
     } else {
-      throw e
+      errors.push([pkg.name, e])
     }
+  }
+
+  // fail if any errors
+  if (errors.length) {
+    for (const [name, err] of errors) {
+      console.log(chalk.red(`Failed to publish ${chalk.bold(name)}`))
+      console.error(err)
+    }
+    process.exit(1)
   }
 }
 
