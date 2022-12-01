@@ -106,7 +106,7 @@ const VueFire: NuxtModule<VueFireNuxtModuleOptions> =
           nuxt.options.appConfig.firebaseAdmin = options.admin
         }
 
-        addPlugin(resolve(runtimeDir, '2.admin-plugin.server.ts'))
+        addPlugin(resolve(runtimeDir, '2.admin-plugin.server'))
       }
 
       nuxt.hook('modules:done', () => {
