@@ -37,7 +37,16 @@
   "peerDependencies": {
     "@firebase/app-types": ">=0.8.1",
     "firebase": "^9.0.0",
+    "firebase-admin": "^11.3.0",
     "vuefire": ">=3.0.0-alpha.12"
+  },
+  "peerDependenciesMeta": {
+    "@firebase/app-types": {
+      "optional": true
+    },
+    "firebase-admin": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@firebase/app-types": "^0.8.1",
