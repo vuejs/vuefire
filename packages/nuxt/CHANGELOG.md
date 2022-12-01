@@ -1,3 +1,9 @@
+## [0.0.4](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.0.3...nuxt-vuefire@0.0.4) (2022-12-01)
+
+### Bug Fixes
+
+- **nuxt:** resolve without extension ([e44a2f4](https://github.com/vuejs/vuefire/commit/e44a2f45b206d8cae0fc7d62b0c4f08011f01085))
+
 ## [0.0.3](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.0.2...nuxt-vuefire@0.0.3) (2022-12-01)
 
 ### Bug Fixes
