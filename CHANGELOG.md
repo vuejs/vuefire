@@ -1,3 +1,40 @@
+# [3.0.0-alpha.12](https://github.com/vuejs/vuefire/compare/v3.0.0-alpha.11...vuefire@3.0.0-alpha.12) (2022-12-01)
+
+### Bug Fixes
+
+- **app-check:** run only in client ([384085e](https://github.com/vuejs/vuefire/commit/384085edbe2e39dc05d9ad78e0600e647805116e))
+- **firestore:** pass snapshotOptions before extracting refs ([a61ee09](https://github.com/vuejs/vuefire/commit/a61ee092736c2af726106578a3d792cbc6e2a57a))
+- **firestore:** pass the id as a value ([d0afc0a](https://github.com/vuejs/vuefire/commit/d0afc0aa70cd5dd1d05c17b6f266fad81dd0d341))
+- **firestore:** skip ref extraction in non pojo ([cc01b84](https://github.com/vuejs/vuefire/commit/cc01b842b31c64709580536f2b6e4c4a6296c7e4)), closes [#1257](https://github.com/vuejs/vuefire/issues/1257)
+- nested refs ([c4ab275](https://github.com/vuejs/vuefire/commit/c4ab2757638928d43f3a269118c1c0c974a6994d))
+- **options-api:** cleanup variables ([5d244b7](https://github.com/vuejs/vuefire/commit/5d244b75e579ea3feda9aa3beee5c6e39680f791))
+- pass options when unbinding documents ([6d4f151](https://github.com/vuejs/vuefire/commit/6d4f1512e26ddcfb0f208abc11feab8ef6e38804))
+- resilient walkSet and walkGet ([80879d1](https://github.com/vuejs/vuefire/commit/80879d1e925a1c186f47d7b29c5838b8af40a358))
+- **ssr:** fallback value in firestore ([57cdd82](https://github.com/vuejs/vuefire/commit/57cdd824be1439a636655a02c75978f857ba36ba))
+- **ssr:** use ssrKey in firestore ([25d86ca](https://github.com/vuejs/vuefire/commit/25d86cac1bb230ac3478aebab92062f6a6f3632c))
+- **types:** add undefined for initial values ([76e1527](https://github.com/vuejs/vuefire/commit/76e15277791dcb6097629d6a65bc41c0dab22541))
+
+### Code Refactoring
+
+- **firestore:** rename `$bind` to `$firestoreBind` ([a636c21](https://github.com/vuejs/vuefire/commit/a636c21e6a7fc62827ca83c3363bf648811172ff))
+- remove manual bind/unbind methods ([7b8b037](https://github.com/vuejs/vuefire/commit/7b8b037e345d1983cb6b80f2de896ad36a5a9fed))
+- rename `unbind()` to `stop()` ([37d3f67](https://github.com/vuejs/vuefire/commit/37d3f67eda2206df4ca346028e6fb573f89e7960))
+- rename rtdbPlugin to databasePlugin ([a7f500d](https://github.com/vuejs/vuefire/commit/a7f500dc55df841c7b44ffd512cf944f53fbaef0))
+
+### Features
+
+- wait on server for data ([947a325](https://github.com/vuejs/vuefire/commit/947a32518002cecc36e10e6166f89f7d04c8f749))
+- warn wrong usage useDocument(), ... ([098c16c](https://github.com/vuejs/vuefire/commit/098c16c53296a2bd6b7c96b23f1957b2612c406e))
+
+### BREAKING CHANGES
+
+- **database:** when binding to a primitive value in RTDB, VueFire used
+  to create an object with a property `.value` for the primitive vaule
+  itself. The `.` in front forces to always use a bracket syntax
+  (`obj['.value']`) while the `$` doesn't, making its usage cleaner. The
+  `$value` and `id` property created in the case of primitives are also
+  **enumerable** properties. This should make things easier to debug.
+
 # [3.0.0-alpha.11](https://github.com/vuejs/vuefire/compare/v3.0.0-alpha.10...v3.0.0-alpha.11) (2022-11-25)
 
 ### Bug Fixes
