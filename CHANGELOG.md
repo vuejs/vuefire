@@ -1,3 +1,10 @@
+# [3.0.0-beta.1](https://github.com/vuejs/vuefire/compare/vuefire@3.0.0-alpha.13...vuefire@3.0.0-beta.1) (2022-12-05)
+
+### Features
+
+- **app-check:** add access to appcheck ([01d5651](https://github.com/vuejs/vuefire/commit/01d5651122045aa5fc119200ae068fc80ad3f2ab))
+- **ssr:** use env credentials in prod ([4fadba7](https://github.com/vuejs/vuefire/commit/4fadba79076647ca80905320739ec2b0461af6f6))
+
 # [3.0.0-alpha.13](https://github.com/vuejs/vuefire/compare/vuefire@3.0.0-alpha.12...vuefire@3.0.0-alpha.13) (2022-12-01)
 
 ### Bug Fixes

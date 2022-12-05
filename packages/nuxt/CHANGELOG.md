@@ -1,3 +1,9 @@
+## [0.0.7](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.0.6...nuxt-vuefire@0.0.7) (2022-12-05)
+
+### Features
+
+- **ssr:** use env credentials in prod ([4fadba7](https://github.com/vuejs/vuefire/commit/4fadba79076647ca80905320739ec2b0461af6f6))
+
 ## [0.0.6](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.0.5...nuxt-vuefire@0.0.6) (2022-12-01)
 
 ### Bug Fixes
