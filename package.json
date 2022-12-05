@@ -8,10 +8,12 @@
   "type": "module",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
       "require": "./dist/index.cjs"
     },
     "./server": {
+      "types": "./dist/server/index.d.ts",
       "import": "./dist/server/index.mjs",
       "require": "./dist/server/index.cjs"
     }
@@ -22,6 +24,7 @@
   "sideEffects": false,
   "files": [
     "dist",
+    "./server.d.ts",
     "LICENSE",
     "README.md"
   ],
