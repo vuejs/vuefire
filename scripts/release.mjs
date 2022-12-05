@@ -210,9 +210,12 @@ async function main() {
     return
   }
 
+  // NOTE: prefer this to prepack so that if it fails we don't end up in the middle of the process of releasing
   step('\nBuilding all packages...')
-  if (!skipBuild && !isDryRun) {
-    await run('pnpm', ['run', 'build'])
+  if (!skipBuild) {
+    for (const pkg of pkgWithVersions) {
+      await runIfNotDry(`pnpm`, ['run', 'build'], { cwd: pkg.path })
+    }
   } else {
     console.log(`(skipped)`)
   }
