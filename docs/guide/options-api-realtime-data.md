@@ -1,6 +1,6 @@
 # Options API Realtime Data
 
-:::tip
+::: tip
 This pages assumes you have read the [Realtime Data](./realtime-data.md) page and will only cover the syntax differences between the Options API and the Composition API.
 :::
 
@@ -89,7 +89,7 @@ export default {
 
 </FirebaseExample>
 
-:::warning
+::: warning
 You must declare properties with their initial values in `data`. **For the RTDB, using an _Array_ as the initial value will bind the Reference as an array, otherwise it is bound as an object**. For Firestore, collections and queries are bound as arrays while documents are bound as objects.
 :::
 
@@ -151,7 +151,7 @@ export default {
 
 With the approach above, `user` will always be bound to the user defined by the prop `id`
 
-:::tip
+::: tip
 No need to call `$databaseUnbind`/`$firestoreUnbind` as `$databaseBind`/`$firestoreBind` will automatically unbind any existing binding on the provided key. Upon component removal, all bindings are removed as well, so no need to use `$databaseUnbind`/`$firestoreUnbind` in `unmounted` hooks.
 :::
 

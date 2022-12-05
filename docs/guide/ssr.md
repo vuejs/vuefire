@@ -1,7 +1,7 @@
 # Server Side Rendering (SSR)
 
 <!-- NOTE: hide until it works -->
-<!-- :::tip
+<!-- ::: tip
 If you are using Nuxt.js, read the [Nuxt guide](./nuxt.md) instead, most of the things are already configured for you.
 ::: -->
 

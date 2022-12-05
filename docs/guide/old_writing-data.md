@@ -6,7 +6,7 @@ As said in the introduction, Vuefire **does not** handle writing data back to Fi
 
 There are two ways to update a document `set` and `update`. The first will replace the whole document (as a PUT in HTTP) while the later will keep the original document and overwrite values (as a PATCH in HTTP).
 
-:::tip
+::: tip
 In the following examples, `this.user` is a user bound to a Firebase document using Vuefire while `this.conferences` is a list of conferences bound to a Firebase collection using Vuefire.
 :::
 

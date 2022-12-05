@@ -1,6 +1,6 @@
 # Realtime Data
 
-:::info
+::: info
 If you are looking for the VueFire Options API guide, make sure to **also check** the [dedicated page](./options-api-realtime-data.md). This page still includes a more information than the Options API page, which focuses more on its syntax.
 :::
 
@@ -67,7 +67,7 @@ const contact = useDocument(contactSource)
 
 This way, if the route changes, the document will be updated to the new one, automatically unsubscribing from the previous one and subscribing to the new one.
 
-:::tip
+::: tip
 If you can't use a `computed()`, use `shallowRef()`s instead of `ref()`s to store the data sources. This is because `shallowRef()` doesn't try to recursively observe the object it's given, which in the case of a Firebase data source, would be wasteful.
 :::
 
@@ -93,7 +93,7 @@ const {
 
 Notice how we rename `data` to whatever makes more sense for the context. It's important to note
 
-:::note
+::: warning
 All of the properties that can be defined on the Ref are defined as [non-enumerable properties](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty) which means they won't be copied over when using the spread operator e.g. `const { data, ...rest } = useDocument(contactSource)`. This is to ensure they are completely ignored in other places like devtools.
 :::
 
@@ -299,7 +299,7 @@ Note this is only a type annotation, it does not perform any runtime validation.
 
 The recommended Firebase approach is to use the `withConverter()` for Firestore:
 
-:::info
+::: info
 `.withConverter()` is a Firestore feature that doesn't have an equivalent in Database but you can use VueFire's [`serialize()` option](#TODO:global options when installing plugin) instead.
 :::
 

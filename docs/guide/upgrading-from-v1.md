@@ -108,7 +108,7 @@ Previously you would call `$firestoreBindAsArray` and `$firestoreBindAsObject` d
 }
 ```
 
-:::tip
+::: tip
 Note: you can pass an options object with `{ bindName: '$firestoreBind', unbindName: '$firestoreUnbind' }` to `Vue.use(VueFire)` to keep a shorter name for binding instead of `$rtdbBind` and `$rtdbUnbind`.
 :::
 

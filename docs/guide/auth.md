@@ -43,7 +43,7 @@ router.beforeEach(async () => {
 })
 ```
 
-:::tip
+::: tip
 If you are using `getCurrentUser()` in a navigation guard, make sure to add it before calling `app.use(router)` as that will trigger the initial navigation.
 :::
 

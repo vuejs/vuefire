@@ -117,7 +117,7 @@ app.use(VueFire, {
 
 ## Vuexfire
 
-:::tip
+::: tip
 If you are using [Pinia](https://pinia.vuejs.org/), make sure to check the [Pinia guide](./subscriptions-external.md#pinia) instead.
 :::
 

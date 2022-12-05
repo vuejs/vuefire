@@ -12,7 +12,7 @@ yarn add vuefire firebase
 npm install vuefire firebase
 ```
 
-:::warning
+::: warning
 
 VueFire requires Firebase JS SDK >= 9 but **is compatible with Vue 2 and Vue 3**. It's currently in alpha, make sure to check [the Roadmap](https://github.com/vuejs/vuefire/issues/1241) and report any issue you find.
 
@@ -38,7 +38,7 @@ export const firestore = getFirestore(firebase)
 // ... other firebase exports
 ```
 
-:::tip
+::: tip
 Note that we will refer to `database` and `firestore` as `db` in examples where only one of them is used.
 :::
 
