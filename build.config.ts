@@ -23,6 +23,8 @@ export default defineBuildConfig({
     '@firebase/database-types',
     '@firebase/firestore-types',
     'firebase-admin',
+    'firebase-admin/app',
+    'firebase-admin/app-check',
   ],
 
   rollup: {
