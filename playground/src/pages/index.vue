@@ -6,14 +6,14 @@ const router = useRouter()
 const routes = computed(() =>
   router
     .getRoutes()
-    .filter(route => !route.path.includes(':') && !route.children.length)
+    .filter((route) => !route.path.includes(':') && !route.children.length)
 )
 </script>
 
 <template>
   <ul>
     <li v-for="route in routes">
-      <RouterLink :to="{ name: route.name }" v-slot="{ href }">{{
+      <RouterLink :to="{ name: route.name as any }" v-slot="{ href }">{{
         href
       }}</RouterLink>
     </li>

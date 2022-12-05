@@ -70,7 +70,7 @@ export { usePendingPromises } from './ssr/plugin'
 export { useSSRInitialState } from './ssr/initialState'
 
 // App Check
-export { VueFireAppCheck, useAppCheckToken } from './app-check'
+export { VueFireAppCheck, useAppCheckToken, useAppCheck } from './app-check'
 export type { VueFireAppCheckOptions } from './app-check'
 
 // Storage

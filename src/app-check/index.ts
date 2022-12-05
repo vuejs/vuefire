@@ -63,5 +63,38 @@ export function VueFireAppCheck(options: VueFireAppCheckOptions) {
     onTokenChanged(appCheck, (newToken) => {
       token.value = newToken.token
     })
+    AppCheckMap.set(firebaseApp, appCheck)
   }
+}
+
+/**
+ * To retrieve the current app check
+ * @internal
+ */
+export const AppCheckMap = new WeakMap<FirebaseApp, AppCheck>()
+
+/**
+ * Retrieves the Firebase App Check instance. Note this is only available on the client and will be `undefined` on the
+ * server.
+ *
+ * @param name - name of the application
+ */
+export function useAppCheck(name?: string) {
+  return AppCheckMap.get(useFirebaseApp(name))
+}
+
+/**
+ * Retrieves the current app check token. If there is no app check token, it will return an empty string token.
+ *
+ * @param name - name of the application
+ * @param forceRefresh - force a refresh of the token
+ */
+export function getAppCheckToken(
+  name?: string,
+  forceRefresh?: boolean
+): Promise<AppCheckTokenResult> {
+  const appCheck = useAppCheck(name)
+  return appCheck
+    ? getToken(appCheck, forceRefresh)
+    : Promise.resolve({ token: '' })
 }

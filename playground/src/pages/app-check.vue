@@ -7,7 +7,11 @@ const token = useAppCheckToken()
 const appCheck = useAppCheck()
 
 onMounted(async () => {
-  // console.log(await getToken(appCheck))
+  if (appCheck) {
+    console.log('appcheck token', await getToken(appCheck))
+  } else {
+    console.log('App Check not initialized')
+  }
 })
 </script>
 
