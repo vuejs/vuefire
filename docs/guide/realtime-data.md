@@ -113,7 +113,7 @@ this.user.id // -KguCoSMemQZw3JD6EPh
 Object.keys(this.user).includes('id') // false
 
 // it originally comes from the `key` attribute
-dbRef(db, 'users/ada').key // 'ada'
+dbRef(db, 'users/-KguCoSMemQZw3JD6EPh').key // '-KguCoSMemQZw3JD6EPh'
 // More at https://firebase.google.com/docs/reference/js/database.datasnapshot.md#datasnapshotkey
 ```
 
@@ -123,7 +123,7 @@ this.user.id // jORwjIykFn1NmkdzTkhU
 Object.keys(this.user).includes('id') // false
 
 // it originally comes from the `id` attribute
-doc(collection(db, 'users'), 'ada').id // 'ada'
+doc(collection(db, 'users'), 'jORwjIykFn1NmkdzTkhU').id // 'jORwjIykFn1NmkdzTkhU'
 // More at https://firebase.google.com/docs/reference/js/firestore_.documentreference.md#documentreferenceid
 ```
 
