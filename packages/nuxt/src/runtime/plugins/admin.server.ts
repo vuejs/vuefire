@@ -1,6 +1,5 @@
-import admin from 'firebase-admin'
+import { initializeApp, cert, getApp, getApps } from 'firebase-admin/app'
 import { VueFireAppCheckServer } from 'vuefire/server'
-import { config } from 'firebase-functions'
 import type { FirebaseApp } from '@firebase/app-types'
 import { defineNuxtPlugin, useAppConfig } from '#app'
 
@@ -17,15 +16,15 @@ export default defineNuxtPlugin((nuxtApp) => {
   const firebaseApp = nuxtApp.$firebaseApp as FirebaseApp
 
   // only initialize the admin sdk once
-  if (!admin.apps.length) {
-    const adminApp = admin.initializeApp({
-      ...firebaseAdmin.config,
-      credential:
-        // when deployed we get direct access to the config
-        process.env.NODE_ENV === 'production'
-          ? config().firebase
-          : admin.credential.cert(firebaseAdmin.serviceAccount),
-    })
+  if (!getApps().length) {
+    const adminApp =
+      // this is specified when deployed on Firebase and automatically picks up the credentials from env variables
+      process.env.GCLOUD_PROJECT
+        ? initializeApp()
+        : initializeApp({
+            ...firebaseAdmin.config,
+            credential: cert(firebaseAdmin.serviceAccount),
+          })
 
     if (vuefireOptions.appCheck) {
       // NOTE: necessary in VueFireAppCheckServer
@@ -41,7 +40,7 @@ export default defineNuxtPlugin((nuxtApp) => {
 
   return {
     provide: {
-      adminApp: admin.app(),
+      adminApp: getApp(),
     },
   }
 })

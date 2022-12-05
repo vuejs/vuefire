@@ -1,7 +1,14 @@
 <script lang="ts" setup>
-import { useAppCheckToken } from 'vuefire'
+import { getToken } from 'firebase/app-check'
+import { onMounted } from 'vue'
+import { useAppCheckToken, useAppCheck } from 'vuefire'
 
 const token = useAppCheckToken()
+const appCheck = useAppCheck()
+
+onMounted(async () => {
+  // console.log(await getToken(appCheck))
+})
 </script>
 
 <template>

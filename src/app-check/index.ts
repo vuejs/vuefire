@@ -1,10 +1,14 @@
 import { FirebaseApp } from 'firebase/app'
 import {
   initializeAppCheck,
-  AppCheckOptions,
   onTokenChanged,
+  AppCheckOptions,
+  AppCheck,
+  getToken,
+  AppCheckTokenResult,
 } from 'firebase/app-check'
 import { App, inject, InjectionKey, Ref, ref } from 'vue-demi'
+import { useFirebaseApp } from '../app'
 import { getGlobalScope } from '../globals'
 import { isClient } from '../shared'
 
