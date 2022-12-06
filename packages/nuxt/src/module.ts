@@ -45,6 +45,7 @@ export interface VueFireNuxtModuleOptions {
    * Optional name passed to `firebase.initializeApp(config, name)`
    */
   // TODO: is this useful?
+  // NOTE: this should probably be inferred automatically based on the auth status to have one app per user cached on the server
   // appName?: string
 
   /**
