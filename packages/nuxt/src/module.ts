@@ -113,6 +113,10 @@ const VueFire: NuxtModule<VueFireNuxtModuleOptions> =
       }
 
       nuxt.hook('modules:done', () => {
+        addPlugin(resolve(runtimeDir, 'plugins/admin.server'))
+
+        addPlugin(resolve(runtimeDir, 'plugins/auth.client'))
+
         // plugin are added in reverse order
         addPluginTemplate({
           src: normalize(resolve(templatesDir, 'plugin.ejs')),
@@ -122,7 +126,6 @@ const VueFire: NuxtModule<VueFireNuxtModuleOptions> =
             ssr: nuxt.options.ssr,
           },
         })
-        addPlugin(resolve(runtimeDir, 'plugins/admin.server'))
         addPlugin(resolve(runtimeDir, 'plugins/app'))
       })
     },
