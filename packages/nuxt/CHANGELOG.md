@@ -1,3 +1,9 @@
+## [0.0.8](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.0.7...nuxt-vuefire@0.0.8) (2022-12-06)
+
+### Features
+
+- **ssr:** fail on unknown provider ([366ccc0](https://github.com/vuejs/vuefire/commit/366ccc0583d384db060ac109df88e69f584e3c57))
+
 ## [0.0.7](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.0.6...nuxt-vuefire@0.0.7) (2022-12-05)
 
 ### Features

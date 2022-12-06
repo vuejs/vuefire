@@ -1,3 +1,6 @@
+# [3.0.0-beta.2](https://github.com/vuejs/vuefire/compare/vuefire@3.0.0-beta.1...vuefire@3.0.0-beta.2) (2022-12-06)
+
+- SSR fixes
 # [3.0.0-beta.1](https://github.com/vuejs/vuefire/compare/vuefire@3.0.0-alpha.13...vuefire@3.0.0-beta.1) (2022-12-05)
 
 ### Features
