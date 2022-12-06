@@ -17,30 +17,33 @@ export default defineNuxtPlugin((nuxtApp) => {
 
   // only initialize the admin sdk once
   if (!getApps().length) {
-    const adminApp =
-      // this is specified when deployed on Firebase and automatically picks up the credentials from env variables
-      process.env.GCLOUD_PROJECT
-        ? initializeApp()
-        : initializeApp({
-            ...firebaseAdmin.config,
-            credential: cert(firebaseAdmin.serviceAccount),
-          })
-
-    if (vuefireOptions.appCheck) {
-      // NOTE: necessary in VueFireAppCheckServer
-      if (!firebaseApp.options.appId) {
-        throw new Error(
-          '[VueFire]: Missing "appId" in firebase config. This is necessary to use the app-check module on the server.'
-        )
-      }
-
-      VueFireAppCheckServer(adminApp, firebaseApp)
+    // this is specified when deployed on Firebase and automatically picks up the credentials from env variables
+    if (process.env.GCLOUD_PROJECT) {
+      initializeApp()
+    } else {
+      initializeApp({
+        // TODO: is this really going to be used?
+        ...firebaseAdmin.config,
+        credential: cert(firebaseAdmin.serviceAccount),
+      })
     }
+  }
+
+  const adminApp = getApp()
+  if (vuefireOptions.appCheck) {
+    // NOTE: necessary in VueFireAppCheckServer
+    if (!firebaseApp.options.appId) {
+      throw new Error(
+        '[VueFire]: Missing "appId" in firebase config. This is necessary to use the app-check module on the server.'
+      )
+    }
+
+    VueFireAppCheckServer(adminApp, firebaseApp)
   }
 
   return {
     provide: {
-      adminApp: getApp(),
+      adminApp,
     },
   }
 })

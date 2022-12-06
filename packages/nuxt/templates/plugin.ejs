@@ -52,7 +52,11 @@ export default defineNuxtPlugin((nuxtApp) => {
     provider: '<%= options.appCheck.provider %>' === 'ReCaptchaV3'
       ? new ReCaptchaV3Provider('<%= options.appCheck.key %>')
       : new CustomProvider({
-        getToken: () => Promise.resolve({ token: '', expireTimeMillis: 1 })
+        getToken: () => Promise.reject(
+          process.env.NODE_ENV !== 'production'
+            ? new Error('Unknown provider "<%= options.appCheck.provider %>"')
+            : new Error()
+          ),
       }),
   }))
   <% } %>

@@ -10,7 +10,12 @@
       "**/.*",
       "**/node_modules/**"
     ],
-    "rewrites": [{ "source": "**", "function": "server" }]
+    "rewrites": [
+      {
+        "source": "**",
+        "function": "server"
+      }
+    ]
   },
   "database": {
     "rules": "database.rules.json"
@@ -21,5 +26,26 @@
   },
   "storage": {
     "rules": "storage.rules"
+  },
+  "emulators": {
+    "functions": {
+      "port": 5001
+    },
+    "firestore": {
+      "port": 8080
+    },
+    "database": {
+      "port": 9050
+    },
+    "hosting": {
+      "port": 5050
+    },
+    "storage": {
+      "port": 9199
+    },
+    "ui": {
+      "enabled": true
+    },
+    "singleProjectMode": true
   }
 }
