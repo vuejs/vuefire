@@ -1,3 +1,7 @@
+## [0.0.9](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.0.8...nuxt-vuefire@0.0.9) (2022-12-06)
+
+- add back runtime folder
+
 ## [0.0.8](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.0.7...nuxt-vuefire@0.0.8) (2022-12-06)
 
 ### Features
