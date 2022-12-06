@@ -1,3 +1,7 @@
+## [0.0.10](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.0.9...nuxt-vuefire@0.0.10) (2022-12-06)
+
+- remove prepare script
+
 ## [0.0.9](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.0.8...nuxt-vuefire@0.0.9) (2022-12-06)
 
 - add back runtime folder
