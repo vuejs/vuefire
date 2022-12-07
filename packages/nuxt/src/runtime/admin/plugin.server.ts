@@ -8,7 +8,7 @@ export default defineNuxtPlugin((nuxtApp) => {
 
   const { firebaseConfig, firebaseAdmin, vuefireOptions } = appConfig
 
-  // the admin sdk is not always needed
+  // the admin sdk is not always needed, skip if not provided
   if (!firebaseAdmin?.config) {
     return
   }

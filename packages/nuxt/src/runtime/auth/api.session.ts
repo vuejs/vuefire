@@ -1,6 +1,16 @@
-import { readBody, setCookie, assertMethod, defineEventHandler, H3Response, setHeader } from 'h3'
+import {
+  readBody,
+  setCookie,
+  assertMethod,
+  defineEventHandler,
+  H3Response,
+  setHeader,
+} from 'h3'
 import { useRuntimeConfig } from '#app'
 
+/**
+ * Setups an API endpoint to be used by the client to mint a cookie based auth session.
+ */
 export default defineEventHandler(async (event) => {
   assertMethod(event, 'POST')
   const { token } = await readBody(event)
@@ -13,14 +23,14 @@ export default defineEventHandler(async (event) => {
       secure: true,
       httpOnly: true,
       path: '/',
-      sameSite: 'lax'
+      sameSite: 'lax',
     })
     // empty content status
   } else {
     // delete the cookie
     setCookie(event, AUTH_COOKIE_NAME, '', {
       maxAge: -1,
-      path: '/'
+      path: '/',
     })
   }
 
@@ -29,5 +39,6 @@ export default defineEventHandler(async (event) => {
   return ''
 })
 
+// TODO: customizable defaults
 export const AUTH_COOKIE_MAX_AGE = 60 * 60 * 24 * 5 * 1_000
 export const AUTH_COOKIE_NAME = '_vuefire_auth'

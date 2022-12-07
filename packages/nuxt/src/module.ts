@@ -11,7 +11,7 @@ import type { NuxtModule } from '@nuxt/schema'
 // cannot import from firebase-admin because the build fails, maybe a nuxt bug?
 import type { FirebaseOptions } from '@firebase/app-types'
 import type { AppOptions, ServiceAccount } from 'firebase-admin'
-import type { NuxtVueFireAppCheckOptions } from './app-check'
+import type { NuxtVueFireAppCheckOptions } from './runtime/app-check'
 
 export interface VueFireNuxtModuleOptions {
   /**
@@ -85,8 +85,6 @@ const VueFire: NuxtModule<VueFireNuxtModuleOptions> =
       }
 
       const { resolve } = createResolver(import.meta.url)
-      // TODO: refactor folder structure to be domain based (e.g. auth, firestore, etc.)
-      const authDir = fileURLToPath(new URL('./auth', import.meta.url))
       const runtimeDir = fileURLToPath(new URL('./runtime', import.meta.url))
       const templatesDir = fileURLToPath(
         new URL('../templates', import.meta.url)
@@ -98,7 +96,6 @@ const VueFire: NuxtModule<VueFireNuxtModuleOptions> =
 
       // nuxt.options.build.transpile.push(templatesDir)
       nuxt.options.build.transpile.push(runtimeDir)
-      nuxt.options.build.transpile.push(authDir)
 
       // FIXME: this is a workaround because of the resolve issue with firebase
       // without this, we use different firebase packages within vuefire and nuxt-vuefire
@@ -120,15 +117,17 @@ const VueFire: NuxtModule<VueFireNuxtModuleOptions> =
       if (nuxt.options.ssr) {
         addServerHandler({
           route: '/api/_vuefire/auth',
-          handler: resolve(authDir, 'session'),
+          handler: resolve(runtimeDir, './auth/api.session'),
         })
       }
 
+      // this allows us to the order of the plugins
       nuxt.hook('modules:done', () => {
+        addPlugin(resolve(runtimeDir, 'auth/plugin.client'))
         // must be added after the admin module to use the admin app
-        addPlugin(resolve(runtimeDir, 'plugins/auth'))
+        addPlugin(resolve(runtimeDir, 'auth/plugin.server'))
 
-        addPlugin(resolve(runtimeDir, 'plugins/admin.server'))
+        addPlugin(resolve(runtimeDir, 'admin/plugin.server'))
 
         // plugin are added in reverse order
         addPluginTemplate({
@@ -139,7 +138,7 @@ const VueFire: NuxtModule<VueFireNuxtModuleOptions> =
             ssr: nuxt.options.ssr,
           },
         })
-        addPlugin(resolve(runtimeDir, 'plugins/app'))
+        addPlugin(resolve(runtimeDir, 'app/plugin'))
       })
     },
   })
@@ -149,7 +148,7 @@ export type {
   NuxtVueFireAppCheckOptions,
   NuxtVueFireAppCheckOptionsReCaptchaV3,
   NuxtVueFireAppCheckOptionsReCaptchaEnterprise,
-} from './app-check'
+} from './runtime/app-check'
 
 declare module '@nuxt/schema' {
   export interface AppConfig {
