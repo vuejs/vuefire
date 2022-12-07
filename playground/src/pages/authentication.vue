@@ -114,7 +114,7 @@ getRedirectResult(auth).then((creds) => {
 
     <p v-if="user">
       Name: {{ user.displayName }} <br />
-      <img v-if="user.photoURL" :src="user.photoURL" />
+      <img v-if="user.photoURL" :src="user.photoURL" referrerpolicy="no-referrer">
     </p>
 
     <hr />
