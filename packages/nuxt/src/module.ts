@@ -3,6 +3,7 @@ import { normalize } from 'node:path'
 import {
   addPlugin,
   addPluginTemplate,
+  addServerHandler,
   createResolver,
   defineNuxtModule,
 } from '@nuxt/kit'
@@ -84,6 +85,8 @@ const VueFire: NuxtModule<VueFireNuxtModuleOptions> =
       }
 
       const { resolve } = createResolver(import.meta.url)
+      // TODO: refactor folder structure to be domain based (e.g. auth, firestore, etc.)
+      const authDir = fileURLToPath(new URL('./auth', import.meta.url))
       const runtimeDir = fileURLToPath(new URL('./runtime', import.meta.url))
       const templatesDir = fileURLToPath(
         new URL('../templates', import.meta.url)
@@ -95,6 +98,8 @@ const VueFire: NuxtModule<VueFireNuxtModuleOptions> =
 
       // nuxt.options.build.transpile.push(templatesDir)
       nuxt.options.build.transpile.push(runtimeDir)
+      nuxt.options.build.transpile.push(authDir)
+
       // FIXME: this is a workaround because of the resolve issue with firebase
       // without this, we use different firebase packages within vuefire and nuxt-vuefire
       nuxt.options.build.transpile.push('vuefire')
@@ -112,10 +117,18 @@ const VueFire: NuxtModule<VueFireNuxtModuleOptions> =
         }
       }
 
-      nuxt.hook('modules:done', () => {
-        addPlugin(resolve(runtimeDir, 'plugins/admin.server'))
+      if (nuxt.options.ssr) {
+        addServerHandler({
+          route: '/api/_vuefire/auth',
+          handler: resolve(authDir, 'session'),
+        })
+      }
 
-        addPlugin(resolve(runtimeDir, 'plugins/auth.client'))
+      nuxt.hook('modules:done', () => {
+        // must be added after the admin module to use the admin app
+        addPlugin(resolve(runtimeDir, 'plugins/auth'))
+
+        addPlugin(resolve(runtimeDir, 'plugins/admin.server'))
 
         // plugin are added in reverse order
         addPluginTemplate({

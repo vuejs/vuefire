@@ -94,6 +94,7 @@ type _UserState =
 
 const initialUserMap = new WeakMap<FirebaseApp, _UserState>()
 
+// TODO: add firebase app name?
 // @internal
 function _getCurrentUserState() {
   const firebaseApp = useFirebaseApp()
