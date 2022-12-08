@@ -9,6 +9,8 @@ export {
   useList,
   useObject,
   useDatabase,
+  useDatabaseList,
+  useDatabaseObject,
   globalDatabaseOptions,
 } from './database'
 export type {

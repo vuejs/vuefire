@@ -7,7 +7,7 @@ import {
   update,
 } from 'firebase/database'
 import { ref } from 'vue'
-import { useDatabase, useList } from 'vuefire'
+import { useDatabase, useDatabaseList } from 'vuefire'
 
 interface Todo {
   created: Date
@@ -21,7 +21,7 @@ const todosRef = dbRef(db, 'todos')
 // const finishedTodos = query(todosRef, where('finished', '==', true))
 // const unfinishedTodos = query(todosRef, where('finished', '==', false))
 
-const todos = useList<Todo>(todosRef)
+const todos = useDatabaseList<Todo>(todosRef)
 
 const newTodoText = ref('')
 

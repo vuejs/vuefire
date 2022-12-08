@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 import {
   push,
   remove,
@@ -8,7 +7,7 @@ import {
   update,
 } from 'firebase/database'
 import { ref } from 'vue'
-import { useDatabase, useList } from 'vuefire'
+import { useDatabase, useDatabaseList } from 'vuefire'
 import { Todo } from '~/components/TodoItem.vue'
 
 const db = useDatabase()
@@ -17,7 +16,7 @@ const todosRef = dbRef(db, 'todos')
 // const finishedTodos = query(todosRef, where('finished', '==', true))
 // const unfinishedTodos = query(todosRef, where('finished', '==', false))
 
-const todos = useList<Todo>(todosRef)
+const todos = useDatabaseList<Todo>(todosRef)
 
 const newTodoText = ref('')
 
@@ -43,16 +42,13 @@ function removeTodo(id: string) {
 function toggleTodos() {
   // TODO:
 }
-
 </script>
 
 <template>
   <div>
-    <button @click="toggleTodos">
-      Toggle todos
-    </button> <br>
+    <button @click="toggleTodos">Toggle todos</button> <br />
     <form @submit.prevent="addTodo">
-      <input v-model.trim="newTodoText" placeholder="Add new todo">
+      <input v-model.trim="newTodoText" placeholder="Add new todo" />
       <button>Add Todo</button>
     </form>
     <ul>

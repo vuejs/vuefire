@@ -41,7 +41,7 @@ export const databaseUnbinds = new WeakMap<
 
 /**
  * Install this plugin if you want to add `$databaseBind` and `$databaseUnbind` functions. Note this plugin is only necessary if
- * you use the Options API. If you **exclusively use the Composition API** (e.g. `useObject()` and `useList()`), you
+ * you use the Options API. If you **exclusively use the Composition API** (e.g. `useDatabaseObject()` and `useDatabaseList()`), you
  * should not add it.
  *
  * @deprecated Use `VueFire` and `VueFireDatabaseOptionsAPI` with the `modules` option instead.
@@ -166,7 +166,7 @@ export function databasePlugin(
 
 /**
  * VueFire Database Module to be added to the `VueFire` Vue plugin options. If you **exclusively use the Composition
- * API** (e.g. `useObject()` and `useList()`), you should not add it.
+ * API** (e.g. `useDatabaseObject()` and `useDatabaseList()`), you should not add it.
  *
  * @example
  *

@@ -10,17 +10,17 @@ When using Firebase Database and Firestore, you can either retrieve the data onc
 
 ## Declarative realtime data
 
-Use the `useCollection()`, `useList()`, `useDocument()`, and `useObject()` composables to create a realtime data connected to Firestore and/or a Realtime Database. These functions take a reference to a Collection, Query, or Document a Vue `ref()`:
+Use the `useCollection()`, `useDatabaseList()`, `useDocument()`, and `useDatabaseObject()` composables to create a realtime data connected to Firestore and/or a Realtime Database. These functions take a reference to a Collection, Query, or Document a Vue `ref()`:
 
 <FirebaseExample>
 
 ```vue
 <script setup>
-import { useList } from 'vuefire'
+import { useDatabaseList } from 'vuefire'
 import { ref as dbRef } from 'firebase/database'
 
-const todos = useList(dbRef(db, 'todos'))
-const someTodo = useObject(dbRef(db, 'todos', 'someId'))
+const todos = useDatabaseList(dbRef(db, 'todos'))
+const someTodo = useDatabaseObject(dbRef(db, 'todos', 'someId'))
 </script>
 
 <template>
@@ -54,7 +54,7 @@ const someTodo = useDocument(doc(collection(db, 'todos'), 'someId'))
 
 These composables all return a Vue `Ref` of the data. Note **this is a readonly data**, you shouldn't mutate it directly, [use the Firebase SDK](./writing-data.md) instead. It will be automatically updated when the data changes anywhere.
 
-Sometimes, you need to change the document you are observing, let's say you have a list of contacts and that you display one based on the URL, you handle this by passing a reactive variable of the data source to the `useDocument()`, `useObject()`, etc composables:
+Sometimes, you need to change the document you are observing, let's say you have a list of contacts and that you display one based on the URL, you handle this by passing a reactive variable of the data source to the `useDocument()`, `useDatabaseObject()`, etc composables:
 
 ```ts
 const route = useRoute()
@@ -259,7 +259,7 @@ Read more about [writing References to the Database](./writing-data.md#reference
 
 ### Primitive values (Database only)
 
-In Realtime Database, you can _push_ primitive values like strings, numbers, booleans, etc. When calling `useList()` on a database ref containing primitive values, **you will get a slightly different value**. Instead of an array of values, you will get an array of objects **with a `$value` and an `id` property**. This is because VueFire needs to keep track of the key of each value in order to add, update, or remove them.
+In Realtime Database, you can _push_ primitive values like strings, numbers, booleans, etc. When calling `useDatabaseList()` on a database ref containing primitive values, **you will get a slightly different value**. Instead of an array of values, you will get an array of objects **with a `$value` and an `id` property**. This is because VueFire needs to keep track of the key of each value in order to add, update, or remove them.
 
 ```js
 import { ref as databaseRef, push } from 'firebase/database'
@@ -270,7 +270,7 @@ push(numbersRef, 24)
 push(numbersRef, 7)
 push(numbersRef, 10)
 
-const numberList = useList(numbersRef)
+const numberList = useDatabaseList(numbersRef)
 // [{ $value: 24, id: '...' }, { $value: 7, id: '...' }, { $value: 10, id: '...' }]
 // note the order might be different
 ```
@@ -282,8 +282,8 @@ Usually, the different composables accept a generic to enforce the type of the d
 <FirebaseExample>
 
 ```ts
-const contacts = useList<Contact>(dbRef(db, 'contacts'))
-const settings = useObject<Settings>(dbRef(db, 'settings/someId'))
+const contacts = useDatabaseList<Contact>(dbRef(db, 'contacts'))
+const settings = useDatabaseObject<Settings>(dbRef(db, 'settings/someId'))
 ```
 
 ```ts

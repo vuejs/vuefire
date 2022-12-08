@@ -89,16 +89,16 @@ VueFire exposes a few [composables](https://vuejs.org/guide/reusability/composab
 
 #### Collections/Lists
 
-You can retrieve a reactive collection (Firestore) or list (Realtime Database) with the `useCollection()`/`useList()` composable:
+You can retrieve a reactive collection (Firestore) or list (Realtime Database) with the `useCollection()`/`useDatabaseList()` composable:
 
 <FirebaseExample>
 
 ```vue
 <script setup>
-import { useList } from 'vuefire'
+import { useDatabaseList } from 'vuefire'
 import { ref as dbRef } from 'firebase/database'
 
-const todos = useList(dbRef(db, 'todos'))
+const todos = useDatabaseList(dbRef(db, 'todos'))
 </script>
 
 <template>
@@ -138,16 +138,16 @@ If you want to change the data, you should use the Firebase API (e.g. `addDoc()`
 
 #### Documents/Objects
 
-Similarly, you can retrieve a reactive document (Firestore) or object (Realtime Database) with the `useDocument()`/`useObject()` composable:
+Similarly, you can retrieve a reactive document (Firestore) or object (Realtime Database) with the `useDocument()`/`useDatabaseObject()` composable:
 
 <FirebaseExample>
 
 ```vue
 <script setup>
-import { useObject } from 'vuefire'
+import { useDatabaseObject } from 'vuefire'
 import { ref as dbRef } from 'firebase/database'
 
-const settings = useObject(dbRef(db, 'settings', 'some_id'))
+const settings = useDatabaseObject(dbRef(db, 'settings', 'some_id'))
 </script>
 ```
 

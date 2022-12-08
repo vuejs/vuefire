@@ -24,7 +24,7 @@ export type UseListOptions = UseDatabaseRefOptions
  * @param reference - Reference or query to the database
  * @param options - optional options
  */
-export function useList<T = unknown>(
+export function useDatabaseList<T = unknown>(
   reference: _MaybeRef<DatabaseReference | Query>,
   options?: UseListOptions
 ): _RefDatabase<VueDatabaseQueryData<T>> {
@@ -34,6 +34,11 @@ export function useList<T = unknown>(
     ...options,
   }) as _RefDatabase<VueDatabaseQueryData<T>>
 }
+
+/**
+ * @deprecated use `useDatabaseList()` instead
+ */
+export const useList = useDatabaseList
 
 export type UseObjectOptions = UseDatabaseRefOptions
 
@@ -45,7 +50,7 @@ export type UseObjectOptions = UseDatabaseRefOptions
  * @param reference - Reference or query to the database
  * @param options - optional options
  */
-export function useObject<T = unknown>(
+export function useDatabaseObject<T = unknown>(
   reference: _MaybeRef<DatabaseReference>,
   options?: UseObjectOptions
 ): _RefDatabase<VueDatabaseDocumentData<T> | undefined> {
@@ -55,6 +60,11 @@ export function useObject<T = unknown>(
     ...options,
   }) as _RefDatabase<VueDatabaseDocumentData<T>>
 }
+
+/**
+ * @deprecated use `useDatabaseObject()` instead
+ */
+export const useObject = useDatabaseObject
 
 /**
  * Retrieves the Database instance.

@@ -48,7 +48,10 @@ export function _useDatabaseRef(
   // dev only warning
   if (process.env.NODE_ENV !== 'production') {
     // is the target a ref that has already been passed to useDocument() and therefore can't be extended anymore
-    if (options.target && checkWrittenTarget(data, 'useObject()/useList()')) {
+    if (
+      options.target &&
+      checkWrittenTarget(data, 'useDatabaseObject()/useDatabaseList()')
+    ) {
       return data as _RefDatabase<unknown>
     }
   }

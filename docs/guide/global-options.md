@@ -1,6 +1,6 @@
 # Firestore and Database global Options
 
-If you find yourself passing around the same options to `useDocument()`, `useObject()`, ..., you can use the global options to avoid repeating yourself:
+If you find yourself passing around the same options to `useDocument()`, `useDatabaseObject()`, ..., you can use the global options to avoid repeating yourself:
 
 <FirebaseExample>
 
@@ -18,7 +18,7 @@ globalFirestoreOptions.converter = ...
 
 </FirebaseExample>
 
-Changing these options will affect all calls to `useDocument()`, `useObject()`, ... in your application **and the Options API usage** as well (`$firestoreBind()`, `$rtdbBind()`).
+Changing these options will affect all calls to `useDocument()`, `useDatabaseObject()`, ... in your application **and the Options API usage** as well (`$firestoreBind()`, `$rtdbBind()`).
 
 In both scenarios, **you need to make sure the returned objects contain their original `id`** so other VueFire functionalities can work correctly. The easies way to do this is by reusing the default `serialize`/`converter`:
 

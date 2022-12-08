@@ -12,11 +12,11 @@ When doing SSR (Server Side Rendering) you want to wait for the data on the serv
 ```vue
 <script setup>
 import { ref as dbRef } from 'firebase/database'
-import { useObject, useDatabase } from 'vuefire'
+import { useDatabaseObject, useDatabase } from 'vuefire'
 
 const db = useDatabase()
 // automatically waits for the data to be loaded on the server
-const quizResults = useObject(dbRef(db, 'quizzes/' + quizId))
+const quizResults = useDatabaseObject(dbRef(db, 'quizzes/' + quizId))
 </script>
 ```
 
@@ -89,7 +89,7 @@ Web Security is a broad topic that we cannot cover here. We recommend you to rea
 
 ## Usage outside of components
 
-If you are using VueFire composables outside of components, e.g. using `useDocument()` within a [Pinia](https://pinia.vuejs.org) store, you need to manually wait for the data to be loaded on the server as VueFire cannot call `onServerPrefetch()` for you. This means you also need to [use `<Suspense>`](https://vuejs.org/guide/built-ins/suspense.html#suspense) to be able to use `await` within `setup()`. VueFire exposes a function to retrieve all pending promises created by the different composables (`useDocument()`, `useObject()`, etc). Await it inside of **any component that uses the data**:
+If you are using VueFire composables outside of components, e.g. using `useDocument()` within a [Pinia](https://pinia.vuejs.org) store, you need to manually wait for the data to be loaded on the server as VueFire cannot call `onServerPrefetch()` for you. This means you also need to [use `<Suspense>`](https://vuejs.org/guide/built-ins/suspense.html#suspense) to be able to use `await` within `setup()`. VueFire exposes a function to retrieve all pending promises created by the different composables (`useDocument()`, `useDatabaseObject()`, etc). Await it inside of **any component that uses the data**:
 
 ```vue
 <script setup>
@@ -110,7 +110,7 @@ You can exclude data from hydration by passing `false` to the `ssrKey` option:
 
 ```ts
 useDocument(..., { ssrKey: false })
-useList(..., { ssrKey: false })
+useDatabaseList(..., { ssrKey: false })
 // etc
 ```
 

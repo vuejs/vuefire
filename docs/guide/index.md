@@ -144,7 +144,7 @@ Now let's look at the equivalent code with vuefire:
 import { initializeApp } from 'firebase/app'
 import { getDatabase, ref as dbRef } from 'firebase/firebase'
 import { createApp } from 'vue'
-import { useList } from 'vuefire'
+import { useDatabaseList } from 'vuefire'
 
 const firebase = initializeApp({ databaseURL: 'https://MY-DATABASE.firebaseio.com' })
 const db = getDatabase(firebase)
@@ -153,7 +153,7 @@ createApp({
   // setup the reactive todos property
   setup() {
     const todosRef = dbRef(db, 'todos')
-    const todos = useList(todosRef)
+    const todos = useDatabaseList(todosRef)
 
     return { todos }
   },

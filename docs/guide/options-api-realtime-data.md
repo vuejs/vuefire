@@ -28,7 +28,7 @@ app.use(VueFire, {
 })
 ```
 
-You can pass global options to the modules but note **these options are limited to the Options API usage**.They do not affect composition API calls such as `useDocument()` and `useObject()`. [Check the global options](./global-options.md) to see how you can override those.
+You can pass global options to the modules but note **these options are limited to the Options API usage**.They do not affect composition API calls such as `useDocument()` and `useDatabaseObject()`. [Check the global options](./global-options.md) to see how you can override those.
 
 ```ts
 app.use(VueFire, {
