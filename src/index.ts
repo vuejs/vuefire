@@ -23,7 +23,9 @@ export type {
   VueDatabaseQueryData,
 } from './database/utils'
 
-// Firestore
+/**
+ * Firestore
+ */
 export { useCollection, useDocument, useFirestore } from './firestore'
 export { firestoreOptionsDefaults as globalFirestoreOptions } from './firestore/subscribe'
 export { firestoreDefaultConverter } from './firestore/utils'
@@ -35,7 +37,9 @@ export type {
   VueFirestoreQueryData,
 } from './firestore'
 
-// Database options API
+/**
+ * Database Options API
+ */
 export {
   databasePlugin,
   // To ease migration
@@ -48,7 +52,9 @@ export type {
   FirebaseOption,
 } from './database/optionsApi'
 
-// Firestore options API
+/**
+ * Firestore Options API
+ */
 export {
   firestorePlugin,
   VueFireFirestoreOptionsAPI,
@@ -59,10 +65,14 @@ export type {
   FirestoreOption,
 } from './firestore/optionsApi'
 
-// app
+/**
+ * App
+ */
 export { useFirebaseApp } from './app'
 
-// Auth
+/**
+ * Auth
+ */
 export {
   useCurrentUser,
   VueFireAuth,
@@ -71,15 +81,21 @@ export {
   updateCurrentUserProfile,
 } from './auth'
 
-// SSR
+/**
+ * SSR
+ */
 export { usePendingPromises } from './ssr/plugin'
 export { useSSRInitialState } from './ssr/initialState'
 
-// App Check
+/**
+ * App Check
+ */
 export { VueFireAppCheck, useAppCheckToken, useAppCheck } from './app-check'
 export type { VueFireAppCheckOptions } from './app-check'
 
-// Storage
+/**
+ * Storage
+ */
 export {
   useStorage,
   useStorageMetadata,
