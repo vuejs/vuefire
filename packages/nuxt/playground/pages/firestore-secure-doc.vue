@@ -1,7 +1,10 @@
 <script setup lang="ts">
-import { doc, getDoc } from 'firebase/firestore'
-import { useCurrentUser, useDocument, useFirestore, usePendingPromises } from 'vuefire'
-import { ref } from 'vue'
+import { doc } from 'firebase/firestore'
+import { useCurrentUser, useFirestore, usePendingPromises } from 'vuefire'
+
+definePageMeta({
+  middleware: ['vuefire-auth']
+})
 
 const db = useFirestore()
 const user = useCurrentUser()

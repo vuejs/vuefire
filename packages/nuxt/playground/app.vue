@@ -19,6 +19,11 @@ const routes = router
   <div>
     <nav class="nav-links">
       <ul>
+        <li>
+          <NuxtLink to="/">
+            Home
+          </NuxtLink>
+        </li>
         <li v-for="route in routes">
           <NuxtLink :to="route.to">
             {{ route.label }}

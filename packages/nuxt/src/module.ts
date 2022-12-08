@@ -1,6 +1,7 @@
 import { fileURLToPath } from 'node:url'
 import { normalize } from 'node:path'
 import {
+  addImports,
   addPlugin,
   addPluginTemplate,
   addServerHandler,
@@ -127,42 +128,70 @@ const VueFire: NuxtModule<VueFireNuxtModuleOptions> =
         })
       }
 
-      // this allows us to the order of the plugins
-      nuxt.hook('modules:done', () => {
-        if (options.auth) {
-          addPlugin(resolve(runtimeDir, 'auth/plugin.client'))
-          // must be added after the admin module to use the admin app
-          addPlugin(resolve(runtimeDir, 'auth/plugin.server'))
+      // NOTE: the order of the plugins is reversed, so we end by adding the app plugin which is used by all other
+      // plugins
+
+      if (options.auth) {
+        addPlugin(resolve(runtimeDir, 'auth/plugin.client'))
+        // must be added after the admin module to use the admin app
+        addPlugin(resolve(runtimeDir, 'auth/plugin.server'))
+
+        addVueFireImports([
+          // auth
+          { from: 'vuefire', name: 'useFirebaseAuth' },
+          { from: 'vuefire', name: 'useCurrentUser' },
+        ])
+      }
+
+      if (options.admin) {
+        if (!nuxt.options.ssr) {
+          console.warn(
+            '[VueFire]: The "admin" option is only used during SSR. You should reenable ssr to use it.'
+          )
         }
+        addPlugin(resolve(runtimeDir, 'admin/plugin.server'))
+      }
 
-        if (options.admin) {
-          if (!nuxt.options.ssr) {
-            console.warn(
-              '[VueFire]: The "admin" option is only used during SSR. You should reenable ssr to use it.'
-            )
-          }
-          addPlugin(resolve(runtimeDir, 'admin/plugin.server'))
-        }
+      if (options.appCheck) {
+        addPlugin(resolve(runtimeDir, 'app-check/plugin'))
+      }
 
-        if (options.appCheck) {
-          addPlugin(resolve(runtimeDir, 'app-check/plugin'))
-        }
+      // plugin are added in reverse order
+      addPluginTemplate({
+        src: normalize(resolve(templatesDir, 'plugin.ejs')),
 
-        // plugin are added in reverse order
-        addPluginTemplate({
-          src: normalize(resolve(templatesDir, 'plugin.ejs')),
-
-          options: {
-            ...options,
-            ssr: nuxt.options.ssr,
-          },
-        })
-
-        // adds the firebase app to each application
-        addPlugin(resolve(runtimeDir, 'app/plugin'))
+        options: {
+          ...options,
+          ssr: nuxt.options.ssr,
+        },
       })
+
+      // adds the firebase app to each application
+      addPlugin(resolve(runtimeDir, 'app/plugin'))
+
+      addVueFireImports([
+        // firestore
+        { from: 'vuefire', name: 'useDocument' },
+        { from: 'vuefire', name: 'useCollection' },
+        { from: 'vuefire', name: 'useFirestore' },
+
+        // database
+        { from: 'vuefire', name: 'useDatabase' },
+        { from: 'vuefire', name: 'useDatabaseList' },
+        { from: 'vuefire', name: 'useDatabaseObject' },
+      ])
     },
   })
+
+type VueFireModuleExportKeys = keyof Awaited<typeof import('vuefire')>
+function addVueFireImports(
+  imports: Array<{
+    from: 'vuefire'
+    name: VueFireModuleExportKeys
+  }>
+) {
+  return addImports(imports)
+}
 
 export default VueFire
 export type {
