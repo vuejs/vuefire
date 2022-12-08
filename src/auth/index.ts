@@ -28,33 +28,23 @@ export {
  * })
  * ```
  */
-export function VueFireAuth(_app?: never) {
-  //                        ^
-  // app: never to prevent the user from just passing `VueFireAuth` without calling the function
-
-  // TODO: Hopefully we should be able to remove this with the next Vue release
-  if (process.env.NODE_ENV !== 'production') {
-    if (_app != null) {
-      console.warn(`Did you forget to call the VueFireAuth function? It should look like
-modules: [VueFireAuth()]`)
-    }
-  }
-
+export function VueFireAuth(initialUser?: _Nullable<User>) {
   return (firebaseApp: FirebaseApp, app: App) => {
     const user = getGlobalScope(firebaseApp, app).run(() =>
-      ref<_Nullable<User>>()
+      ref<_Nullable<User>>(initialUser)
     )!
+    // this should only be on client
     authUserMap.set(firebaseApp, user)
     setupOnAuthStateChanged(user, firebaseApp)
   }
 }
 
 /**
- * Retrieves the Firebase Auth instance.
+ * Retrieves the Firebase Auth instance. Returns `null` on the server.
  *
  * @param name - name of the application
  * @returns the Auth instance
  */
 export function useFirebaseAuth(name?: string) {
-  return getAuth(useFirebaseApp(name))
+  return typeof window === 'undefined' ? null : getAuth(useFirebaseApp(name))
 }

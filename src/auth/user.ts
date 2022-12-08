@@ -8,7 +8,7 @@ import {
   reauthenticateWithCredential,
   AuthCredential,
 } from 'firebase/auth'
-import { inject, InjectionKey, Ref } from 'vue-demi'
+import type { Ref } from 'vue-demi'
 import { useFirebaseApp } from '../app'
 import type { _MaybeRef, _Nullable } from '../shared'
 
@@ -19,8 +19,8 @@ import type { _MaybeRef, _Nullable } from '../shared'
 export const authUserMap = new WeakMap<FirebaseApp, Ref<_Nullable<User>>>()
 
 /**
- * Returns a shallowRef of the currently authenticated user in the firebase app. The ref is null if no user is
- * authenticated or when the user logs out. The ref is undefined when the user is not yet loaded.
+ * Returns a reactive variable of the currently authenticated user in the firebase app. The ref is null if no user is
+ * authenticated or when the user logs out. The ref is undefined when the user is not yet loaded. Note th
  * @param name - name of the application
  */
 export function useCurrentUser(name?: string) {

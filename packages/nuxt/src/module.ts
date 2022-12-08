@@ -9,8 +9,12 @@ import {
 } from '@nuxt/kit'
 import type { NuxtModule } from '@nuxt/schema'
 // cannot import from firebase-admin because the build fails, maybe a nuxt bug?
-import type { FirebaseOptions } from '@firebase/app-types'
-import type { AppOptions, ServiceAccount } from 'firebase-admin'
+import type { FirebaseApp, FirebaseOptions } from '@firebase/app-types'
+import type {
+  AppOptions,
+  ServiceAccount,
+  App as FirebaseAdminApp,
+} from 'firebase-admin/app'
 import type { NuxtVueFireAppCheckOptions } from './runtime/app-check'
 
 export interface VueFireNuxtModuleOptions {
@@ -170,5 +174,18 @@ declare module '@nuxt/schema' {
       config: Omit<AppOptions, 'credential'>
       serviceAccount: string | ServiceAccount
     }
+  }
+}
+
+declare module '#app' {
+  interface NuxtApp {
+    $firebaseApp: FirebaseApp
+    $adminApp: FirebaseAdminApp
+  }
+}
+declare module '@vue/runtime-core' {
+  interface ComponentCustomProperties {
+    $firebaseApp: FirebaseApp
+    $adminApp: FirebaseAdminApp
   }
 }

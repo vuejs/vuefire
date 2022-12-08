@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-
 import {
   createUserWithEmailAndPassword,
   EmailAuthProvider,
@@ -23,7 +22,9 @@ import {
 } from 'vuefire'
 import { googleAuthProvider } from '~/helpers/auth'
 
-const auth = useFirebaseAuth()
+// auth is null on the server but it's fine as long as we don't use it. So we force the type to be non-null here because
+// auth is only used within methods that are only called on the client
+const auth = useFirebaseAuth()!
 const user = useCurrentUser()
 let credential: AuthCredential | null = null
 
@@ -68,11 +69,13 @@ function signinRedirect() {
   signInWithRedirect(auth, googleAuthProvider)
 }
 
-getRedirectResult(auth).then((creds) => {
-  console.log('got creds', creds)
-  if (creds) {
-    // credential = creds.user.
-  }
+onMounted(() => {
+  getRedirectResult(auth).then((creds) => {
+    console.log('got creds', creds)
+    if (creds) {
+      // credential = creds.user.
+    }
+  })
 })
 </script>
 
@@ -125,12 +128,19 @@ getRedirectResult(auth).then((creds) => {
 
     <p v-if="user">
       Name: {{ user.displayName }} <br>
-      <img v-if="user.photoURL" :src="user.photoURL" referrerpolicy="no-referrer">
+      <img
+        v-if="user.photoURL"
+        :src="user.photoURL"
+        referrerpolicy="no-referrer"
+      >
     </p>
 
     <hr>
 
-    <p>Current User:</p>
-    <pre>{{ user }}</pre>
+    <!-- this is for debug purposes only, displaying it on the server would create a hydration mismatch -->
+    <ClientOnly>
+      <p>Current User:</p>
+      <pre>{{ user }}</pre>
+    </ClientOnly>
   </main>
 </template>
