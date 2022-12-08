@@ -2,7 +2,7 @@ import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import {
   UseDatabaseRefOptions,
-  useList,
+  useDatabaseList,
   VueDatabaseQueryData,
   _RefDatabase,
 } from '../../src'
@@ -34,7 +34,7 @@ describe('Database lists', () => {
     const wrapper = mount({
       template: 'no',
       setup() {
-        data = useList(ref, options)
+        data = useDatabaseList(ref, options)
         const { data: list, pending, error, promise, stop } = data
         return { list, pending, error, promise, stop }
       },
@@ -99,7 +99,7 @@ describe('Database lists', () => {
 
     expect(data).toBe(target)
 
-    expect(() => useList(listRef, { target })).not.toThrow()
+    expect(() => useDatabaseList(listRef, { target })).not.toThrow()
     expect(/FAIL/).toHaveBeenWarned()
   })
 
@@ -381,12 +381,14 @@ describe('Database lists', () => {
   tds(() => {
     const db = database
     const databaseRef = _databaseRef
-    expectType<Ref<VueDatabaseQueryData>>(useList(databaseRef(db, 'todos')))
+    expectType<Ref<VueDatabaseQueryData>>(
+      useDatabaseList(databaseRef(db, 'todos'))
+    )
     expectType<string | undefined>(
-      useList(databaseRef(db, 'todos')).value?.[0]?.id
+      useDatabaseList(databaseRef(db, 'todos')).value?.[0]?.id
     )
     expectType<Ref<VueDatabaseQueryData<number>>>(
-      useList<number>(databaseRef(db, 'todos'))
+      useDatabaseList<number>(databaseRef(db, 'todos'))
     )
 
     // TODO: tests for id field

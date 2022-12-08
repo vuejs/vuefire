@@ -2,7 +2,7 @@ import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import {
   UseDatabaseRefOptions,
-  useObject,
+  useDatabaseObject,
   VueDatabaseDocumentData,
   _RefDatabase,
 } from '../../src'
@@ -28,7 +28,7 @@ describe('Database objects', () => {
     const wrapper = mount({
       template: 'no',
       setup() {
-        data = useObject(ref, options)
+        data = useDatabaseObject(ref, options)
         const { data: item, pending, error, promise, stop } = data
         return { item, pending, error, promise, stop }
       },
@@ -63,7 +63,7 @@ describe('Database objects', () => {
 
     expect(data).toBe(target)
 
-    expect(() => useObject(itemRef, { target })).not.toThrow()
+    expect(() => useDatabaseObject(itemRef, { target })).not.toThrow()
     expect(/FAIL/).toHaveBeenWarned()
   })
 
@@ -226,13 +226,15 @@ describe('Database objects', () => {
   tds(() => {
     const db = database
     const databaseRef = _databaseRef
-    expectType<Ref<unknown>>(useObject(databaseRef(db, 'todo')))
+    expectType<Ref<unknown>>(useDatabaseObject(databaseRef(db, 'todo')))
     expectType<Ref<{ name: string } | null | undefined>>(
-      useObject<{ name: string }>(databaseRef(db, 'todo'))
+      useDatabaseObject<{ name: string }>(databaseRef(db, 'todo'))
     )
-    expectType<undefined | string>(useObject(databaseRef(db, 'todo')).value?.id)
+    expectType<undefined | string>(
+      useDatabaseObject(databaseRef(db, 'todo')).value?.id
+    )
     expectType<Ref<number | null | undefined>>(
-      useObject<number>(databaseRef(db, 'todo'))
+      useDatabaseObject<number>(databaseRef(db, 'todo'))
     )
   })
 })

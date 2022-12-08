@@ -4,7 +4,7 @@
 import { beforeEach, describe, it, expect } from 'vitest'
 import { firebaseApp, setupDatabaseRefs } from '../utils'
 import { ShallowUnwrapRef } from 'vue'
-import { useObject } from '../../src'
+import { useDatabaseObject } from '../../src'
 import { createSSRApp } from 'vue'
 import { renderToString, ssrInterpolate } from '@vue/server-renderer'
 import { clearPendingPromises } from '../../src/ssr/plugin'
@@ -37,7 +37,7 @@ describe('Database SSR', async () => {
     await set(docRef, { name: 'a' })
     const { app } = createMyApp(
       async () => {
-        const { data, promise } = useObject<{ name: string }>(docRef)
+        const { data, promise } = useDatabaseObject<{ name: string }>(docRef)
         await promise.value
         return { data }
       },
@@ -52,7 +52,7 @@ describe('Database SSR', async () => {
     await set(docRef, { name: 'hello' })
     const { app } = createMyApp(
       () => {
-        const data = useObject<{ name: string }>(docRef)
+        const data = useDatabaseObject<{ name: string }>(docRef)
         return { data }
       },
       ({ data }) => data!.name
