@@ -3,7 +3,7 @@ import { getAuth, User } from 'firebase/auth'
 import { App, ref, shallowRef } from 'vue-demi'
 import { useFirebaseApp } from '../app'
 import { getGlobalScope } from '../globals'
-import { _Nullable } from '../shared'
+import { isClient, _Nullable } from '../shared'
 import { authUserMap, setupOnAuthStateChanged } from './user'
 
 export {
@@ -47,5 +47,5 @@ export function VueFireAuth(initialUser?: _Nullable<User>) {
  * @returns the Auth instance
  */
 export function useFirebaseAuth(name?: string) {
-  return typeof window === 'undefined' ? null : getAuth(useFirebaseApp(name))
+  return isClient ? getAuth(useFirebaseApp(name)) : null
 }

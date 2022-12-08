@@ -67,6 +67,8 @@ export function VueFireAppCheck(options: VueFireAppCheckOptions) {
   }
 }
 
+// TODO: split the function above into two, one that provides the token and is used in both server and client and another one that is only used on the client
+
 /**
  * To retrieve the current app check
  * @internal
