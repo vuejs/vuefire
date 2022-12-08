@@ -15,6 +15,7 @@ import type {
   ServiceAccount,
   App as FirebaseAdminApp,
 } from 'firebase-admin/app'
+import { markRaw } from 'vue'
 import type { NuxtVueFireAppCheckOptions } from './runtime/app-check'
 
 export interface VueFireNuxtModuleOptions {
@@ -94,9 +95,10 @@ const VueFire: NuxtModule<VueFireNuxtModuleOptions> =
         new URL('../templates', import.meta.url)
       )
 
+      // TODO: I don't think the appConfig is the right place to store these as it makes things reactive
       // Let plugins and the user access the firebase config within the app
-      nuxt.options.appConfig.firebaseConfig = options.config
-      nuxt.options.appConfig.vuefireOptions = options
+      nuxt.options.appConfig.firebaseConfig = markRaw(options.config)
+      nuxt.options.appConfig.vuefireOptions = markRaw(options)
 
       // nuxt.options.build.transpile.push(templatesDir)
       nuxt.options.build.transpile.push(runtimeDir)
@@ -114,7 +116,7 @@ const VueFire: NuxtModule<VueFireNuxtModuleOptions> =
               '[VueFire]: Missing firebase "admin" config. Provide an "admin" option to the VueFire module options. This is necessary to use the auth or app-check module.'
             )
           }
-          nuxt.options.appConfig.firebaseAdmin = options.admin
+          nuxt.options.appConfig.firebaseAdmin = markRaw(options.admin)
         }
       }
 
@@ -127,11 +129,24 @@ const VueFire: NuxtModule<VueFireNuxtModuleOptions> =
 
       // this allows us to the order of the plugins
       nuxt.hook('modules:done', () => {
-        addPlugin(resolve(runtimeDir, 'auth/plugin.client'))
-        // must be added after the admin module to use the admin app
-        addPlugin(resolve(runtimeDir, 'auth/plugin.server'))
+        if (options.auth) {
+          addPlugin(resolve(runtimeDir, 'auth/plugin.client'))
+          // must be added after the admin module to use the admin app
+          addPlugin(resolve(runtimeDir, 'auth/plugin.server'))
+        }
 
-        addPlugin(resolve(runtimeDir, 'admin/plugin.server'))
+        if (options.admin) {
+          if (!nuxt.options.ssr) {
+            console.warn(
+              '[VueFire]: The "admin" option is only used during SSR. You should reenable ssr to use it.'
+            )
+          }
+          addPlugin(resolve(runtimeDir, 'admin/plugin.server'))
+        }
+
+        if (options.appCheck) {
+          addPlugin(resolve(runtimeDir, 'app-check/plugin'))
+        }
 
         // plugin are added in reverse order
         addPluginTemplate({
@@ -142,6 +157,8 @@ const VueFire: NuxtModule<VueFireNuxtModuleOptions> =
             ssr: nuxt.options.ssr,
           },
         })
+
+        // adds the firebase app to each application
         addPlugin(resolve(runtimeDir, 'app/plugin'))
       })
     },
@@ -158,6 +175,7 @@ declare module '@nuxt/schema' {
   export interface AppConfig {
     /**
      * Firebase config to initialize the app.
+     * @internal
      */
     firebaseConfig: FirebaseOptions
 
@@ -169,6 +187,7 @@ declare module '@nuxt/schema' {
 
     /**
      * Firebase Admin options passed to VueFire module. Only available on the server.
+     * @internal
      */
     firebaseAdmin?: {
       config: Omit<AppOptions, 'credential'>

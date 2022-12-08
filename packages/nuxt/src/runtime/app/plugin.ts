@@ -4,7 +4,6 @@ import { defineNuxtPlugin, useAppConfig } from '#app'
 /**
  * Initializes the app and provides it to others.
  */
-
 export default defineNuxtPlugin(() => {
   const appConfig = useAppConfig()
 
