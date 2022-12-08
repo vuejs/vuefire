@@ -5,8 +5,9 @@ import { isVue3 } from 'vue-demi'
 import { useFirebaseApp } from '../app'
 import { getGlobalScope } from '../globals'
 import { ResetOption, UnbindWithReset } from '../shared'
-import { internalUnbind, _useDatabaseRef } from './index'
-import { _DatabaseRefOptions } from './subscribe'
+import { internalUnbind } from './unbind'
+import { _DatabaseRefOptions } from './bind'
+import { _useDatabaseRef } from './useDatabaseRef'
 
 /**
  * Options for the Firebase Database Plugin that enables the Options API such as `$databaseBind` and `$databaseUnbind`.

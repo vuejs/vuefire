@@ -37,7 +37,7 @@ export interface _DatabaseRefOptions extends _DataSourceOptions {
 }
 
 /**
- * Global defaults type override options for all database bindings.
+ * Global defaults type override options for all database bindings. This type remove make some optional values required.
  * @internal
  */
 interface _DatabaseRefOptionsWithDefaults extends _DatabaseRefOptions {
@@ -59,13 +59,17 @@ const DEFAULT_OPTIONS: _DatabaseRefOptionsWithDefaults = {
   wait: true,
 }
 
-export { DEFAULT_OPTIONS as databaseOptionsDefaults }
+export { DEFAULT_OPTIONS as globalDatabaseOptions }
 
 /**
- * Binds a Firebase Database reference as an object
- * @param param0
- * @param options
- * @returns a function to be called to stop listening for changes
+ * Binds a Firebase database reference or query as an object.
+ *
+ * @param target - the target to bind to
+ * @param document - the document to bind to
+ * @param resolve - resolve function
+ * @param reject - reject function
+ * @param extraOptions - ref binding options
+ * @returns
  */
 export function bindAsObject(
   target: Ref<unknown>,

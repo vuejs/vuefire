@@ -2,9 +2,15 @@ import type { FirebaseApp } from 'firebase/app'
 import type { App } from 'vue-demi'
 import { _FirebaseAppInjectionKey } from './app'
 
-// Database
-export { useList, useObject, useDatabase } from './database'
-export { databaseOptionsDefaults as globalDatabaseOptions } from './database/subscribe'
+/**
+ * Database
+ */
+export {
+  useList,
+  useObject,
+  useDatabase,
+  globalDatabaseOptions,
+} from './database'
 export type {
   UseListOptions,
   UseObjectOptions,
