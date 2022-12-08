@@ -40,7 +40,8 @@ export function VueFireAuth(initialUser?: _Nullable<User>) {
 }
 
 /**
- * Retrieves the Firebase Auth instance. Returns `null` on the server.
+ * Retrieves the Firebase Auth instance. **Returns `null` on the server**. When using this function on the client in
+ * TypeScript, you can force the type with `useFirebaseAuth()!`.
  *
  * @param name - name of the application
  * @returns the Auth instance
