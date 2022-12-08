@@ -94,10 +94,12 @@ type _UserState =
 
 const initialUserMap = new WeakMap<FirebaseApp, _UserState>()
 
-// TODO: add firebase app name?
-// @internal
-function _getCurrentUserState() {
-  const firebaseApp = useFirebaseApp()
+/**
+ * @internal
+ * @param name - name of the application
+ */
+function _getCurrentUserState(name?: string) {
+  const firebaseApp = useFirebaseApp(name)
   if (!initialUserMap.has(firebaseApp)) {
     let resolve!: (resolvedUser: _Nullable<User>) => void
     const promise = new Promise<_Nullable<User>>((_resolve) => {
@@ -122,9 +124,10 @@ function _getCurrentUserState() {
 /**
  * Returns a promise that resolves the current user once the user is loaded. Must be called after the firebase app is
  * initialized.
+ * @param name - name of the firebase application
  */
-export function getCurrentUser(): Promise<_Nullable<User>> {
-  const userOrPromise = _getCurrentUserState()
+export function getCurrentUser(name?: string): Promise<_Nullable<User>> {
+  const userOrPromise = _getCurrentUserState(name)
 
   return Array.isArray(userOrPromise)
     ? userOrPromise[0]
