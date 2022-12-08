@@ -170,6 +170,9 @@ const VueFire: NuxtModule<VueFireNuxtModuleOptions> =
       addPlugin(resolve(runtimeDir, 'app/plugin'))
 
       addVueFireImports([
+        // app
+        { from: 'vuefire', name: 'useFirebaseApp' },
+
         // firestore
         { from: 'vuefire', name: 'useDocument' },
         { from: 'vuefire', name: 'useCollection' },
