@@ -20,23 +20,48 @@ VueFire requires Firebase JS SDK >= 9 but **is compatible with Vue 2 and Vue 3**
 
 ## Usage
 
-VueFire expects you to use the existing APIs from Firebase as much as possible. It doesn't expose any configs to initialize your app or get the database/firestore instances. You should follow the official Firebase documentation for that. We do have [some recommendations](#TODO) for a Vue project and [a Nuxt module](./nuxt.md) to help you get started.
+VueFire expects you to use the existing APIs from Firebase as much as possible. It doesn't expose any configs to initialize your app or get the database/firestore instances. You should follow the official Firebase documentation for that. We do have [a Nuxt module](./nuxt.md) that makes it even easier to use VueFire with Nuxt.
 
 Most of the time, you should gather collection references in one of your files and export them but **to keep examples short, we will always create the database references whenever necessary** instead of gathering them in one place. We will also consider that we have access to some globals (you usually import them from the file where you initialize your Firebase app):
+
+<FirebaseExample>
 
 ```js
 import { initializeApp } from 'firebase/app'
 import { getFirestore } from 'firebase/firestore'
-import { getDatabase } from 'firebase/database'
+import { getDatabase, dbRef } from 'firebase/database'
 // ... other firebase imports
 
 export const firebaseApp = initializeApp({
   // your application settings
 })
-export const database = getDatabase(firebase)
-export const firestore = getFirestore(firebase)
-// ... other firebase exports
+
+// used for the databas refs
+const db = getDatabase(firebase)
+
+// here we can export reusable database references
+export const todosRef = dbRef(db, 'todos')
 ```
+
+```js
+import { initializeApp } from 'firebase/app'
+import { getFirestore, collection } from 'firebase/firestore'
+// ... other firebase imports
+
+export const firebaseApp = initializeApp({
+  // your application settings
+})
+
+// used for the firestore refs
+const db = getFirestore(firebase)
+
+// here we can export reusable database references
+export const todosRef = collection(db, 'todos')
+```
+
+</FirebaseExample>
+
+Note exporting Database and Firestore isn't necessary as you can always accessing Firebase services within your components with [`useFirebaseApp()` and other composables](./firebase-composables.md).
 
 ::: tip
 Note that we will refer to `database` and `firestore` as `db` in examples where only one of them is used.
@@ -67,7 +92,7 @@ app
 app.mount('#app')
 ```
 
-This will give you access to some convenient composables like `useFirebaseApp()`, `useFirestore()` and `useDatabase()` in your components:
+This will give you access to some [convenient composables](./firebase-composables.md) like `useFirebaseApp()`, `useFirestore()` and `useDatabase()` in your components:
 
 ```vue
 <script setup>
@@ -171,7 +196,7 @@ If you want to change the data, you should use the Firebase API (e.g. `setDoc()`
 
 ### Options API
 
-TODO: complete this section. The composition API is the recommended way to use VueFire at the moment because its API is more stable and it's easier to use with TypeScript.
+The composition API is the recommended way to use VueFire because its API is more flexible and it's easier to use with TypeScript.
 
 VueFire can also be used with the Options API, while less flexible, it's still a valid way to use VueFire. First, you need to install the options plugin:
 

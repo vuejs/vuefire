@@ -300,7 +300,7 @@ Note this is only a type annotation, it does not perform any runtime validation.
 The recommended Firebase approach is to use the `withConverter()` for Firestore:
 
 ::: info
-`.withConverter()` is a Firestore feature that doesn't have an equivalent in Database but you can use VueFire's [`serialize()` option](#TODO:global options when installing plugin) instead.
+`.withConverter()` is a Firestore feature that doesn't have an equivalent in Database but you can use VueFire's [`serialize()` option](./global-options.md#firestore-and-database-global-options) instead.
 :::
 
 ```ts
