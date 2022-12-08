@@ -4,14 +4,20 @@ import type {
   DocumentData,
   DocumentReference,
 } from 'firebase/firestore'
-import { App, ComponentPublicInstance, effectScope, toRef } from 'vue-demi'
-import { isVue3 } from 'vue-demi'
-import { firestoreOptionsDefaults, FirestoreRefOptions } from './subscribe'
-import { internalUnbind, _useFirestoreRef } from '.'
+import {
+  App,
+  ComponentPublicInstance,
+  effectScope,
+  toRef,
+  isVue3,
+} from 'vue-demi'
+import { FirestoreRefOptions } from './bind'
+import { _useFirestoreRef } from './useFirestoreRef'
 import { ResetOption, UnbindWithReset, _FirestoreDataSource } from '../shared'
 import { FirebaseApp } from 'firebase/app'
 import { getGlobalScope } from '../globals'
 import { useFirebaseApp } from '../app'
+import { internalUnbind } from './unbind'
 
 // TODO: this should be an entry point to generate the corresponding .d.ts file that only gets included if the plugin is imported
 

@@ -7,7 +7,7 @@ import {
 } from 'firebase/firestore'
 import { setupFirestoreRefs, sleep } from '../utils'
 import { unref } from 'vue'
-import { _InferReferenceType, _RefFirestore } from '../../src/firestore'
+import { _RefFirestore } from '../../src/firestore'
 import {
   UseDocumentOptions,
   VueFirestoreQueryData,

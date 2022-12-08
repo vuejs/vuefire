@@ -2,11 +2,9 @@
  * @vitest-environment node
  */
 import { beforeEach, describe, it, expect } from 'vitest'
-import { setupFirestoreRefs, firebaseApp, setupDatabaseRefs } from '../utils'
+import { firebaseApp, setupDatabaseRefs } from '../utils'
 import { ShallowUnwrapRef } from 'vue'
-import { _InferReferenceType, _RefFirestore } from '../../src/firestore'
-import { useDocument, useObject } from '../../src'
-import { _MaybeRef, _Nullable } from '../../src/shared'
+import { useObject } from '../../src'
 import { createSSRApp } from 'vue'
 import { renderToString, ssrInterpolate } from '@vue/server-renderer'
 import { clearPendingPromises } from '../../src/ssr/plugin'

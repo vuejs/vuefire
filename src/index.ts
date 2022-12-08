@@ -29,7 +29,7 @@ export type {
  * Firestore
  */
 export { useCollection, useDocument, useFirestore } from './firestore'
-export { firestoreOptionsDefaults as globalFirestoreOptions } from './firestore/subscribe'
+export { firestoreOptionsDefaults as globalFirestoreOptions } from './firestore/bind'
 export { firestoreDefaultConverter } from './firestore/utils'
 export type {
   UseCollectionOptions,

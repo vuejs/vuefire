@@ -10,7 +10,7 @@ import {
 } from 'firebase/firestore'
 import { expectType, setupFirestoreRefs, tds, firestore } from '../utils'
 import { computed, nextTick, ref, unref, watch, type Ref } from 'vue'
-import { _InferReferenceType, _RefFirestore } from '../../src/firestore'
+import { _RefFirestore } from '../../src/firestore'
 import {
   useCollection,
   UseCollectionOptions,
