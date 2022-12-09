@@ -25,9 +25,9 @@ export function useAppCheckToken() {
 export interface VueFireAppCheckOptions extends AppCheckOptions {
   /**
    * Setups the debug token global. See https://firebase.google.com/docs/app-check/web/debug-provider. Note you should
-   * set to false in production (or not set it at all).
+   * set to false in production (or not set it at all). It can be set to a string to force a specific token.
    */
-  debug?: boolean
+  debug?: boolean | string
 }
 
 /**
@@ -56,7 +56,7 @@ export function VueFireAppCheck(options: VueFireAppCheckOptions) {
 
     if (options.debug) {
       // @ts-expect-error: local override
-      self.FIREBASE_APPCHECK_DEBUG_TOKEN = true
+      self.FIREBASE_APPCHECK_DEBUG_TOKEN = options.debug
     }
 
     const appCheck = initializeAppCheck(firebaseApp, options)
