@@ -2,7 +2,7 @@ import { FirebaseApp } from 'firebase/app'
 import { User } from 'firebase/auth'
 import { UserRecord } from 'firebase-admin/auth'
 import { App, ref } from 'vue'
-import { authUserMap } from '../auth/user'
+import { authUserMap, _setInitialUser } from '../auth/user'
 import { getGlobalScope } from '../globals'
 import { _Nullable } from '../shared'
 
@@ -15,6 +15,7 @@ export function VueFireAuthServer(
     ref<_Nullable<User>>(createServerUser(userRecord))
   )!
   authUserMap.set(firebaseApp, user)
+  _setInitialUser(firebaseApp, user)
 }
 
 /**

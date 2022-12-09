@@ -87,12 +87,33 @@ export function updateCurrentUserEmail(
 
 // @internal
 type _UserState =
-  // state 1 waiting for the initial load
+  // state 1 waiting for the initial load: [Promise, resolveFn]
   | [Promise<_Nullable<User>>, (user: Ref<_Nullable<User>>) => void]
   // state 2 loaded
   | Ref<_Nullable<User>>
 
-const initialUserMap = new WeakMap<FirebaseApp, _UserState>()
+/**
+ * Map of user promises based on the firebase application. Used by `getCurrentUser()` to return a promise that resolves
+ * the current user.
+ * @internal
+ */
+export const initialUserMap = new WeakMap<FirebaseApp, _UserState>()
+
+/**
+ * Forcibly sets the initial user state. This is used by the server auth module to set the initial user state and make
+ * `getCurrentUser()` work on the server during navigation and such.
+ *
+ * @internal
+ *
+ * @param firebaseApp - the firebase application
+ * @param user - the user to set
+ */
+export function _setInitialUser(
+  firebaseApp: FirebaseApp,
+  user: Ref<_Nullable<User>>
+) {
+  initialUserMap.set(firebaseApp, user)
+}
 
 /**
  * @internal
