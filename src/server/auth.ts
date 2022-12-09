@@ -9,10 +9,10 @@ import { _Nullable } from '../shared'
 export function VueFireAuthServer(
   firebaseApp: FirebaseApp,
   app: App,
-  userRecord: _Nullable<UserRecord>
+  userRecord: _Nullable<User>
 ) {
   const user = getGlobalScope(firebaseApp, app).run(() =>
-    ref<_Nullable<User>>(createServerUser(userRecord))
+    ref<_Nullable<User>>(userRecord)
   )!
   authUserMap.set(firebaseApp, user)
   _setInitialUser(firebaseApp, user)
@@ -24,7 +24,9 @@ export function VueFireAuthServer(
  *
  * @param userRecord - user data from firebase-admin
  */
-function createServerUser(userRecord: _Nullable<UserRecord>): _Nullable<User> {
+export function createServerUser(
+  userRecord: _Nullable<UserRecord>
+): _Nullable<User> {
   if (!userRecord) return null
   const user = userRecord.toJSON() as UserRecord
 

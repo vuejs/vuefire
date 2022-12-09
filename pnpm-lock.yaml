@@ -70,10 +70,12 @@ importers:
       firebase: ^9.14.0
       firebase-admin: ^11.3.0
       firebase-functions: ^4.1.0
+      lru-cache: ^7.14.1
       nuxt: ^3.0.0
       vuefire: workspace:*
     dependencies:
       '@nuxt/kit': 3.0.0
+      lru-cache: 7.14.1
     devDependencies:
       '@firebase/app-types': 0.8.1
       '@nuxt/module-builder': 0.2.1
@@ -6571,6 +6573,11 @@ packages:
     engines: {node: '>=10'}
     dependencies:
       yallist: 4.0.0
+
+  /lru-cache/7.14.1:
+    resolution: {integrity: sha512-ysxwsnTKdAx96aTRdhDOCQfDgbHnt8SK0KY8SEjO0wHinhWOFTESbjVCMPbU1uGXg/ch4lifqx0wfjOawU2+WA==}
+    engines: {node: '>=12'}
+    dev: false
 
   /lru-memoizer/2.1.4:
     resolution: {integrity: sha512-IXAq50s4qwrOBrXJklY+KhgZF+5y98PDaNo0gi/v2KQBFLyWr+JyFvijZXkGKjQj/h9c0OwoE+JZbwUXce76hQ==}

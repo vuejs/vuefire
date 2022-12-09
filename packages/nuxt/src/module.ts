@@ -143,20 +143,12 @@ const VueFire: NuxtModule<VueFireNuxtModuleOptions> =
         ])
       }
 
-      if (options.admin) {
-        if (!nuxt.options.ssr) {
-          console.warn(
-            '[VueFire]: The "admin" option is only used during SSR. You should reenable ssr to use it.'
-          )
-        }
-        addPlugin(resolve(runtimeDir, 'admin/plugin.server'))
-      }
-
       if (options.appCheck) {
-        addPlugin(resolve(runtimeDir, 'app-check/plugin'))
+        addPlugin(resolve(runtimeDir, 'app-check/plugin.client'))
+        addPlugin(resolve(runtimeDir, 'app-check/plugin.server'))
       }
 
-      // plugin are added in reverse order
+      // this adds the VueFire plugin and handle SSR state serialization and hydration
       addPluginTemplate({
         src: normalize(resolve(templatesDir, 'plugin.ejs')),
 
@@ -167,7 +159,22 @@ const VueFire: NuxtModule<VueFireNuxtModuleOptions> =
       })
 
       // adds the firebase app to each application
-      addPlugin(resolve(runtimeDir, 'app/plugin'))
+      addPlugin(resolve(runtimeDir, 'app/plugin.client'))
+      addPlugin(resolve(runtimeDir, 'app/plugin.server'))
+
+      // we start the admin app first so we can have access to the user uid everywhere
+      if (options.admin) {
+        if (!nuxt.options.ssr) {
+          console.warn(
+            '[VueFire]: The "admin" option is only used during SSR. You should reenable ssr to use it.'
+          )
+        }
+        // this plugin adds the user so it's accessible directly in the app as well
+        if (options.auth) {
+          addPlugin(resolve(runtimeDir, 'admin/plugin-auth-user.server'))
+        }
+        addPlugin(resolve(runtimeDir, 'admin/plugin.server'))
+      }
 
       addVueFireImports([
         // app
@@ -186,6 +193,7 @@ const VueFire: NuxtModule<VueFireNuxtModuleOptions> =
     },
   })
 
+// just to have autocomplete and errors
 type VueFireModuleExportKeys = keyof Awaited<typeof import('vuefire')>
 function addVueFireImports(
   imports: Array<{
@@ -231,12 +239,12 @@ declare module '@nuxt/schema' {
 declare module '#app' {
   interface NuxtApp {
     $firebaseApp: FirebaseApp
-    $adminApp: FirebaseAdminApp
+    $firebaseAdminApp: FirebaseAdminApp
   }
 }
 declare module '@vue/runtime-core' {
   interface ComponentCustomProperties {
     $firebaseApp: FirebaseApp
-    $adminApp: FirebaseAdminApp
+    $firebaseAdminApp: FirebaseAdminApp
   }
 }

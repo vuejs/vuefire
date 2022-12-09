@@ -31,7 +31,8 @@
     "dev:prepare": "nuxt-module-build --stub"
   },
   "dependencies": {
-    "@nuxt/kit": "^3.0.0"
+    "@nuxt/kit": "^3.0.0",
+    "lru-cache": "^7.14.1"
   },
   "peerDependencies": {
     "@firebase/app-types": ">=0.8.1",

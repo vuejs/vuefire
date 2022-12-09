@@ -1,2 +1,2 @@
 export { VueFireAppCheckServer } from './app-check'
-export { VueFireAuthServer } from './auth'
+export { VueFireAuthServer, createServerUser } from './auth'

@@ -9,7 +9,7 @@ import { VueFireAppCheck } from 'vuefire'
 import { defineNuxtPlugin, useAppConfig } from '#app'
 
 /**
- * Plugin to initialize the appCheck module.
+ * Plugin to initialize the appCheck module. Must be added before the server version. TODO: verify it changes anything.
  */
 export default defineNuxtPlugin((nuxtApp) => {
   const appConfig = useAppConfig()
@@ -17,12 +17,13 @@ export default defineNuxtPlugin((nuxtApp) => {
   const options = appConfig.vuefireOptions.appCheck!
   const firebaseApp = nuxtApp.$firebaseApp as FirebaseApp
 
-  // default provider for server
+  // Add a default provider for production
+  // TODO: make this a dev only warning
   let provider: AppCheckOptions['provider'] = new CustomProvider({
     getToken: () =>
       Promise.reject(
         process.env.NODE_ENV !== 'production'
-          ? new Error("[VueFire]: This shouldn't be called on server.")
+          ? new Error(`[VueFire]: Unknown Provider "${options.provider}".`)
           : new Error('app-check/invalid-provider')
       ),
   })
