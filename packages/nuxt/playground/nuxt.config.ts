@@ -28,6 +28,7 @@ export default defineNuxtConfig({
       {
         auth: true,
         appCheck: {
+          // TODO: could automatically pick up a debug token defined as an env variable
           debug: process.env.NODE_ENV !== 'production',
           isTokenAutoRefreshEnabled: true,
           provider: 'ReCaptchaV3',
