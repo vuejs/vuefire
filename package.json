@@ -3,8 +3,6 @@
   "version": "3.0.0-beta.2",
   "description": "Official Firebase bindings for Vue.js",
   "packageManager": "pnpm@7.14.2",
-  "unpkg": "dist/index.iife.js",
-  "jsdelivr": "dist/index.iife.js",
   "type": "module",
   "exports": {
     ".": {
