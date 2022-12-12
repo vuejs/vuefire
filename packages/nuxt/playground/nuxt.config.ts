@@ -55,27 +55,4 @@ export default defineNuxtConfig({
       },
     ],
   ],
-
-  // NOTE: temporary workaround that cannot be put within the nuxt-vuefire module
-  hooks: {
-    // cannot be added in nuxt's resolve.alias
-    'vite:extendConfig': (config, { isServer }) => {
-      if (isServer) {
-        config.resolve ??= {}
-        config.resolve.alias ??= {}
-        // @ts-ignore
-        config.resolve.alias['firebase/firestore'] = resolve(
-          nodeModules,
-          'firebase/firestore/dist/index.mjs'
-        )
-        // @ts-ignore
-        config.resolve.alias['@firebase/firestore'] = resolve(
-          nodeModules,
-          '@firebase/firestore/dist/index.node.mjs'
-        )
-
-        // add any other firebase alias you need
-      }
-    },
-  },
 })

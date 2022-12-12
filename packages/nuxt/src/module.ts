@@ -7,6 +7,7 @@ import {
   addServerHandler,
   createResolver,
   defineNuxtModule,
+  resolvePath,
 } from '@nuxt/kit'
 import type { NuxtModule } from '@nuxt/schema'
 // cannot import from firebase-admin because the build fails, maybe a nuxt bug?
@@ -190,6 +191,45 @@ const VueFire: NuxtModule<VueFireNuxtModuleOptions> =
         { from: 'vuefire', name: 'useDatabaseList' },
         { from: 'vuefire', name: 'useDatabaseObject' },
       ])
+    },
+
+    // NOTE: workaround until https://github.com/vitejs/vite/issues/11114 is fixed
+    hooks: {
+      // Resolve the correct firebase/firestore path on server only since vite is resolving the wrong one in dev
+      'vite:extendConfig': async (config, { isServer }) => {
+        if (isServer) {
+          config.resolve ??= {}
+          config.resolve.alias ??= {}
+
+          // skip the whole thing if the alias is already set in user config
+          // @ts-ignore
+          if (!config.resolve.alias['firebase/firestore']) {
+            // this gives an absolute path which is needed for the alias to work since the firebase package is not including the dist folder in exports
+            const resolvedFirestore = await resolvePath('firebase/firestore')
+            const resolvedFirestoreMJS =
+              resolvedFirestore.slice(
+                0,
+                resolvedFirestore.lastIndexOf('dist')
+              ) + 'dist/index.mjs'
+            // @ts-ignore
+            config.resolve.alias['firebase/firestore'] = resolvedFirestoreMJS
+
+            const resolvedNamespacedFirestore = await resolvePath(
+              '@firebase/firestore'
+            )
+            const resolvedNamespacedFirestoreMJS =
+              resolvedNamespacedFirestore.slice(
+                0,
+                resolvedNamespacedFirestore.lastIndexOf('dist')
+              ) + 'dist/index.node.mjs'
+            // @ts-ignore
+            config.resolve.alias['@firebase/firestore'] =
+              resolvedNamespacedFirestoreMJS
+          }
+
+          // add any other firebase alias you need
+        }
+      },
     },
   })
 
