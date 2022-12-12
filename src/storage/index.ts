@@ -53,7 +53,8 @@ export function useStorageFileUrl(
   url.value = getInitialValue(
     initialSourceValue,
     undefined,
-    url.value
+    url.value,
+    useFirebaseApp()
   ) as string
   const promise = ref<Promise<string | null>>(Promise.resolve(null))
   // TODO: pending and error states?
@@ -108,7 +109,8 @@ export function useStorageFileMetadata(
       initialSourceValue,
       // 'm ' is a prefix to differentiate from urls since both are stored in the same object
       'm ' + initialSourceValue.toString(),
-      metadata.value
+      metadata.value,
+      useFirebaseApp()
     ) as FullMetadata
   }
   const promise = shallowRef<Promise<FullMetadata | null>>(

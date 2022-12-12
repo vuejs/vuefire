@@ -41,8 +41,8 @@ const initialStatesMap = new WeakMap<FirebaseApp, SSRStore>()
  * @returns the initial states for the current firebaseApp
  */
 export function useSSRInitialState(
-  initialState?: SSRStore,
-  firebaseApp: FirebaseApp = useFirebaseApp()
+  initialState: SSRStore | undefined,
+  firebaseApp: FirebaseApp
 ): SSRStore {
   // get initial state based on the current firebase app
   if (!initialStatesMap.has(firebaseApp)) {
@@ -60,7 +60,8 @@ export function getInitialValue(
     _FirestoreDataSource | DatabaseReference | DatabaseQuery | StorageReference
   >,
   ssrKey: string | undefined,
-  fallbackValue: unknown
+  fallbackValue: unknown,
+  firebaseApp: FirebaseApp
 ) {
   if (!dataSource) return fallbackValue
 
@@ -68,7 +69,7 @@ export function getInitialValue(
   if (!sourceType) return fallbackValue
 
   const initialState: Record<string, unknown> =
-    useSSRInitialState()[sourceType] || {}
+    useSSRInitialState(undefined, firebaseApp)[sourceType] || {}
   const key = ssrKey || path
 
   // TODO: warn for queries on the client if there are other keys and this is during hydration
@@ -82,14 +83,18 @@ export function deferInitialValueSetup(
     _FirestoreDataSource | DatabaseReference | DatabaseQuery | StorageReference
   >,
   ssrKey: string | undefined | null,
-  promise: Promise<unknown>
+  promise: Promise<unknown>,
+  firebaseApp: FirebaseApp
 ) {
   if (!dataSource) return
 
   const [sourceType, path] = getDataSourceInfo(dataSource)
   if (!sourceType) return
 
-  const initialState: Record<string, unknown> = useSSRInitialState()[sourceType]
+  const initialState: Record<string, unknown> = useSSRInitialState(
+    undefined,
+    firebaseApp
+  )[sourceType]
   const key = ssrKey || path
 
   if (key) {

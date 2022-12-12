@@ -17,6 +17,7 @@ import {
   onServerPrefetch,
   onScopeDispose,
 } from 'vue-demi'
+import { useFirebaseApp } from '../app'
 import {
   _MaybeRef,
   _Nullable,
@@ -80,7 +81,13 @@ export function _useFirestoreRef(
   }
 
   // set the initial value from SSR even if the ref comes from outside
-  data.value = getInitialValue(initialSourceValue, options.ssrKey, data.value)
+  // TODO: allow passing firebase app name
+  data.value = getInitialValue(
+    initialSourceValue,
+    options.ssrKey,
+    data.value,
+    useFirebaseApp()
+  )
 
   const pending = ref(true)
   const error = ref<FirestoreError>()

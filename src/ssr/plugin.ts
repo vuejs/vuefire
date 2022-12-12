@@ -36,7 +36,7 @@ export function addPendingPromise(
   const pendingPromises = appPendingPromises.get(app)!
 
   // TODO: skip this outside of SSR
-  const key = deferInitialValueSetup(dataSource, ssrKey, promise)
+  const key = deferInitialValueSetup(dataSource, ssrKey, promise, app)
   if (key) {
     pendingPromises.set(key, promise)
   } else {
