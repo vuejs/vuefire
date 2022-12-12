@@ -9,14 +9,14 @@ import {
   useAuth,
   useDatabase,
   useFirestore,
-  useStorage,
+  useFirebaseStorage,
 } from 'vuefire'
 
 const firebaseApp = useFirebaseApp()
 const auth = useAuth()
 const database = useDatabase()
 const firestore = useFirestore()
-const storage = useStorage()
+const storage = useFirebaseStorage()
 </script>
 ```
 

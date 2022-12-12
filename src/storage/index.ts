@@ -36,7 +36,7 @@ import { addPendingPromise } from '../ssr/plugin'
  * @param name - name of the application
  * @returns the Database instance
  */
-export function useStorage(name?: string) {
+export function useFirebaseStorage(name?: string) {
   return getStorage(useFirebaseApp(name))
 }
 
@@ -45,7 +45,7 @@ export function useStorage(name?: string) {
  *
  * @param storageRef - StorageReference
  */
-export function useStorageUrl(
+export function useStorageFileUrl(
   storageRef: _MaybeRef<_Nullable<StorageReference>>
 ) {
   const initialSourceValue = unref(storageRef)
@@ -98,7 +98,7 @@ export function useStorageUrl(
  *
  * @param storageRef - StorageReference
  */
-export function useStorageMetadata(
+export function useStorageFileMetadata(
   storageRef: _MaybeRef<_Nullable<StorageReference>>
 ) {
   const initialSourceValue = unref(storageRef)
@@ -168,15 +168,15 @@ export function useStorageMetadata(
  *
  * @param storageRef - StorageReference
  */
-export function useStorageObject(
+export function useStorageFile(
   storageRef: _MaybeRef<_Nullable<StorageReference>>
 ) {
-  const { url, refresh: refreshUrl } = useStorageUrl(storageRef)
+  const { url, refresh: refreshUrl } = useStorageFileUrl(storageRef)
   const {
     metadata,
     update: updateMetadata,
     refresh: refreshMetadata,
-  } = useStorageMetadata(storageRef)
+  } = useStorageFileMetadata(storageRef)
 
   const uploadTask = shallowRef<UploadTask | null>()
   const snapshot = shallowRef<UploadTaskSnapshot | null>()
@@ -284,3 +284,25 @@ export function useStorageObject(
     // promise,
   }
 }
+
+// DEPRECATION
+
+/**
+ * @deprecated use `useFirebaseStorage()` instead
+ */
+export const useStorage = useFirebaseStorage
+
+/**
+ * @deprecated use `useStorageFileUrl()` instead
+ */
+export const useStorageUrl = useStorageFileUrl
+
+/**
+ * @deprecated use `useStorageFileMetadata()` instead
+ */
+export const useStorageMetadata = useStorageFileMetadata
+
+/**
+ * @deprecated use `useStorageFile()` instead
+ */
+export const useStorageObject = useStorageFile

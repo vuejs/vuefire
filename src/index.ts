@@ -99,10 +99,15 @@ export type { VueFireAppCheckOptions } from './app-check'
  * Storage
  */
 export {
+  useFirebaseStorage,
+  useStorageFile,
+  useStorageFileUrl,
+  useStorageFileMetadata,
+  // deprecated apis
   useStorage,
-  useStorageMetadata,
-  useStorageUrl,
   useStorageObject,
+  useStorageUrl,
+  useStorageMetadata,
 } from './storage'
 
 /**

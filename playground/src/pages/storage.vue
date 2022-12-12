@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { computed, ref, watch } from 'vue'
 import { useFileDialog } from '@vueuse/core'
-import { useCurrentUser, useStorage, useStorageObject } from 'vuefire'
+import { useCurrentUser, useFirebaseStorage, useStorageFile } from 'vuefire'
 import {
   deleteObject,
   ref as storageRef,
@@ -23,7 +23,7 @@ watch(
 
 const user = useCurrentUser()
 
-const storage = useStorage()
+const storage = useFirebaseStorage()
 const storageBucket = storageRef(storage, 'demo/' + user.value?.uid || '')
 const storageSource = computed(() =>
   filename.value ? storageRef(storageBucket, filename.value) : null
@@ -37,7 +37,7 @@ const {
   uploadTask,
   metadata,
   upload,
-} = useStorageObject(storageSource)
+} = useStorageFile(storageSource)
 
 // TODO: move to tests
 // useStorageTask(storageSource, null).data

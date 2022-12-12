@@ -3,10 +3,10 @@ import { it, describe, expect } from 'vitest'
 import { uploadString } from 'firebase/storage'
 import { nextTick, ref } from 'vue'
 import {
-  useStorage,
-  useStorageMetadata,
-  useStorageObject,
-  useStorageUrl,
+  useFirebaseStorage,
+  useStorageFileMetadata,
+  useStorageFile,
+  useStorageFileUrl,
 } from '../../src'
 import { setupStorageRefs } from '../utils'
 
@@ -19,7 +19,7 @@ describe('Storage', () => {
     const wrapper = mount({
       template: 'no',
       setup() {
-        const { url, promise } = useStorageUrl(objectRef)
+        const { url, promise } = useStorageFileUrl(objectRef)
 
         return { url, promise }
       },
@@ -37,7 +37,7 @@ describe('Storage', () => {
     const wrapper = mount({
       template: 'no',
       setup() {
-        const { metadata, promise } = useStorageMetadata(objectRef)
+        const { metadata, promise } = useStorageFileMetadata(objectRef)
 
         return { metadata, promise }
       },
@@ -57,8 +57,7 @@ describe('Storage', () => {
     const wrapper = mount({
       template: 'no',
       setup() {
-        const { uploadTask, upload, uploadProgress } =
-          useStorageObject(objectRef)
+        const { uploadTask, upload, uploadProgress } = useStorageFile(objectRef)
 
         return { uploadTask, upload, uploadProgress }
       },
