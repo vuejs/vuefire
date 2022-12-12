@@ -98,6 +98,7 @@ const VueFire: NuxtModule<VueFireNuxtModuleOptions> =
 
       // nuxt.options.build.transpile.push(templatesDir)
       nuxt.options.build.transpile.push(runtimeDir)
+      nuxt.options.build.transpile.push(templatesDir)
 
       // FIXME: this is a workaround because of the resolve issue with firebase
       // without this, we use different firebase packages within vuefire and nuxt-vuefire
