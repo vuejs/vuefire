@@ -1,3 +1,10 @@
+## [0.0.12](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.0.11...nuxt-vuefire@0.0.12) (2022-12-12)
+
+### Bug Fixes
+
+- add aliases to workaround vite issue ([15f4e50](https://github.com/vuejs/vuefire/commit/15f4e50a1fab273386ea9425626aa8e8fd0cb3a3))
+- add templates to transpiled dirs ([9491488](https://github.com/vuejs/vuefire/commit/94914880033e7ddfd90978d0e06754f06fe84016))
+
 ## [0.0.11](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.0.10...nuxt-vuefire@0.0.11) (2022-12-12)
 
 ### Features
