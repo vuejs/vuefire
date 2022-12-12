@@ -1,6 +1,21 @@
+# [3.0.0-beta.3](https://github.com/vuejs/vuefire/compare/vuefire@3.0.0-beta.2...vuefire@3.0.0-beta.3) (2022-12-12)
+
+### Bug Fixes
+
+- pass name internally ([f7b3d44](https://github.com/vuejs/vuefire/commit/f7b3d44d35791a0e393b78b6445527a0bbde3a10))
+
+### Features
+
+- **app-check:** allow specifying your own debug token ([e0b2b5a](https://github.com/vuejs/vuefire/commit/e0b2b5a85c6a95669e07f7b7f178f56145cd0388))
+- **auth:** allow passing the app name to getUser functions ([20ab13d](https://github.com/vuejs/vuefire/commit/20ab13d78eef3ff07113d3239e0db80c53e5b049))
+- **auth:** handle ssr ([567fd12](https://github.com/vuejs/vuefire/commit/567fd12bc7fa215d9facaf8a6aa114750a74d2b4))
+- **nuxt:** handle user context on the server and use LRU cache for apps ([a335c54](https://github.com/vuejs/vuefire/commit/a335c547a79b583d6ae967073dfd95ebe05e7954))
+- **ssr:** allow resolving getCurrentUser ([282b6bc](https://github.com/vuejs/vuefire/commit/282b6bce880acb2b3170555fe6062d0b49a5d59a))
+
 # [3.0.0-beta.2](https://github.com/vuejs/vuefire/compare/vuefire@3.0.0-beta.1...vuefire@3.0.0-beta.2) (2022-12-06)
 
 - SSR fixes
+
 # [3.0.0-beta.1](https://github.com/vuejs/vuefire/compare/vuefire@3.0.0-alpha.13...vuefire@3.0.0-beta.1) (2022-12-05)
 
 ### Features

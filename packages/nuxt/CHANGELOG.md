@@ -1,3 +1,16 @@
+## [0.0.11](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.0.10...nuxt-vuefire@0.0.11) (2022-12-12)
+
+### Features
+
+- **auth:** handle ssr ([567fd12](https://github.com/vuejs/vuefire/commit/567fd12bc7fa215d9facaf8a6aa114750a74d2b4))
+- automatically fix resolve issue ([97f275a](https://github.com/vuejs/vuefire/commit/97f275a60e52a64e979aac96fb155272d2e026b1))
+- **nuxt:** add auto imports ([bb9f2fd](https://github.com/vuejs/vuefire/commit/bb9f2fdc14daf2efe660f6bdf41d32e10eccde4b))
+- **nuxt:** add auto imports app ([2bf116c](https://github.com/vuejs/vuefire/commit/2bf116c50f103760abded869e714a7075d58c737))
+- **nuxt:** handle user context on the server and use LRU cache for apps ([a335c54](https://github.com/vuejs/vuefire/commit/a335c547a79b583d6ae967073dfd95ebe05e7954))
+- **nuxt:** simplify getCurrentUser ([1abe9d9](https://github.com/vuejs/vuefire/commit/1abe9d99085e67ee703552d7e69acee2ad94c326))
+- **nuxt:** split plugins and check options ot add them ([840ca8b](https://github.com/vuejs/vuefire/commit/840ca8b9f068f6ecabd2d08dfda56636cff9569a))
+- useFirebaseApp in nuxt ([df57432](https://github.com/vuejs/vuefire/commit/df574325b8c08af044d8f7827615e1e79dd2bff3))
+
 ## [0.0.10](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.0.9...nuxt-vuefire@0.0.10) (2022-12-06)
 
 - remove prepare script
