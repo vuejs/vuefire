@@ -44,17 +44,10 @@ export interface VueFireNuxtModuleOptions {
     config: Omit<AppOptions, 'credential'>
 
     /**
-     * Firebase Admin Service Account passed to `firebase-admin`'s `initializeApp()`. Required if you are adding an adminConfig
+     * Firebase Admin Service Account passed to `firebase-admin`'s `initializeApp()`. Required if you are adding an adminConfig.
      */
     serviceAccount: string | ServiceAccount
   }
-
-  /**
-   * Optional name passed to `firebase.initializeApp(config, name)`
-   */
-  // TODO: is this useful?
-  // NOTE: this should probably be inferred automatically based on the auth status to have one app per user cached on the server
-  // appName?: string
 
   /**
    * Enables AppCheck on the client and server. Note you only need to pass the options for the client, on the server,
@@ -187,10 +180,16 @@ const VueFire: NuxtModule<VueFireNuxtModuleOptions> =
         addPlugin(resolve(runtimeDir, 'admin/plugin.server'))
       }
 
-      addVueFireImports([
+      // these imports are overridden by nuxt-vuefire to allow being used in more places like plugins and middlewares
+      addImports([
         // app
-        { from: 'vuefire', name: 'useFirebaseApp' },
+        {
+          from: resolve(runtimeDir, 'app/composables'),
+          name: 'useFirebaseApp',
+        },
+      ])
 
+      addVueFireImports([
         // firestore
         { from: 'vuefire', name: 'useDocument' },
         { from: 'vuefire', name: 'useCollection' },

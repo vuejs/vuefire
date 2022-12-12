@@ -1,10 +1,9 @@
 import { getCurrentUser as _getCurrentUser } from 'vuefire'
-import { useNuxtApp } from '#app'
+import { useFirebaseApp } from '../app/composables'
 
 /**
  * @inheritDoc {getCurrentUser}
  */
-export function getCurrentUser(name?: string) {
+export const getCurrentUser = (name?: string) =>
   // This makes the `getCurrentUser()` function work by default in more places when using the Nuxt module
-  return _getCurrentUser(name ?? useNuxtApp().$firebaseApp.name)
-}
+  _getCurrentUser(name ?? useFirebaseApp().name)
