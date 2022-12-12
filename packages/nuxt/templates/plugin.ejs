@@ -14,15 +14,6 @@ import {
 connectDatabaseEmulator,
 getDatabase,
 } from 'firebase/database'
-import {
-  toRaw,
-} from 'vue-demi'
-import {
-  // TODO: conditional imports
-  ReCaptchaV3Provider,
-  ReCaptchaEnterpriseProvider,
-  CustomProvider,
-} from 'firebase/app-check'
 
 export default defineNuxtPlugin((nuxtApp) => {
   const appConfig = useAppConfig()
@@ -33,9 +24,7 @@ export default defineNuxtPlugin((nuxtApp) => {
   // connectFirestoreEmulator(getFirestore(firebaseApp), 'localhost', 8080)
   // connectDatabaseEmulator(getDatabase(firebaseApp), 'localhost', 8081)
 
-  nuxtApp.vueApp.use(VueFire, {
-    firebaseApp,
-  })
+  nuxtApp.vueApp.use(VueFire, { firebaseApp })
 
   <% if(options.ssr) { %>
   if (process.server) {
