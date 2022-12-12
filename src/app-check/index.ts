@@ -47,6 +47,7 @@ export interface VueFireAppCheckOptions extends AppCheckOptions {
  */
 export function VueFireAppCheck(options: VueFireAppCheckOptions) {
   return (firebaseApp: FirebaseApp, app: App) => {
+    // TODO: copy this bit to the server and remove the isClient check
     // provide this even on the server for simplicity of usage
     const token = getGlobalScope(firebaseApp, app).run(() => ref<string>())!
     app.provide(AppCheckTokenInjectSymbol, token)
