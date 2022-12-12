@@ -19,6 +19,7 @@ import type {
 } from 'firebase-admin/app'
 import { markRaw } from 'vue'
 import type { NuxtVueFireAppCheckOptions } from './runtime/app-check'
+import { addMissingAlias } from './firebaseAliases'
 
 export interface VueFireNuxtModuleOptions {
   /**
@@ -206,38 +207,27 @@ const VueFire: NuxtModule<VueFireNuxtModuleOptions> =
     hooks: {
       // Resolve the correct firebase/firestore path on server only since vite is resolving the wrong one in dev
       'vite:extendConfig': async (config, { isServer }) => {
+        config.resolve ??= {}
+        config.resolve.alias ??= {}
+        const aliases: Record<string, string> = config.resolve.alias as Record<
+          string,
+          string
+        >
+
+        const promises: Promise<void>[] = []
+
         if (isServer) {
-          config.resolve ??= {}
-          config.resolve.alias ??= {}
-
-          // skip the whole thing if the alias is already set in user config
-          // @ts-ignore
-          if (!config.resolve.alias['firebase/firestore']) {
-            // this gives an absolute path which is needed for the alias to work since the firebase package is not including the dist folder in exports
-            const resolvedFirestore = await resolvePath('firebase/firestore')
-            const resolvedFirestoreMJS =
-              resolvedFirestore.slice(
-                0,
-                resolvedFirestore.lastIndexOf('dist')
-              ) + 'dist/index.mjs'
-            // @ts-ignore
-            config.resolve.alias['firebase/firestore'] = resolvedFirestoreMJS
-
-            const resolvedNamespacedFirestore = await resolvePath(
-              '@firebase/firestore'
-            )
-            const resolvedNamespacedFirestoreMJS =
-              resolvedNamespacedFirestore.slice(
-                0,
-                resolvedNamespacedFirestore.lastIndexOf('dist')
-              ) + 'dist/index.node.mjs'
-            // @ts-ignore
-            config.resolve.alias['@firebase/firestore'] =
-              resolvedNamespacedFirestoreMJS
-          }
-
-          // add any other firebase alias you need
+          promises.push(
+            addMissingAlias(aliases, 'firebase/firestore', 'index.mjs')
+          )
+          promises.push(
+            addMissingAlias(aliases, '@firebase/firestore', 'index.node.mjs')
+          )
         }
+
+        promises.push(addMissingAlias(aliases, 'firebase/app', 'index.mjs'))
+
+        await Promise.all(promises)
       },
     },
   })
