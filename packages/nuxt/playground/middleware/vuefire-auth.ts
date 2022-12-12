@@ -1,8 +1,7 @@
-import { getCurrentUser } from 'vuefire'
 export default defineNuxtRouteMiddleware(async (to, from) => {
-  const app = useNuxtApp().$firebaseApp
-  console.log('app name', app.name)
-  const user = await getCurrentUser(app.name)
+  const user = await getCurrentUser()
+
+  console.log('got user in middleware', user?.uid)
 
   if (!user) {
     return navigateTo('/authentication')

@@ -140,7 +140,17 @@ const VueFire: NuxtModule<VueFireNuxtModuleOptions> =
         addVueFireImports([
           // auth
           { from: 'vuefire', name: 'useFirebaseAuth' },
-          { from: 'vuefire', name: 'useCurrentUser' },
+        ])
+        // these are improved for nuxt to avoid the need to pass the app name
+        addImports([
+          {
+            from: resolve(runtimeDir, 'auth/composables'),
+            name: 'getCurrentUser',
+          },
+          {
+            from: resolve(runtimeDir, 'auth/composables'),
+            name: 'useCurrentUser',
+          },
         ])
       }
 
