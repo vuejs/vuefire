@@ -4,6 +4,11 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   console.log('got user in middleware', user?.uid)
 
   if (!user) {
-    return navigateTo('/authentication')
+    return navigateTo({
+      path: '/authentication',
+      query: {
+        redirect: to.fullPath,
+      },
+    })
   }
 })
