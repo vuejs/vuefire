@@ -285,6 +285,7 @@ declare module '@nuxt/schema' {
   }
 }
 
+// @ts-ignore: #app not found error when building
 declare module '#app' {
   interface NuxtApp {
     $firebaseApp: FirebaseApp
