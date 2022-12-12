@@ -33,7 +33,7 @@ export function useCurrentUser(name?: string) {
       `[VueFire] useCurrentUser() called before the VueFireAuth module was added to the VueFire plugin. This will fail in production.`
     )
   }
-  return authUserMap.get(useFirebaseApp())!
+  return authUserMap.get(useFirebaseApp(name))!
 }
 
 /**
