@@ -9,7 +9,7 @@ import { VueFireAppCheck } from 'vuefire'
 import { defineNuxtPlugin, useAppConfig } from '#app'
 
 /**
- * Plugin to initialize the appCheck module. Must be added before the server version. TODO: verify it changes anything.
+ * Plugin to initialize the appCheck module on the server.
  */
 export default defineNuxtPlugin((nuxtApp) => {
   const appConfig = useAppConfig()
@@ -25,7 +25,6 @@ export default defineNuxtPlugin((nuxtApp) => {
     provider = new ReCaptchaEnterpriseProvider(options.key)
   } else {
     // default provider that fails
-    // TODO: make this a dev only warning
     provider = new CustomProvider({
       getToken: () =>
         Promise.reject(
