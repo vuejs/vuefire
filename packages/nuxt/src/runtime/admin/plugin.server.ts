@@ -14,11 +14,6 @@ export default defineNuxtPlugin((nuxtApp) => {
 
   const { firebaseAdmin } = appConfig
 
-  // the admin sdk is not always needed, skip if not provided
-  if (!firebaseAdmin?.config) {
-    return
-  }
-
   // only initialize the admin sdk once
   if (!getApps().length) {
     const {
@@ -61,7 +56,7 @@ You can also set the FIREBASE_CLIENT_EMAIL, FIREBASE_PRIVATE_KEY and FIREBASE_PR
 
       initializeApp({
         // TODO: is this really going to be used?
-        ...firebaseAdmin.config,
+        ...firebaseAdmin?.config,
         credential,
       })
     }
