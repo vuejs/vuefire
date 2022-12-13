@@ -1,5 +1,4 @@
 import { initializeApp, cert, getApp, getApps } from 'firebase-admin/app'
-import type { FirebaseApp } from '@firebase/app-types'
 import { defineNuxtPlugin, useAppConfig } from '#app'
 
 export default defineNuxtPlugin((nuxtApp) => {

@@ -7,11 +7,10 @@ import {
   addServerHandler,
   createResolver,
   defineNuxtModule,
-  resolvePath,
 } from '@nuxt/kit'
 import type { NuxtModule } from '@nuxt/schema'
 // cannot import from firebase-admin because the build fails, maybe a nuxt bug?
-import type { FirebaseApp, FirebaseOptions } from '@firebase/app-types'
+import type { FirebaseApp, FirebaseOptions } from 'firebase/app'
 import type {
   AppOptions,
   ServiceAccount,

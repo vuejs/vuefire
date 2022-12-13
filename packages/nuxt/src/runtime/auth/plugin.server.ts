@@ -1,4 +1,4 @@
-import type { FirebaseApp } from '@firebase/app-types'
+import type { FirebaseApp } from 'firebase/app'
 import type { User } from 'firebase/auth'
 import { VueFireAuthServer } from 'vuefire/server'
 import { UserSymbol } from '../admin/plugin-auth-user.server'

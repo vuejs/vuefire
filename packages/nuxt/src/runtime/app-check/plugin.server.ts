@@ -1,8 +1,8 @@
 import type { App as FirebaseAdminApp } from 'firebase-admin/app'
+import type { FirebaseApp } from 'firebase/app'
+import { CustomProvider } from 'firebase/app-check'
 import { VueFireAppCheck } from 'vuefire'
 import { VueFireAppCheckServer } from 'vuefire/server'
-import type { FirebaseApp } from '@firebase/app-types'
-import { CustomProvider } from 'firebase/app-check'
 import { defineNuxtPlugin, useAppConfig } from '#app'
 
 /**
