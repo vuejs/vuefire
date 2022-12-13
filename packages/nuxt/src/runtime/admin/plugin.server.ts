@@ -1,4 +1,10 @@
-import { initializeApp, cert, getApp, getApps } from 'firebase-admin/app'
+import {
+  initializeApp,
+  cert,
+  getApp,
+  getApps,
+  ServiceAccount,
+} from 'firebase-admin/app'
 import { defineNuxtPlugin, useAppConfig } from '#app'
 
 export default defineNuxtPlugin((nuxtApp) => {
@@ -16,27 +22,28 @@ export default defineNuxtPlugin((nuxtApp) => {
     const { FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, FIREBASE_PRIVATE_KEY } =
       process.env
     // we need either a serviceAccount or the env variables
-    if (
-      !firebaseAdmin.serviceAccount &&
-      (!FIREBASE_CLIENT_EMAIL || !FIREBASE_PRIVATE_KEY || !FIREBASE_PROJECT_ID)
-    ) {
+    let serviceAccountOrProject: string | ServiceAccount
+
+    if (FIREBASE_CLIENT_EMAIL && FIREBASE_PRIVATE_KEY && FIREBASE_PROJECT_ID) {
+      // This version should work in Firebase Functions and other providers while applicationDefault() only works on
+      serviceAccountOrProject = {
+        projectId: FIREBASE_PROJECT_ID,
+        clientEmail: FIREBASE_CLIENT_EMAIL,
+        // replace `\` and `n` character pairs w/ single `\n` character
+        privateKey: FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+      }
+    } else if (firebaseAdmin.serviceAccount) {
+      serviceAccountOrProject = firebaseAdmin.serviceAccount
+    } else {
       throw new Error(
-        '[VueFire]: You must provide a "serviceAccount" or set the FIREBASE_CLIENT_EMAIL, FIREBASE_PRIVATE_KEY and FIREBASE_PROJECT_ID env variables.'
+        '[VueFire]: You must provide a "serviceAccount" (dev) or set the FIREBASE_CLIENT_EMAIL, FIREBASE_PRIVATE_KEY and FIREBASE_PROJECT_ID env variables production.'
       )
     }
+
     initializeApp({
       // TODO: is this really going to be used?
       ...firebaseAdmin.config,
-      credential: cert(
-        firebaseAdmin.serviceAccount || {
-          // This version should work in Firebase Functions and other providers while applicationDefault() only works on
-          // Firebase Functions. All values must exists because of the check above.
-          projectId: FIREBASE_PROJECT_ID!,
-          clientEmail: FIREBASE_CLIENT_EMAIL!,
-          // replace `\` and `n` character pairs w/ single `\n` character
-          privateKey: FIREBASE_PRIVATE_KEY!.replace(/\\n/g, '\n'),
-        }
-      ),
+      credential: cert(serviceAccountOrProject),
     })
   }
 
