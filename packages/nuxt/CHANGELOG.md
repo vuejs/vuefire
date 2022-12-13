@@ -1,3 +1,13 @@
+## [0.0.13](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.0.12...nuxt-vuefire@0.0.13) (2022-12-13)
+
+### Bug Fixes
+
+- **auth:** avoid race conditions ([14c79ae](https://github.com/vuejs/vuefire/commit/14c79aefc2a3668b8f7b26d883e3d417a0ccbc1e)), closes [/github.com/firebase/firebase-js-sdk/blob/master/packages/auth/src/platform_browser/index.ts#L91](https://github.com//github.com/firebase/firebase-js-sdk/blob/master/packages/auth/src/platform_browser/index.ts/issues/L91)
+
+### Features
+
+- use env variables for admin app ([25e72c4](https://github.com/vuejs/vuefire/commit/25e72c4f83db3418e044fd65acd34d551f65ba40))
+
 ## [0.0.12](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.0.11...nuxt-vuefire@0.0.12) (2022-12-12)
 
 ### Bug Fixes
