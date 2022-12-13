@@ -1,3 +1,13 @@
+## [0.0.14](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.0.13...nuxt-vuefire@0.0.14) (2022-12-13)
+
+### Bug Fixes
+
+- **admin:** apply globals if present ([9e43384](https://github.com/vuejs/vuefire/commit/9e43384566fef9ff021fd5b6e33b71df1dc436c4))
+
+### Performance Improvements
+
+- avoid creating custom provider for nothing ([541a6c4](https://github.com/vuejs/vuefire/commit/541a6c4fc781dc2bcc30e45e3b0e2b545d4b629d))
+
 ## [0.0.13](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.0.12...nuxt-vuefire@0.0.13) (2022-12-13)
 
 ### Bug Fixes
