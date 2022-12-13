@@ -28,6 +28,9 @@ service cloud.firestore {
     match /configs/jORwjIykFo2NmkdzTkhU {
     	allow read, write;
     }
+    match /secrets/{userId} {
+      allow read, write: if request.auth.uid == userId;
+    }
     match /bug-reports/{issue}/demo-files/{id} {
     	allow read, write;
     }
