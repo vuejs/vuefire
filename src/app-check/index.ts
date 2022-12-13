@@ -31,7 +31,7 @@ export interface VueFireAppCheckOptions extends AppCheckOptions {
 }
 
 /**
- * VueFire AppCheck Module to be added to the `VueFire` Vue plugin options.
+ * VueFire AppCheck Module to be added to the `VueFire` Vue plugin options. This module **is client only** and shouldn't be added on server.
  *
  * @example
  *
@@ -47,13 +47,12 @@ export interface VueFireAppCheckOptions extends AppCheckOptions {
  */
 export function VueFireAppCheck(options: VueFireAppCheckOptions) {
   return (firebaseApp: FirebaseApp, app: App) => {
-    // TODO: copy this bit to the server and remove the isClient check
+    // AppCheck requires special treatment on the server
+    if (!isClient) return
+
     // provide this even on the server for simplicity of usage
     const token = getGlobalScope(firebaseApp, app).run(() => ref<string>())!
     app.provide(AppCheckTokenInjectSymbol, token)
-
-    // AppCheck requires special treatment on the server
-    if (!isClient) return
 
     if (options.debug) {
       // @ts-expect-error: local override
@@ -68,14 +67,13 @@ export function VueFireAppCheck(options: VueFireAppCheckOptions) {
   }
 }
 
-// TODO: split the function above into two, one that provides the token and is used in both server and client and another one that is only used on the client
-
 /**
  * To retrieve the current app check
  * @internal
  */
 export const AppCheckMap = new WeakMap<FirebaseApp, AppCheck>()
 
+// TODO: this should be available on the server too
 /**
  * Retrieves the Firebase App Check instance. Note this is only available on the client and will be `undefined` on the
  * server.
