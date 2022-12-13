@@ -14,16 +14,31 @@ export default defineNuxtPlugin((nuxtApp) => {
 
   // only initialize the admin sdk once
   if (!getApps().length) {
-    // this is specified when deployed on Firebase and automatically picks up the credentials from env variables
-    if (process.env.GCLOUD_PROJECT) {
-      initializeApp()
-    } else {
-      initializeApp({
-        // TODO: is this really going to be used?
-        ...firebaseAdmin.config,
-        credential: cert(firebaseAdmin.serviceAccount),
-      })
+    const { FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, FIREBASE_PRIVATE_KEY } =
+      process.env
+    // we need either a serviceAccount or the env variables
+    if (
+      !firebaseAdmin.serviceAccount &&
+      (!FIREBASE_CLIENT_EMAIL || !FIREBASE_PRIVATE_KEY || !FIREBASE_PROJECT_ID)
+    ) {
+      throw new Error(
+        '[VueFire]: You must provide a "serviceAccount" or set the FIREBASE_CLIENT_EMAIL, FIREBASE_PRIVATE_KEY and FIREBASE_PROJECT_ID env variables.'
+      )
     }
+    initializeApp({
+      // TODO: is this really going to be used?
+      ...firebaseAdmin.config,
+      credential: cert(
+        firebaseAdmin.serviceAccount || {
+          // This version should work in Firebase Functions and other providers while applicationDefault() only works on
+          // Firebase Functions. All values must exists because of the check above.
+          projectId: FIREBASE_PROJECT_ID!,
+          clientEmail: FIREBASE_CLIENT_EMAIL!,
+          // replace `\` and `n` character pairs w/ single `\n` character
+          privateKey: FIREBASE_PRIVATE_KEY!.replace(/\\n/g, '\n'),
+        }
+      ),
+    })
   }
 
   const firebaseAdminApp = getApp()
