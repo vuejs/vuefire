@@ -37,16 +37,18 @@ export interface VueFireNuxtModuleOptions {
    * Firebase Admin Options.
    */
   admin?: {
+    // TODO: rename to options
     /**
      * Firebase Admin Options passed to `firebase-admin`'s `initializeApp()`. Required if you are using the auth, or the
      * app-check module.
      */
-    config: Omit<AppOptions, 'credential'>
+    config?: Omit<AppOptions, 'credential'>
 
+    // TODO: remove, use env variables instead
     /**
      * Firebase Admin Service Account passed to `firebase-admin`'s `initializeApp()`. Required if you are adding an adminConfig.
      */
-    serviceAccount: string | ServiceAccount
+    serviceAccount?: string | ServiceAccount
   }
 
   /**
@@ -104,18 +106,6 @@ const VueFire: NuxtModule<VueFireNuxtModuleOptions> =
       nuxt.options.build.transpile.push('vuefire')
       nuxt.options.build.transpile.push('vuefire/server')
 
-      if (nuxt.options.ssr && options.admin) {
-        // check the provided config is valid
-        if (options.auth || options.appCheck) {
-          if (!options.admin.config || !options.admin.serviceAccount) {
-            throw new Error(
-              '[VueFire]: Missing firebase "admin" config. Provide an "admin" option to the VueFire module options. This is necessary to use the auth or app-check module.'
-            )
-          }
-          nuxt.options.appConfig.firebaseAdmin = markRaw(options.admin)
-        }
-      }
-
       if (nuxt.options.ssr) {
         addServerHandler({
           route: '/api/_vuefire/auth',
@@ -168,11 +158,24 @@ const VueFire: NuxtModule<VueFireNuxtModuleOptions> =
       addPlugin(resolve(runtimeDir, 'app/plugin.server'))
 
       // we start the admin app first so we can have access to the user uid everywhere
-      if (options.admin) {
+      // TODO: if options.admin
+      if (options.admin || nuxt.options.ssr) {
         if (!nuxt.options.ssr) {
           console.warn(
             '[VueFire]: The "admin" option is only used during SSR. You should reenable ssr to use it.'
           )
+        }
+        // TODO: check env variables are present
+
+        // This one is set by servers, we set the GOOGLE_APPLICATION_CREDENTIALS env variable instead that has a lower priority and can be both a path or a JSON string
+        // process.env.FIREBASE_CONFIG ||= JSON.stringify(options.config)
+        if (typeof options.admin?.serviceAccount === 'string') {
+          process.env.GOOGLE_APPLICATION_CREDENTIALS ||=
+            options.admin.serviceAccount
+        }
+        // TODO: remove this runtime config if it's not needed as it could include sensitive data
+        if (options.admin) {
+          nuxt.options.appConfig.firebaseAdmin = markRaw(options.admin)
         }
         // this plugin adds the user so it's accessible directly in the app as well
         if (options.auth) {
@@ -268,10 +271,7 @@ declare module '@nuxt/schema' {
      * Firebase Admin options passed to VueFire module. Only available on the server.
      * @internal
      */
-    firebaseAdmin?: {
-      config: Omit<AppOptions, 'credential'>
-      serviceAccount: string | ServiceAccount
-    }
+    firebaseAdmin?: VueFireNuxtModuleOptions['admin']
   }
 }
 

@@ -47,7 +47,7 @@ export default defineNuxtConfig({
         },
 
         admin: {
-          config: {},
+          // config: {},
           serviceAccount: resolve(
             fileURLToPath(new URL('./service-account.json', import.meta.url))
           ),

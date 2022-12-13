@@ -1,5 +1,4 @@
 import type { App as AdminApp } from 'firebase-admin/app'
-import type { User } from 'firebase/auth'
 import { getAuth as getAdminAuth, UserRecord } from 'firebase-admin/auth'
 import { createServerUser } from 'vuefire/server'
 import { getCookie } from 'h3'
@@ -9,7 +8,7 @@ import { AUTH_COOKIE_NAME } from '../auth/api.session'
 import { defineNuxtPlugin, useRequestEvent } from '#app'
 
 /**
- * Check if there is a cookie and if it is valid, extracts the user from it.
+ * Check if there is a cookie and if it is valid, extracts the user from it. This only requires the admin app.
  */
 export default defineNuxtPlugin(async (nuxtApp) => {
   const event = useRequestEvent()
@@ -31,7 +30,7 @@ export default defineNuxtPlugin(async (nuxtApp) => {
         // the error is fine, the user is not logged in
       } else {
         // ignore the error and consider the user as not logged in
-        console.error(err)
+        console.error('[VueFire]:', err)
       }
     }
   }
