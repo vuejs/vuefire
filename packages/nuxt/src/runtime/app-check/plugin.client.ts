@@ -17,21 +17,29 @@ export default defineNuxtPlugin((nuxtApp) => {
   const options = appConfig.vuefireOptions.appCheck!
   const firebaseApp = nuxtApp.$firebaseApp as FirebaseApp
 
-  // Add a default provider for production
-  // TODO: make this a dev only warning
-  let provider: AppCheckOptions['provider'] = new CustomProvider({
-    getToken: () =>
-      Promise.reject(
-        process.env.NODE_ENV !== 'production'
-          ? new Error(`[VueFire]: Unknown Provider "${options.provider}".`)
-          : new Error('app-check/invalid-provider')
-      ),
-  })
+  let provider: AppCheckOptions['provider']
 
   if (options.provider === 'ReCaptchaV3') {
     provider = new ReCaptchaV3Provider(options.key)
   } else if (options.provider === 'ReCaptchaEnterprise') {
     provider = new ReCaptchaEnterpriseProvider(options.key)
+  } else {
+    // default provider that fails
+    // TODO: make this a dev only warning
+    provider = new CustomProvider({
+      getToken: () =>
+        Promise.reject(
+          process.env.NODE_ENV !== 'production'
+            ? new Error(
+                `[VueFire]: Unknown Provider "${
+                  // @ts-expect-error: options.provider is never here
+                  options.provider
+                }".`
+                // eslint-disable-next-line indent
+              )
+            : new Error('app-check/invalid-provider')
+        ),
+    })
   }
 
   VueFireAppCheck({
