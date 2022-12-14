@@ -48,14 +48,6 @@ form {
   overflow-x: auto;
 }
 
-form {
-  margin-block-end: 0;
-}
-
-.custom-blocks {
-  overflow-x: auto;
-}
-
 .reset-button {
   /* reset button style */
   border: none;
