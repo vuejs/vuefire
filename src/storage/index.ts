@@ -56,7 +56,7 @@ export function useStorageFileUrl(
     url.value,
     useFirebaseApp()
   ) as string
-  const promise = ref<Promise<string | null>>(Promise.resolve(null))
+  const promise = shallowRef<Promise<string | null>>(Promise.resolve(null))
   // TODO: pending and error states?
   let removePendingPromise = noop
 
