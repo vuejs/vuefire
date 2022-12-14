@@ -7,7 +7,7 @@
         title="Realtime Database example"
         @focus="selectOnFocus(0, $event)"
         @click="select(0)"
-        :disabled="selectedTab == 0 || disable == 0"
+        :disabled="disable == 0"
       >
         <rtdb-logo />
       </button>
@@ -17,7 +17,7 @@
         title="Firestore example"
         @focus="selectOnFocus(1, $event)"
         @click="select(1)"
-        :disabled="selectedTab == 1 || disable == 1"
+        :disabled="disable == 1"
       >
         <firestore-logo />
       </button>
