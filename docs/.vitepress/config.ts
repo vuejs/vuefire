@@ -1,4 +1,4 @@
-import { defineConfig } from 'vitepress'
+import { defineConfig, DefaultTheme } from 'vitepress'
 import { version } from '../../package.json'
 import {
   twitter,
@@ -95,7 +95,6 @@ export default defineConfig({
     nav: [
       { text: 'Guide', link: '/guide/' },
       { text: 'API', link: '/api/' },
-      { text: 'Config', link: '/config/' },
       {
         text: `v${version}`,
         items: [
@@ -117,79 +116,115 @@ export default defineConfig({
 
     sidebar: {
       '/': [
-        {
-          text: 'Guide',
-          items: [
-            {
-              text: 'Why VueFire',
-              link: '/guide/',
-            },
-            {
-              text: 'Getting Started',
-              link: '/guide/getting-started',
-            },
-            {
-              text: 'Realtime Data',
-              link: '/guide/realtime-data',
-            },
-            {
-              text: 'Options API',
-              link: '/guide/options-api-realtime-data',
-            },
-            {
-              text: 'Authentication',
-              link: '/guide/auth',
-            },
-            {
-              text: 'SSR',
-              link: '/guide/ssr',
-            },
-            // NOTE: hide until it works
-            // {
-            //   text: 'Nuxt',
-            //   link: '/guide/nuxt',
-            // },
-            // {
-            //   text: 'Querying the database',
-            //   link: '/guide/querying',
-            // },
-            // {
-            //   text: 'Writing to the database',
-            //   link: '/guide/writing-data',
-            // },
-            {
-              text: 'Global Options',
-              link: '/guide/global-options',
-            },
-          ],
-        },
-        {
-          text: 'Cookbook',
-          items: [
-            {
-              text: 'Cookbook',
-              link: '/cookbook/',
-            },
-            {
-              text: 'Migration from VueFire 2',
-              link: '/cookbook/migration-v2-v3',
-            },
-            {
-              text: 'Binding to existing refs',
-              link: '/cookbook/subscriptions-external',
-            },
-          ],
-        },
-        {
-          text: 'API',
-          items: [
-            {
-              text: 'API Reference',
-              link: '/api/',
-            },
-          ],
-        },
+        //
+        sidebarGuide(),
+        sidebarNuxt(),
+        sidebarCookbook(),
+        sidebarApi(),
       ],
     },
   },
 })
+
+type SidebarGroup = DefaultTheme.SidebarGroup
+
+function sidebarGuide(): SidebarGroup {
+  return {
+    text: 'Guide',
+    collapsible: true,
+    items: [
+      {
+        text: 'Why VueFire',
+        link: '/guide/',
+      },
+      {
+        text: 'Getting Started',
+        link: '/guide/getting-started',
+      },
+      {
+        text: 'Realtime Data',
+        link: '/guide/realtime-data',
+      },
+      {
+        text: 'Options API',
+        link: '/guide/options-api-realtime-data',
+      },
+      {
+        text: 'Authentication',
+        link: '/guide/auth',
+      },
+      {
+        text: 'SSR',
+        link: '/guide/ssr',
+      },
+      // NOTE: hide until it works
+      // {
+      //   text: 'Nuxt',
+      //   link: '/guide/nuxt',
+      // },
+      // {
+      //   text: 'Querying the database',
+      //   link: '/guide/querying',
+      // },
+      // {
+      //   text: 'Writing to the database',
+      //   link: '/guide/writing-data',
+      // },
+      {
+        text: 'Global Options',
+        link: '/guide/global-options',
+      },
+    ],
+  }
+}
+
+function sidebarNuxt(): SidebarGroup {
+  return {
+    collapsible: true,
+    text: 'Nuxt',
+    items: [
+      {
+        text: 'Getting Started',
+        link: '/nuxt/getting-started',
+      },
+      {
+        text: 'Config',
+        link: '/nuxt/config',
+      },
+    ],
+  }
+}
+
+function sidebarCookbook(): SidebarGroup {
+  return {
+    collapsible: true,
+    text: 'Cookbook',
+    items: [
+      {
+        text: 'Cookbook',
+        link: '/cookbook/',
+      },
+      {
+        text: 'Migration from VueFire 2',
+        link: '/cookbook/migration-v2-v3',
+      },
+      {
+        text: 'Binding to existing refs',
+        link: '/cookbook/subscriptions-external',
+      },
+    ],
+  }
+}
+
+function sidebarApi(): SidebarGroup {
+  return {
+    collapsible: false,
+    text: 'API',
+    items: [
+      {
+        text: 'API Reference',
+        link: '/api/',
+      },
+    ],
+  }
+}
