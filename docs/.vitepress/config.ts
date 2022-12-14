@@ -153,14 +153,14 @@ function sidebarGuide(): SidebarGroup {
         link: '/guide/auth',
       },
       {
+        text: 'File Storage',
+        link: '/guide/storage',
+      },
+      {
         text: 'SSR',
         link: '/guide/ssr',
       },
       // NOTE: hide until it works
-      // {
-      //   text: 'Nuxt',
-      //   link: '/guide/nuxt',
-      // },
       // {
       //   text: 'Querying the database',
       //   link: '/guide/querying',
