@@ -1,12 +1,4 @@
-import {
-  readBody,
-  setCookie,
-  assertMethod,
-  defineEventHandler,
-  H3Response,
-  setHeader,
-} from 'h3'
-import { useRuntimeConfig } from '#app'
+import { readBody, setCookie, assertMethod, defineEventHandler } from 'h3'
 
 /**
  * Setups an API endpoint to be used by the client to mint a cookie based auth session.
