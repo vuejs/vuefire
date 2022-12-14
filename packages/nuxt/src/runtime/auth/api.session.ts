@@ -1,4 +1,10 @@
-import { readBody, setCookie, assertMethod, defineEventHandler } from 'h3'
+import {
+  readBody,
+  setCookie,
+  assertMethod,
+  defineEventHandler,
+  deleteCookie,
+} from 'h3'
 
 /**
  * Setups an API endpoint to be used by the client to mint a cookie based auth session.
@@ -6,8 +12,6 @@ import { readBody, setCookie, assertMethod, defineEventHandler } from 'h3'
 export default defineEventHandler(async (event) => {
   assertMethod(event, 'POST')
   const { token } = await readBody(event)
-
-  // console.log('💚 updating token', token)
 
   if (token) {
     setCookie(event, AUTH_COOKIE_NAME, token, {
@@ -20,9 +24,8 @@ export default defineEventHandler(async (event) => {
     // empty content status
   } else {
     // delete the cookie
-    setCookie(event, AUTH_COOKIE_NAME, '', {
+    deleteCookie(event, AUTH_COOKIE_NAME, {
       maxAge: -1,
-      path: '/',
     })
   }
 
@@ -33,4 +36,6 @@ export default defineEventHandler(async (event) => {
 
 // TODO: customizable defaults
 export const AUTH_COOKIE_MAX_AGE = 60 * 60 * 24 * 5 * 1_000
-export const AUTH_COOKIE_NAME = '_vuefire_jwt'
+// MUST be named session to be kept
+// https://firebase.google.com/docs/hosting/manage-cache#using_cookies
+export const AUTH_COOKIE_NAME = '__session'
