@@ -47,7 +47,6 @@ form {
 .custom-blocks {
   overflow-x: auto;
 }
-.reset-button {
 
 form {
   margin-block-end: 0;
@@ -73,24 +72,6 @@ form {
   outline: none;
 }
 
-blockquote.warning {
-  background-color: rgba(255, 229, 100, 0.3);
-  border-color: #e7c000;
-  color: #6b5900;
-}
-
-  border: none;
-  padding: 0;
-  margin: 0;
-  width: auto;
-  overflow: visible;
-  background: transparent;
-  color: inherit;
-  font: inherit;
-}
-.js-focus-visible :focus:not(.focus-visible) {
-  outline: none;
-}
 blockquote.warning {
   background-color: rgba(255, 229, 100, 0.3);
   border-color: #e7c000;
