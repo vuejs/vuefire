@@ -17,16 +17,17 @@ export default defineNuxtPlugin(async (nuxtApp) => {
 
   if (token) {
     const adminApp = nuxtApp.$firebaseAdminApp as AdminApp
-    const auth = getAdminAuth(adminApp)
+    const adminAuth = getAdminAuth(adminApp)
 
     try {
       // TODO: should we check for the revoked status of the token here?
-      const decodedToken = await auth.verifyIdToken(token)
-      user = await auth.getUser(decodedToken.uid)
+      const decodedToken = await adminAuth.verifyIdToken(token)
+      user = await adminAuth.getUser(decodedToken.uid)
     } catch (err) {
       // TODO: some errors should probably go higher
       // ignore the error and consider the user as not logged in
       if (isFirebaseError(err) && err.code === 'auth/id-token-expired') {
+        // Other errors to be handled: auth/argument-error
         // the error is fine, the user is not logged in
       } else {
         // ignore the error and consider the user as not logged in

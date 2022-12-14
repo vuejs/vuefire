@@ -29,16 +29,29 @@ export function VueFireAppCheckServer(
   const token = getGlobalScope(firebaseApp, app).run(() => ref<string>())!
   app.provide(AppCheckTokenInjectSymbol, token)
 
+  console.log('[VueFire]: Initializing AppCheck on the server')
   const appCheck = initializeAppCheck(firebaseApp, {
     provider: new CustomProvider({
-      getToken: () =>
-        getAdminAppCheck(adminApp)
-          // NOTE: appId is checked on the module
+      getToken: () => {
+        console.log('[VueFire]: Getting Admin AppCheck')
+        const adminAppCheck = getAdminAppCheck(adminApp)
+        // NOTE: appId is checked on the module
+        console.log(
+          `[VueFire]: Getting creating token for app ${firebaseApp.options
+            .appId!}.`
+        )
+        return adminAppCheck
           .createToken(firebaseApp.options.appId!, { ttlMillis })
-          .then(({ token, ttlMillis: expireTimeMillis }) => ({
-            token,
-            expireTimeMillis,
-          })),
+          .then(({ token, ttlMillis: expireTimeMillis }) => {
+            console.log(
+              `[VueFire]: Got AppCheck token from the server: ${token}`
+            )
+            return {
+              token,
+              expireTimeMillis,
+            }
+          })
+      },
     }),
     isTokenAutoRefreshEnabled: false,
   })
