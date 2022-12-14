@@ -5,6 +5,12 @@
 If you are using Nuxt.js, read the [Nuxt guide](/nuxt/getting-started.md) instead, most of the things are already configured for you.
 ::: -->
 
+::: warning
+SSR support is still experimental. Please report any issues you find.
+:::
+
+## SSR with Vitesse
+
 When doing SSR (Server Side Rendering) you want to wait for the data on the server to serialize it and retrieve it on the client side where it will displayed. VueFire already waits for the data for you if you use the composables within components:
 
 <FirebaseExample>
@@ -55,7 +61,12 @@ export const install: UserModule = ({ isClient, initialState, app }) => {
     useSSRInitialState(initialState.vuefire, firebaseApp)
   } else {
     // on the server we ensure all the data is retrieved in this object
-    initialState.vuefire = useSSRInitialState()
+    initialState.vuefire = useSSRInitialState(
+      // let `useSSRInitialState` create the initial object for us
+      undefined,
+      // this is necessary to work with concurrent requests
+      firebaseApp,
+    )
   }
 }
 ```
