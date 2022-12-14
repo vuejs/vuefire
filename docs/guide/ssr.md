@@ -89,7 +89,22 @@ Web Security is a broad topic that we cannot cover here. We recommend you to rea
 
 ## Usage outside of components
 
-If you are using VueFire composables outside of components, e.g. using `useDocument()` within a [Pinia](https://pinia.vuejs.org) store, you need to manually wait for the data to be loaded on the server as VueFire cannot call `onServerPrefetch()` for you. This means you also need to [use `<Suspense>`](https://vuejs.org/guide/built-ins/suspense.html#suspense) to be able to use `await` within `setup()`. VueFire exposes a function to retrieve all pending promises created by the different composables (`useDocument()`, `useDatabaseObject()`, etc). Await it inside of **any component that uses the data**:
+If you are using VueFire composables outside of components, e.g. using `useDocument()` within a [Pinia](https://pinia.vuejs.org) store, you need to manually wait for the data to be loaded on the server as VueFire cannot call `onServerPrefetch()` for you and you will have to manually call it yourself. VueFire exposes a function to retrieve all pending promises created by the different composables (`useDocument()`, `useDatabaseObject()`, etc). You will need to use it inside of **any component that uses the data**:
+
+```vue
+<script setup>
+import { useQuizStore } from '~/stores/quiz'
+import { usePendingPromises } from 'vuefire'
+
+// this store internally calls `useDocument()` when created
+const quizStore = useQuizStore()
+
+// `useDocument()` has been called within `useQuizStore()` but this component isn't aware of it
+onServerPrefetch(() => usePendingPromises())
+</script>
+```
+
+While the recommended approach is to use `onServerPrefetch()`, aother possibility is to [use `<Suspense>`](https://vuejs.org/guide/built-ins/suspense.html#suspense) to be able to use `await` within `setup()`:
 
 ```vue
 <script setup>

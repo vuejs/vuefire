@@ -13,12 +13,14 @@ npm install nuxt-vuefire
 Add it to your nuxt config:
 
 ```ts
-import { defineNuxtConfig } from 'nuxt/config'
-import VueFire from 'nuxt-vuefire'
-
 export default defineNuxtConfig({
-  modules: [VueFire, {
+  modules: [
+    // ... other modules
+    'nuxt-vuefire',
+  ],
+
+  vuefire: {
     /* options */
-  }],
+  },
 })
 ```
