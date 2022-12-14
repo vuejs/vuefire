@@ -7,7 +7,7 @@
         title="Realtime Database example"
         @focus="selectOnFocus(0, $event)"
         @click="select(0)"
-        :disabled="disable == 0"
+        :disabled="selectedTab == 0 || disable == 0"
       >
         <rtdb-logo />
       </button>
@@ -17,7 +17,7 @@
         title="Firestore example"
         @focus="selectOnFocus(1, $event)"
         @click="select(1)"
-        :disabled="disable == 1"
+        :disabled="selectedTab == 1 || disable == 1"
       >
         <firestore-logo />
       </button>
@@ -150,7 +150,7 @@ export default {
   border-radius: 0 6px 0 0;
 }
 
-.tab-container > nav > button:not([disabled]):hover {
+.tab-container > nav > button:not([disabled]):not(.is-selected):hover {
   cursor: pointer;
   /* background-color: lighten(var(--code-bg-color), 30%); */
   background-color: var(--code-bg-color-lightest);
