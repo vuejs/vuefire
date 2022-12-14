@@ -1,23 +1,26 @@
 # Firebase Authentication
 
-VueFire exposes the current user as a reactive variable while allowing you to use the Firebase Authentication API as you would normally do.
+[Firebase Authentication](https://firebase.google.com/docs/auth/web/start) makes it really easy to add different kind of authentications to your app and integrate with security rules for Firestore and Database.
+Most of the APIs can be used as you would normally do with Firebase, VueFire exposes a few composables to integrate better with Vue:
 
 ## Installation
 
 Start by adding the `VueFireAuth` module to the `VueFire` plugin:
 
 ```ts
-app
-  .use(VueFire, {
-    firebaseApp: createFirebaseApp(),
-    modules: [
-      // ... other modules
-      VueFireAuth(),
-    ],
-  })
+import { VueFire, VueFireAuth } from 'vuefire'
+app.use(VueFire, {
+  firebaseApp: createFirebaseApp(),
+  modules: [
+    // ... other modules
+    VueFireAuth(),
+  ],
+})
 ```
 
-## Get the Current User
+This will automatically create and inject the [Auth module](https://firebase.google.com/docs/auth/web/start#add-initialize-sdk) from Firebase so you can access it from within any component with the `useFirebaseAuth()` composable.
+
+## Current User
 
 You can get the current user as a reactive variable with the `useCurrentUser()` composable:
 
@@ -33,13 +36,27 @@ const user = useCurrentUser()
 </template>
 ```
 
-## Wait for the user to be loaded
+### Wait for the user to be loaded
 
 There is also a `getCurrentUser()` function that returns a promise of the current user. This is useful if you want to wait for the user to be loaded before doing anything. You can, for example, await it within a navigation guard:
 
 ```ts
-router.beforeEach(async () => {
-  await getCurrentUser()
+router.beforeEach(async (to) => {
+  // routes with `meta: { requiresAuth: true }` will check for the users, others won't
+  if (to.meta.requiresAuth) {
+    const currentUser = await getCurrentUser()
+    // if the user is not logged in, redirect to the login page
+    if (!currentUser) {
+      return {
+        path: '/login',
+        query: {
+          // we keep the current path in the query so we can redirect to it after login
+          // with `router.push(route.query.redirectTo || '/')`
+          redirectTo: to.fullPath,
+        },
+      }
+    }
+  }
 })
 ```
 
@@ -48,3 +65,20 @@ If you are using `getCurrentUser()` in a navigation guard, make sure to add it b
 :::
 
 Once the user is loaded, `getCurrentUser()` will immediately resolve the current user.
+
+Sometimes, the Firebase SDK might be able to automatically log in the user with a hidden cookie or local storage. In that case, you can automatically redirect the user to the page they were trying to access before being automatically logged in:
+
+```ts
+// within the Page component displayed for the `/login` route
+onMounted(async () => {
+  const currentUser = await getCurrentUser()
+  if (currentUser) {
+    const to =
+      route.query.redirectTo && typeof route.query.redirectTo === 'string'
+        ? route.query.redirectTo
+        : '/'
+
+    router.push(to)
+  }
+})
+```
