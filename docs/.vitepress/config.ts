@@ -79,11 +79,10 @@ export default defineConfig({
         'Copyright © 2016-PRESENT Eduardo San Martin Morote and VueFire contributors',
     },
 
-    // TODO:
-    // carbonAds: {
-    //   code: 'CK7DL23N',
-    //   placement: 'vuefirevuejsorg',
-    // },
+    carbonAds: {
+      code: 'CK7DL23N',
+      placement: 'vuefirevuejsorg',
+    },
 
     algolia: {
       appId: 'O9WVPRF35B',
