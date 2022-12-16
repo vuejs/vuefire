@@ -25,6 +25,8 @@ export default defineBuildConfig({
     'firebase-admin',
     'firebase-admin/app',
     'firebase-admin/app-check',
+    'firebase-functions',
+    'firebase-functions/params',
   ],
 
   rollup: {
