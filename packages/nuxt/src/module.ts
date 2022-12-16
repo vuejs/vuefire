@@ -19,6 +19,7 @@ import type {
 import { markRaw } from 'vue'
 import type { NuxtVueFireAppCheckOptions } from './runtime/app-check'
 import { addMissingAlias } from './firebaseAliases'
+import { log } from './logging'
 
 export interface VueFireNuxtModuleOptions {
   /**
@@ -161,8 +162,9 @@ const VueFire: NuxtModule<VueFireNuxtModuleOptions> =
       // TODO: if options.admin
       if (options.admin || nuxt.options.ssr) {
         if (!nuxt.options.ssr) {
-          console.warn(
-            '[VueFire]: The "admin" option is only used during SSR. You should reenable ssr to use it.'
+          log(
+            'warn',
+            'The "admin" option is only used during SSR. You should reenable ssr to use it.'
           )
         }
         // TODO: check env variables are present

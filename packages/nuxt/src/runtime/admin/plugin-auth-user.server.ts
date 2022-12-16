@@ -5,6 +5,7 @@ import { getCookie } from 'h3'
 // FirebaseError is an interface here but is a class in firebase/app
 import type { FirebaseError } from 'firebase-admin'
 import { AUTH_COOKIE_NAME } from '../auth/api.session'
+import { log } from '../../logging'
 import { defineNuxtPlugin, useRequestEvent } from '#app'
 
 /**
@@ -14,6 +15,8 @@ export default defineNuxtPlugin(async (nuxtApp) => {
   const event = useRequestEvent()
   const token = getCookie(event, AUTH_COOKIE_NAME)
   let user: UserRecord | undefined
+
+  log(`Getting user from "${AUTH_COOKIE_NAME}"`, token)
 
   if (token) {
     const adminApp = nuxtApp.$firebaseAdminApp as AdminApp
@@ -29,10 +32,10 @@ export default defineNuxtPlugin(async (nuxtApp) => {
       if (isFirebaseError(err) && err.code === 'auth/id-token-expired') {
         // Other errors to be handled: auth/argument-error
         // the error is fine, the user is not logged in
-        console.log('[VueFire]: Token expired -', err)
+        log('Token expired -', err)
       } else {
         // ignore the error and consider the user as not logged in
-        console.error('[VueFire]: Unknown Error -', err)
+        log('error', 'Unknown Error -', err)
       }
     }
   }

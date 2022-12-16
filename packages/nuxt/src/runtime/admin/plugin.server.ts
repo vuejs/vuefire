@@ -7,6 +7,7 @@ import {
   // renamed because there seems to be a global Credential type in vscode
   Credential as FirebaseAdminCredential,
 } from 'firebase-admin/app'
+import { log } from '../../logging'
 import { defineNuxtPlugin, useAppConfig } from '#app'
 
 export default defineNuxtPlugin((nuxtApp) => {
@@ -28,13 +29,13 @@ export default defineNuxtPlugin((nuxtApp) => {
     } = process.env
 
     if (FIREBASE_CONFIG || FUNCTION_NAME) {
-      console.log('[VueFire]: using FIREBASE_CONFIG env variable')
+      log('using FIREBASE_CONFIG env variable')
       initializeApp()
     } else {
       let credential: FirebaseAdminCredential
       // This version should work in Firebase Functions and other providers while applicationDefault() only works on
       if (FIREBASE_PRIVATE_KEY) {
-        console.log('[VueFire]: using FIREBASE_PRIVATE_KEY env variable')
+        log('using FIREBASE_PRIVATE_KEY env variable')
         credential = cert({
           projectId: FIREBASE_PROJECT_ID,
           clientEmail: FIREBASE_CLIENT_EMAIL,

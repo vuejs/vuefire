@@ -2,6 +2,7 @@ import { deleteApp, FirebaseApp, initializeApp } from 'firebase/app'
 import { User } from 'firebase/auth'
 import LRU from 'lru-cache'
 import { UserSymbol } from '../admin/plugin-auth-user.server'
+import { log } from '../../logging'
 import { defineNuxtPlugin, useAppConfig } from '#app'
 
 // TODO: allow customizing
@@ -31,18 +32,20 @@ export default defineNuxtPlugin((nuxtApp) => {
 
   let firebaseApp: FirebaseApp
 
+  log('initializing app with', appConfig.firebaseConfig)
   if (uid) {
     if (!appCache.has(uid)) {
       const randomId = Math.random().toString(36).slice(2)
       const appName = `auth:${user.uid}:${randomId}`
 
-      console.log('✅ creating new app', appName)
+      log('✅ creating new app', appName)
 
       appCache.set(uid, initializeApp(appConfig.firebaseConfig, appName))
     }
     firebaseApp = appCache.get(uid)!
   } else {
     // anonymous session, just create a new app
+    log('anonymous session')
     firebaseApp = initializeApp(appConfig.firebaseConfig)
   }
 
