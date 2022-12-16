@@ -23,9 +23,11 @@ export default defineNuxtPlugin((nuxtApp) => {
       FIREBASE_PRIVATE_KEY,
       // set on firebase cloud functions
       FIREBASE_CONFIG,
+      // in cloud functions, we can auto initialize
+      FUNCTION_NAME,
     } = process.env
 
-    if (FIREBASE_CONFIG) {
+    if (FIREBASE_CONFIG || FUNCTION_NAME) {
       console.log('[VueFire]: using FIREBASE_CONFIG env variable')
       initializeApp()
     } else {
