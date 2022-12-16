@@ -31,7 +31,7 @@ export interface SSRStore {
 }
 
 // @internal
-const initialStatesMap = new WeakMap<FirebaseApp, SSRStore>()
+export const _initialStatesMap = new WeakMap<FirebaseApp, SSRStore>()
 
 /**
  * Allows getting the initial state set during SSR on the client.
@@ -45,14 +45,14 @@ export function useSSRInitialState(
   firebaseApp: FirebaseApp
 ): SSRStore {
   // get initial state based on the current firebase app
-  if (!initialStatesMap.has(firebaseApp)) {
-    initialStatesMap.set(
+  if (!_initialStatesMap.has(firebaseApp)) {
+    _initialStatesMap.set(
       firebaseApp,
       initialState || { f: {}, r: {}, s: {}, u: {} }
     )
   }
 
-  return initialStatesMap.get(firebaseApp)!
+  return _initialStatesMap.get(firebaseApp)!
 }
 
 export function getInitialValue(

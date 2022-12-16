@@ -63,7 +63,6 @@ export function _useDatabaseRef(
   }
 
   // set the initial value from SSR even if the ref comes from outside
-  // TODO: firebase app name
   data.value = getInitialValue(
     initialSourceValue,
     options.ssrKey,
@@ -71,22 +70,30 @@ export function _useDatabaseRef(
     useFirebaseApp()
   )
 
+  // if no initial value is found (ssr), we should set pending to true
+  let shouldStartAsPending = data.value === undefined // no initial value
+
   const error = ref<Error>()
-  const pending = ref(true)
+  const pending = ref(false)
   // force the type since its value is set right after and undefined isn't possible
   const promise = shallowRef() as ShallowRef<Promise<unknown | null>>
   const hasCurrentScope = getCurrentScope()
   let removePendingPromise = noop
 
   function bindDatabaseRef() {
-    let referenceValue = unref(reference)
+    const referenceValue = unref(reference)
 
-    const p = new Promise<unknown | null>((resolve, reject) => {
+    const newPromise = new Promise<unknown | null>((resolve, reject) => {
       if (!referenceValue) {
         unbind = noop
         // resolve to avoid an ever pending promise
         return resolve(null)
       }
+
+      pending.value = shouldStartAsPending
+      // the very first time we bind, if we hydrated the value, we don't set loading to true
+      // this way we ensure, all subsequent calls to bindDatabaseRef will set pending to true
+      shouldStartAsPending = true
 
       if (Array.isArray(data.value)) {
         unbind = bindAsArray(
@@ -100,22 +107,28 @@ export function _useDatabaseRef(
         unbind = bindAsObject(data, referenceValue, resolve, reject, options)
       }
     })
+      .catch((reason) => {
+        if (promise.value === newPromise) {
+          error.value = reason
+        }
+        return Promise.reject(reason) // propagate the error
+      })
+      .finally(() => {
+        // ensure the current promise is still valid
+        if (promise.value === newPromise) {
+          pending.value = false
+        }
+      })
 
-    promise.value = p
-
-    p.catch((reason) => {
-      error.value = reason
-    }).finally(() => {
-      pending.value = false
-    })
+    // we set the promise here to ensure that pending is set right after if the user awaits the promise
+    promise.value = newPromise
   }
 
   let stopWatcher = noop
   if (isRef(reference)) {
-    stopWatcher = watch(reference, bindDatabaseRef, { immediate: true })
-  } else {
-    bindDatabaseRef()
+    stopWatcher = watch(reference, bindDatabaseRef)
   }
+  bindDatabaseRef()
 
   // only add the first promise to the pending ones
   if (initialSourceValue) {
@@ -136,6 +149,8 @@ export function _useDatabaseRef(
     removePendingPromise()
     unbind(reset)
   }
+
+  // TODO: warn if the data has already any property set (use a symbol to check in dev)
 
   return Object.defineProperties(data as _RefDatabase<unknown>, {
     // allow destructuring without interfering with the ref itself

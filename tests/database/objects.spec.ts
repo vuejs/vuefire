@@ -1,16 +1,24 @@
 import { mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 import {
   UseDatabaseRefOptions,
   useDatabaseObject,
   VueDatabaseDocumentData,
   _RefDatabase,
+  useSSRInitialState,
 } from '../../src'
-import { expectType, tds, setupDatabaseRefs, database } from '../utils'
+import {
+  expectType,
+  tds,
+  setupDatabaseRefs,
+  database,
+  firebaseApp,
+} from '../utils'
 import { computed, nextTick, ref, shallowRef, unref, type Ref } from 'vue'
 import { DatabaseReference, get, ref as _databaseRef } from 'firebase/database'
 import { _MaybeRef, _Nullable } from '../../src/shared'
 import { mockWarn } from '../vitest-mock-warn'
+import { _initialStatesMap } from '../../src/ssr/initialState'
 
 describe('Database objects', () => {
   const { databaseRef, set, update, remove } = setupDatabaseRefs()
@@ -46,6 +54,11 @@ describe('Database objects', () => {
     }
   }
 
+  beforeEach(() => {
+    // delete any ssr state
+    _initialStatesMap.delete(firebaseApp)
+  })
+
   it('binds an object', async () => {
     const { wrapper, itemRef } = factory()
 
@@ -72,6 +85,45 @@ describe('Database objects', () => {
 
     await remove(itemRef)
     expect(wrapper.vm.item).toBe(null)
+  })
+
+  it('sets pending while loading', async () => {
+    const itemRef = shallowRef(databaseRef('a'))
+    const { pending, promise } = factory({ ref: itemRef })
+
+    expect(pending.value).toBe(true)
+    await promise.value
+    expect(pending.value).toBe(false)
+
+    // set the target to a new ref so it can be loaded again
+    itemRef.value = databaseRef('b')
+
+    await nextTick() // for the watcher to trigger
+    expect(pending.value).toBe(true)
+    await promise.value
+    expect(pending.value).toBe(false)
+  })
+
+  it('sets pending to false if there is an initial value (ssr)', async () => {
+    const itemRef = shallowRef(databaseRef())
+    useSSRInitialState({ r: { a: 1 }, f: {}, s: {}, u: {} }, firebaseApp)
+    const { pending, promise } = factory({
+      ref: itemRef,
+      options: { ssrKey: 'a' },
+    })
+
+    expect(pending.value).toBe(false)
+    await promise.value
+    expect(pending.value).toBe(false)
+  })
+
+  it('skips setting pending if the object is an empty ref', async () => {
+    const itemRef = shallowRef()
+    const { pending, promise } = factory({ ref: itemRef })
+
+    expect(pending.value).toBe(false)
+    await promise.value
+    expect(pending.value).toBe(false)
   })
 
   it('retrieves an object with $value for primitives', async () => {
