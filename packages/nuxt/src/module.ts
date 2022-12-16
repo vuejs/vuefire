@@ -19,7 +19,7 @@ import type {
 import { markRaw } from 'vue'
 import type { NuxtVueFireAppCheckOptions } from './runtime/app-check'
 import { addMissingAlias } from './firebaseAliases'
-import { log } from './logging'
+import { log } from './runtime/logging'
 
 export interface VueFireNuxtModuleOptions {
   /**

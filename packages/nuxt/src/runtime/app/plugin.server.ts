@@ -2,7 +2,7 @@ import { deleteApp, FirebaseApp, initializeApp } from 'firebase/app'
 import { User } from 'firebase/auth'
 import LRU from 'lru-cache'
 import { UserSymbol } from '../admin/plugin-auth-user.server'
-import { log } from '../../logging'
+import { log } from '../logging'
 import { defineNuxtPlugin, useAppConfig } from '#app'
 
 // TODO: allow customizing
