@@ -51,6 +51,13 @@ export function VueFireAppCheckServer(
               expireTimeMillis,
             }
           })
+          .catch((reason) => {
+            console.error(
+              '[VueFire]: Error getting AppCheck token from the server:',
+              reason
+            )
+            throw reason
+          })
       },
     }),
     isTokenAutoRefreshEnabled: false,

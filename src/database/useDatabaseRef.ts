@@ -112,7 +112,7 @@ export function _useDatabaseRef(
         if (promise.value === newPromise) {
           error.value = reason
         }
-        return Promise.reject(reason) // propagate the error
+        throw reason // propagate the error
       })
       .finally(() => {
         // ensure the current promise is still valid
