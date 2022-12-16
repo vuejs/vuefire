@@ -5,6 +5,17 @@ export type LogType = 'debug' | 'info' | 'warn' | 'error' | 'trace'
 export function log(type: LogType, ...args: any[]): void
 export function log(...args: any[]): void
 export function log(typeOrLog?: unknown, ...args: any[]): void {
-  const type = typeof typeOrLog === 'string' ? (typeOrLog as LogType) : 'log'
+  const type = isLogType(typeOrLog) ? typeOrLog : 'log'
   console[type]('[VueFire]:', ...args)
+}
+
+function isLogType(type: unknown): type is LogType {
+  return (
+    typeof type === 'string' &&
+    (type === 'debug' ||
+      type === 'info' ||
+      type === 'warn' ||
+      type === 'error' ||
+      type === 'trace')
+  )
 }
