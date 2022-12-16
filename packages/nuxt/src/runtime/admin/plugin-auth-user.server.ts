@@ -29,9 +29,10 @@ export default defineNuxtPlugin(async (nuxtApp) => {
       if (isFirebaseError(err) && err.code === 'auth/id-token-expired') {
         // Other errors to be handled: auth/argument-error
         // the error is fine, the user is not logged in
+        console.log('[VueFire]: Token expired -', err)
       } else {
         // ignore the error and consider the user as not logged in
-        console.error('[VueFire]:', err)
+        console.error('[VueFire]: Unknown Error -', err)
       }
     }
   }

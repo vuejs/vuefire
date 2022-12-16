@@ -108,7 +108,7 @@ const VueFire: NuxtModule<VueFireNuxtModuleOptions> =
 
       if (nuxt.options.ssr) {
         addServerHandler({
-          route: '/api/_vuefire/auth',
+          route: '/api/__session',
           handler: resolve(runtimeDir, './auth/api.session'),
         })
       }
