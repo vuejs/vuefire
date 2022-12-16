@@ -1,3 +1,9 @@
+## [0.0.16](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.0.15...nuxt-vuefire@0.0.16) (2022-12-16)
+
+### Bug Fixes
+
+- wrong logging ([db81a3e](https://github.com/vuejs/vuefire/commit/db81a3e5999fe9f75ef6fbb5c7bf0864b20d6ccc))
+
 ## [0.0.15](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.0.14...nuxt-vuefire@0.0.15) (2022-12-16)
 
 ### Bug Fixes

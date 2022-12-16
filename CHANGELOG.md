@@ -1,3 +1,7 @@
+# [3.0.0-beta.6](https://github.com/vuejs/vuefire/compare/vuefire@3.0.0-beta.5...vuefire@3.0.0-beta.6) (2022-12-16)
+
+No updates in this release
+
 # [3.0.0-beta.5](https://github.com/vuejs/vuefire/compare/vuefire@3.0.0-beta.4...vuefire@3.0.0-beta.5) (2022-12-16)
 
 ### Bug Fixes
