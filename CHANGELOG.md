@@ -1,3 +1,10 @@
+# [3.0.0-beta.5](https://github.com/vuejs/vuefire/compare/vuefire@3.0.0-beta.4...vuefire@3.0.0-beta.5) (2022-12-16)
+
+### Bug Fixes
+
+- **database:** correctly set pending when hydrating and during racing conditions ([90bd7f5](https://github.com/vuejs/vuefire/commit/90bd7f5cbeada113b1976ea6dd975cead63771f8))
+- **firestore:** correctly set pending when hydrating and during racing conditions ([998fe38](https://github.com/vuejs/vuefire/commit/998fe38704e9ad01e47a9f94c9dc7d72fade6940))
+
 # [3.0.0-beta.4](https://github.com/vuejs/vuefire/compare/vuefire@3.0.0-beta.3...vuefire@3.0.0-beta.4) (2022-12-13)
 
 # [3.0.0-beta.3](https://github.com/vuejs/vuefire/compare/vuefire@3.0.0-beta.2...vuefire@3.0.0-beta.3) (2022-12-12)

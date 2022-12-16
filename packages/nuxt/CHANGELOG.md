@@ -1,3 +1,16 @@
+## [0.0.15](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.0.14...nuxt-vuefire@0.0.15) (2022-12-16)
+
+### Bug Fixes
+
+- **auth:** auto import useCurrentUser ([a033e33](https://github.com/vuejs/vuefire/commit/a033e3314e10a3fd83e6d4cc7910c3afaa63b098))
+- **auth:** cookie must be named \_\_session ([6f08cc0](https://github.com/vuejs/vuefire/commit/6f08cc0362bfe024312110246daee360bf02e3c2))
+
+### Features
+
+- add logs ([03b971e](https://github.com/vuejs/vuefire/commit/03b971eecf583c87c1ee8d49a2cd05a94cf25f03))
+- **admin:** also check for FUNCTION_NAME env ([eb122b7](https://github.com/vuejs/vuefire/commit/eb122b775b9cb0c918e30aeecdb245166e511744))
+- **admin:** make options optional ([64a5e50](https://github.com/vuejs/vuefire/commit/64a5e50fde4cd1047427db2162f758b056ed9f1f))
+
 ## [0.0.14](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.0.13...nuxt-vuefire@0.0.14) (2022-12-13)
 
 ### Bug Fixes
