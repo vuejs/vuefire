@@ -1,3 +1,9 @@
+## [0.0.17](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.0.16...nuxt-vuefire@0.0.17) (2022-12-16)
+
+### Bug Fixes
+
+- move logging utils within runtime ([79e3604](https://github.com/vuejs/vuefire/commit/79e36042beb416ca4262f896ecee3064f8395227))
+
 ## [0.0.16](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.0.15...nuxt-vuefire@0.0.16) (2022-12-16)
 
 ### Bug Fixes
