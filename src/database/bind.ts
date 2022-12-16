@@ -13,7 +13,7 @@ import {
   _MaybeRef,
   _ResolveRejectFn,
 } from '../shared'
-import { ref, Ref, unref } from 'vue-demi'
+import { Ref, unref } from 'vue-demi'
 import {
   onValue,
   onChildAdded,

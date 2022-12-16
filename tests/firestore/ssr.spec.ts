@@ -8,6 +8,7 @@ import { useDocument } from '../../src'
 import { createSSRApp } from 'vue'
 import { renderToString, ssrInterpolate } from '@vue/server-renderer'
 import { clearPendingPromises } from '../../src/ssr/plugin'
+import { _initialStatesMap } from '../../src/ssr/initialState'
 
 describe('Firestore SSR', async () => {
   const { collection, query, addDoc, setDoc, updateDoc, deleteDoc, doc } =
@@ -15,6 +16,8 @@ describe('Firestore SSR', async () => {
 
   beforeEach(() => {
     clearPendingPromises(firebaseApp)
+    // delete any ssr state
+    _initialStatesMap.delete(firebaseApp)
   })
 
   function createMyApp<T>(

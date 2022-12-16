@@ -81,7 +81,6 @@ export function _useFirestoreRef(
   }
 
   // set the initial value from SSR even if the ref comes from outside
-  // TODO: allow passing firebase app name
   data.value = getInitialValue(
     initialSourceValue,
     options.ssrKey,
@@ -89,7 +88,10 @@ export function _useFirestoreRef(
     useFirebaseApp()
   )
 
-  const pending = ref(true)
+  // if no initial value is found (ssr), we should set pending to true
+  let shouldStartAsPending = data.value === undefined // no initial value
+
+  const pending = ref(false)
   const error = ref<FirestoreError>()
   // force the type since its value is set right after and undefined isn't possible
   const promise = shallowRef() as ShallowRef<Promise<unknown | null>>
@@ -99,7 +101,7 @@ export function _useFirestoreRef(
   function bindFirestoreRef() {
     let docRefValue = unref(docOrCollectionRef)
 
-    const p = new Promise<unknown | null>((resolve, reject) => {
+    const newPromise = new Promise<unknown | null>((resolve, reject) => {
       // stop the previous subscription
       unbind(options.reset)
       // skip if the ref is null or undefined
@@ -109,6 +111,11 @@ export function _useFirestoreRef(
         // resolve to avoid an ever pending promise
         return resolve(null)
       }
+
+      pending.value = shouldStartAsPending
+      // the very first time we bind, if we hydrated the value, we don't set loading to true
+      // this way we ensure, all subsequent calls to bindDatabaseRef will set pending to true
+      shouldStartAsPending = true
 
       if (!docRefValue.converter) {
         docRefValue = docRefValue.withConverter(
@@ -128,24 +135,29 @@ export function _useFirestoreRef(
         options
       )
     })
+      .catch((reason) => {
+        if (promise.value === newPromise) {
+          error.value = reason
+        }
+        return Promise.reject(reason) // propagate the error
+      })
+      .finally(() => {
+        // ensure the current promise is still valid
+        if (promise.value === newPromise) {
+          pending.value = false
+        }
+      })
 
-    promise.value = p
-
-    p.catch((reason: FirestoreError) => {
-      error.value = reason
-    }).finally(() => {
-      pending.value = false
-    })
+    // we set the promise here to ensure that pending is set right after if the user awaits the promise
+    promise.value = newPromise
   }
 
   let stopWatcher = noop
   if (isRef(docOrCollectionRef)) {
-    stopWatcher = watch(docOrCollectionRef, bindFirestoreRef, {
-      immediate: true,
-    })
-  } else {
-    bindFirestoreRef()
+    stopWatcher = watch(docOrCollectionRef, bindFirestoreRef)
   }
+
+  bindFirestoreRef()
 
   // only add the first promise to the pending ones
   if (initialSourceValue) {

@@ -41,7 +41,7 @@ export function _useDatabaseRef(
   reference: _MaybeRef<_Nullable<DatabaseReference | Query>>,
   localOptions: UseDatabaseRefOptions = {}
 ): _RefDatabase<unknown> {
-  let unbind!: UnbindWithReset
+  let unbind: UnbindWithReset = noop
   const options = Object.assign({}, globalDatabaseOptions, localOptions)
   const initialSourceValue = unref(reference)
   const data = options.target || ref<unknown | null>()
@@ -84,6 +84,7 @@ export function _useDatabaseRef(
     const referenceValue = unref(reference)
 
     const newPromise = new Promise<unknown | null>((resolve, reject) => {
+      unbind(options.reset)
       if (!referenceValue) {
         unbind = noop
         // resolve to avoid an ever pending promise

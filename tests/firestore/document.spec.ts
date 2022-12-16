@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 import {
   addDoc,
   doc as originalDoc,
@@ -7,7 +7,13 @@ import {
   DocumentReference,
   FirestoreError,
 } from 'firebase/firestore'
-import { expectType, setupFirestoreRefs, tds, firestore } from '../utils'
+import {
+  expectType,
+  setupFirestoreRefs,
+  tds,
+  firestore,
+  firebaseApp,
+} from '../utils'
 import { nextTick, ref, shallowRef, unref, type Ref } from 'vue'
 import { isPOJO, _MaybeRef, _Nullable } from '../../src/shared'
 import {
@@ -17,6 +23,10 @@ import {
   _RefFirestore,
 } from '../../src'
 import { mockWarn } from '../vitest-mock-warn'
+import {
+  useSSRInitialState,
+  _initialStatesMap,
+} from '../../src/ssr/initialState'
 
 describe(
   'Firestore documents',
@@ -56,6 +66,11 @@ describe(
         stop: data.stop,
       }
     }
+
+    beforeEach(() => {
+      // delete any ssr state
+      _initialStatesMap.delete(firebaseApp)
+    })
 
     it('binds a document', async () => {
       const { wrapper, itemRef, data } = factory()
@@ -116,6 +131,45 @@ describe(
 
       await setDoc(itemRef, { name: 'a' })
       expect(data.value!.id).toBe(itemRef.id)
+    })
+
+    it('sets pending while loading', async () => {
+      const itemRef = shallowRef(doc('a'))
+      const { pending, promise } = factory({ ref: itemRef })
+
+      expect(pending.value).toBe(true)
+      await promise.value
+      expect(pending.value).toBe(false)
+
+      // set the target to a new ref so it can be loaded again
+      itemRef.value = doc('b')
+
+      await nextTick() // for the watcher to trigger
+      expect(pending.value).toBe(true)
+      await promise.value
+      expect(pending.value).toBe(false)
+    })
+
+    it('sets pending to false if there is an initial value (ssr)', async () => {
+      const itemRef = shallowRef(doc())
+      useSSRInitialState({ f: { a: 1 }, r: {}, s: {}, u: {} }, firebaseApp)
+      const { pending, promise } = factory({
+        ref: itemRef,
+        options: { ssrKey: 'a' },
+      })
+
+      expect(pending.value).toBe(false)
+      await promise.value
+      expect(pending.value).toBe(false)
+    })
+
+    it('skips setting pending if the object is an empty ref', async () => {
+      const itemRef = shallowRef()
+      const { pending, promise } = factory({ ref: itemRef })
+
+      expect(pending.value).toBe(false)
+      await promise.value
+      expect(pending.value).toBe(false)
     })
 
     it('manually unbinds a document', async () => {

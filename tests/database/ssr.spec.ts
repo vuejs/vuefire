@@ -8,12 +8,15 @@ import { useDatabaseObject } from '../../src'
 import { createSSRApp } from 'vue'
 import { renderToString, ssrInterpolate } from '@vue/server-renderer'
 import { clearPendingPromises } from '../../src/ssr/plugin'
+import { _initialStatesMap } from '../../src/ssr/initialState'
 
 describe('Database SSR', async () => {
   const { databaseRef, set } = setupDatabaseRefs()
 
   beforeEach(() => {
     clearPendingPromises(firebaseApp)
+    // delete any ssr state
+    _initialStatesMap.delete(firebaseApp)
   })
 
   function createMyApp<T>(
