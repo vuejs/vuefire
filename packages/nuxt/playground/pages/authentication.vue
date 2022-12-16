@@ -31,7 +31,7 @@ let credential: AuthCredential | null = null
 const route = useRoute()
 const router = useRouter()
 
-// automatically redirect the user if they are logged in but was rejected on the server beacuse of an outdated cookie
+// automatically redirect the user if they are logged in but was rejected on the server because of an outdated cookie
 onMounted(async () => {
   const currentUser = await getCurrentUser()
   if (

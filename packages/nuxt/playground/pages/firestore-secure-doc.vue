@@ -10,7 +10,7 @@ const db = useFirestore()
 const user = useCurrentUser()
 const secretRef = computed(() => user.value ? doc(db, 'secrets', user.value.uid) : null)
 
-const secret = useDocument(secretRef)
+const { data:secret, pending: isSecretLoading } = useDocument(secretRef)
 
 const textSecret = ref('')
 function setSecret() {
@@ -25,7 +25,7 @@ function setSecret() {
     <p v-if="!user">
       Log in in the authentication page to test this.
     </p>
-    <template v-else>
+    <template v-else-if="secret">
       <p>Secret Data for user {{ user.displayName }} ({{ user.uid }})</p>
       <pre v-if="secret">{{ secret }}</pre>
       <div v-else>
@@ -35,6 +35,9 @@ function setSecret() {
           <button>Set the secret</button>
         </form>
       </div>
+    </template>
+    <template v-else-if="isSecretLoading">
+      <p>Loading...</p>
     </template>
   </div>
 </template>
