@@ -75,6 +75,11 @@ interface _FirestoreRefOptionsWithDefaults extends FirestoreRefOptions {
    * See https://vuefire.vuejs.org/guide/global-options.html
    */
   converter: FirestoreDataConverter<unknown>
+
+  /**
+   * @defaultValue `{ serverTimestamps: 'estimate' }` to avoid `null` values
+   */
+  snapshotOptions: SnapshotOptions
 }
 
 /**
@@ -85,6 +90,7 @@ const DEFAULT_OPTIONS: _FirestoreRefOptionsWithDefaults = {
   wait: true,
   maxRefDepth: 2,
   converter: firestoreDefaultConverter,
+  snapshotOptions: { serverTimestamps: 'estimate' },
 }
 export { DEFAULT_OPTIONS as firestoreOptionsDefaults }
 
