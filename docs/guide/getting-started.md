@@ -69,7 +69,7 @@ Note that we will refer to `database` and `firestore` as `db` in examples where 
 
 ### Setup
 
-First, install the VueFire Vue plugin. It will allow you to add extra modules like [Storage](./storage.md) or [Auth](./auth.md) to your app.
+First, install the VueFire Vue plugin. It will allow you to add extra modules like [AppCheck](./app-check.md) or [Auth](./auth.md) to your app.
 
 ```ts
 import { createApp } from 'vue'
@@ -196,29 +196,37 @@ If you want to change the data, you should use the Firebase API (e.g. `setDoc()`
 
 ### Options API
 
-The composition API is the recommended way to use VueFire because its API is more flexible and it's easier to use with TypeScript.
-
 VueFire can also be used with the Options API, while less flexible, it's still a valid way to use VueFire. First, you need to install the options plugin:
 
-- Install `firestorePlugin` to use _Firestore_
-- Install `databasePlugin` to use Firebase _Database_
+- Add the `VueFireFirestoreOptionsAPI` module to use _Firestore_
+- Add the `VueFireDatabaseOptionsAPI` module to use Firebase _Database_
 
 <FirebaseExample>
 
 ```js
 import { createApp } from 'vue'
-import { databasePlugin } from 'vuefire'
+import { VueFire, VueFireDatabaseOptionsAPI } from 'vuefire'
 
 const app = createApp(App)
-app.use(databasePlugin)
+app.use(VueFire, {
+  // ...
+  modules: [
+    VueFireDatabaseOptionsAPI(),
+  ],
+})
 ```
 
 ```js
 import { createApp } from 'vue'
-import { firestorePlugin } from 'vuefire'
+import { VueFire, VueFireFirestoreOptionsAPI } from 'vuefire'
 
 const app = createApp(App)
-app.use(firestorePlugin)
+app.use(VueFire, {
+  // ...
+  modules: [
+    VueFireFirestoreOptionsAPI(),
+  ],
+})
 ```
 
 </FirebaseExample>
