@@ -87,18 +87,18 @@ export function extractRefs(
       ) {
         data[key] = ref
       } else if (isDocumentRef(ref)) {
+        // key for the subscription
+        const refSubKey = path + key
         // allow values to be null (like non-existent refs)
         // TODO: better typing since this isObject shouldn't be necessary but it doesn't work
         data[key] =
-          typeof oldDoc === 'object' &&
-          key in oldDoc &&
-          // only copy refs if they were refs before
+          // if the ref was already bound, keep the same object
+          // otherwise set the path as a string so it can be bound later
           // https://github.com/vuejs/vuefire/issues/831
-          typeof oldDoc[key] != 'string'
-            ? oldDoc[key]
-            : ref.path
+          // https://github.com/vuejs/vuefire/pull/1223
+          refSubKey in subs ? oldDoc[key] : ref.path
         // TODO: handle subpathes?
-        refs[path + key] = ref
+        refs[refSubKey] = ref
       } else if (Array.isArray(ref)) {
         data[key] = Array(ref.length)
         // fill existing refs into data but leave the rest empty

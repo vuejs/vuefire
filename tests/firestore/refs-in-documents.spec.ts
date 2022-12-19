@@ -156,6 +156,37 @@ describe('Firestore refs in documents', async () => {
     expect(data.value).toEqual({ a: aRef.path })
   })
 
+  // https://github.com/vuejs/vuefire/pull/1223
+  it('sets the path even if the value was null before', async () => {
+    const docRef = await addDoc(listOfRefs, { a: null })
+    const { data, pending, promise } = factory({
+      ref: docRef,
+      options: { maxRefDepth: 0 },
+    })
+
+    await promise.value
+    expect(data.value).toEqual({ a: null })
+    await updateDoc(docRef, { a: aRef })
+    expect(data.value).toEqual({ a: aRef.path })
+  })
+
+  it('keeps null for non existent docs refs when updating the doc', async () => {
+    const docRef = await addDoc(listOfRefs, { a: null })
+
+    const { data, promise } = factory({ ref: docRef })
+    await promise.value
+
+    expect(data.value).toEqual({ a: null })
+
+    await updateDoc(docRef, { a: emptyRef })
+
+    expect(data.value).toEqual({ a: null })
+
+    await updateDoc(docRef, { name: 'd' })
+
+    expect(data.value).toEqual({ a: null, name: 'd' })
+  })
+
   it('does not fail with cyclic refs', async () => {
     const docRef = await addDoc(listOfRefs, {})
     await setDoc(docRef, { ref: docRef })
