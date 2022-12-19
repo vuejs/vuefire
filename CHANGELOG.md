@@ -1,3 +1,13 @@
+# [3.0.0-beta.7](https://github.com/vuejs/vuefire/compare/vuefire@3.0.0-beta.6...vuefire@3.0.0-beta.7) (2022-12-19)
+
+### Bug Fixes
+
+- **firestore:** track all ref subs ([1d46371](https://github.com/vuejs/vuefire/commit/1d463710915b9859c8415cd7848f0780a09df25a)), closes [#1223](https://github.com/vuejs/vuefire/issues/1223)
+
+### Features
+
+- **firestore:** default serverTimestamps to estimate ([ae85a41](https://github.com/vuejs/vuefire/commit/ae85a41a4614c7b4b3526c79aebfb8ac8d6853fd))
+
 # [3.0.0-beta.6](https://github.com/vuejs/vuefire/compare/vuefire@3.0.0-beta.5...vuefire@3.0.0-beta.6) (2022-12-16)
 
 No updates in this release
