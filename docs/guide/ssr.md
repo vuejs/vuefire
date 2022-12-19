@@ -165,3 +165,24 @@ const { data: users } = useUserList()
 ```
 
 -->
+
+## Manual SSR keys
+
+VueFire automatically infers an SSR key based on the path of the document or collection whenever possible. This means there are some scenarios where **you have to provide a manual `ssrKey`**:
+
+- When using Firestore Queries
+- When binding the same document multiple times
+
+In these scenarios, provide the `ssrKey` as a second argument to `useDocument()`, `useCollection()`, etc:
+
+<FirebaseExample>
+
+```ts
+useDatabaseList(queryRef, { ssrKey: 'my-quiz' })
+```
+
+```ts
+useCollection(queryRef, { ssrKey: 'my-quiz' })
+```
+
+</FirebaseExample>
