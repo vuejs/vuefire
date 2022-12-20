@@ -23,7 +23,7 @@
 
 ## Roadmap
 
-VueFire is currently being rewritten to support Vue 3 and Firebase 9. You can follow the progress on [the Roadmap issue](https://github.com/vuejs/vuefire/issues/1241). While it's currently in alpha, **it's the recommended version to use**, even for Vue 2, is it covers everything VueFire 2 did and more.
+VueFire is currently being rewritten to support Vue 3 and Firebase 9. You can follow the progress on [the Roadmap issue](https://github.com/vuejs/vuefire/issues/1241). While it's currently in alpha, **it's the recommended version to use**, even for Vue 2, as it covers everything VueFire 2 did and more.
 
 ## Installation
 
