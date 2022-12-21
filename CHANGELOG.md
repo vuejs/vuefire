@@ -1,3 +1,9 @@
+# [3.0.0-beta.8](https://github.com/vuejs/vuefire/compare/vuefire@3.0.0-beta.7...vuefire@3.0.0-beta.8) (2022-12-21)
+
+### Features
+
+- **database:** expose databaseDefaultSerializer ([278916b](https://github.com/vuejs/vuefire/commit/278916be17676ccee71f86ffcc895606ebdcf872))
+
 # [3.0.0-beta.7](https://github.com/vuejs/vuefire/compare/vuefire@3.0.0-beta.6...vuefire@3.0.0-beta.7) (2022-12-19)
 
 ### Bug Fixes
