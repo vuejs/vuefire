@@ -23,6 +23,7 @@ export type {
   _RefDatabase,
   VueDatabaseDocumentData,
   VueDatabaseQueryData,
+  createRecordFromDatabaseSnapshot as databaseDefaultSerializer,
 } from './database/utils'
 
 /**
