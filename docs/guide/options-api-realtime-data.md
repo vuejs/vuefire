@@ -1,7 +1,7 @@
 # Options API Realtime Data
 
 ::: tip
-This pages assumes you have read the [Realtime Data](./realtime-data.md) page and will only cover the syntax differences between the Options API and the Composition API.
+This pages assumes you have read the [Realtime Data](./realtime-data.md) page and only covers the syntax differences between the Options API and the Composition API.
 :::
 
 There are two ways of using Realtime Data with VueFire:
@@ -28,18 +28,18 @@ app.use(VueFire, {
 })
 ```
 
-You can pass global options to the modules but note **these options are limited to the Options API usage**.They do not affect composition API calls such as `useDocument()` and `useDatabaseObject()`. [Check the global options](./global-options.md) to see how you can override those.
+You can pass global options to the modules but note **these options only affect the Options API usage**. They do not affect composition API calls such as `useDocument()` and `useDatabaseObject()`. [Check the global options](./global-options.md) to see how you can override those.
 
 ```ts
 app.use(VueFire, {
   modules: [
     VueFireFirestoreOptionsAPI({
-      // same behavior as vuefire v2
+      // this would be the same behavior as VueFire v2
       reset: true,
       wait: false,
     }),
     VueFireDatabaseOptionsAPI({
-      // same behavior as vuefire v2
+      // this would be the same behavior as VueFire v2
       reset: true,
       wait: false,
     }),
@@ -49,7 +49,7 @@ app.use(VueFire, {
 
 ## Declarative binding
 
-Any Database Reference provided in a `firebase`/`firestore` option will be bound at creation (after Vue's `beforeMount` hook) to the specified key on the component. In the following example we bind a Collection of Documents to our `documents` property. The key provided in the `firebase`/`firestore` option (`documents`) must be initialized in the `data` of the component:
+Any Database Reference provided in a `firebase`/`firestore` option will be bound at creation (after Vue's `beforeMount` hook) to the specified key on the component. In the following example we bind a _collection_ of Documents to our `documents` property. The key provided in the `firebase`/`firestore` option (`documents`) must be initialized in the `data` of the component:
 
 <FirebaseExample>
 
@@ -60,6 +60,7 @@ import { ref as dbRef } from 'firebase/database'
 export default {
   data() {
     return {
+      // must be an empty array to be bound as a list
       documents: [],
     }
   },
@@ -90,7 +91,7 @@ export default {
 </FirebaseExample>
 
 ::: warning
-You must declare properties with their initial values in `data`. **For the RTDB, using an _Array_ as the initial value will bind the Reference as an array, otherwise it is bound as an object**. For Firestore, collections and queries are bound as arrays while documents are bound as objects.
+You must declare properties with their initial values in `data`. **For Firebase Database, using an _Array_ as the initial value will bind the Reference as an array, otherwise it will be bound as an object**. For Firestore, collections and queries are bound as arrays while documents are bound as objects.
 :::
 
 ## Programmatic binding
@@ -189,7 +190,7 @@ this.$firestoreBind('documents', query(documents, where('creator', '==', this.id
 
 ## Unbinding / Unsubscribing to changes
 
-While VueFire will automatically unbind any reference bound in a component whenever needed, you may still want to do it on your own to stop displaying updates on a document or collection or because the user logged out and they do not have read-access to a resource anymore.
+While VueFire will automatically unbind any reference bound in a component whenever needed, you may still want to do it on your own to stop displaying updates on a document or collection or because the user logged out and they do not have the permissions anymore.
 
 <FirebaseExample>
 
@@ -227,7 +228,7 @@ this.$databaseUnbind('user', () => ({ name: 'unregistered' }))
 // this.user === { name: 'unregistered' }
 
 // for references bound as arrays, they are reset to an empty array by default instead of `null`
-this.$databaseUnbind('documents')
+this.$databaseUnbind('documents', true)
 // this.documents === []
 ```
 

@@ -10,10 +10,11 @@ You can access the Firebase Storage from within any component with the composabl
 
 ## Uploading Files
 
-You can upload and monitor the progress of a file upload with the `useStorageFile()` composable. This also exposes the URL of the file once it's uploaded and it's metadata, let's start with a full example of a form upload:
+You can upload and monitor the progress of a file upload with the `useStorageFile()` composable. This also exposes the URL of the file once it's uploaded and its metadata, let's start with a full example of a form upload:
 
 ```vue
 <script setup lang="ts">
+// See https://vueuse.org/core/useFileDialog
 import { useFileDialog } from '@vueuse/core'
 import { ref as storageRef } from 'firebase/storage'
 import { useFirebaseStorage, useStorageFile } from 'vuefire'
@@ -23,7 +24,7 @@ const mountainFileRef = storageRef(storage, 'images/mountains.jpg')
 
 const {
   url,
-  // gives you a 0-1 value of the upload progress
+  // gives you a percentage between 0 and 1 of the upload progress
   uploadProgress,
   uploadError,
   // firebase upload task
@@ -50,7 +51,7 @@ const { files, open, reset } = useFileDialog()
         type="button"
         @click="open({ accept: 'image/*', multiple: false })"
       >
-        <template v-if="files?.length">
+        <template v-if="files?.length === 1">
           Selected file: {{ files.item(0)!.name }} (Click to select another)
         </template>
         <template v-else> Select one picture </template>
@@ -67,7 +68,7 @@ const { files, open, reset } = useFileDialog()
 Once the picture is uploaded, you can use the `url` reactive variable. For example, if it's an image, you can display it:
 
 ```vue-html
-<img :src="url" />
+<img v-if="url" :src="url" />
 ```
 
 ## Downloading Files
@@ -104,11 +105,11 @@ const storage = useFirebaseStorage()
 const mountainFileRef = storageRef(storage, 'images/mountains.jpg')
 const {
   metadata,
-  // refresh the url if the file changes
+  // manually refresh the metadata
   refresh,
   // update metadata
   update,
-} = useStorageFileUrl(mountainFileRef)
+} = useStorageFileMetadata(mountainFileRef)
 </script>
 ```
 

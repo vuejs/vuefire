@@ -18,18 +18,19 @@ globalFirestoreOptions.converter = ...
 
 </FirebaseExample>
 
-Changing these options will affect all calls to `useDocument()`, `useDatabaseObject()`, ... in your application **and the Options API usage** as well (`$firestoreBind()`, `$rtdbBind()`).
+Changing these options will affect **all calls** to `useDocument()`, `useDatabaseObject()`, ... in your application **as well as Options API calls** (`$firestoreBind()`, `$rtdbBind()`).
 
-In both scenarios, **you need to make sure the returned objects contain their original `id`** so other VueFire functionalities can work correctly. The easies way to do this is by reusing the default `serialize`/`converter`:
+## Custom `serialize`/`converter`
+
+When adapting `serialize`/`converter` or using `.withConverter()`, **you need to make sure the returned objects contain their original `id`** so other VueFire functionalities can work correctly. The easies way to do this is by reusing the default `serialize`/`converter`:
 
 <FirebaseExample>
 
 ```ts
-import { globalDatabaseOptions } from 'vuefire'
+import { databaseDefaultSerializer } from 'vuefire'
 
-const defaultSerialize = globalDatabaseOptions.serialize
 globalDatabaseOptions.serialize = (snapshot) => {
-  const data = defaultSerialize(snapshot)
+  const data = databaseDefaultSerializer(snapshot)
   // add anything custom to the returned object
   data.metadata = snapshot.metadata
   return data
@@ -37,13 +38,15 @@ globalDatabaseOptions.serialize = (snapshot) => {
 ```
 
 ```ts
-import { globalFirestoreOptions } from 'vuefire'
+import { firestoreDefaultConverter } from 'vuefire'
 
-const defaultConverter = globalFirestoreOptions.converter
 globalFirestoreOptions.converter = {
-  toFirestore: defaultConverter.toFirestore,
+  // the default converter just returns the data: (data) => data
+  toFirestore: firestoreDefaultConverter.toFirestore,
   fromFirestore: (snapshot, options) => {
-    const data = defaultConverter.fromFirestore(snapshot, options)
+    const data = firestoreDefaultConverter.fromFirestore(snapshot, options)
+    // if the document doesn't exist, return null
+    if (!data) return null
     // add anything custom to the returned object
     data.metadata = snapshot.metadata
     return data

@@ -11,7 +11,7 @@ When passing a target ref, the composable will not create a new `ref()` for you,
 
 ## Pinia
 
-If you are using [Pinia](https://pinia.vuejs.org), you can directly use the `useCollection` function within [setup stores](https://pinia.vuejs.org/cookbook/composables.html#setup-stores):
+If you are using [Pinia](https://pinia.vuejs.org), you can directly use the `useCollection()` function within [setup stores](https://pinia.vuejs.org/cookbook/composables.html#setup-stores):
 
 ```ts
 import { defineStore } from 'pinia'

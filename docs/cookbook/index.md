@@ -1,12 +1,12 @@
 # What is the Cookbook
 
-Here are some recipes that you may find useful. If you find a usecase that is missing, you can check if it isn't yet on [the roadmap](https://github.com/vuejs/vuefire/issues/145) or open an issue. You could also directly open a Pull request, but I recommend you to open an issue first so you don't end up wasting your time writing something that won't get published.
+Here are some recipes that you may find useful. If you find a use-case that is missing, you can check if it isn't yet on [the roadmap](https://github.com/vuejs/vuefire/issues/145) or open an issue. You could also directly open a Pull request, but I recommend you to open an issue first so you don't end up wasting your time writing something that won't get published.
 
 ## Recipes
 
-- [Prototyping](./prototyping.md)
-- [Using Firebase Database and Firestore together](./rtdb-and-firestore.md)
+- [Migration from VueFire 2](./migration-v2-v3.md)
 - [Vuex](./vuex.md)
+- [Binding to existing refs](./subscriptions-external.md)
 
 ## Useful links
 

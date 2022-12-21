@@ -52,28 +52,43 @@ const someTodo = useDocument(doc(collection(db, 'todos'), 'someId'))
 
 </FirebaseExample>
 
-These composables all return a Vue `Ref` of the data. Note **this is a readonly data**, you shouldn't mutate it directly, [use the Firebase SDK](./writing-data.md) instead. It will be automatically updated when the data changes anywhere.
+These composables all a Vue `Ref` containing the data. Note **this is a readonly data**, you shouldn't mutate it directly, you should instead [use the Firebase SDK](./writing-data.md). VueFire will automatically keep the data in sync with the database.
 
-Sometimes, you need to change the document you are observing, let's say you have a list of contacts and that you display one based on the URL, you handle this by passing a reactive variable of the data source to the `useDocument()`, `useDatabaseObject()`, etc composables:
+Sometimes, you need to start observing a different document or collection, let's say you have a _collection_ of contacts and that you display a specific contact based on the URL, e.g. displaying the contact with an id equal to `24` on `/contacts/24`, you can achieve this this by passing a _reactive variable of the data source_ to the `useDocument()`, `useDatabaseObject()`, etc composables:
+
+<FirebaseExample>
 
 ```ts
 const route = useRoute()
+// since route is reactive, `contactSource` will be reactive too
+const contactSource = computed(
+  () => dbRef(db, 'contacts/' + route.params.id)
+)
+// contact will always be in sync with the data source
+const contact = useDatabaseObject(contactSource)
+```
+
+```ts
+const route = useRoute()
+// since route is reactive, `contactSource` will be reactive too
 const contactSource = computed(
   () => doc(collection(db, 'contacts'), route.params.id)
 )
-// contact will always be
+// contact will always be in sync with the data source
 const contact = useDocument(contactSource)
 ```
 
-This way, if the route changes, the document will be updated to the new one, automatically unsubscribing from the previous one and subscribing to the new one.
+</FirebaseExample>
+
+This way, when the route changes, the document will be updated to the new one, automatically unsubscribing from the previous one and subscribing to the new one.
 
 ::: tip
-If you can't use a `computed()`, use `shallowRef()`s instead of `ref()`s to store the data sources. This is because `shallowRef()` doesn't try to recursively observe the object it's given, which in the case of a Firebase data source, would be wasteful.
+If you can't use a `computed()`, use `shallowRef()`s instead of `ref()`s to store the data sources. This is because `shallowRef()` doesn't try to recursively observe the object it's given, which in the case of a Firebase data source, would be worse in terms of performance.
 :::
 
 ### Subscription state
 
-All of the composables not only return a `Ref`, they can also be destructured to access other useful data like _is the initial load still pending?_ or _did the subscription fail?_. You only need to destructure the returned value from the composables:
+All of the composables can also be destructured to access other useful data like _is the initial load still pending?_ or _did the subscription fail?_. You only need to destructure the returned value from the composables:
 
 ```ts
 // instead of writing
@@ -91,19 +106,19 @@ const {
 } = useDocument(contactSource)
 ```
 
-Notice how we rename `data` to whatever makes more sense for the context. It's important to note
+Notice how we rename `data` to whatever makes more sense for the context.
 
 ::: warning
-All of the properties that can be defined on the Ref are defined as [non-enumerable properties](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty) which means they won't be copied over when using the spread operator e.g. `const { data, ...rest } = useDocument(contactSource)`. This is to ensure they are completely ignored in other places like devtools.
+All of the properties that can be defined on the `Ref` are defined as [non-enumerable properties](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty) which means they won't be copied over when using the spread operator e.g. `const { data, ...rest } = useDocument(contactSource)`. This is to ensure they are completely ignored and do not cerate problems in other places like devtools.
 :::
 
-## VueFire extras
+## VueFire additions
 
 VueFire adds a few properties to the data snapshot to make it easier to work with.
 
 ### Document's `id`
 
-Each document/object, has an `id` property that is the key of the document/object. This is useful when you want to display the id of the document/object in your template. It's set as a non enumerable property so it won't be copied over when using the spread operator.
+Each document/object, has an convenient `id` property that is the id/key of the document/object. It's set as a non enumerable property so it won't be copied over when using the spread operator.
 
 <FirebaseExample>
 
@@ -129,6 +144,8 @@ doc(collection(db, 'users'), 'jORwjIykFn1NmkdzTkhU').id // 'jORwjIykFn1NmkdzTkhU
 
 </FirebaseExample>
 
+This behavior can be customized through the [`serialize`/`converter` option](./global-options.md#custom-serializeconverter). Note that in both cases, **you must keep the `id` property for VueFire to correctly work**.
+
 ### GeoPoints (Firestore only)
 
 In Firestore you can store [GeoPoints](https://firebase.google.com/docs/reference/js/firestore_.geopoint). They are retrieved as-is by VueFire, meaning that you can directly use methods like `isEqual` and access its properties `latitude` and `longitude`.
@@ -152,7 +169,7 @@ await addDoc(collection(db, 'cities'), {
 // somewhere else...
 // we consider `cities` to be the result af `useCollection(collection(db, 'cities'))`
 // we retrieve Paris that was just added
-const paris = cities.value[cities.value.length - 1]
+const paris = cities.value.at(-1)
 paris.location.latitude // 48.8588377
 paris.location.longitude // 2.2770206
 ```
@@ -182,7 +199,7 @@ await addDoc(collection(db, 'events'), {
 // somewhere else...
 // we consider `events` to be the result af `useCollection(collection(db, 'events'))`
 // we retrieve the event we just added
-const prise = events.value[events.value.length - 1]
+const prise = events.value.at(-1)
 prise.date.seconds // -5694969600
 prise.date.nanoseconds // 0
 prise.toDate() // Tue Jul 14 1789
@@ -277,7 +294,7 @@ const numberList = useDatabaseList(numbersRef)
 
 ## TypeScript
 
-Usually, the different composables accept a generic to enforce the type of the documents:
+To enforce a type, you only need to pass a generic type when using the different composables functions:
 
 <FirebaseExample>
 
@@ -288,12 +305,14 @@ const settings = useDatabaseObject<Settings>(dbRef(db, 'settings/someId'))
 
 ```ts
 const contacts = useCollection<Contact>(collection(db, 'contacts'))
-const settings = useDocument<Settings>(doc(collection(db, 'settings'), 'someId'))
+const settings = useDocument<Settings>(
+  doc(collection(db, 'settings'), 'someId')
+)
 ```
 
 </FirebaseExample>
 
-Note this is only a type annotation, it does not perform any runtime validation.
+Note this is only a type annotation, it does not perform any runtime validation. If you want a runtime validation, you can use the `withConverter()` method as shown below.
 
 ### Firestore `.withConverter()`
 
@@ -304,6 +323,8 @@ The recommended Firebase approach is to use the `withConverter()` for Firestore:
 :::
 
 ```ts
+import { firestoreDefaultConverter } from 'vuefire'
+
 interface TodoI {
   text: string
   finished: boolean
@@ -312,11 +333,13 @@ interface TodoI {
 const todoList = useDocument(
   doc(db, 'todos').withConverter<TodoI>({
     fromFirestore: (snapshot) => {
-      const data = snapshot.data()
+      const data = firestoreDefaultConverter.fromFirestore(snapshot)
       // usually you can do data validation here
-      return { text: data.text, finished: data.finished }
+      if (!data || !isValidTodoItem(data)) return null
+
+      return data
     },
-    toFirestore: (todo) => todo,
+    toFirestore: firestoreDefaultConverter.toFirestore,
   })
 )
 ```

@@ -200,7 +200,7 @@ function sidebarCookbook(): SidebarGroup {
     text: 'Cookbook',
     items: [
       {
-        text: 'Cookbook',
+        text: 'Cookbook Index',
         link: '/cookbook/',
       },
       {

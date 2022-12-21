@@ -18,7 +18,17 @@ app.use(VueFire, {
 })
 ```
 
-This will automatically create and inject the [Auth module](https://firebase.google.com/docs/auth/web/start#add-initialize-sdk) from Firebase so you can access it from within any component with the `useFirebaseAuth()` composable.
+This will automatically initialize and inject the [Auth module](https://firebase.google.com/docs/auth/web/start#add-initialize-sdk) as well as the other features described in this page.
+
+## Auth instance
+
+You can access the current Auth instance in any component with the `useFirebaseAuth()` composable:
+
+```vue
+<script setup>
+const auth = useFirebaseAuth()
+</script>
+```
 
 ## Current User
 
