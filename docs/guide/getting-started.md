@@ -37,7 +37,7 @@ export const firebaseApp = initializeApp({
 })
 
 // used for the databas refs
-const db = getDatabase(firebase)
+const db = getDatabase(firebaseApp)
 
 // here we can export reusable database references
 export const todosRef = dbRef(db, 'todos')
@@ -53,7 +53,7 @@ export const firebaseApp = initializeApp({
 })
 
 // used for the firestore refs
-const db = getFirestore(firebase)
+const db = getFirestore(firebaseApp)
 
 // here we can export reusable database references
 export const todosRef = collection(db, 'todos')
