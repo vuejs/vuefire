@@ -21,21 +21,28 @@
 
 [**📚 Documentation**](https://vuefire.vuejs.org/)
 
+## Status
+
+- VueFire is currently stable
+- Nuxt VueFire is in _Preview_
+
 ## Roadmap
 
-VueFire is currently being rewritten to support Vue 3 and Firebase 9. You can follow the progress on [the Roadmap issue](https://github.com/vuejs/vuefire/issues/1241). While it's currently in alpha, **it's the recommended version to use**, even for Vue 2, as it covers everything VueFire 2 did and more.
+You can follow the progress and future plans on [the Roadmap issue](https://github.com/vuejs/vuefire/issues/1241).
 
 ## Installation
 
 VueFire requires the `firebase` package to be installed as well as `vuefire`:
 
 ```bash
-npm install vuefire
+npm install vuefire firebase
 ```
 
 ## Usage
 
-[Getting Started](https://vuefire.vuejs.org/guide/getting-started.html)
+- [Getting Started](https://vuefire.vuejs.org/guide/getting-started.html)
+- [Vite Demo](https://github.com/posva/vuefire-vite-example)
+- _Coming soon_: Nuxt Demo.
 
 ## Related
 
