@@ -1,6 +1,10 @@
 import type { Ref } from 'vue-demi'
 import type { UnbindWithReset, ResetOption } from '../shared'
-import { databaseUnbinds } from './optionsApi'
+
+export const databaseUnbinds = new WeakMap<
+  object,
+  Record<string, UnbindWithReset>
+>()
 
 export function internalUnbind(
   key: string,

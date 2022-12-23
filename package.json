@@ -14,6 +14,16 @@
       "types": "./dist/server/index.d.ts",
       "import": "./dist/server/index.mjs",
       "require": "./dist/server/index.cjs"
+    },
+    "./options-api/firestore": {
+      "types": "./dist/options-api/firestore.d.ts",
+      "import": "./dist/options-api/firestore.mjs",
+      "require": "./dist/options-api/firestore.cjs"
+    },
+    "./options-api/database": {
+      "types": "./dist/options-api/database.d.ts",
+      "import": "./dist/options-api/database.mjs",
+      "require": "./dist/options-api/database.cjs"
     }
   },
   "main": "./dist/index.cjs",

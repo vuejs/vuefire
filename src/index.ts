@@ -43,30 +43,72 @@ export type {
 /**
  * Database Options API
  */
+import {
+  databasePlugin as _databasePlugin,
+  databasePlugin as _rtdbPlugin,
+  VueFireDatabaseOptionsAPI as _VueFireDatabaseOptionsAPI,
+} from './options-api/database'
+import type {
+  DatabasePluginOptions as _DatabasePluginOptions,
+  VueFirebaseObject as _VueFirebaseObject,
+  FirebaseOption as _FirebaseOption,
+} from './options-api/database'
+
 export {
+  // already deprecated
   databasePlugin,
   // To ease migration
   databasePlugin as rtdbPlugin,
-  VueFireDatabaseOptionsAPI,
-} from './database/optionsApi'
-export type {
-  DatabasePluginOptions,
-  VueFirebaseObject,
-  FirebaseOption,
-} from './database/optionsApi'
+} from './options-api/database'
+
+// TODO: remove deprecations in v4
+/**
+ * @deprecated import from `vuefire/options-api/database` instead
+ */
+export const VueFireDatabaseOptionsAPI = _VueFireDatabaseOptionsAPI
+/**
+ * @deprecated import from `vuefire/options-api/database` instead
+ */
+export type DatabasePluginOptions = _DatabasePluginOptions
+/**
+ * @deprecated import from `vuefire/options-api/database` instead
+ */
+export type VueFirebaseObject = _VueFirebaseObject
+/**
+ * @deprecated import from `vuefire/options-api/database` instead
+ */
+export type FirebaseOption = _FirebaseOption
 
 /**
  * Firestore Options API
  */
-export {
-  firestorePlugin,
-  VueFireFirestoreOptionsAPI,
-} from './firestore/optionsApi'
-export type {
-  FirestorePluginOptions,
-  VueFirestoreObject,
-  FirestoreOption,
-} from './firestore/optionsApi'
+import { VueFireFirestoreOptionsAPI as _VueFireFirestoreOptionsAPI } from './options-api/firestore'
+import type {
+  FirestorePluginOptions as _FirestorePluginOptions,
+  VueFirestoreObject as _VueFirestoreObject,
+  FirestoreOption as _FirestoreOption,
+} from './options-api/firestore'
+
+// TODO: remove deprecations in v4
+/**
+ * @deprecated import from `vuefire/options-api/firestore` instead
+ */
+export const VueFireFirestoreOptionsAPI = _VueFireFirestoreOptionsAPI
+/**
+ * @deprecated import from `vuefire/options-api/firestore` instead
+ */
+export type FirestorePluginOptions = _FirestorePluginOptions
+/**
+ * @deprecated import from `vuefire/options-api/firestore` instead
+ */
+export type VueFirestoreObject = _VueFirestoreObject
+/**
+ * @deprecated import from `vuefire/options-api/firestore` instead
+ */
+export type FirestoreOption = _FirestoreOption
+
+// this one is deprecated already
+export { firestorePlugin } from './options-api/firestore'
 
 /**
  * App
