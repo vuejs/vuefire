@@ -6,9 +6,7 @@ import {
 } from './utils'
 import {
   noop,
-  OperationsType,
   ResetOption,
-  TODO,
   _DataSourceOptions,
   _MaybeRef,
   _ResolveRejectFn,

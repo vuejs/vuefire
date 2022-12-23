@@ -7,7 +7,7 @@ import {
 } from 'firebase/firestore'
 import { StorageReference } from 'firebase/storage'
 import { useFirebaseApp, _FirebaseAppInjectionKey } from '../app'
-import { getDataSourcePath, noop } from '../shared'
+import { noop } from '../shared'
 import { deferInitialValueSetup } from './initialState'
 
 export const appPendingPromises = new WeakMap<

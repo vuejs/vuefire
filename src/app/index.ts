@@ -1,10 +1,5 @@
 import { FirebaseApp, getApp } from 'firebase/app'
-import {
-  getCurrentInstance,
-  getCurrentScope,
-  inject,
-  InjectionKey,
-} from 'vue-demi'
+import { getCurrentInstance, inject, InjectionKey } from 'vue-demi'
 
 // @internal
 export const _FirebaseAppInjectionKey: InjectionKey<FirebaseApp> =

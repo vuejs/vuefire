@@ -1,4 +1,4 @@
-import { FirebaseApp } from 'firebase/app'
+import type { FirebaseApp } from 'firebase/app'
 import { App, EffectScope, effectScope } from 'vue-demi'
 
 // @internal

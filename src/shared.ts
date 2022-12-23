@@ -1,12 +1,9 @@
 import { DatabaseReference, Query as DatabaseQuery } from 'firebase/database'
-import {
+import type {
   CollectionReference,
   DocumentData,
   DocumentReference,
-  DocumentSnapshot,
   Query as FirestoreQuery,
-  QuerySnapshot,
-  Timestamp,
 } from 'firebase/firestore'
 import { StorageReference } from 'firebase/storage'
 import { getCurrentInstance, inject, ssrContextKey } from 'vue-demi'
