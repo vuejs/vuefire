@@ -1,7 +1,11 @@
 import type { Ref } from 'vue-demi'
 import type { UnbindWithReset } from '../shared'
 import type { FirestoreRefOptions } from './bind'
-import { firestoreUnbinds } from './optionsApi'
+
+export const firestoreUnbinds = new WeakMap<
+  object,
+  Record<string, UnbindWithReset>
+>()
 
 export function internalUnbind(
   key: string,

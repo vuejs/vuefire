@@ -11,23 +11,18 @@ import {
   toRef,
   isVue3,
 } from 'vue-demi'
-import { FirestoreRefOptions } from './bind'
-import { _useFirestoreRef } from './useFirestoreRef'
+import { FirestoreRefOptions } from '../firestore/bind'
+import { _useFirestoreRef } from '../firestore/useFirestoreRef'
 import { ResetOption, UnbindWithReset, _FirestoreDataSource } from '../shared'
-import { FirebaseApp } from 'firebase/app'
+import type { FirebaseApp } from 'firebase/app'
 import { getGlobalScope } from '../globals'
 import { useFirebaseApp } from '../app'
-import { internalUnbind } from './unbind'
+import { firestoreUnbinds, internalUnbind } from '../firestore/unbind'
 
 // TODO: this should be an entry point to generate the corresponding .d.ts file that only gets included if the plugin is imported
 
 export type VueFirestoreObject = Record<string, _FirestoreDataSource>
 export type FirestoreOption = VueFirestoreObject | (() => VueFirestoreObject)
-
-export const firestoreUnbinds = new WeakMap<
-  object,
-  Record<string, UnbindWithReset>
->()
 
 /**
  * Options for the Firebase Database Plugin that enables the Options API such as `$firestoreBind` and
@@ -55,7 +50,7 @@ const firestorePluginDefaults: Readonly<
 /**
  * Install this plugin to add `$firestoreBind` and `$firestoreUnbind` functions. Note this plugin is not necessary if
  * you exclusively use the Composition API (`useDocument()` and `useCollection()`).
- * @deprecated Use `VueFire` and `VueFireFirestoreOptionsAPI` with the `modules` option instead.b
+ * @deprecated Use `VueFire` and `VueFireFirestoreOptionsAPI` with the `modules` option instead.
  *
  * @param app
  * @param pluginOptions
@@ -168,7 +163,8 @@ export const firestorePlugin = function firestorePlugin(
  *
  * ```ts
  * import { createApp } from 'vue'
- * import { VueFire, VueFireFirestoreOptionsAPI } from 'vuefire'
+ * import { VueFire } from 'vuefire'
+ * import { VueFireFirestoreOptionsAPI } from 'vuefire/options-api/firestore'
  *
  * const app = createApp(App)
  * app.use(VueFire, {

@@ -10,6 +10,14 @@ export default defineBuildConfig({
       input: './src/server/index',
       name: 'server/index',
     },
+    {
+      input: './src/options-api/firestore',
+      name: 'options-api/firestore',
+    },
+    {
+      input: './src/options-api/database',
+      name: 'options-api/database',
+    },
   ],
   declaration: true,
   externals: [

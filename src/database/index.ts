@@ -10,7 +10,6 @@ import {
 import { useFirebaseApp } from '../app'
 import { UseDatabaseRefOptions, _useDatabaseRef } from './useDatabaseRef'
 
-export { databasePlugin } from './optionsApi'
 export { globalDatabaseOptions } from './bind'
 export type { UseDatabaseRefOptions }
 

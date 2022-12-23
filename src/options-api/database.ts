@@ -1,13 +1,13 @@
-import { FirebaseApp } from 'firebase/app'
-import { DatabaseReference, DataSnapshot, Query } from 'firebase/database'
+import type { FirebaseApp } from 'firebase/app'
+import type { DatabaseReference, DataSnapshot, Query } from 'firebase/database'
 import { App, ComponentPublicInstance, effectScope, toRef } from 'vue-demi'
 import { isVue3 } from 'vue-demi'
 import { useFirebaseApp } from '../app'
 import { getGlobalScope } from '../globals'
 import { ResetOption, UnbindWithReset } from '../shared'
-import { internalUnbind } from './unbind'
-import { _DatabaseRefOptions } from './bind'
-import { _useDatabaseRef } from './useDatabaseRef'
+import { databaseUnbinds, internalUnbind } from '../database/unbind'
+import { _DatabaseRefOptions } from '../database/bind'
+import { _useDatabaseRef } from '../database/useDatabaseRef'
 
 /**
  * Options for the Firebase Database Plugin that enables the Options API such as `$databaseBind` and `$databaseUnbind`.
@@ -33,11 +33,6 @@ const databasePluginDefaults: Readonly<
 
 export type VueFirebaseObject = Record<string, Query | DatabaseReference>
 export type FirebaseOption = VueFirebaseObject | (() => VueFirebaseObject)
-
-export const databaseUnbinds = new WeakMap<
-  object,
-  Record<string, UnbindWithReset>
->()
 
 /**
  * Install this plugin if you want to add `$databaseBind` and `$databaseUnbind` functions. Note this plugin is only necessary if
