@@ -14,8 +14,9 @@ export default defineBuildConfig({
   declaration: true,
   externals: [
     'firebase',
-    'firebase/auth',
+    'firebase/app',
     'firebase/app-check',
+    'firebase/auth',
     'firebase/firestore',
     'firebase/database',
     'firebase/storage',
