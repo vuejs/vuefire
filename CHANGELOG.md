@@ -1,3 +1,19 @@
+# [3.0.0](https://github.com/vuejs/vuefire/compare/vuefire@3.0.0-beta.8...vuefire@3.0.0) (2022-12-23)
+
+<p align="center">
+  <a href="https://vuefire.vuejs.org" target="_blank" rel="noopener noreferrer">
+    <img width="100" src="https://vuefire.vuejs.org/logo.svg" alt="VueFire logo">
+  </a>
+</p>
+
+VueFire 3 is now entering its stable phase! 🎉
+
+This release doesn't include any changes from the previous beta, but it's now considered a good time to start using it in production.
+
+Head over to the [Documentation](https://vuefire.vuejs.org/) to learn more about VueFire 3.
+
+Report any bugs you find on GitHub Issues.
+
 # [3.0.0-beta.8](https://github.com/vuejs/vuefire/compare/vuefire@3.0.0-beta.7...vuefire@3.0.0-beta.8) (2022-12-21)
 
 ### Features
