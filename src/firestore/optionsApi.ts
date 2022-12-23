@@ -17,17 +17,12 @@ import { ResetOption, UnbindWithReset, _FirestoreDataSource } from '../shared'
 import { FirebaseApp } from 'firebase/app'
 import { getGlobalScope } from '../globals'
 import { useFirebaseApp } from '../app'
-import { internalUnbind } from './unbind'
+import { firestoreUnbinds, internalUnbind } from './unbind'
 
 // TODO: this should be an entry point to generate the corresponding .d.ts file that only gets included if the plugin is imported
 
 export type VueFirestoreObject = Record<string, _FirestoreDataSource>
 export type FirestoreOption = VueFirestoreObject | (() => VueFirestoreObject)
-
-export const firestoreUnbinds = new WeakMap<
-  object,
-  Record<string, UnbindWithReset>
->()
 
 /**
  * Options for the Firebase Database Plugin that enables the Options API such as `$firestoreBind` and
