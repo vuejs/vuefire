@@ -9,6 +9,7 @@ on:
     paths:
       - 'docs/**'
       - 'src/**' # for api changes
+      - 'package.json' # for version changes
       - '.github/workflows/docs.yml'
 
 jobs:
