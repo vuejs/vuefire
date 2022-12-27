@@ -203,34 +203,40 @@ const VueFire: NuxtModule<VueFireNuxtModuleOptions> =
         { from: 'vuefire', name: 'useDatabaseList' },
         { from: 'vuefire', name: 'useDatabaseObject' },
       ])
-    },
 
-    // NOTE: workaround until https://github.com/vitejs/vite/issues/11114 is fixed
-    hooks: {
-      // Resolve the correct firebase/firestore path on server only since vite is resolving the wrong one in dev
-      'vite:extendConfig': async (config, { isServer }) => {
-        config.resolve ??= {}
-        config.resolve.alias ??= {}
-        const aliases: Record<string, string> = config.resolve.alias as Record<
-          string,
-          string
-        >
+      // NOTE: Because of https://github.com/nuxt/framework/issues/9865
+      // otherwise, move to the `hooks` option
+      if (nuxt.options.ssr) {
+        // NOTE: workaround until https://github.com/vitejs/vite/issues/11114 is fixed
+        nuxt.addHooks({
+          // Resolve the correct firebase/firestore path on server only since vite is resolving the wrong one in dev
+          'vite:extendConfig': async (config, { isServer }) => {
+            config.resolve ??= {}
+            config.resolve.alias ??= {}
+            const aliases: Record<string, string> = config.resolve
+              .alias as Record<string, string>
 
-        const promises: Promise<void>[] = []
+            const promises: Promise<void>[] = []
 
-        if (isServer) {
-          promises.push(
-            addMissingAlias(aliases, 'firebase/firestore', 'index.mjs')
-          )
-          promises.push(
-            addMissingAlias(aliases, '@firebase/firestore', 'index.node.mjs')
-          )
-        }
+            if (isServer) {
+              promises.push(
+                addMissingAlias(aliases, 'firebase/firestore', 'index.mjs')
+              )
+              promises.push(
+                addMissingAlias(
+                  aliases,
+                  '@firebase/firestore',
+                  'index.node.mjs'
+                )
+              )
+            }
 
-        promises.push(addMissingAlias(aliases, 'firebase/app', 'index.mjs'))
+            promises.push(addMissingAlias(aliases, 'firebase/app', 'index.mjs'))
 
-        await Promise.all(promises)
-      },
+            await Promise.all(promises)
+          },
+        })
+      }
     },
   })
 
