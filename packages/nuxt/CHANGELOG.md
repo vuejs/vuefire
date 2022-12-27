@@ -1,3 +1,9 @@
+## [0.0.18](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.0.17...nuxt-vuefire@0.0.18) (2022-12-27)
+
+### Bug Fixes
+
+- temporary workaround for non ssr app ([1db0058](https://github.com/vuejs/vuefire/commit/1db0058bb40e883d547363a980936f5f242c2f29))
+
 ## [0.0.17](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.0.16...nuxt-vuefire@0.0.17) (2022-12-16)
 
 ### Bug Fixes
