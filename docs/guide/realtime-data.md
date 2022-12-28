@@ -109,7 +109,7 @@ const {
 Notice how we rename `data` to whatever makes more sense for the context.
 
 ::: warning
-All of the properties that can be defined on the `Ref` are defined as [non-enumerable properties](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty) which means they won't be copied over when using the spread operator e.g. `const { data, ...rest } = useDocument(contactSource)`. This is to ensure they are completely ignored and do not cerate problems in other places like devtools.
+All of the properties that can be defined on the `Ref` are defined as [non-enumerable properties](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty) which means they won't be copied over when using the spread operator e.g. `const { data, ...rest } = useDocument(contactSource)`. This is to ensure they are completely ignored and do not create problems in other places like devtools.
 :::
 
 ## VueFire additions
