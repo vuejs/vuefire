@@ -26,9 +26,6 @@ import {
   addDoc,
   setDoc,
   updateDoc,
-  PartialWithFieldValue,
-  SetOptions,
-  WithFieldValue,
 } from 'firebase/firestore'
 import {
   connectStorageEmulator,

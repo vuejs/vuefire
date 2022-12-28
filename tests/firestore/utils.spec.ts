@@ -1,9 +1,4 @@
-import {
-  DocumentSnapshot,
-  GeoPoint,
-  getDoc,
-  Timestamp,
-} from 'firebase/firestore'
+import { GeoPoint, getDoc, Timestamp } from 'firebase/firestore'
 import { beforeEach, describe, expect, it } from 'vitest'
 import {
   extractRefs,
@@ -12,41 +7,38 @@ import {
 import { setupFirestoreRefs } from '../utils'
 
 describe('Firestore and Database utils', () => {
-  const { collection, doc, setDoc, updateDoc, addDoc } = setupFirestoreRefs()
+  const { collection, doc, addDoc } = setupFirestoreRefs()
 
-  const docRef = doc()
   const collectionRef = collection()
 
-  const docData = {
-    n: 42,
-    is: true,
-    items: [{ text: 'foo' }],
-    ref: docRef,
+  let docRef = doc()
+  beforeEach(async () => {
+    // fresh document for each test
+    docRef = doc()
+  })
+
+  async function addDocToCollection() {
+    const forSnapshot = await addDoc(collectionRef, {
+      n: 42,
+      is: true,
+      items: [{ text: 'foo' }],
+      ref: docRef,
+    })
+    return await getDoc(forSnapshot.withConverter(firestoreDefaultConverter))
   }
 
-  let snapshot!: DocumentSnapshot<any>
-  beforeEach(async () => {
-    await setDoc(docRef, {
-      // TODO: ref of collection
-      // collection,
-      data: {},
-      index: 0,
-    })
-    const forSnapshot = await addDoc(collectionRef, { ...docData })
-    snapshot = await getDoc(
-      forSnapshot.withConverter(firestoreDefaultConverter)
-    )
+  it('createSnapshot adds an id', async () => {
+    const snapshot = await addDocToCollection()
+    expect(snapshot.data()?.id).not.toBeFalsy()
   })
 
-  it('createSnapshot adds an id', () => {
-    expect(snapshot.data().id).not.toBeFalsy()
+  it('id is not enumerable', async () => {
+    const snapshot = await addDocToCollection()
+    expect(Object.keys(snapshot.data() ?? {}).includes('id')).toBe(false)
   })
 
-  it('id is not enumerable', () => {
-    expect(Object.keys(snapshot.data()).includes('id')).toBe(false)
-  })
-
-  it('contains all the data', () => {
+  it('contains all the data', async () => {
+    const snapshot = await addDocToCollection()
     expect(snapshot.data()).toEqual({
       n: 42,
       is: true,
@@ -56,7 +48,16 @@ describe('Firestore and Database utils', () => {
   })
 
   it('extracts refs from documents', async () => {
-    const [noRefsDoc, refs] = extractRefs(docData, undefined, {})
+    const [noRefsDoc, refs] = extractRefs(
+      {
+        n: 42,
+        is: true,
+        items: [{ text: 'foo' }],
+        ref: docRef,
+      },
+      undefined,
+      {}
+    )
     expect(noRefsDoc.ref).toBe(docRef.path)
     expect(refs).toEqual({
       ref: docRef,
