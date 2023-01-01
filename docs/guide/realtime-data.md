@@ -263,7 +263,7 @@ In the example above, `documents` is an array of References. Let's look at the d
 }
 ```
 
-`documents.sharedWith.documents` end up as arrays of strings. Those strings are actuallyh _paths_ that can be passed to `doc()` as in `doc(db, 'documents/robin-book')` to get the actual reference to the document. By being a string instead of a Reference, it is possible to display a bound document with VueFire as plain text.
+`documents.sharedWith.documents` end up as arrays of strings. Those strings are actually _paths_ that can be passed to `doc()` as in `doc(db, 'documents/robin-book')` to get the actual reference to the document. By being a string instead of a Reference, it is possible to display a bound document with VueFire as plain text.
 
 It is possible to customize this behavior by providing a [`maxRefDepth` option](../api/interfaces/UseDocumentOptions.md#maxrefdepth):
 
