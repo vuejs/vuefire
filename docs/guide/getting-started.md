@@ -14,7 +14,7 @@ npm install vuefire firebase
 
 ::: warning
 
-VueFire requires Firebase JS SDK >= 9 but **is compatible with Vue 2 and Vue 3**. It's currently in alpha, make sure to check [the Roadmap](https://github.com/vuejs/vuefire/issues/1241) and report any issue you find.
+VueFire requires Firebase JS SDK >= 9 but **is compatible with Vue 2 and Vue 3**.
 
 :::
 
@@ -61,7 +61,7 @@ export const todosRef = collection(db, 'todos')
 
 </FirebaseExample>
 
-Note exporting Database and Firestore isn't necessary as you can always accessing Firebase services within your components with [`useFirebaseApp()` and other composables](./firebase-composables.md).
+Note exporting Database and Firestore isn't necessary as you can always access Firebase services within your components with [`useFirebaseApp()` and other composables](./firebase-composables.md).
 
 ::: tip
 Note that we will refer to `database` and `firestore` as `db` in examples where only one of them is used.
