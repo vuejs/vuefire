@@ -121,6 +121,7 @@ export const firestorePlugin = function firestorePlugin(
     this.$firestoreRefs[key] =
       // ts
       docOrCollectionRef
+
     return promise.value
   }
 

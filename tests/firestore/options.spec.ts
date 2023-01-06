@@ -38,10 +38,19 @@ describe('Firestore: Options API', () => {
       expect(wrapper.vm.$myUnbind).toBeTypeOf('function')
     })
 
+    it('returns a promise', async () => {
+      const { vm } = factory()
+
+      const itemListRef = collection()
+      await addDoc(itemListRef, {})
+
+      const p = vm.$firestoreBind('itemList', itemListRef)
+      expect(p).toBeInstanceOf(Promise)
+      await expect(p).resolves.toHaveLength(1)
+    })
+
     it('calls custom serialize function with collection', async () => {
-      const fromFirestore = vi.fn(() => ({
-        foo: 'bar',
-      }))
+      const fromFirestore = vi.fn(() => ({ foo: 'bar' }))
       const wrapper = factory({
         converter: {
           fromFirestore,

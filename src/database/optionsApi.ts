@@ -119,7 +119,7 @@ export function databasePlugin(
     ;(this.$firebaseRefs as Mutable<Record<string, DatabaseReference>>)[key] =
       source.ref
 
-    return promise
+    return promise.value
   }
 
   // handle firebase option

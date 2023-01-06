@@ -35,6 +35,16 @@ describe('RTDB: plugin options', () => {
       expect(typeof (wrapper.vm as any).$myUnbind).toBe('function')
     })
 
+    it('returns a promise', async () => {
+      const serialize = vi.fn(() => ({ id: '2', foo: 'bar' }))
+      const { vm } = factory({ serialize })
+      const itemListRef = databaseRef()
+
+      const p = vm.$databaseBind('itemList', itemListRef)
+      expect(p).toBeInstanceOf(Promise)
+      await expect(p).resolves.toHaveLength(0)
+    })
+
     it('calls custom serialize function with a ref', async () => {
       const serialize = vi.fn(() => ({ id: '2', foo: 'bar' }))
       const { vm } = factory({ serialize })
@@ -42,6 +52,7 @@ describe('RTDB: plugin options', () => {
       const itemListRef = databaseRef()
 
       const p = vm.$databaseBind('itemList', itemListRef)
+      await p
       await push(itemListRef, { text: 'foo' })
 
       expect(serialize).toHaveBeenCalledTimes(1)
