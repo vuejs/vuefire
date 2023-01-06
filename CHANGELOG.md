@@ -1,3 +1,10 @@
+## [3.0.1](https://github.com/vuejs/vuefire/compare/vuefire@3.0.0...vuefire@3.0.1) (2023-01-06)
+
+### Bug Fixes
+
+- **firestore:** apply converter to nested refs ([fe78629](https://github.com/vuejs/vuefire/commit/fe786297c7fcf50f6f0333eb5acb98002037eb47)), closes [#1263](https://github.com/vuejs/vuefire/issues/1263)
+- unwrap promise $databaseBind() ([4e6d32f](https://github.com/vuejs/vuefire/commit/4e6d32f08b5c3fcf0834b6a5a644b294a48c6765)), closes [#1275](https://github.com/vuejs/vuefire/issues/1275)
+
 # [3.0.0](https://github.com/vuejs/vuefire/compare/vuefire@3.0.0-beta.8...vuefire@3.0.0) (2022-12-23)
 
 <p align="center">
