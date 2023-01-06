@@ -55,7 +55,7 @@ export interface FirestoreRefOptions extends _DataSourceOptions {
  * Type of the global options for firestore refs. Some values cannot be `undefined`.
  * @internal
  */
-interface _FirestoreRefOptionsWithDefaults extends FirestoreRefOptions {
+export interface _FirestoreRefOptionsWithDefaults extends FirestoreRefOptions {
   /**
    * @defaultValue `false`
    */
@@ -121,11 +121,12 @@ function updateDataFromDocumentSnapshot<T>(
   reject: _ResolveRejectFn
 ) {
   const [data, refs] = extractRefs(
-    // @ts-expect-error: FIXME: use better types
     // Pass snapshot options
+    // @ts-expect-error: FIXME: use better types
     snapshot.data(options.snapshotOptions),
     walkGet(target, path),
-    subs
+    subs,
+    options
   )
   ops.set(target, path, data)
   subscribeToRefs(
@@ -319,7 +320,8 @@ export function bindCollection<T = unknown>(
         // @ts-expect-error: FIXME: wrong cast, needs better types
         doc.data(snapshotOptions),
         undefined,
-        subs
+        subs,
+        options
       )
       ops.add(unref(arrayRef), newIndex, data)
       subscribeToRefs(
@@ -342,7 +344,8 @@ export function bindCollection<T = unknown>(
         // @ts-expect-error: FIXME: Better types
         doc.data(snapshotOptions),
         oldData,
-        subs
+        subs,
+        options
       )
       // only move things around after extracting refs
       // only move things around after extracting refs

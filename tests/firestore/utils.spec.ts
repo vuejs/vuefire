@@ -4,6 +4,7 @@ import {
   extractRefs,
   firestoreDefaultConverter,
 } from '../../src/firestore/utils'
+import { globalFirestoreOptions } from '../../src'
 import { setupFirestoreRefs } from '../utils'
 
 describe('Firestore and Database utils', () => {
@@ -56,11 +57,12 @@ describe('Firestore and Database utils', () => {
         ref: docRef,
       },
       undefined,
-      {}
+      {},
+      globalFirestoreOptions
     )
     expect(noRefsDoc.ref).toBe(docRef.path)
     expect(refs).toEqual({
-      ref: docRef,
+      ref: expect.objectContaining({ id: docRef.id }),
     })
   })
 
@@ -72,7 +74,8 @@ describe('Firestore and Database utils', () => {
         bar: d,
       },
       undefined,
-      {}
+      {},
+      globalFirestoreOptions
     )
     expect(doc.foo).toBe(1)
     expect(doc.bar).toBe(d)
@@ -87,7 +90,8 @@ describe('Firestore and Database utils', () => {
         bar: d,
       },
       undefined,
-      {}
+      {},
+      globalFirestoreOptions
     )
     expect(doc.foo).toBe(1)
     expect(doc.bar).toBe(d)
@@ -102,7 +106,8 @@ describe('Firestore and Database utils', () => {
         bar: d,
       },
       undefined,
-      {}
+      {},
+      globalFirestoreOptions
     )
     expect(doc.foo).toBe(1)
     expect(doc.bar).toBe(d)
@@ -117,11 +122,12 @@ describe('Firestore and Database utils', () => {
         },
       },
       undefined,
-      {}
+      {},
+      globalFirestoreOptions
     )
     expect(noRefsDoc.obj.ref).toBe(docRef.path)
     expect(refs).toEqual({
-      'obj.ref': docRef,
+      'obj.ref': expect.objectContaining({ id: docRef.id }),
     })
   })
 
@@ -134,7 +140,8 @@ describe('Firestore and Database utils', () => {
         },
       },
       undefined,
-      {}
+      {},
+      globalFirestoreOptions
     )
     expect(noRefsDoc).toEqual({
       a: null,
@@ -155,11 +162,12 @@ describe('Firestore and Database utils', () => {
         },
       },
       undefined,
-      {}
+      {},
+      globalFirestoreOptions
     )
     expect(noRefsDoc.obj.nested.ref).toBe(docRef.path)
     expect(refs).toEqual({
-      'obj.nested.ref': docRef,
+      'obj.nested.ref': expect.objectContaining({ id: docRef.id }),
     })
   })
 
@@ -170,15 +178,16 @@ describe('Firestore and Database utils', () => {
         arr: [docRef, docRef2, docRef],
       },
       undefined,
-      {}
+      {},
+      globalFirestoreOptions
     )
     expect(noRefsDoc.arr[0]).toBe(docRef.path)
     expect(noRefsDoc.arr[1]).toBe(docRef2.path)
     expect(noRefsDoc.arr[2]).toBe(docRef.path)
     expect(refs).toEqual({
-      'arr.0': docRef,
-      'arr.1': docRef2,
-      'arr.2': docRef,
+      'arr.0': expect.objectContaining({ id: docRef.id }),
+      'arr.1': expect.objectContaining({ id: docRef2.id }),
+      'arr.2': expect.objectContaining({ id: docRef.id }),
     })
   })
 
@@ -188,7 +197,12 @@ describe('Firestore and Database utils', () => {
       value: 'foo',
       enumerable: false,
     })
-    const [noRefsDoc, refs] = extractRefs(obj, undefined, {})
+    const [noRefsDoc, refs] = extractRefs(
+      obj,
+      undefined,
+      {},
+      globalFirestoreOptions
+    )
     expect(Object.getOwnPropertyDescriptor(noRefsDoc, 'bar')).toEqual({
       value: 'foo',
       enumerable: false,

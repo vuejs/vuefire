@@ -9,6 +9,8 @@ import {
 } from 'firebase/firestore'
 import { isObject, isDocumentRef, TODO, isPOJO } from '../shared'
 import { VueFirestoreDocumentData } from '.'
+import type { _UseFirestoreRefOptions } from './useFirestoreRef'
+import { _FirestoreRefOptionsWithDefaults } from './bind'
 
 export type FirestoreReference = Query | DocumentReference | CollectionReference
 
@@ -40,7 +42,8 @@ export function extractRefs(
   // TODO: should be unknown instead of DocumentData
   doc: DocumentData,
   oldDoc: DocumentData | void,
-  subs: Record<string, { path: string; data: () => DocumentData | null }>
+  subs: Record<string, { path: string; data: () => DocumentData | null }>,
+  options: _FirestoreRefOptionsWithDefaults
 ): [DocumentData, Record<string, DocumentReference>] {
   if (!isPOJO(doc)) return [doc, {}]
 
@@ -98,7 +101,11 @@ export function extractRefs(
           // https://github.com/vuejs/vuefire/pull/1223
           refSubKey in subs ? oldDoc[key] : ref.path
         // TODO: handle subpathes?
-        refs[refSubKey] = ref
+        refs[refSubKey] = ref.converter
+          ? ref
+          : ref.withConverter(
+              options.converter as FirestoreDataConverter<DocumentData>
+            )
       } else if (Array.isArray(ref)) {
         data[key] = Array(ref.length)
         // fill existing refs into data but leave the rest empty

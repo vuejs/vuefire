@@ -4,6 +4,7 @@ import type {
   CollectionReference,
   FirestoreError,
   DocumentData,
+  FirestoreDataConverter,
 } from 'firebase/firestore'
 import {
   unref,
@@ -38,13 +39,14 @@ import {
   bindDocument,
   firestoreOptionsDefaults,
   FirestoreRefOptions,
+  _FirestoreRefOptionsWithDefaults,
 } from './bind'
 
 export interface _UseFirestoreRefOptions extends FirestoreRefOptions {
   /**
    * @deprecated: use `.withConverter()` instead
    */
-  converter?: any
+  converter?: FirestoreDataConverter<unknown>
 }
 
 /**

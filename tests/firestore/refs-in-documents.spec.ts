@@ -7,7 +7,7 @@ import {
 } from 'firebase/firestore'
 import { setupFirestoreRefs, sleep } from '../utils'
 import { unref } from 'vue'
-import { _RefFirestore } from '../../src/firestore'
+import { VueFirestoreDocumentData, _RefFirestore } from '../../src/firestore'
 import {
   UseDocumentOptions,
   VueFirestoreQueryData,
@@ -26,7 +26,7 @@ describe('Firestore refs in documents', async () => {
     options?: UseDocumentOptions
     ref?: _MaybeRef<DocumentReference<T>>
   } = {}) {
-    let data!: _RefFirestore<VueFirestoreQueryData<T>>
+    let data!: _RefFirestore<VueFirestoreDocumentData<T>>
 
     const wrapper = mount({
       template: 'no',
@@ -113,6 +113,18 @@ describe('Firestore refs in documents', async () => {
     await sleep(20)
     expect(data.value).toEqual({
       a: { b: { name: 'b2' } },
+    })
+  })
+
+  it('refs are also serialized with the converter', async () => {
+    const docRef = await addDoc(listOfRefs, { a: aRef })
+    const { data, pending, promise } = factory({ ref: docRef })
+
+    await promise.value
+    // NOTE: why does toEqual fail here?
+    expect(data.value).toMatchObject({
+      id: docRef.id,
+      a: { name: 'a', id: aRef.id },
     })
   })
 
