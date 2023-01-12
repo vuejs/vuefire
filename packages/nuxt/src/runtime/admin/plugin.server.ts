@@ -15,6 +15,10 @@ export default defineNuxtPlugin((nuxtApp) => {
 
   const { firebaseAdmin } = appConfig
 
+  if (typeof firebaseAdmin?.serviceAccount === 'string') {
+    process.env.GOOGLE_APPLICATION_CREDENTIALS ||= firebaseAdmin.serviceAccount
+  }
+
   // only initialize the admin sdk once
   if (!getApps().length) {
     const {
@@ -43,9 +47,14 @@ export default defineNuxtPlugin((nuxtApp) => {
           privateKey: FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
         })
       } else if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
-        log('using GOOGLE_APPLICATION_CREDENTIALS env variable')
+        log('debug', 'using GOOGLE_APPLICATION_CREDENTIALS env variable')
         // automatically picks up the service account file path from the env variable
         credential = applicationDefault()
+      } else if (
+        typeof firebaseAdmin?.serviceAccount === 'object' &&
+        firebaseAdmin.serviceAccount != null
+      ) {
+        credential = cert(firebaseAdmin.serviceAccount)
       } else {
         // TODO: add link to vuefire docs
         log(

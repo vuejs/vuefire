@@ -114,6 +114,16 @@ const VueFire: NuxtModule<VueFireNuxtModuleOptions> =
         })
       }
 
+      // This one is set by servers, we set the GOOGLE_APPLICATION_CREDENTIALS env variable instead that has a lower priority and can be both a path or a JSON string
+      // process.env.FIREBASE_CONFIG ||= JSON.stringify(options.config)
+      if (typeof options.admin?.serviceAccount === 'string') {
+        process.env.GOOGLE_APPLICATION_CREDENTIALS ||=
+          options.admin.serviceAccount
+      }
+      const hasServiceAccount =
+        typeof process.env.GOOGLE_APPLICATION_CREDENTIALS === 'string' &&
+        process.env.GOOGLE_APPLICATION_CREDENTIALS.length > 0
+
       // NOTE: the order of the plugins is reversed, so we end by adding the app plugin which is used by all other
       // plugins
 
@@ -164,14 +174,7 @@ const VueFire: NuxtModule<VueFireNuxtModuleOptions> =
             'The "admin" option is only used during SSR. You should reenable ssr to use it.'
           )
         }
-        // TODO: check env variables are present
 
-        // This one is set by servers, we set the GOOGLE_APPLICATION_CREDENTIALS env variable instead that has a lower priority and can be both a path or a JSON string
-        // process.env.FIREBASE_CONFIG ||= JSON.stringify(options.config)
-        if (typeof options.admin?.serviceAccount === 'string') {
-          process.env.GOOGLE_APPLICATION_CREDENTIALS ||=
-            options.admin.serviceAccount
-        }
         // TODO: remove this runtime config if it's not needed as it could include sensitive data
         if (options.admin) {
           nuxt.options.appConfig.firebaseAdmin = markRaw(options.admin)
@@ -182,6 +185,8 @@ const VueFire: NuxtModule<VueFireNuxtModuleOptions> =
         }
         addPlugin(resolve(runtimeDir, 'admin/plugin.server'))
       }
+
+      // Add auto imports that are useful to be auto imported
 
       // these imports are overridden by nuxt-vuefire to allow being used in more places like plugins and middlewares
       addImports([
