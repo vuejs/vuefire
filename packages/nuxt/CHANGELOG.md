@@ -1,3 +1,23 @@
+# [0.1.0](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.0.19...nuxt-vuefire@0.1.0) (2023-01-12)
+
+### Bug Fixes
+
+- handle more service account cases ([c9461ef](https://github.com/vuejs/vuefire/commit/c9461efcdf06017d8c347d2d8355e677a93ca6a1))
+- workaround vite resolving issue ([86c276e](https://github.com/vuejs/vuefire/commit/86c276edff2a56d5528b1c37beac2c6a422540dc))
+
+### Code Refactoring
+
+- rename admin.config to admin.options ([c1ba636](https://github.com/vuejs/vuefire/commit/c1ba636a0df68d32f7f8441021dcbd604755764b))
+
+### Features
+
+- improve ssr + admin check ([6698c04](https://github.com/vuejs/vuefire/commit/6698c045080bfbe39681fb5d350eaf5cbfb7efe4))
+- mark nuxt-vuefire logs ([1fe0307](https://github.com/vuejs/vuefire/commit/1fe03073f74eb5a2615d2595af27e2aff7eba4b4))
+
+### BREAKING CHANGES
+
+- rename `admin.config` to `admin.options`
+
 ## [0.0.19](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.0.18...nuxt-vuefire@0.0.19) (2023-01-06)
 
 - dependencies updated
