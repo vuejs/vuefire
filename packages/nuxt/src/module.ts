@@ -82,7 +82,7 @@ const VueFire: NuxtModule<VueFireNuxtModuleOptions> =
       // ensure provided options are valid
       if (!options.config) {
         throw new Error(
-          '[VueFire]: Missing firebase config. Provide a "config" option to the VueFire module options.'
+          '[nuxt-vuefire]: Missing firebase config. Provide a "config" option to the VueFire module options.'
         )
       }
 

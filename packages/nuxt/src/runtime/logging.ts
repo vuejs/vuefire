@@ -7,9 +7,9 @@ export function log(...args: any[]): void
 export function log(...args: unknown[]): void {
   const [typeOrLog, ...rest] = args
   if (isLogType(typeOrLog)) {
-    console[typeOrLog]('[VueFire]:', ...rest)
+    console[typeOrLog]('[nuxt-vuefire]:', ...rest)
   } else {
-    console.log('[VueFire]:', ...args)
+    console.log('[nuxt-vuefire]:', ...args)
   }
 }
 

@@ -13,7 +13,7 @@ export default defineNuxtPlugin((nuxtApp) => {
   // NOTE: necessary in VueFireAppCheckServer
   if (!firebaseApp.options.appId) {
     throw new Error(
-      '[VueFire]: Missing "appId" in firebase config. This is necessary to use the app-check module on the server.'
+      '[nuxt-vuefire]: Missing "appId" in firebase config. This is necessary to use the app-check module on the server.'
     )
   }
 

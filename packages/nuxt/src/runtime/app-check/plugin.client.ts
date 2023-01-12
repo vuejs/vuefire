@@ -30,7 +30,7 @@ export default defineNuxtPlugin((nuxtApp) => {
         Promise.reject(
           process.env.NODE_ENV !== 'production'
             ? new Error(
-                `[VueFire]: Unknown Provider "${
+                `[nuxt-vuefire]: Unknown Provider "${
                   // @ts-expect-error: options.provider is never here
                   options.provider
                 }".`

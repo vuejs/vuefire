@@ -29,13 +29,13 @@ export default defineNuxtPlugin((nuxtApp) => {
     } = process.env
 
     if (FIREBASE_CONFIG || FUNCTION_NAME) {
-      log('using FIREBASE_CONFIG env variable')
+      log('debug', 'using FIREBASE_CONFIG env variable')
       initializeApp()
     } else {
       let credential: FirebaseAdminCredential
       // This version should work in Firebase Functions and other providers while applicationDefault() only works on
       if (FIREBASE_PRIVATE_KEY) {
-        log('using FIREBASE_PRIVATE_KEY env variable')
+        log('debug', 'using FIREBASE_PRIVATE_KEY env variable')
         credential = cert({
           projectId: FIREBASE_PROJECT_ID,
           clientEmail: FIREBASE_CLIENT_EMAIL,
