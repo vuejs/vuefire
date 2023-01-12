@@ -128,6 +128,13 @@ const VueFire: NuxtModule<VueFireNuxtModuleOptions> =
       // plugins
 
       if (options.auth) {
+        if (nuxt.options.ssr && !hasServiceAccount) {
+          log(
+            'warn',
+            'You activated both SSR and auth but you are not providing an admin config. If you render or prerender any page using auth, you will get an error. To fix this, provide an admin config to the nuxt-vuefire module.'
+          )
+        }
+
         addPlugin(resolve(runtimeDir, 'auth/plugin.client'))
         // must be added after the admin module to use the admin app
         addPlugin(resolve(runtimeDir, 'auth/plugin.server'))
@@ -148,7 +155,15 @@ const VueFire: NuxtModule<VueFireNuxtModuleOptions> =
 
       if (options.appCheck) {
         addPlugin(resolve(runtimeDir, 'app-check/plugin.client'))
-        addPlugin(resolve(runtimeDir, 'app-check/plugin.server'))
+        if (hasServiceAccount) {
+          addPlugin(resolve(runtimeDir, 'app-check/plugin.server'))
+        } else if (nuxt.options.ssr) {
+          log(
+            'warn',
+            'You activated both SSR and app-check but you are not providing an admin config. If you render or prerender any page using app-check, you will get an error. To fix this, provide an admin config to the nuxt-vuefire module.'
+            // TODO: link about how to provide admin credentials
+          )
+        }
       }
 
       // this adds the VueFire plugin and handle SSR state serialization and hydration
@@ -165,13 +180,12 @@ const VueFire: NuxtModule<VueFireNuxtModuleOptions> =
       addPlugin(resolve(runtimeDir, 'app/plugin.client'))
       addPlugin(resolve(runtimeDir, 'app/plugin.server'))
 
-      // we start the admin app first so we can have access to the user uid everywhere
-      // TODO: if options.admin
+      // we start the admin app before the regular app so we can have access to the user uid everywhere
       if (options.admin || nuxt.options.ssr) {
         if (!nuxt.options.ssr) {
           log(
             'warn',
-            'The "admin" option is only used during SSR. You should reenable ssr to use it.'
+            'The "admin" option is only used during SSR. You should reenable SSR to use it or remove it if you are not doing SSR or SSG.'
           )
         }
 
@@ -179,11 +193,14 @@ const VueFire: NuxtModule<VueFireNuxtModuleOptions> =
         if (options.admin) {
           nuxt.options.appConfig.firebaseAdmin = markRaw(options.admin)
         }
-        // this plugin adds the user so it's accessible directly in the app as well
-        if (options.auth) {
-          addPlugin(resolve(runtimeDir, 'admin/plugin-auth-user.server'))
+
+        if (hasServiceAccount) {
+          // this plugin adds the user so it's accessible directly in the app as well
+          if (options.auth) {
+            addPlugin(resolve(runtimeDir, 'admin/plugin-auth-user.server'))
+          }
+          addPlugin(resolve(runtimeDir, 'admin/plugin.server'))
         }
-        addPlugin(resolve(runtimeDir, 'admin/plugin.server'))
       }
 
       // Add auto imports that are useful to be auto imported
