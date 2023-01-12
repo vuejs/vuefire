@@ -106,6 +106,7 @@ const VueFire: NuxtModule<VueFireNuxtModuleOptions> =
       nuxt.options.build.transpile.push('vuefire')
       nuxt.options.build.transpile.push('vuefire/server')
 
+      // Add the session handler than mints a cookie for the user
       if (nuxt.options.ssr) {
         addServerHandler({
           route: '/api/__session',
@@ -193,9 +194,9 @@ const VueFire: NuxtModule<VueFireNuxtModuleOptions> =
 
       addVueFireImports([
         // firestore
+        { from: 'vuefire', name: 'useFirestore' },
         { from: 'vuefire', name: 'useDocument' },
         { from: 'vuefire', name: 'useCollection' },
-        { from: 'vuefire', name: 'useFirestore' },
 
         // database
         { from: 'vuefire', name: 'useDatabase' },
@@ -282,13 +283,25 @@ declare module '@nuxt/schema' {
 // @ts-ignore: #app not found error when building
 declare module '#app' {
   interface NuxtApp {
+    /**
+     * Firebase App instance.
+     */
     $firebaseApp: FirebaseApp
+    /**
+     * Firebase Admin app. Only available on the server.
+     */
     $firebaseAdminApp: FirebaseAdminApp
   }
 }
 declare module '@vue/runtime-core' {
   interface ComponentCustomProperties {
+    /**
+     * Firebase App instance.
+     */
     $firebaseApp: FirebaseApp
+    /**
+     * Firebase Admin app. Only available on the server.
+     */
     $firebaseAdminApp: FirebaseAdminApp
   }
 }
