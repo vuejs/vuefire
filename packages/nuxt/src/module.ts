@@ -38,12 +38,11 @@ export interface VueFireNuxtModuleOptions {
    * Firebase Admin Options.
    */
   admin?: {
-    // TODO: rename to options
     /**
      * Firebase Admin Options passed to `firebase-admin`'s `initializeApp()`. Required if you are using the auth, or the
      * app-check module.
      */
-    config?: Omit<AppOptions, 'credential'>
+    options?: Omit<AppOptions, 'credential'>
 
     // TODO: remove, use env variables instead
     /**

@@ -60,7 +60,7 @@ You can also set the FIREBASE_CLIENT_EMAIL, FIREBASE_PRIVATE_KEY and FIREBASE_PR
 
       initializeApp({
         // TODO: is this really going to be used?
-        ...firebaseAdmin?.config,
+        ...firebaseAdmin?.options,
         credential,
       })
     }
