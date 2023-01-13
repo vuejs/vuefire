@@ -1,3 +1,9 @@
+## [0.1.2](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.1.1...nuxt-vuefire@0.1.2) (2023-01-13)
+
+### Bug Fixes
+
+- use file to avoid weird errors ([55e6a9e](https://github.com/vuejs/vuefire/commit/55e6a9e4e5f07362fa25cc17f60e0529ccc990d0))
+
 ## [0.1.1](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.1.0...nuxt-vuefire@0.1.1) (2023-01-13)
 
 ### Bug Fixes
