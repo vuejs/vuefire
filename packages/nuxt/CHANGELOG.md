@@ -1,3 +1,9 @@
+## [0.1.3](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.1.2...nuxt-vuefire@0.1.3) (2023-01-13)
+
+### Bug Fixes
+
+- refactor cookie name var ([59ad275](https://github.com/vuejs/vuefire/commit/59ad27595fac503ecbf0d6d9327dc4e3cc73afa5))
+
 ## [0.1.2](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.1.1...nuxt-vuefire@0.1.2) (2023-01-13)
 
 ### Bug Fixes
