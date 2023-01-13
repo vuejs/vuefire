@@ -4,8 +4,8 @@ import { createServerUser } from 'vuefire/server'
 import { getCookie } from 'h3'
 // FirebaseError is an interface here but is a class in firebase/app
 import type { FirebaseError } from 'firebase-admin'
-import { AUTH_COOKIE_NAME } from '../auth/api.session'
 import { log } from '../logging'
+import { AUTH_COOKIE_NAME, UserSymbol } from '../shared'
 import { defineNuxtPlugin, useRequestEvent } from '#app'
 
 /**
@@ -42,15 +42,11 @@ export default defineNuxtPlugin(async (nuxtApp) => {
 
   nuxtApp.payload.vuefireUser = user?.toJSON()
 
-  // @ts-expect-error: We cannot provide with a Symbol in nuxt and it cannot be typed
-  nuxtApp[UserSymbol] = createServerUser(user)
+  nuxtApp[
+    // we cannot use symbol to index
+    UserSymbol as unknown as string
+  ] = createServerUser(user)
 })
-
-/**
- * Gets access to the user within the application. This is a symbol to keep it private for the moment.
- * @internal
- */
-export const UserSymbol = Symbol('user')
 
 function isFirebaseError(err: any): err is FirebaseError {
   return err != null && 'code' in err

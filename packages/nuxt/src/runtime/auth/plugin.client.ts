@@ -1,4 +1,4 @@
-import type { FirebaseError, FirebaseApp } from 'firebase/app'
+import type { FirebaseApp } from 'firebase/app'
 import {
   getAuth,
   onIdTokenChanged,
@@ -6,7 +6,7 @@ import {
   User,
 } from 'firebase/auth'
 import { VueFireAuth } from 'vuefire'
-import { defineNuxtPlugin, showError } from '#app'
+import { defineNuxtPlugin } from '#app'
 
 /**
  * Setups VueFireAuth and automatically mints a cookie based auth session. On the server, it reads the cookie to

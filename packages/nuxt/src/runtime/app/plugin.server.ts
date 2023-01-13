@@ -1,8 +1,8 @@
 import { deleteApp, FirebaseApp, initializeApp } from 'firebase/app'
 import { User } from 'firebase/auth'
 import LRU from 'lru-cache'
-import { UserSymbol } from '../admin/plugin-auth-user.server'
 import { log } from '../logging'
+import { UserSymbol } from '../shared'
 import { defineNuxtPlugin, useAppConfig } from '#app'
 
 // TODO: allow customizing
@@ -26,8 +26,10 @@ const appCache = new LRU<string, FirebaseApp>({
 export default defineNuxtPlugin((nuxtApp) => {
   const appConfig = useAppConfig()
 
-  // @ts-expect-error: this is a private symbol
-  const user = nuxtApp[UserSymbol] as User | undefined | null
+  const user = nuxtApp[
+    // we cannot use a symbol to index
+    UserSymbol as unknown as string
+  ] as User | undefined | null
   const uid = user?.uid
 
   let firebaseApp: FirebaseApp

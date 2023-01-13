@@ -1,8 +1,8 @@
 import type { FirebaseApp } from 'firebase/app'
 import type { User } from 'firebase/auth'
 import { VueFireAuthServer } from 'vuefire/server'
-import { UserSymbol } from '../admin/plugin-auth-user.server'
 import { log } from '../logging'
+import { UserSymbol } from '../shared'
 import { defineNuxtPlugin } from '#app'
 
 /**
@@ -10,8 +10,10 @@ import { defineNuxtPlugin } from '#app'
  */
 export default defineNuxtPlugin((nuxtApp) => {
   const firebaseApp = nuxtApp.$firebaseApp as FirebaseApp
-  // @ts-expect-error: this is a private symbol
-  const user = nuxtApp[UserSymbol] as User | undefined | null
+  const user = nuxtApp[
+    // we cannot use symbol to index
+    UserSymbol as unknown as string
+  ] as User | undefined | null
 
   log('debug', 'setting up user for app', firebaseApp.name, user?.uid)
 
