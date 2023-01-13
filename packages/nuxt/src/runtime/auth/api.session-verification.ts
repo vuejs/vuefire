@@ -8,7 +8,6 @@ import {
   deleteCookie,
 } from 'h3'
 import { log } from '../logging'
-import { AUTH_COOKIE_MAX_AGE, AUTH_COOKIE_NAME } from '../constants'
 
 // This version is used at https://github.com/FirebaseExtended/firebase-framework-tools/blob/e69f5bdd44695274ad88dbb4e21aac778ba60cc8/src/firebase-aware.ts#L39 but doesn't work locally. Should it maybe be used in production only? Seems unlikely.
 
@@ -66,4 +65,9 @@ export default defineEventHandler(async (event) => {
   return ''
 })
 
-export const ID_TOKEN_MAX_AGE = 5 * 60
+// these must be within this file because the handler gets inlined in dev mode
+const ID_TOKEN_MAX_AGE = 5 * 60
+const AUTH_COOKIE_MAX_AGE = 60 * 60 * 24 * 5 * 1_000
+// MUST be named session to be kept
+// https://firebase.google.com/docs/hosting/manage-cache#using_cookies
+const AUTH_COOKIE_NAME = '__session'

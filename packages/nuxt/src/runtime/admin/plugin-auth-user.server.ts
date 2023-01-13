@@ -5,7 +5,7 @@ import { getCookie } from 'h3'
 // FirebaseError is an interface here but is a class in firebase/app
 import type { FirebaseError } from 'firebase-admin'
 import { log } from '../logging'
-import { AUTH_COOKIE_NAME, UserSymbol } from '../constants'
+import { UserSymbol } from '../constants'
 import { defineNuxtPlugin, useRequestEvent } from '#app'
 
 /**
@@ -51,3 +51,7 @@ export default defineNuxtPlugin(async (nuxtApp) => {
 function isFirebaseError(err: any): err is FirebaseError {
   return err != null && 'code' in err
 }
+
+// MUST be named session to be kept
+// https://firebase.google.com/docs/hosting/manage-cache#using_cookies
+const AUTH_COOKIE_NAME = '__session'

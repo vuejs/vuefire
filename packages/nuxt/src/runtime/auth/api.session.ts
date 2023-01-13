@@ -5,7 +5,6 @@ import {
   defineEventHandler,
   deleteCookie,
 } from 'h3'
-import { AUTH_COOKIE_NAME, AUTH_COOKIE_MAX_AGE } from '../constants'
 
 /**
  * Setups an API endpoint to be used by the client to mint a cookie based auth session.
@@ -34,3 +33,9 @@ export default defineEventHandler(async (event) => {
   event.node.res.statusCode = 204
   return ''
 })
+
+// these must be within this file because the handler gets inlined in dev mode
+const AUTH_COOKIE_MAX_AGE = 60 * 60 * 24 * 5 * 1_000
+// MUST be named session to be kept
+// https://firebase.google.com/docs/hosting/manage-cache#using_cookies
+const AUTH_COOKIE_NAME = '__session'
