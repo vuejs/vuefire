@@ -1,3 +1,9 @@
+## [0.1.1](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.1.0...nuxt-vuefire@0.1.1) (2023-01-13)
+
+### Bug Fixes
+
+- should not import from firebase-admin if not used ([50a4c53](https://github.com/vuejs/vuefire/commit/50a4c5320b7ed27d438caeeb695821e263c5940e))
+
 # [0.1.0](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.0.19...nuxt-vuefire@0.1.0) (2023-01-12)
 
 ### Bug Fixes
