@@ -5,7 +5,7 @@ import { getCookie } from 'h3'
 // FirebaseError is an interface here but is a class in firebase/app
 import type { FirebaseError } from 'firebase-admin'
 import { log } from '../logging'
-import { AUTH_COOKIE_NAME, UserSymbol } from '../shared'
+import { AUTH_COOKIE_NAME, UserSymbol } from '../constants'
 import { defineNuxtPlugin, useRequestEvent } from '#app'
 
 /**

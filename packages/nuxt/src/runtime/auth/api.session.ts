@@ -5,7 +5,7 @@ import {
   defineEventHandler,
   deleteCookie,
 } from 'h3'
-import { AUTH_COOKIE_NAME, AUTH_COOKIE_MAX_AGE } from '../shared'
+import { AUTH_COOKIE_NAME, AUTH_COOKIE_MAX_AGE } from '../constants'
 
 /**
  * Setups an API endpoint to be used by the client to mint a cookie based auth session.

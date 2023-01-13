@@ -8,7 +8,7 @@ import {
   deleteCookie,
 } from 'h3'
 import { log } from '../logging'
-import { AUTH_COOKIE_MAX_AGE, AUTH_COOKIE_NAME } from '../shared'
+import { AUTH_COOKIE_MAX_AGE, AUTH_COOKIE_NAME } from '../constants'
 
 // This version is used at https://github.com/FirebaseExtended/firebase-framework-tools/blob/e69f5bdd44695274ad88dbb4e21aac778ba60cc8/src/firebase-aware.ts#L39 but doesn't work locally. Should it maybe be used in production only? Seems unlikely.
 
