@@ -123,7 +123,7 @@ const VueFire: NuxtModule<VueFireNuxtModuleOptions> =
         if (nuxt.options.ssr && !hasServiceAccount) {
           log(
             'warn',
-            'You activated both SSR and auth but you are not providing an admin config. If you render or prerender any page using auth, you will get an error. To fix this, provide an admin config to the nuxt-vuefire module.'
+            'You activated both SSR and auth but you are not providing an admin config. If you render or prerender any page using auth, you will get an error. In that case, provide an admin config to the nuxt-vuefire module.'
           )
         }
 
@@ -163,7 +163,7 @@ const VueFire: NuxtModule<VueFireNuxtModuleOptions> =
         } else if (nuxt.options.ssr) {
           log(
             'warn',
-            'You activated both SSR and app-check but you are not providing an admin config. If you render or prerender any page using app-check, you will get an error. To fix this, provide an admin config to the nuxt-vuefire module.'
+            'You activated both SSR and app-check but you are not providing an admin config. If you render or prerender any page using app-check, you will get an error. In that case, provide an admin config to the nuxt-vuefire module.'
             // TODO: link about how to provide admin credentials
           )
         }
