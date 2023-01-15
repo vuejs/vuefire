@@ -106,14 +106,6 @@ const VueFire: NuxtModule<VueFireNuxtModuleOptions> =
       nuxt.options.build.transpile.push('vuefire')
       nuxt.options.build.transpile.push('vuefire/server')
 
-      // Add the session handler than mints a cookie for the user
-      if (nuxt.options.ssr) {
-        addServerHandler({
-          route: '/api/__session',
-          handler: resolve(runtimeDir, './auth/api.session'),
-        })
-      }
-
       // This one is set by servers, we set the GOOGLE_APPLICATION_CREDENTIALS env variable instead that has a lower priority and can be both a path or a JSON string
       // process.env.FIREBASE_CONFIG ||= JSON.stringify(options.config)
       if (typeof options.admin?.serviceAccount === 'string') {
@@ -133,6 +125,17 @@ const VueFire: NuxtModule<VueFireNuxtModuleOptions> =
             'warn',
             'You activated both SSR and auth but you are not providing an admin config. If you render or prerender any page using auth, you will get an error. To fix this, provide an admin config to the nuxt-vuefire module.'
           )
+        }
+
+        // Add the session handler than mints a cookie for the user
+        if (nuxt.options.ssr && hasServiceAccount) {
+          addServerHandler({
+            route: '/api/__session',
+            handler: resolve(runtimeDir, './auth/api.session'),
+          })
+
+          // must be added after (which means before in code) the plugin module
+          addPlugin(resolve(runtimeDir, 'auth/plugin-mint-cookie.client'))
         }
 
         addPlugin(resolve(runtimeDir, 'auth/plugin.client'))
