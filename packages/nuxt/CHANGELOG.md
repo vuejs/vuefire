@@ -1,3 +1,13 @@
+## [0.1.4](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.1.3...nuxt-vuefire@0.1.4) (2023-01-15)
+
+### Bug Fixes
+
+- **auth:** only add mint cookie endpoint with admin sdk ([b81dff0](https://github.com/vuejs/vuefire/commit/b81dff0a64e8229da0c2124b676971846317cb15))
+
+### Features
+
+- reword warn ([ce54d91](https://github.com/vuejs/vuefire/commit/ce54d91191c864edb5beaf1e78c3361af70e061f))
+
 ## [0.1.3](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.1.2...nuxt-vuefire@0.1.3) (2023-01-13)
 
 ### Bug Fixes
