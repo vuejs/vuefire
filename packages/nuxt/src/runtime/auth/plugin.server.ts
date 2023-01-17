@@ -15,7 +15,7 @@ export default defineNuxtPlugin((nuxtApp) => {
     UserSymbol as unknown as string
   ] as User | undefined | null
 
-  log('debug', 'setting up user for app', firebaseApp.name, user?.uid)
+  // log('debug', 'setting up user for app', firebaseApp.name, user?.uid)
 
   // provide the user data to the app during ssr
   VueFireAuthServer(firebaseApp, nuxtApp.vueApp, user)

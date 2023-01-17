@@ -16,7 +16,7 @@ export default defineNuxtPlugin(async (nuxtApp) => {
   const token = getCookie(event, AUTH_COOKIE_NAME)
   let user: UserRecord | undefined
 
-  log(`Getting user from "${AUTH_COOKIE_NAME}"`, token)
+  // log('debug', `Getting user from "${AUTH_COOKIE_NAME}"`, token)
 
   if (token) {
     const adminApp = nuxtApp.$firebaseAdminApp as AdminApp
@@ -32,7 +32,7 @@ export default defineNuxtPlugin(async (nuxtApp) => {
       if (isFirebaseError(err) && err.code === 'auth/id-token-expired') {
         // Other errors to be handled: auth/argument-error
         // the error is fine, the user is not logged in
-        log('Token expired -', err)
+        log('info', 'Token expired -', err)
       } else {
         // ignore the error and consider the user as not logged in
         log('error', 'Unknown Error -', err)

@@ -18,11 +18,11 @@ export default defineEventHandler(async (event) => {
   assertMethod(event, 'POST')
   const { token } = await readBody(event)
 
-  log('minting a session cookie')
+  // log('debug', 'minting a session cookie')
   const adminApp = getApp()
   const adminAuth = getAdminAuth(adminApp)
 
-  log('read idToken from Authorization header', token)
+  // log('debug', 'read idToken from Authorization header', token)
   const verifiedIdToken = token ? await adminAuth.verifyIdToken(token) : null
 
   if (verifiedIdToken) {
@@ -39,7 +39,7 @@ export default defineEventHandler(async (event) => {
           log('error', 'Error minting the cookie -', e.message)
         })
       if (cookie) {
-        log('minted a session cookie', cookie)
+        // log('debug', 'minted a session cookie', cookie)
         setCookie(event, AUTH_COOKIE_NAME, cookie, {
           maxAge: AUTH_COOKIE_MAX_AGE,
           secure: true,
@@ -50,13 +50,13 @@ export default defineEventHandler(async (event) => {
         event.node.res.statusCode = 201
         return ''
       } else {
-        log('failed to mint a session cookie')
+        log('error', 'failed to mint a session cookie')
         event.node.res.statusCode = 401
         return ''
       }
     }
   } else {
-    log('deleting the session cookie')
+    log('debug', 'deleting the session cookie')
     deleteCookie(event, AUTH_COOKIE_NAME)
     event.node.res.statusCode = 204
   }
