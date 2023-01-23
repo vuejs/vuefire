@@ -187,8 +187,16 @@ function sidebarNuxt(): SidebarGroup {
         link: '/nuxt/getting-started',
       },
       {
-        text: 'Config',
-        link: '/nuxt/config',
+        text: 'Authentication',
+        link: '/nuxt/auth',
+      },
+      {
+        text: 'Server Side Rendering',
+        link: '/nuxt/ssr',
+      },
+      {
+        text: 'Deployment',
+        link: '/nuxt/deployment',
       },
     ],
   }
