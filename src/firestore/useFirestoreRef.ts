@@ -126,7 +126,6 @@ export function _useFirestoreRef(
         )
       }
 
-      // FIXME: force once on server
       unbind = (isDocumentRef(docRefValue) ? bindDocument : bindCollection)(
         // @ts-expect-error: cannot type with the ternary
         data,

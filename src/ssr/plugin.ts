@@ -71,24 +71,3 @@ export function usePendingPromises(app?: FirebaseApp) {
 
   return p
 }
-
-export function getInitialData(
-  app?: FirebaseApp
-): Promise<Record<string, unknown>> {
-  app = app || useFirebaseApp()
-  const pendingPromises = appPendingPromises.get(app)
-
-  if (!pendingPromises) {
-    if (process.env.NODE_ENV !== 'production') {
-      console.warn('[VueFire]: No initial data found.')
-    }
-    return Promise.resolve({})
-  }
-
-  return usePendingPromises(app).then((keyData) =>
-    keyData.reduce((initialData, [key, data]) => {
-      initialData[key] = data
-      return initialData
-    }, {} as Record<string, unknown>)
-  )
-}
