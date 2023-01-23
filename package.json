@@ -73,7 +73,7 @@
     }
   },
   "devDependencies": {
-    "@vitest/coverage-c8": "^0.26.3",
+    "@vitest/coverage-c8": "^0.28.1",
     "@vue/runtime-core": "^3.2.45",
     "@vue/test-utils": "^2.2.7",
     "chalk": "^5.1.2",
@@ -84,7 +84,7 @@
     "firebase-admin": "^11.4.0",
     "focus-visible": "^5.2.0",
     "globby": "^13.1.2",
-    "happy-dom": "^7.7.0",
+    "happy-dom": "^8.1.5",
     "lint-staged": "^13.0.4",
     "minimist": "^1.2.7",
     "p-series": "^3.0.0",
@@ -94,8 +94,8 @@
     "typedoc-plugin-markdown": "^3.13.6",
     "typescript": "~4.9.3",
     "unbuild": "^1.1.1",
-    "vitepress": "1.0.0-alpha.35",
-    "vitest": "^0.26.3",
+    "vitepress": "1.0.0-alpha.40",
+    "vitest": "^0.28.1",
     "vue": "^3.2.45",
     "yorkie": "^2.0.0"
   },
