@@ -1,16 +1,12 @@
 import type { FirebaseApp } from 'firebase/app'
 import { DatabaseReference, Query as DatabaseQuery } from 'firebase/database'
-import {
-  CollectionReference,
-  DocumentReference,
-  Query as FirestoreQuery,
-} from 'firebase/firestore'
 import { StorageReference } from 'firebase/storage'
 import {
   isDatabaseReference,
   isFirestoreDataReference,
   isFirestoreQuery,
   isStorageReference,
+  noop,
   _FirestoreDataSource,
   _Nullable,
 } from '../shared'
@@ -96,9 +92,12 @@ export function deferInitialValueSetup(
   const key = ssrKey || path
 
   if (key) {
-    promise.then((value) => {
-      initialState[key] = value
-    })
+    promise
+      .then((value) => {
+        initialState[key] = value
+      })
+      // avoid permission errors in tests and others
+      .catch(noop)
     return key
   }
 }
