@@ -1,5 +1,43 @@
-# Nuxt VueFire Config
+# Deployment
+
+It is recommended not to SSR every route in your application. Instead, you should only SSR or SSG (generate at build) the routes that are critical for SEO and performance. For example, you can SSG the homepage and the product pages, but not the cart page or profile pages.
+
+You can achieve this by combining the [`prerender` option for nitro](https://nuxt.com/docs/getting-started/deployment#manual-pre-rendering):
+
+```ts{4-6}
+// nuxt.config.ts
+defineNuxtConfig({
+  nitro: {
+    prerender: {
+      routes: ['/', '/products'],
+    },
+  },
+  //
+})
+```
+
+## Spark plan
+
+The Spark plan is a free plan that enable most of firebase functions. With this plan, you want to **prerender your app and deploy it as a static site**. In order to do this, make sure **not to apply the Firebase preset** when bundling your app and to use the `generate` command:
+
+```bash
+nuxt generate
+```
+
+You can then let your CI deploy your app to Firebase or do it manually:
+
+```bash
+firebase deploy
+```
+
+## Blaze plan
 
 ::: warning
-The Nuxt VueFire module is still a work in progress and it might contain breaking changes in the future. The SSR is only partially supported. If you find any issues, please open an issue on GitHub.
+The Firebase preset is still experimental. It is not recommended to use it in production.
 :::
+
+The Blaze plan is a pay-as-you-go that allows you to run Firebase Functions. It's free up to a certain amount of requests. With this plan, you can either do the same as with the [Spark plan](#spark-plan) (cheaper) or build with the Firebase preset and deploy your app as a serverless function:
+
+```bash
+NITRO_PRESET=firebase nuxt build
+```
