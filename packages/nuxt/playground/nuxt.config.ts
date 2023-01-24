@@ -1,11 +1,6 @@
 import { fileURLToPath } from 'node:url'
 import { resolve } from 'node:path'
 
-// we need the root node modules where packages are hoisted
-const nodeModules = fileURLToPath(
-  new URL('../../../node_modules', import.meta.url)
-)
-
 export default defineNuxtConfig({
   app: {
     pageTransition: false,
@@ -24,7 +19,7 @@ export default defineNuxtConfig({
   modules: [
     //
     [
-      '../src/module.ts',
+      '../src/module',
       {
         auth: true,
         appCheck: {
