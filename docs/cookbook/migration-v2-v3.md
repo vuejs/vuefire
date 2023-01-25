@@ -35,7 +35,7 @@ The `firestorePlugin` and `rtdbPlugin` are now deprecated in favor of _modules_.
 
 Firestore supports a native equivalent of the `serialize` option: [Firestore Data Converter](https://firebase.google.com/docs/firestore/query-data/get-data#custom_objects). You can use it to convert your data to a class instance. This is the recommended way to use Firestore with VueFire **and make it typesafe**.
 
-VueFire does support a **global `converter` option** that is equivalent to the previous global `serialize` option. Note that, like the its predecessor `serialize`, VueFire uses a default converter that adds the `id` property to your data, you can import it to use it:
+VueFire does support a **global `converter` option** that is equivalent to the previous global `serialize` option. Note that, like its predecessor `serialize`, VueFire uses a default converter that adds the `id` property to your data, you can import it to use it:
 
 ```ts
 import { firestorePlugin } from 'vuefire'
