@@ -109,8 +109,12 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
         options.admin.serviceAccount
     }
     const hasServiceAccount =
-      typeof process.env.GOOGLE_APPLICATION_CREDENTIALS === 'string' &&
-      process.env.GOOGLE_APPLICATION_CREDENTIALS.length > 0
+      (typeof process.env.GOOGLE_APPLICATION_CREDENTIALS === 'string' &&
+      process.env.GOOGLE_APPLICATION_CREDENTIALS.length > 0) || (
+        options.admin &&
+        options.admin.serviceAccount != null &&
+        typeof options.admin.serviceAccount === 'object'
+      )
 
     // NOTE: the order of the plugins is reversed, so we end by adding the app plugin which is used by all other
     // plugins
