@@ -29,7 +29,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
 })
 ```
 
-You can then enable this middleware on any `page/` component:
+You can then enable this middleware on any page in the `pages/` directory:
 
 ```vue{2-4}
 <script setup>
@@ -39,7 +39,7 @@ definePageMeta({
 </script>
 ```
 
-You can even automatically handle the auth state by _watching_ the current user. We recommend you to do this either in a layout or on the `app.vue` component so the watcher is always active:
+You can even automatically handle the auth state by _watching_ the current user. We recommend you do this in either a layout or the `app.vue` component so the watcher is always active:
 
 ```vue
 <script setup>
