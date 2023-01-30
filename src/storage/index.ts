@@ -228,6 +228,8 @@ export function useStorageFile(
         })
         .catch((err) => {
           uploadError.value = err
+          // propagate the error
+          return Promise.reject(err)
         })
         .finally(() => {
           unsub()
