@@ -13,7 +13,7 @@ npm install vuefire nuxt-vuefire
 Additionally, if you are using [SSR](https://nuxt.com/docs/api/configuration/nuxt-config/#ssr), you need to install `firebase-admin` and its peer dependencies:
 
 ```bash
-npm install firebase-admin @firebase/@app-types
+npm install firebase-admin @firebase/app-types
 ```
 
 ## Configuration
