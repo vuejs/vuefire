@@ -26,7 +26,7 @@ The `firestorePlugin` and `rtdbPlugin` are now deprecated in favor of _modules_.
 
  // for database
 -app.use(rtdbPlugin)
-+app.use(VueFire, { modules: [VueFireFirestoreOptionsAPI] })
++app.use(VueFire, { modules: [VueFireDatabaseOptionsAPI] })
 ````
 
 ## Breaking changes
