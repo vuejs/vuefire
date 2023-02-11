@@ -35,6 +35,8 @@ You can follow the progress and future plans on [the Roadmap issue](https://gith
 VueFire requires the `firebase` package to be installed as well as `vuefire`:
 
 ```bash
+yarn add vuefire firebase
+# or
 npm install vuefire firebase
 ```
 

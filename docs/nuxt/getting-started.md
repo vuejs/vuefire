@@ -7,12 +7,16 @@ The Nuxt VueFire module is still a work in progress and it might contain breakin
 ## Installation
 
 ```bash
+yarn add vuefire nuxt-vuefire
+# or
 npm install vuefire nuxt-vuefire
 ```
 
 Additionally, if you are using [SSR](https://nuxt.com/docs/api/configuration/nuxt-config/#ssr), you need to install `firebase-admin` and its peer dependencies:
 
 ```bash
+yarn add firebase-admin @firebase/app-types
+# or
 npm install firebase-admin @firebase/app-types
 ```
 
