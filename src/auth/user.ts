@@ -8,7 +8,7 @@ import {
   reauthenticateWithCredential,
   AuthCredential,
 } from 'firebase/auth'
-import type { Ref } from 'vue-demi'
+import { computed, Ref } from 'vue-demi'
 import { useFirebaseApp } from '../app'
 import type { _MaybeRef, _Nullable } from '../shared'
 
@@ -34,6 +34,16 @@ export function useCurrentUser(name?: string) {
     )
   }
   return authUserMap.get(useFirebaseApp(name))!
+}
+
+/**
+ * Returns a boolean indicating if the current user has finished loading and is no longer undefined. This is useful for
+ * hiding navigation until the current user is loaded and we know if they are authenticated or not.
+ * @param name - name of the application
+ */
+export function isUserLoaded(name?: string) {
+  const currentUser = useCurrentUser(name)
+  return computed(() => typeof currentUser !== 'undefined')
 }
 
 /**
