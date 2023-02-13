@@ -69,7 +69,7 @@ const isUserLoaded = useIsUserLoaded()
 ```
 
 ::: tip
-Using `v-show` instead of `v-if` to hide the navigation will avoid an unnecessary DOM reflow and be less noticable.
+Note this does not ensure the user is logged in, only if the initial signing process has run. You still need to check if `currentUser` is `null` or not.
 :::
 
 ### Wait for the user to be loaded
