@@ -61,8 +61,8 @@ router.beforeEach(async (to) => {
         path: '/login',
         query: {
           // we keep the current path in the query so we can redirect to it after login
-          // with `router.push(route.query.redirectTo || '/')`
-          redirectTo: to.fullPath,
+          // with `router.push(route.query.redirect || '/')`
+          redirect: to.fullPath,
         },
       }
     }
@@ -84,8 +84,8 @@ onMounted(async () => {
   const currentUser = await getCurrentUser()
   if (currentUser) {
     const to =
-      route.query.redirectTo && typeof route.query.redirectTo === 'string'
-        ? route.query.redirectTo
+      route.query.redirect && typeof route.query.redirect === 'string'
+        ? route.query.redirect
         : '/'
 
     router.push(to)
