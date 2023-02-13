@@ -43,7 +43,7 @@ export function useCurrentUser(name?: string) {
  */
 export function isUserLoaded(name?: string) {
   const currentUser = useCurrentUser(name)
-  return computed(() => typeof currentUser !== 'undefined')
+  return computed(() => currentUser !== undefined)
 }
 
 /**
