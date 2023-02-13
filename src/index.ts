@@ -78,7 +78,7 @@ export { useFirebaseApp } from './app'
  */
 export {
   useCurrentUser,
-  isUserLoaded,
+  useIsUserLoaded,
   VueFireAuth,
   useFirebaseAuth,
   getCurrentUser,

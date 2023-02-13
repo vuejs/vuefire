@@ -8,7 +8,7 @@ import { authUserMap, setupOnAuthStateChanged } from './user'
 
 export {
   useCurrentUser,
-  isUserLoaded,
+  useIsUserLoaded,
   getCurrentUser,
   updateCurrentUserProfile,
   updateCurrentUserEmail,
