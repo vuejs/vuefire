@@ -39,6 +39,7 @@ export function useCurrentUser(name?: string) {
 /**
  * Returns a boolean indicating if the current user has finished loading and is no longer undefined. This is useful for
  * hiding navigation until the current user is loaded and we know if they are authenticated or not.
+ *
  * @param name - name of the application
  */
 export function isUserLoaded(name?: string) {
