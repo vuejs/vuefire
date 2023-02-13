@@ -37,8 +37,7 @@ export function useCurrentUser(name?: string) {
 }
 
 /**
- * Returns a boolean indicating if the current user has finished loading and is no longer undefined. This is useful for
- * hiding navigation until the current user is loaded and we know if they are authenticated or not.
+ * Helper that returns a computed boolean that becomes `true` as soon as the current user is no longer `undefined`. Note this doesn't ensure the user is logged in, only if the initial signing process has run.
  *
  * @param name - name of the application
  */
