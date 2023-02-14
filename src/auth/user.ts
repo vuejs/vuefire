@@ -42,7 +42,7 @@ export function useCurrentUser(name?: string) {
  *
  * @param name - name of the application
  */
-export function useIsUserLoaded(name?: string) {
+export function useIsCurrentUserLoaded(name?: string) {
   const currentUser = useCurrentUser(name)
   return computed(() => currentUser !== undefined)
 }
