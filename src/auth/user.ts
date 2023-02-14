@@ -37,7 +37,8 @@ export function useCurrentUser(name?: string) {
 }
 
 /**
- * Helper that returns a computed boolean that becomes `true` as soon as the current user is no longer `undefined`. Note this doesn't ensure the user is logged in, only if the initial signing process has run.
+ * Helper that returns a computed boolean that becomes `true` as soon as the current user is no longer `undefined`. Note
+ * this doesn't ensure the user is logged in, only if the initial signing process has run.
  *
  * @param name - name of the application
  */
