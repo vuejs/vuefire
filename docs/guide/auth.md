@@ -46,33 +46,9 @@ const user = useCurrentUser()
 </template>
 ```
 
-### Avoid "flash of logged out navigation" on page load
-
-It is common to hide or disable navigation links when the user is not logged in. However, when the page loads, the user is loaded asynchronously. This can result in a "flash of logged out navigation" where the navigation links are displayed briefly before the user is loaded.
-
-To avoid this, you can use the `useIsUserLoaded()` composable to check if the user is loaded and only then display the navigation links.
-
-```vue
-<script setup>
-import { useCurrentUser, useIsUserLoaded } from 'vuefire'
-
-const currentUser = useCurrentUser()
-const isUserLoaded = useIsUserLoaded()
-</script>
-
-<template>
-  <nav v-show="isUserLoaded">
-    <router-link to="/">Home</router-link>
-    <router-link v-if="currentUser" to="/profile">Profile</router-link>
-  </nav>
-</template>
-```
-
-::: tip
-Note this does not ensure the user is logged in, only if the initial signing process has run. You still need to check if `currentUser` is `null` or not.
-:::
-
 ### Wait for the user to be loaded
+
+The `useCurrentUser()` composable will give you an `undefined` value until the user is loaded. It will then become `null` or the user object itself. If you need to wait for the user to be loaded in a declarative fashion, you can use the `useIsCurrentUserLoaded()` composable. Internally it's just a computed property that returns `true` when if user is not `undefined`.
 
 There is also a `getCurrentUser()` function that returns a promise of the current user. This is useful if you want to wait for the user to be loaded before doing anything. You can, for example, await it within a navigation guard:
 
