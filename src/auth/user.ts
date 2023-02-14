@@ -8,7 +8,7 @@ import {
   reauthenticateWithCredential,
   AuthCredential,
 } from 'firebase/auth'
-import type { Ref } from 'vue-demi'
+import { computed, Ref } from 'vue-demi'
 import { useFirebaseApp } from '../app'
 import type { _MaybeRef, _Nullable } from '../shared'
 
@@ -34,6 +34,17 @@ export function useCurrentUser(name?: string) {
     )
   }
   return authUserMap.get(useFirebaseApp(name))!
+}
+
+/**
+ * Helper that returns a computed boolean that becomes `true` as soon as the current user is no longer `undefined`. Note
+ * this doesn't ensure the user is logged in, only if the initial signing process has run.
+ *
+ * @param name - name of the application
+ */
+export function useIsCurrentUserLoaded(name?: string) {
+  const currentUser = useCurrentUser(name)
+  return computed(() => currentUser !== undefined)
 }
 
 /**
