@@ -4,7 +4,7 @@ import { App, ref } from 'vue-demi'
 import { useFirebaseApp } from '../app'
 import { getGlobalScope } from '../globals'
 import { isClient, _Nullable } from '../shared'
-import { authUserMap, setupOnAuthStateChanged } from './user'
+import { _connectAuthEmulator, authUserMap, setupOnAuthStateChanged } from "./user"
 
 export {
   useCurrentUser,
@@ -48,5 +48,10 @@ export function VueFireAuth(initialUser?: _Nullable<User>) {
  * @returns the Auth instance
  */
 export function useFirebaseAuth(name?: string) {
-  return isClient ? getAuth(useFirebaseApp(name)) : null
+  if (!isClient) return null
+
+  const auth = getAuth(useFirebaseApp(name))
+  _connectAuthEmulator(auth)
+
+  return auth
 }

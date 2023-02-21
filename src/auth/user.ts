@@ -6,11 +6,14 @@ import {
   updateEmail,
   updateProfile,
   reauthenticateWithCredential,
+  connectAuthEmulator,
   AuthCredential,
 } from 'firebase/auth'
 import { computed, Ref } from 'vue-demi'
 import { useFirebaseApp } from '../app'
 import type { _MaybeRef, _Nullable } from '../shared'
+import { Auth } from "@firebase/auth"
+import { toBool } from "../emulators"
 
 /**
  * Maps an application to a user
@@ -154,6 +157,36 @@ function _getCurrentUserState(name?: string) {
 }
 
 /**
+ * @internal
+ */
+export function _connectAuthEmulator(auth: Auth) {
+  let enabled = false
+  let url: string | undefined
+  let options = { disableWarnings: false }
+
+  if (process.env) {
+    enabled = toBool(process.env.VUEFIRE_EMULATORS_ENABLED) || toBool(process.env.VUEFIRE_AUTH_EMULATOR_ENABLED)
+    url = process.env.VUEFIRE_AUTH_EMULATOR_URL
+    options = { disableWarnings: toBool(process.env.VUEFIRE_AUTH_EMULATOR_DISABLE_WARNINGS) }
+  } else if (typeof useAppConfig === 'function') {
+    const appConfig = useAppConfig()
+    const emulatorsOptions = appConfig.vuefireOptions.emulators || {}
+
+    enabled = emulatorsOptions.enabled || emulatorsOptions.auth?.enabled
+    url = emulatorsOptions.auth?.url
+    options = emulatorsOptions.auth?.options ?? options
+  }
+
+  if (enabled) {
+    connectAuthEmulator(
+      auth,
+      url || "http://localhost:9099",
+      options
+    )
+  }
+}
+
+/**
  * Returns a promise that resolves the current user once the user is loaded. Must be called after the firebase app is
  * initialized.
  * @param name - name of the firebase application
@@ -171,6 +204,7 @@ export function setupOnAuthStateChanged(
   app?: FirebaseApp
 ) {
   const auth = getAuth(app)
+  _connectAuthEmulator(auth)
 
   // onAuthStateChanged doesn't trigger in all scenarios like when the user goes links an existing account and their
   // data is updated

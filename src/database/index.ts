@@ -1,5 +1,5 @@
 import { Ref, ref } from 'vue-demi'
-import { DatabaseReference, getDatabase, Query } from 'firebase/database'
+import { connectDatabaseEmulator, DatabaseReference, getDatabase, Query } from 'firebase/database'
 import { _MaybeRef, _Nullable, _RefWithState } from '../shared'
 import { _DatabaseRefOptions } from './bind'
 import {
@@ -9,6 +9,7 @@ import {
 } from './utils'
 import { useFirebaseApp } from '../app'
 import { UseDatabaseRefOptions, _useDatabaseRef } from './useDatabaseRef'
+import { getEmulatorConfig } from "../emulators"
 
 export { globalDatabaseOptions } from './bind'
 export type { UseDatabaseRefOptions }
@@ -72,5 +73,16 @@ export const useObject = useDatabaseObject
  * @returns the Database instance
  */
 export function useDatabase(name?: string) {
-  return getDatabase(useFirebaseApp(name))
+  const database = getDatabase(useFirebaseApp(name))
+  const databaseEmulator = getEmulatorConfig('database')
+
+  if (databaseEmulator.enabled) {
+    connectDatabaseEmulator(
+      database,
+      databaseEmulator.host || 'localhost',
+      databaseEmulator.port || 9000,
+    )
+  }
+
+  return database
 }

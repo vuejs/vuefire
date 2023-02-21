@@ -61,6 +61,54 @@ export interface VueFireNuxtModuleOptions {
    * Enables Authentication
    */
   auth?: boolean
+
+  /**
+   * Enables and configures Firebase Emulators
+   */
+  emulators?: {
+    /**
+     * Enables all emulators. Defaults to `false`.
+     */
+    enabled?: boolean,
+
+    /**
+     * Enables and configures the Auth emulator
+     */
+    auth?: {
+      enabled?: boolean,
+      url?: string,
+      options?: {
+        disableWarnings: boolean
+      }
+    },
+
+    /**
+     * Enables and configures the Firestore emulator
+     */
+    firestore?: {
+      enabled?: boolean,
+      host?: string,
+      port?: number
+    },
+
+    /**
+     * Enables and configures the Realtime Database emulator
+     */
+    database?: {
+      enabled?: boolean,
+      host?: string,
+      port?: number
+    },
+
+    /**
+     * Enables and configures the Storage emulator
+     */
+    storage?: {
+      enabled?: boolean,
+      host?: string,
+      port?: number
+    }
+  },
 }
 
 export default defineNuxtModule<VueFireNuxtModuleOptions>({

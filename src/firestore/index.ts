@@ -3,6 +3,7 @@ import {
   DocumentReference,
   Query,
   getFirestore,
+  connectFirestoreEmulator,
 } from 'firebase/firestore'
 import { ref } from 'vue-demi'
 import { useFirebaseApp } from '../app'
@@ -15,6 +16,7 @@ import {
   _useFirestoreRef,
   _UseFirestoreRefOptions,
 } from './useFirestoreRef'
+import { getEmulatorConfig } from '../emulators'
 
 export interface UseCollectionOptions extends _UseFirestoreRefOptions {}
 export type { _RefFirestore, VueFirestoreDocumentData, VueFirestoreQueryData }
@@ -105,5 +107,16 @@ export function useDocument<T>(
  * @returns the Firestore instance
  */
 export function useFirestore(name?: string) {
-  return getFirestore(useFirebaseApp(name))
+  const firestore = getFirestore(useFirebaseApp(name))
+  const firestoreEmulator = getEmulatorConfig('firestore')
+
+  if (firestoreEmulator.enabled) {
+    connectFirestoreEmulator(
+      firestore,
+      firestoreEmulator.host || 'localhost',
+      firestoreEmulator.port || 8080
+    )
+  }
+
+  return firestore
 }

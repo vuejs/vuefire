@@ -12,6 +12,7 @@ import {
   StorageError,
   SettableMetadata,
   FullMetadata,
+  connectStorageEmulator,
 } from 'firebase/storage'
 import {
   computed,
@@ -29,6 +30,7 @@ import { useFirebaseApp } from '../app'
 import { noop, _MaybeRef, _Nullable } from '../shared'
 import { getInitialValue } from '../ssr/initialState'
 import { addPendingPromise } from '../ssr/plugin'
+import { getEmulatorConfig } from '../emulators'
 
 /**
  * Retrieves the Storage instance.
@@ -37,7 +39,18 @@ import { addPendingPromise } from '../ssr/plugin'
  * @returns the Database instance
  */
 export function useFirebaseStorage(name?: string) {
-  return getStorage(useFirebaseApp(name))
+  const storage = getStorage(useFirebaseApp(name))
+  const storageEmulator = getEmulatorConfig('storage')
+
+  if (storageEmulator.enabled) {
+    connectStorageEmulator(
+      storage,
+      storageEmulator.host || 'localhost',
+      storageEmulator.port || 9199
+    )
+  }
+
+  return storage
 }
 
 /**
