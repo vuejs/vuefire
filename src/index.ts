@@ -113,6 +113,13 @@ export {
 } from './storage'
 
 /**
+ * Functions
+ */
+export {
+  useFirebaseFunctions,
+} from './functions'
+
+/**
  * Options for VueFire Vue plugin.
  */
 export interface VueFireOptions {

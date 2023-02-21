@@ -1,0 +1,25 @@
+import { getFunctions, connectFunctionsEmulator, httpsCallable } from "firebase/functions"
+import { useFirebaseApp } from "../app"
+import { getEmulatorConfig } from "../emulators"
+import { HttpsCallableOptions } from "@firebase/functions"
+
+/**
+ * Retrieves the Functions instance.
+ *
+ * @param name - name of the application
+ * @returns the Functions instance
+ */
+export function useFirebaseFunctions(name?: string) {
+  const functions = getFunctions(useFirebaseApp(name))
+  const functionsEmulator = getEmulatorConfig('functions')
+
+  if (functionsEmulator.enabled) {
+    connectFunctionsEmulator(
+      functions,
+      functionsEmulator.host || 'localhost',
+      functionsEmulator.port || 5001
+    )
+  }
+
+  return functions
+}

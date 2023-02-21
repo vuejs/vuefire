@@ -36,7 +36,7 @@ import { getEmulatorConfig } from '../emulators'
  * Retrieves the Storage instance.
  *
  * @param name - name of the application
- * @returns the Database instance
+ * @returns the Storage instance
  */
 export function useFirebaseStorage(name?: string) {
   const storage = getStorage(useFirebaseApp(name))

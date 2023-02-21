@@ -14,6 +14,11 @@ const EmulatorsEnvKeys = {
     host: 'VUEFIRE_STORAGE_EMULATOR_HOST',
     port: 'VUEFIRE_STORAGE_EMULATOR_PORT',
   },
+  functions: {
+    enabled: 'VUEFIRE_FUNCTIONS_EMULATOR_ENABLED',
+    host: 'VUEFIRE_FUNCTIONS_EMULATOR_HOST',
+    port: 'VUEFIRE_FUNCTIONS_EMULATOR_PORT',
+  }
 }
 
 /**
@@ -23,7 +28,7 @@ const EmulatorsEnvKeys = {
  * @param moduleName Name of the Firebase module
  */
 export function getEmulatorConfig(
-  moduleName: 'database' | 'firestore' | 'storage'
+  moduleName: 'database' | 'firestore' | 'storage' | 'functions'
 ) {
   const envKeys = EmulatorsEnvKeys[moduleName]
 
