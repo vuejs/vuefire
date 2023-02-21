@@ -1,7 +1,9 @@
-import { getFunctions, connectFunctionsEmulator, httpsCallable } from "firebase/functions"
-import { useFirebaseApp } from "../app"
-import { getEmulatorConfig } from "../emulators"
-import { HttpsCallableOptions } from "@firebase/functions"
+import {
+  getFunctions,
+  connectFunctionsEmulator,
+} from 'firebase/functions'
+import { useFirebaseApp } from '../app'
+import { getEmulatorConfig } from '../emulators'
 
 /**
  * Retrieves the Functions instance.

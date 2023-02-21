@@ -18,7 +18,7 @@ const EmulatorsEnvKeys = {
     enabled: 'VUEFIRE_FUNCTIONS_EMULATOR_ENABLED',
     host: 'VUEFIRE_FUNCTIONS_EMULATOR_HOST',
     port: 'VUEFIRE_FUNCTIONS_EMULATOR_PORT',
-  }
+  },
 }
 
 /**

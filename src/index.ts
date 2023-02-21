@@ -115,9 +115,7 @@ export {
 /**
  * Functions
  */
-export {
-  useFirebaseFunctions,
-} from './functions'
+export { useFirebaseFunctions } from './functions'
 
 /**
  * Options for VueFire Vue plugin.
