@@ -1,19 +1,19 @@
 const EmulatorsEnvKeys = {
   database: {
-    enabled: "VUEFIRE_DATABASE_EMULATOR_ENABLED",
-    host: "VUEFIRE_DATABASE_EMULATOR_HOST",
-    port: "VUEFIRE_DATABASE_EMULATOR_PORT"
+    enabled: 'VUEFIRE_DATABASE_EMULATOR_ENABLED',
+    host: 'VUEFIRE_DATABASE_EMULATOR_HOST',
+    port: 'VUEFIRE_DATABASE_EMULATOR_PORT',
   },
   firestore: {
-    enabled: "VUEFIRE_FIRESTORE_EMULATOR_ENABLED",
-    host: "VUEFIRE_FIRESTORE_EMULATOR_HOST",
-    port: "VUEFIRE_FIRESTORE_EMULATOR_PORT"
+    enabled: 'VUEFIRE_FIRESTORE_EMULATOR_ENABLED',
+    host: 'VUEFIRE_FIRESTORE_EMULATOR_HOST',
+    port: 'VUEFIRE_FIRESTORE_EMULATOR_PORT',
   },
   storage: {
-    enabled: "VUEFIRE_STORAGE_EMULATOR_ENABLED",
-    host: "VUEFIRE_STORAGE_EMULATOR_HOST",
-    port: "VUEFIRE_STORAGE_EMULATOR_PORT"
-  }
+    enabled: 'VUEFIRE_STORAGE_EMULATOR_ENABLED',
+    host: 'VUEFIRE_STORAGE_EMULATOR_HOST',
+    port: 'VUEFIRE_STORAGE_EMULATOR_PORT',
+  },
 }
 
 /**
@@ -22,7 +22,9 @@ const EmulatorsEnvKeys = {
  * @internal
  * @param moduleName Name of the Firebase module
  */
-export function getEmulatorConfig(moduleName: "database" | "firestore" | "storage") {
+export function getEmulatorConfig(
+  moduleName: 'database' | 'firestore' | 'storage'
+) {
   const envKeys = EmulatorsEnvKeys[moduleName]
 
   let enabled = false
@@ -30,7 +32,9 @@ export function getEmulatorConfig(moduleName: "database" | "firestore" | "storag
   let port: number | undefined
 
   if (process.env) {
-    enabled = toBool(process.env.VUEFIRE_EMULATORS_ENABLED) || toBool(process.env[envKeys.enabled])
+    enabled =
+      toBool(process.env.VUEFIRE_EMULATORS_ENABLED) ||
+      toBool(process.env[envKeys.enabled])
     host = process.env[envKeys.host] as string
     port = Number(process.env[envKeys.port])
   } else if (typeof useAppConfig === 'function') {
@@ -45,7 +49,7 @@ export function getEmulatorConfig(moduleName: "database" | "firestore" | "storag
   return {
     enabled,
     host,
-    port
+    port,
   }
 }
 

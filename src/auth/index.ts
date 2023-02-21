@@ -4,7 +4,11 @@ import { App, ref } from 'vue-demi'
 import { useFirebaseApp } from '../app'
 import { getGlobalScope } from '../globals'
 import { isClient, _Nullable } from '../shared'
-import { _connectAuthEmulator, authUserMap, setupOnAuthStateChanged } from "./user"
+import {
+  _connectAuthEmulator,
+  authUserMap,
+  setupOnAuthStateChanged,
+} from './user'
 
 export {
   useCurrentUser,

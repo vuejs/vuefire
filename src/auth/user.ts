@@ -12,8 +12,8 @@ import {
 import { computed, Ref } from 'vue-demi'
 import { useFirebaseApp } from '../app'
 import type { _MaybeRef, _Nullable } from '../shared'
-import { Auth } from "@firebase/auth"
-import { toBool } from "../emulators"
+import { Auth } from '@firebase/auth'
+import { toBool } from '../emulators'
 
 /**
  * Maps an application to a user
@@ -165,9 +165,15 @@ export function _connectAuthEmulator(auth: Auth) {
   let options = { disableWarnings: false }
 
   if (process.env) {
-    enabled = toBool(process.env.VUEFIRE_EMULATORS_ENABLED) || toBool(process.env.VUEFIRE_AUTH_EMULATOR_ENABLED)
+    enabled =
+      toBool(process.env.VUEFIRE_EMULATORS_ENABLED) ||
+      toBool(process.env.VUEFIRE_AUTH_EMULATOR_ENABLED)
     url = process.env.VUEFIRE_AUTH_EMULATOR_URL
-    options = { disableWarnings: toBool(process.env.VUEFIRE_AUTH_EMULATOR_DISABLE_WARNINGS) }
+    options = {
+      disableWarnings: toBool(
+        process.env.VUEFIRE_AUTH_EMULATOR_DISABLE_WARNINGS
+      ),
+    }
   } else if (typeof useAppConfig === 'function') {
     const appConfig = useAppConfig()
     const emulatorsOptions = appConfig.vuefireOptions.emulators || {}
@@ -178,11 +184,7 @@ export function _connectAuthEmulator(auth: Auth) {
   }
 
   if (enabled) {
-    connectAuthEmulator(
-      auth,
-      url || "http://localhost:9099",
-      options
-    )
+    connectAuthEmulator(auth, url || 'http://localhost:9099', options)
   }
 }
 
