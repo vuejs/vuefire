@@ -359,7 +359,7 @@ declare module '@nuxt/schema' {
      * VueFireNuxt options used within plugins.
      * @internal
      */
-    vuefireOptions: Pick<VueFireNuxtModuleOptions, 'appCheck' | 'auth'>
+    vuefireOptions: Pick<VueFireNuxtModuleOptions, 'appCheck' | 'auth' | 'emulators'>
 
     /**
      * Firebase Admin options passed to VueFire module. Only available on the server.
