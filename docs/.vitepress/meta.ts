@@ -18,7 +18,7 @@ export const ogImage = `${ogUrl}og.png`
 export const github = 'https://github.com/vuejs/vuefire'
 export const releases = 'https://github.com/vuejs/vuefire/releases'
 export const contributing =
-  'https://github.com/vuejs/vuefire/blob/main/CONTRIBUTING.md'
+  'https://github.com/vuejs/vuefire/blob/main/.github/CONTRIBUTING.md'
 export const discord = ''
 export const twitter = 'https://twitter.com/posva'
 
