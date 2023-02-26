@@ -155,15 +155,25 @@ describe(
       expect(wrapper.vm.list).toContainEqual({ name: 'cc' })
     })
 
+    it('sets pending while loading', async () => {
+      const { wrapper, listRef, pending, promise } = factory<{ name: string }>()
+
+      expect(pending.value).toBe(true)
+      await promise.value
+      expect(pending.value).toBe(false)
+    })
+
     it('fetches once', async () => {
       const listRef = collection<{ name: string }>()
       await addDoc(listRef, { name: 'a' })
-      const { wrapper, promise, data } = factory<{ name: string }>({
+      const { wrapper, promise, data, pending } = factory<{ name: string }>({
         ref: listRef,
         options: { once: true },
       })
 
+      expect(pending.value).toBe(true)
       await promise.value
+      expect(pending.value).toBe(false)
 
       expect(wrapper.vm.list).toEqual([{ name: 'a' }])
       await addDoc(listRef, { name: 'd' })

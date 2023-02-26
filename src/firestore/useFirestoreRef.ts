@@ -31,6 +31,7 @@ import {
   OperationsType,
   walkSet,
   _RefWithState,
+  isCollectionRef,
 } from '../shared'
 import { getInitialValue } from '../ssr/initialState'
 import { addPendingPromise } from '../ssr/plugin'
@@ -83,15 +84,19 @@ export function _useFirestoreRef(
   }
 
   // set the initial value from SSR even if the ref comes from outside
-  data.value = getInitialValue(
+  const initialValue = getInitialValue(
     initialSourceValue,
     options.ssrKey,
     data.value,
     useFirebaseApp()
   )
+  data.value = initialValue
+  const hasInitialValue = isCollectionRef(initialSourceValue)
+    ? ((initialValue || []) as unknown[]).length > 0
+    : initialValue !== undefined
 
   // if no initial value is found (ssr), we should set pending to true
-  let shouldStartAsPending = data.value === undefined // no initial value
+  let shouldStartAsPending = !hasInitialValue
 
   const pending = ref(false)
   const error = ref<FirestoreError>()
@@ -110,6 +115,7 @@ export function _useFirestoreRef(
       // we still want to create the new promise
       if (!docRefValue) {
         unbind = noop
+        // TODO: should we set pending to false here? probably not since it starts as false
         // resolve to avoid an ever pending promise
         return resolve(null)
       }
