@@ -1,4 +1,10 @@
+## [0.1.6](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.1.5...nuxt-vuefire@0.1.6) (2023-02-26)
+
+This release contains no changes
+
 ## [0.1.5](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.1.4...nuxt-vuefire@0.1.5) (2023-01-17)
+
+This release contains no changes
 
 ## [0.1.4](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.1.3...nuxt-vuefire@0.1.4) (2023-01-15)
 

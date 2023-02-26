@@ -1,3 +1,16 @@
+# [3.1.0](https://github.com/vuejs/vuefire/compare/vuefire@3.0.1...vuefire@3.1.0) (2023-02-26)
+
+### Bug Fixes
+
+- avoid uncaught firebase error ([9b20cfc](https://github.com/vuejs/vuefire/commit/9b20cfcb0d3874cb46bdb2cd6282809e67bc6f4c))
+- **database:** pending for lists ([ee25d06](https://github.com/vuejs/vuefire/commit/ee25d06883ed89b3160aa1b0417bd80a3de9159d))
+- **firestore:** pending value for collections ([3186afb](https://github.com/vuejs/vuefire/commit/3186afb2c651f88c16ed4d0fadb7b4090f17ed49)), closes [#1314](https://github.com/vuejs/vuefire/issues/1314)
+- **storage:** propagate the error ([438ee3e](https://github.com/vuejs/vuefire/commit/438ee3e6fe4cf120b58c87b738009b714452e9ec))
+
+### Features
+
+- **auth:** `useIsCurrentUserLoaded()` composable ([#1307](https://github.com/vuejs/vuefire/issues/1307)) ([f640929](https://github.com/vuejs/vuefire/commit/f640929bf0fc002f1dc2385ff2238a797ca7f854))
+
 ## [3.0.1](https://github.com/vuejs/vuefire/compare/vuefire@3.0.0...vuefire@3.0.1) (2023-01-06)
 
 ### Bug Fixes
