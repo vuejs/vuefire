@@ -28,10 +28,14 @@ export function useDatabaseList<T = unknown>(
   options?: UseListOptions
 ): _RefDatabase<VueDatabaseQueryData<T>> {
   const data = ref<T[]>([]) as Ref<T[]>
-  return _useDatabaseRef(reference, {
-    target: data,
-    ...options,
-  }) as _RefDatabase<VueDatabaseQueryData<T>>
+  return _useDatabaseRef(
+    reference,
+    {
+      target: data,
+      ...options,
+    },
+    true
+  ) as _RefDatabase<VueDatabaseQueryData<T>>
 }
 
 /**

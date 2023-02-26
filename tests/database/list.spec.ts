@@ -336,9 +336,11 @@ describe('Database lists', () => {
     const ref = databaseRef()
     await push(ref, { name: 'a' })
     await push(ref, { name: 'b' })
-    const { error, promise, data } = factory({ ref })
+    const { error, promise, data, pending } = factory({ ref })
 
+    expect(pending.value).toBe(true)
     await expect(unref(promise)).resolves.toEqual(expect.anything())
+    expect(pending.value).toBe(false)
     expect(data.value).toContainEqual({ name: 'a' })
     expect(data.value).toContainEqual({ name: 'b' })
     expect(error.value).toBeUndefined()

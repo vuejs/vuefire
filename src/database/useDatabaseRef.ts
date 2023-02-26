@@ -39,7 +39,8 @@ export interface UseDatabaseRefOptions extends _DatabaseRefOptions {}
 
 export function _useDatabaseRef(
   reference: _MaybeRef<_Nullable<DatabaseReference | Query>>,
-  localOptions: UseDatabaseRefOptions = {}
+  localOptions: UseDatabaseRefOptions = {},
+  isList = false
 ): _RefDatabase<unknown> {
   let unbind: UnbindWithReset = noop
   const options = Object.assign({}, globalDatabaseOptions, localOptions)
@@ -63,15 +64,20 @@ export function _useDatabaseRef(
   }
 
   // set the initial value from SSR even if the ref comes from outside
-  data.value = getInitialValue(
+  const initialValue = getInitialValue(
     initialSourceValue,
     options.ssrKey,
     data.value,
     useFirebaseApp()
   )
+  data.value = initialValue
+
+  const hasInitialValue = isList
+    ? ((initialValue || []) as unknown[]).length > 0
+    : initialValue !== undefined
 
   // if no initial value is found (ssr), we should set pending to true
-  let shouldStartAsPending = data.value === undefined // no initial value
+  let shouldStartAsPending = !hasInitialValue
 
   const error = ref<Error>()
   const pending = ref(false)
