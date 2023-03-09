@@ -20,7 +20,7 @@ export interface UseCollectionOptions extends _UseFirestoreRefOptions {}
 export type { _RefFirestore, VueFirestoreDocumentData, VueFirestoreQueryData }
 
 /**
- * Creates a reactive collection (usually an array) of documents from a collection ref or a query from Firestore. Extracts the the type of the
+ * Creates a reactive collection (usually an array) of documents from a collection ref or a query from Firestore. Extracts the type of the
  * query or converter.
  *
  * @param collectionRef - query or collection
@@ -62,7 +62,7 @@ export function useCollection<T>(
 export interface UseDocumentOptions extends _UseFirestoreRefOptions {}
 
 /**
- * Creates a reactive document from a document ref from Firestore. Extracts the the type of the converter
+ * Creates a reactive document from a document ref from Firestore. Extracts the type of the converter
  *
  * @param documentRef - document reference
  * @param options - optional options
