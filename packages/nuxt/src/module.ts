@@ -8,7 +8,6 @@ import {
   createResolver,
   defineNuxtModule,
 } from '@nuxt/kit'
-import type { NuxtModule } from '@nuxt/schema'
 // cannot import from firebase/app because the build fails, maybe a nuxt bug?
 import type { FirebaseApp, FirebaseOptions } from '@firebase/app-types'
 import type {
@@ -20,6 +19,7 @@ import { markRaw } from 'vue'
 import type { NuxtVueFireAppCheckOptions } from './runtime/app-check'
 import { addMissingAlias } from './firebaseAliases'
 import { log } from './runtime/logging'
+import { isServiceAccountConfigured } from './runtime/config'
 
 export interface VueFireNuxtModuleOptions {
   /**
@@ -108,9 +108,7 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
       process.env.GOOGLE_APPLICATION_CREDENTIALS ||=
         options.admin.serviceAccount
     }
-    const hasServiceAccount =
-      typeof process.env.GOOGLE_APPLICATION_CREDENTIALS === 'string' &&
-      process.env.GOOGLE_APPLICATION_CREDENTIALS.length > 0
+    const hasServiceAccount = isServiceAccountConfigured(options)
 
     // NOTE: the order of the plugins is reversed, so we end by adding the app plugin which is used by all other
     // plugins
