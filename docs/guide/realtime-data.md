@@ -6,7 +6,13 @@ If you are looking for the VueFire Options API guide, make sure to **also check*
 
 In VueFire, subscriptions to data changes are handled transparently. That's why we always talk about _binding_: you only provide the _data source_ (Collection, Query or Document), and VueFire takes care of the rest!
 
-When using Firebase Database and Firestore, you can either retrieve the data once or _subscribe_ to changes with methods like `onSnapshot()` and `onValue()`. VueFire will automatically handle the subscription for you, and update the data when it changes by internally using these functions, greatly simplifying the whole process of connecting your Vue Data to the realtime data from Firebase. It exposes a few [composables](https://vuejs.org/guide/reusability/composables.html#composables) to create these realtime bindings, it's important to note that, like other composables, these functions are meant to be used within a `setup()` function or a `<script setup>`. You can still use them outside of these contexts for advanced scenarios [like Vuex/Pinia](../cookbook/subscriptions-external.md) or global bindings but we will focus on the most common use case here. You can also use the [Options API equivalent](./options-api-realtime-data.md), in this section of the docs we will focus on the Composition API version and give you the equivalent for the Options API.
+When using Firebase Database and Firestore, you can either retrieve the data once or _subscribe_ to changes with methods like `onSnapshot()` and `onValue()`. VueFire will automatically handle the subscription for you, and update the data when it changes by internally using these functions, greatly simplifying the whole process of connecting your Vue Data to the realtime data from Firebase.
+
+::: tip
+To fetch data only _once_, use the [`once`](https://vuefire.vuejs.org/api/interfaces/UseDocumentOptions.html#once) option, which will retrieve a snapshot of the data. For example, `useDocument(q, { once: true })` or `useCollection(q, { once: true })`.
+:::
+
+VueFire exposes a few [composables](https://vuejs.org/guide/reusability/composables.html#composables) to create these realtime bindings, it's important to note that, like other composables, these functions are meant to be used within a `setup()` function or a `<script setup>`. You can still use them outside of these contexts for advanced scenarios [like Vuex/Pinia](../cookbook/subscriptions-external.md) or global bindings but we will focus on the most common use case here. You can also use the [Options API equivalent](./options-api-realtime-data.md), in this section of the docs we will focus on the Composition API version and give you the equivalent for the Options API.
 
 ## Declarative realtime data
 
