@@ -1,7 +1,7 @@
 {
-  "name": "nuxt-vuefire",
+  "name": "@noook/nuxt-vuefire",
   "description": "Nuxt.js module for VueFire",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "license": "MIT",
   "type": "module",
   "exports": {
