@@ -46,7 +46,9 @@ export interface VueFireNuxtModuleOptions {
 
     // TODO: remove, use env variables instead
     /**
-     * Firebase Admin Service Account passed to `firebase-admin`'s `initializeApp()`. Required if you are adding an adminConfig.
+     * Firebase Admin Service Account passed to `firebase-admin`'s `initializeApp()`. Required if you are adding an
+     * adminConfig.
+     * @deprecated use GOOGLE_APPLICATION_CREDENTIALS env variable instead with the service-account JSON content
      */
     serviceAccount?: string | ServiceAccount
   }
@@ -154,6 +156,7 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
 
     if (options.appCheck) {
       addPlugin(resolve(runtimeDir, 'app-check/plugin.client'))
+      // TODO: ensure this is the only necessary check. Maybe we need to check if server
       if (hasServiceAccount) {
         addPlugin(resolve(runtimeDir, 'app-check/plugin.server'))
       } else if (nuxt.options.ssr) {
@@ -225,10 +228,12 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
       { from: 'vuefire', name: 'useDatabaseObject' },
     ])
 
+    // TODO: refactor
     // NOTE: Because of https://github.com/nuxt/framework/issues/9865
     // otherwise, move to the `hooks` option
     if (nuxt.options.ssr) {
       // NOTE: workaround until https://github.com/vitejs/vite/issues/11114 is fixed
+      // TODO: refactor
       nuxt.addHooks({
         // Resolve the correct firebase/firestore path on server only since vite is resolving the wrong one in dev
         'vite:extendConfig': async (config, { isServer }) => {

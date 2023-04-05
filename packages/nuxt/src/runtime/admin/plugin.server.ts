@@ -6,21 +6,16 @@ import {
   applicationDefault,
   // renamed because there seems to be a global Credential type in vscode
   Credential as FirebaseAdminCredential,
+  App as AdminApp,
 } from 'firebase-admin/app'
 import { log } from '../logging'
-import { defineNuxtPlugin, useAppConfig } from '#app'
+import { defineNuxtPlugin, useAppConfig, useRequestEvent } from '#app'
 
 export default defineNuxtPlugin((nuxtApp) => {
-  const appConfig = useAppConfig()
-
-  const { firebaseAdmin } = appConfig
-
-  if (typeof firebaseAdmin?.serviceAccount === 'string') {
-    process.env.GOOGLE_APPLICATION_CREDENTIALS ||= firebaseAdmin.serviceAccount
-  }
-
+  const event = useRequestEvent()
   // only initialize the admin sdk once
   if (!getApps().length) {
+    const { firebaseAdmin } = useAppConfig()
     const {
       // these can be set by the user on other platforms
       FIREBASE_PROJECT_ID,
@@ -30,6 +25,7 @@ export default defineNuxtPlugin((nuxtApp) => {
       FIREBASE_CONFIG,
       // in cloud functions, we can auto initialize
       FUNCTION_NAME,
+      GOOGLE_APPLICATION_CREDENTIALS,
     } = process.env
 
     if (FIREBASE_CONFIG || FUNCTION_NAME) {
@@ -38,6 +34,7 @@ export default defineNuxtPlugin((nuxtApp) => {
     } else {
       let credential: FirebaseAdminCredential
       // This version should work in Firebase Functions and other providers while applicationDefault() only works on
+      // Firebase deployments
       if (FIREBASE_PRIVATE_KEY) {
         log('debug', 'using FIREBASE_PRIVATE_KEY env variable')
         credential = cert({
@@ -47,15 +44,23 @@ export default defineNuxtPlugin((nuxtApp) => {
           privateKey: FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
         })
       } else if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
-        log('debug', 'using GOOGLE_APPLICATION_CREDENTIALS env variable')
-        // automatically picks up the service account file path from the env variable
-        credential = applicationDefault()
-      } else if (
-        typeof firebaseAdmin?.serviceAccount === 'object' &&
-        firebaseAdmin.serviceAccount != null
-      ) {
-        credential = cert(firebaseAdmin.serviceAccount)
+        if (
+          typeof GOOGLE_APPLICATION_CREDENTIALS === 'string' &&
+          // ensure it's an object
+          GOOGLE_APPLICATION_CREDENTIALS[0] === '{'
+        ) {
+          log(
+            'debug',
+            'Parsing GOOGLE_APPLICATION_CREDENTIALS env variable as JSON'
+          )
+          credential = cert(JSON.parse(GOOGLE_APPLICATION_CREDENTIALS))
+        } else {
+          // automatically picks up the service account file path from the env variable
+          log('debug', 'using applicationDefault()')
+          credential = applicationDefault()
+        }
       } else {
+        // No credentials were provided, this will fail so we throw an explicit error
         // TODO: add link to vuefire docs
         log(
           'warn',
@@ -76,6 +81,8 @@ You can also set the FIREBASE_CLIENT_EMAIL, FIREBASE_PRIVATE_KEY and FIREBASE_PR
   }
 
   const firebaseAdminApp = getApp()
+  // TODO: Is this accessible within middlewares and api routes? or should be use a middleware to add it
+  event.context.firebaseApp = firebaseAdminApp
 
   return {
     provide: {
@@ -83,3 +90,15 @@ You can also set the FIREBASE_CLIENT_EMAIL, FIREBASE_PRIVATE_KEY and FIREBASE_PR
     },
   }
 })
+
+// TODO: should the type extensions be added in a different way to the module?
+declare module 'h3' {
+  interface H3EventContext {
+    /**
+     * Firebase Admin User Record. `null` if the user is not logged in or their token is no longer valid and requires a
+     * refresh.
+     * @experimental This API is experimental and may change in future releases.
+     */
+    firebaseApp: AdminApp
+  }
+}
