@@ -2,10 +2,9 @@ import type { App as AdminApp } from 'firebase-admin/app'
 import { getAuth as getAdminAuth, UserRecord } from 'firebase-admin/auth'
 import { createServerUser } from 'vuefire/server'
 import { getCookie } from 'h3'
-// FirebaseError is an interface here but is a class in firebase/app
-import type { FirebaseError } from 'firebase-admin'
 import { log } from '../logging'
-import { UserSymbol } from '../constants'
+import { AUTH_COOKIE_NAME, UserSymbol } from '../constants'
+import { isFirebaseError } from '../utils'
 import { defineNuxtPlugin, useRequestEvent } from '#app'
 
 /**
@@ -14,7 +13,9 @@ import { defineNuxtPlugin, useRequestEvent } from '#app'
 export default defineNuxtPlugin(async (nuxtApp) => {
   const event = useRequestEvent()
   const token = getCookie(event, AUTH_COOKIE_NAME)
-  let user: UserRecord | undefined
+  let user: UserRecord | undefined | null
+  // ensure the property is set
+  event.context.user = null
 
   // log('debug', `Getting user from "${AUTH_COOKIE_NAME}"`, token)
 
@@ -26,6 +27,7 @@ export default defineNuxtPlugin(async (nuxtApp) => {
       // TODO: should we check for the revoked status of the token here?
       const decodedToken = await adminAuth.verifyIdToken(token)
       user = await adminAuth.getUser(decodedToken.uid)
+      event.context.user = user
     } catch (err) {
       // TODO: some errors should probably go higher
       // ignore the error and consider the user as not logged in
@@ -33,6 +35,7 @@ export default defineNuxtPlugin(async (nuxtApp) => {
         // Other errors to be handled: auth/argument-error
         // the error is fine, the user is not logged in
         log('info', 'Token expired -', err)
+        // TODO: this error should be accessible somewhere to instruct the user to renew their access token
       } else {
         // ignore the error and consider the user as not logged in
         log('error', 'Unknown Error -', err)
@@ -48,10 +51,14 @@ export default defineNuxtPlugin(async (nuxtApp) => {
   ] = createServerUser(user)
 })
 
-function isFirebaseError(err: any): err is FirebaseError {
-  return err != null && 'code' in err
+// TODO: should the type extensions be added in a different way to the module?
+declare module 'h3' {
+  interface H3EventContext {
+    /**
+     * Firebase Admin User Record. `null` if the user is not logged in or their token is no longer valid and requires a
+     * refresh.
+     * @experimental This API is experimental and may change in future releases.
+     */
+    user: UserRecord | null
+  }
 }
-
-// MUST be named session to be kept
-// https://firebase.google.com/docs/hosting/manage-cache#using_cookies
-const AUTH_COOKIE_NAME = '__session'
