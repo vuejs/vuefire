@@ -44,7 +44,7 @@ export function useCurrentUser(name?: string) {
  */
 export function useIsCurrentUserLoaded(name?: string) {
   const currentUser = useCurrentUser(name)
-  return computed(() => currentUser !== undefined)
+  return computed(() => currentUser.value !== undefined)
 }
 
 /**
