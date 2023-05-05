@@ -6,7 +6,6 @@ import { h } from 'vue'
 import FirebaseExample from '../components/FirebaseExample.vue'
 import RtdbLogo from '../components/RtdbLogo.vue'
 import FirestoreLogo from '../components/FirestoreLogo.vue'
-import VueMasteryBanner from './components/VueMasteryBanner.vue'
 
 export default {
   ...Theme,
@@ -14,7 +13,6 @@ export default {
     return h(Theme.Layout, null, {
       // 'home-features-after': () => h(HomeSponsors),
       // 'aside-ads-before': () => h(AsideSponsors),
-      'layout-top': () => h(VueMasteryBanner),
     })
   },
   enhanceApp({ app, router, siteData }) {
