@@ -209,7 +209,7 @@ prise.toDate() // Tue Jul 14 1789
 
 ### References (Firestore only)
 
-In Firestore you can store [Nested References](https://firebase.google.com/docs/firestore/manage-data/structure-data). You can think of this as pointers to Documents within a Document. VueFire automatically bind References found in Collections and Documents. This also works for nested references (References found in bound References). By default, VueFire will stop at that level (2 level nesting) but you can change that with `maxRefDepth`.
+In Firestore you can store [Nested References](https://firebase.google.com/docs/firestore/manage-data/structure-data). You can think of this as pointers to Documents within a Document. VueFire automatically binds References found in Collections and Documents. This also works for nested references (References found in bound References). By default, VueFire will stop at that level (2 level nesting) but you can change that with `maxRefDepth`.
 
 Given some _users_ with _documents_ that are being viewed by other _users_. This could be **users/1**:
 
