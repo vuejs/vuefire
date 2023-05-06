@@ -17,7 +17,10 @@ If you are using [Pinia](https://pinia.vuejs.org), you can directly use the `use
 import { defineStore } from 'pinia'
 
 export const useTodoStore = defineStore('todos', () => {
-  const todos = useCollection(todoListRef)
+  const todos = ref<Type[]>([])
+  const db = getFirestore(firebaseApp)
+  const load = async () => await useCollection(collection(db, 'todos'), { target: todos }).promise.value
+  load()
   
   return { todos }
 })
@@ -25,6 +28,42 @@ export const useTodoStore = defineStore('todos', () => {
 
 Note you will still have to follow the [Firebase API](https://firebase.google.com/docs/firestore/manage-data/structure-data) (e.g. `addDoc()`, `updateDoc()`, etc) to update the data.
 
+If you wanted to export getters from the store without modifying the original ref, you could bind it to another ref and then use `computed()` properties over it.
+
+```ts
+export const useTodoStore = defineStore('todos', () => {
+  // given an existing pinia implementation
+  
+  const todosFormatted = computed(() => {
+    todos.value.map((item:Type) => ({
+      ...item,
+      text: parseText(item.text)
+    }))
+  })
+  
+  return { todos, todosFormatted }
+})
+```
+
 ## TypeScript
 
 TODO: use type helper to add properties of converter
+
+```ts
+interface User {
+  id?: string;
+  name: string;
+}
+
+const converter = <T>() => ({
+  toFirestore: (data: PartialWithFieldValue<T>) => data,
+  fromFirestore: (snap: QueryDocumentSnapshot) => snap.data() as T,
+});
+
+const userDocRef = doc(db, 'users', 'my-user-id').withConverter(
+  converter<User>()
+);
+const userData = useFirestore(userDocRef);
+```
+
+Now userData has a type of `Ref<User | null | undefined>` and you can access all the User properties on it without error.
