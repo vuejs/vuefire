@@ -52,7 +52,7 @@ export function addPendingPromise(
 /**
  * Allows awaiting for all pending data sources. Useful to wait for SSR
  *
- * @param name - optional name of teh firebase app
+ * @param name - optional name of the firebase app
  * @returns - a Promise that resolves with an array of all the resolved pending promises
  */
 export function usePendingPromises(app?: FirebaseApp) {
