@@ -61,7 +61,7 @@ export const todosRef = collection(db, 'todos')
 
 </FirebaseExample>
 
-Note exporting Database and Firestore isn't necessary as you can always access Firebase services within your components with [`useFirebaseApp()` and other composables](./firebase-composables.md).
+Note that exporting Database and Firestore isn't necessary as you can always access Firebase services within your components with [`useFirebaseApp()` and other composables](./firebase-composables.md).
 
 ::: tip
 Note that we will refer to `database` and `firestore` as `db` in examples where only one of them is used.
