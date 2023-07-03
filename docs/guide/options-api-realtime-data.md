@@ -208,12 +208,12 @@ this.$firestoreUnbind('documents')
 
 </FirebaseExample>
 
-By default, VueFire **will not reset** the property. You can customize this behavior by providing a second argument, or options, to the `firestoreUnbind`/`rtdbUnbind`
+By default, VueFire **does not reset** a bound property but you can customize this behavior by providing a second argument to the `firestoreUnbind`/`rtdbUnbind`
 
 <FirebaseExample>
 
 ```js
-// default behavior is to leave the property unchanged after unbinding
+// default behavior: leave the property unchanged after unbinding
 this.$databaseUnbind('user')
 // same as
 this.$databaseUnbind('user', false)
@@ -228,7 +228,7 @@ this.$databaseUnbind('user', true)
 this.$databaseUnbind('documents', true)
 // this.documents === []
 
-// you can specify what value to reset the property to, using the function syntax
+// you can specify what value to reset the property to, using a function instead of `true`
 this.$databaseUnbind('user', () => ({ name: 'unregistered' }))
 // this.user === { name: 'unregistered' }
 
