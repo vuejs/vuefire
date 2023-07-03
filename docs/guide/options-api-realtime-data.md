@@ -208,28 +208,30 @@ this.$firestoreUnbind('documents')
 
 </FirebaseExample>
 
-By default, VueFire **will not reset** the property, you can customize this behavior by providing a second argument of options to the `firestoreUnbind`/`rtdbUnbind`
+By default, VueFire **does not reset** a bound property but you can customize this behavior by providing a second argument to the `firestoreUnbind`/`rtdbUnbind`
 
 <FirebaseExample>
 
 ```js
-// default behavior
+// default behavior: leave the property unchanged after unbinding
 this.$databaseUnbind('user')
 // same as
 this.$databaseUnbind('user', false)
-// this.user === { name: 'Eduardo' }
+// Afterwards this.user will retain its value, e.g. { name: 'Eduardo' }
 
-// using a boolean value for reset to keep current value
+// if you set the second parameter to `true`, the property will be reset to a standard value
+// for references bound as primitives or objects, this standard value is `null`
 this.$databaseUnbind('user', true)
-// this.user === null
+// Afterwards, this.user === null.
 
-// using the function syntax to customize the value
+// for references bound as arrays, this standard value is an empty array
+this.$databaseUnbind('documents', true)
+// this.documents === []
+
+// you can specify what value to reset the property to, using a function instead of `true`
 this.$databaseUnbind('user', () => ({ name: 'unregistered' }))
 // this.user === { name: 'unregistered' }
 
-// for references bound as arrays, they are reset to an empty array by default instead of `null`
-this.$databaseUnbind('documents', true)
-// this.documents === []
 ```
 
 ```js
@@ -253,7 +255,7 @@ this.$firestoreUnbind('documents', true)
 
 </FirebaseExample>
 
-It's also possible to customize this behavior when _binding_ by using the `reset` option:
+It's also possible to customize this behavior at the time of _binding_ by using the `reset` option:
 
 <FirebaseExample>
 
@@ -261,7 +263,7 @@ It's also possible to customize this behavior when _binding_ by using the `reset
 // using a boolean value for reset
 await this.$databaseBind('user', userRef)
 this.$databaseBind('user', otherUserRef, { reset: true })
-// while the user is fetched
+// before the user has been fetched for the first time, you will have
 // this.user === null
 ```
 
@@ -269,7 +271,7 @@ this.$databaseBind('user', otherUserRef, { reset: true })
 // using a boolean value for reset
 await this.$firestoreBind('user', userRef)
 this.$firestoreBind('user', otherUserRef, { reset: true })
-// while the user is fetched
+// before the user has been fetched for the first time, you will have
 // this.user === null
 ```
 
