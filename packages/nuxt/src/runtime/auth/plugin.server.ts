@@ -1,7 +1,7 @@
 import type { FirebaseApp } from 'firebase/app'
 import type { User } from 'firebase/auth'
 import { VueFireAuthServer } from 'vuefire/server'
-import { log } from '../logging'
+import type { App } from 'vue'
 import { UserSymbol } from '../constants'
 import { defineNuxtPlugin } from '#app'
 
@@ -18,5 +18,5 @@ export default defineNuxtPlugin((nuxtApp) => {
   // log('debug', 'setting up user for app', firebaseApp.name, user?.uid)
 
   // provide the user data to the app during ssr
-  VueFireAuthServer(firebaseApp, nuxtApp.vueApp, user)
+  VueFireAuthServer(firebaseApp, nuxtApp.vueApp as App, user)
 })

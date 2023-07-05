@@ -252,7 +252,6 @@ export interface _DataSourceOptions {
 
   /**
    * Should the data be fetched once rather than subscribing to changes.
-   * @experimental Still under development
    */
   once?: boolean
 }

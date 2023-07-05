@@ -58,7 +58,7 @@ const someTodo = useDocument(doc(collection(db, 'todos'), 'someId'))
 
 </FirebaseExample>
 
-These composables all a Vue `Ref` containing the data. Note **this is a readonly data**, you shouldn't mutate it directly, you should instead [use the Firebase SDK](./writing-data.md). VueFire will automatically keep the data in sync with the database.
+Each of these composables return a Vue `Ref` containing the data. Note **this is a readonly data**, you shouldn't mutate it directly, you should instead [use the Firebase SDK](./writing-data.md). VueFire will automatically keep the data in sync with the database.
 
 Sometimes, you need to start observing a different document or collection, let's say you have a _collection_ of contacts and that you display a specific contact based on the URL, e.g. displaying the contact with an id equal to `24` on `/contacts/24`, you can achieve this this by passing a _reactive variable of the data source_ to the `useDocument()`, `useDatabaseObject()`, etc composables:
 
@@ -215,7 +215,7 @@ prise.toDate() // Tue Jul 14 1789
 
 ### References (Firestore only)
 
-In Firestore you can store [Nested References](https://firebase.google.com/docs/firestore/manage-data/structure-data). You can think of this as pointers to Documents within a Document. VueFire automatically bind References found in Collections and Documents. This also works for nested references (References found in bound References). By default, VueFire will stop at that level (2 level nesting) but you can change that with `maxRefDepth`.
+In Firestore you can store [Nested References](https://firebase.google.com/docs/firestore/manage-data/structure-data). You can think of this as pointers to Documents within a Document. VueFire automatically binds References found in Collections and Documents. This also works for nested references (References found in bound References). By default, VueFire will stop at that level (2 level nesting) but you can change that with `maxRefDepth`.
 
 Given some _users_ with _documents_ that are being viewed by other _users_. This could be **users/1**:
 
