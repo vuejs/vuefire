@@ -6,10 +6,16 @@
   "type": "module",
   "exports": {
     ".": {
+      "types": "./dist/module.d.ts",
       "import": "./dist/module.mjs",
       "require": "./dist/module.cjs"
     },
-    "./templates/*": "./templates/*"
+    "./templates/*": "./templates/*",
+    "./runtime": {
+      "types": "./dist/runtime/index.d.ts",
+      "import": "./dist/runtime/index.mjs",
+      "require": "./dist/runtime/index.mjs"
+    }
   },
   "main": "./dist/module.cjs",
   "module": "./dist/module.mjs",
@@ -58,9 +64,9 @@
     "@nuxt/schema": "^3.0.0",
     "@nuxtjs/eslint-config-typescript": "^12.0.0",
     "eslint": "^8.35.0",
-    "firebase": "^9.15.0",
-    "firebase-admin": "^11.4.0",
-    "firebase-functions": "^4.1.1",
+    "firebase": "^9.19.1",
+    "firebase-admin": "^11.5.0",
+    "firebase-functions": "^4.2.1",
     "nuxt": "^3.0.0",
     "vuefire": "workspace:*"
   }
