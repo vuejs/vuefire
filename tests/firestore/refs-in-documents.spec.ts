@@ -6,7 +6,7 @@ import {
   DocumentReference,
 } from 'firebase/firestore'
 import { setupFirestoreRefs, sleep } from '../utils'
-import { unref } from 'vue'
+import { defineComponent, unref } from 'vue'
 import { VueFirestoreDocumentData, _RefFirestore } from '../../src/firestore'
 import {
   UseDocumentOptions,
@@ -28,17 +28,19 @@ describe('Firestore refs in documents', async () => {
   } = {}) {
     let data!: _RefFirestore<VueFirestoreDocumentData<T>>
 
-    const wrapper = mount({
-      template: 'no',
-      setup() {
-        // @ts-expect-error: generic forced
-        data =
-          // split for ts
-          useDocument(ref, options)
-        const { data: list, pending, error, promise, stop } = data
-        return { list, pending, error, promise, stop }
-      },
-    })
+    const wrapper = mount(
+      defineComponent({
+        template: 'no',
+        setup() {
+          // @ts-expect-error: generic forced
+          data =
+            // split for ts
+            useDocument(ref, options)
+          const { data: list, pending, error, promise, stop } = data
+          return { list, pending, error, promise, stop }
+        },
+      })
+    )
 
     return {
       wrapper,

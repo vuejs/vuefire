@@ -7,7 +7,15 @@ import {
   _RefDatabase,
 } from '../../src'
 import { expectType, tds, setupDatabaseRefs, database } from '../utils'
-import { computed, nextTick, ref, unref, watch, type Ref } from 'vue'
+import {
+  computed,
+  nextTick,
+  ref,
+  unref,
+  watch,
+  type Ref,
+  defineComponent,
+} from 'vue'
 import {
   DatabaseReference,
   orderByChild,
@@ -31,14 +39,16 @@ describe('Database lists', () => {
   } = {}) {
     let data!: _RefDatabase<VueDatabaseQueryData<T>>
 
-    const wrapper = mount({
-      template: 'no',
-      setup() {
-        data = useDatabaseList(ref, options)
-        const { data: list, pending, error, promise, stop } = data
-        return { list, pending, error, promise, stop }
-      },
-    })
+    const wrapper = mount(
+      defineComponent({
+        template: 'no',
+        setup() {
+          data = useDatabaseList(ref, options)
+          const { data: list, pending, error, promise, stop } = data
+          return { list, pending, error, promise, stop }
+        },
+      })
+    )
 
     return {
       wrapper,

@@ -14,7 +14,14 @@ import {
   firestore,
   firebaseApp,
 } from '../utils'
-import { nextTick, ref, shallowRef, unref, type Ref } from 'vue'
+import {
+  nextTick,
+  ref,
+  shallowRef,
+  unref,
+  type Ref,
+  defineComponent,
+} from 'vue'
 import { isPOJO, _MaybeRef, _Nullable } from '../../src/shared'
 import {
   useDocument,
@@ -43,17 +50,19 @@ describe(
     } = {}) {
       let data!: _RefFirestore<VueFirestoreDocumentData<T>>
 
-      const wrapper = mount({
-        template: 'no',
-        setup() {
-          // @ts-expect-error: stricter type
-          data =
-            // split for ts
-            useDocument(ref, options)
-          const { data: item, pending, error, promise, stop } = data
-          return { item, pending, error, promise, stop }
-        },
-      })
+      const wrapper = mount(
+        defineComponent({
+          template: 'no',
+          setup() {
+            // @ts-expect-error: stricter type
+            data =
+              // split for ts
+              useDocument(ref, options)
+            const { data: item, pending, error, promise, stop } = data
+            return { item, pending, error, promise, stop }
+          },
+        })
+      )
 
       return {
         wrapper,

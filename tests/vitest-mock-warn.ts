@@ -107,12 +107,13 @@ export function mockWarn() {
   })
 }
 
-declare global {
-  namespace Vi {
-    interface JestAssertion<T = any> {
-      toHaveBeenWarned(): void
-      toHaveBeenWarnedLast(): void
-      toHaveBeenWarnedTimes(n: number): void
-    }
-  }
+interface MockWarnMatcher<R = unknown> {
+  toHaveBeenWarned(): void
+  toHaveBeenWarnedLast(): void
+  toHaveBeenWarnedTimes(n: number): void
+}
+
+declare module 'vitest' {
+  interface Assertion<T = any> extends MockWarnMatcher<T> {}
+  interface AsymmetricMatchersContaining extends MockWarnMatcher {}
 }

@@ -6,7 +6,7 @@ import {
   DocumentData,
 } from 'firebase/firestore'
 import { setupFirestoreRefs, sleep } from '../utils'
-import { unref } from 'vue'
+import { defineComponent, unref } from 'vue'
 import { _RefFirestore } from '../../src/firestore'
 import {
   useCollection,
@@ -28,17 +28,19 @@ describe('Firestore refs in collections', async () => {
   } = {}) {
     let data!: _RefFirestore<VueFirestoreQueryData<T>>
 
-    const wrapper = mount({
-      template: 'no',
-      setup() {
-        // @ts-expect-error: generic forced
-        data =
-          // split for ts
-          useCollection(ref, options)
-        const { data: list, pending, error, promise, stop } = data
-        return { list, pending, error, promise, stop }
-      },
-    })
+    const wrapper = mount(
+      defineComponent({
+        template: 'no',
+        setup() {
+          // @ts-expect-error: generic forced
+          data =
+            // split for ts
+            useCollection(ref, options)
+          const { data: list, pending, error, promise, stop } = data
+          return { list, pending, error, promise, stop }
+        },
+      })
+    )
 
     return {
       wrapper,

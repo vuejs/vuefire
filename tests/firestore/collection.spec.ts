@@ -9,7 +9,15 @@ import {
   where,
 } from 'firebase/firestore'
 import { expectType, setupFirestoreRefs, tds, firestore } from '../utils'
-import { computed, nextTick, ref, unref, watch, type Ref } from 'vue'
+import {
+  computed,
+  nextTick,
+  ref,
+  unref,
+  watch,
+  type Ref,
+  defineComponent,
+} from 'vue'
 import { _RefFirestore } from '../../src/firestore'
 import {
   useCollection,
@@ -36,17 +44,19 @@ describe(
     } = {}) {
       let data!: _RefFirestore<VueFirestoreQueryData<T>>
 
-      const wrapper = mount({
-        template: 'no',
-        setup() {
-          // @ts-expect-error: generic forced
-          data =
-            // split for ts
-            useCollection(ref, options)
-          const { data: list, pending, error, promise, stop } = data
-          return { list, pending, error, promise, stop }
-        },
-      })
+      const wrapper = mount(
+        defineComponent({
+          template: 'no',
+          setup() {
+            // @ts-expect-error: generic forced
+            data =
+              // split for ts
+              useCollection(ref, options)
+            const { data: list, pending, error, promise, stop } = data
+            return { list, pending, error, promise, stop }
+          },
+        })
+      )
 
       return {
         wrapper,
@@ -70,19 +80,21 @@ describe(
     } = {}) {
       let data!: _RefFirestore<VueFirestoreQueryData<T>>
 
-      const wrapper = mount({
-        template: 'no',
-        setup() {
-          // @ts-expect-error: generic forced
-          data = useCollection(
-            // split for ts
-            ref,
-            options
-          )
-          const { data: list, pending, error, promise, stop } = data
-          return { list, pending, error, promise, stop }
-        },
-      })
+      const wrapper = mount(
+        defineComponent({
+          template: 'no',
+          setup() {
+            // @ts-expect-error: generic forced
+            data = useCollection(
+              // split for ts
+              ref,
+              options
+            )
+            const { data: list, pending, error, promise, stop } = data
+            return { list, pending, error, promise, stop }
+          },
+        })
+      )
 
       return {
         wrapper,

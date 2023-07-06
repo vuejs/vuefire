@@ -14,7 +14,15 @@ import {
   database,
   firebaseApp,
 } from '../utils'
-import { computed, nextTick, ref, shallowRef, unref, type Ref } from 'vue'
+import {
+  computed,
+  nextTick,
+  ref,
+  shallowRef,
+  unref,
+  type Ref,
+  defineComponent,
+} from 'vue'
 import { DatabaseReference, get, ref as _databaseRef } from 'firebase/database'
 import { _MaybeRef, _Nullable } from '../../src/shared'
 import { mockWarn } from '../vitest-mock-warn'
@@ -33,14 +41,16 @@ describe('Database objects', () => {
   } = {}) {
     let data!: _RefDatabase<VueDatabaseDocumentData<T> | undefined>
 
-    const wrapper = mount({
-      template: 'no',
-      setup() {
-        data = useDatabaseObject(ref, options)
-        const { data: item, pending, error, promise, stop } = data
-        return { item, pending, error, promise, stop }
-      },
-    })
+    const wrapper = mount(
+      defineComponent({
+        template: 'no',
+        setup() {
+          data = useDatabaseObject(ref, options)
+          const { data: item, pending, error, promise, stop } = data
+          return { item, pending, error, promise, stop }
+        },
+      })
+    )
 
     return {
       wrapper,

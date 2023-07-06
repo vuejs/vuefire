@@ -1,7 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { it, describe, expect } from 'vitest'
 import { uploadString } from 'firebase/storage'
-import { nextTick, ref } from 'vue'
+import { defineComponent, nextTick, ref } from 'vue'
 import {
   useFirebaseStorage,
   useStorageFileMetadata,
@@ -16,14 +16,16 @@ describe('Storage', () => {
   it('generates a URL', async () => {
     const objectRef = storageRef('my-url.jpg')
     await uploadString(objectRef, 'test', 'raw')
-    const wrapper = mount({
-      template: 'no',
-      setup() {
-        const { url, promise } = useStorageFileUrl(objectRef)
+    const wrapper = mount(
+      defineComponent({
+        template: 'no',
+        setup() {
+          const { url, promise } = useStorageFileUrl(objectRef)
 
-        return { url, promise }
-      },
-    })
+          return { url, promise }
+        },
+      })
+    )
 
     await wrapper.vm.promise
 
@@ -34,14 +36,16 @@ describe('Storage', () => {
   it('generates the metadata', async () => {
     const objectRef = storageRef('my-url.jpg')
     await uploadString(objectRef, 'test', 'raw')
-    const wrapper = mount({
-      template: 'no',
-      setup() {
-        const { metadata, promise } = useStorageFileMetadata(objectRef)
+    const wrapper = mount(
+      defineComponent({
+        template: 'no',
+        setup() {
+          const { metadata, promise } = useStorageFileMetadata(objectRef)
 
-        return { metadata, promise }
-      },
-    })
+          return { metadata, promise }
+        },
+      })
+    )
 
     await wrapper.vm.promise
 
@@ -54,14 +58,17 @@ describe('Storage', () => {
   it('can create upload tasks', async () => {
     const objectRef = storageRef('my-url.jpg')
     await uploadString(objectRef, 'test', 'raw')
-    const wrapper = mount({
-      template: 'no',
-      setup() {
-        const { uploadTask, upload, uploadProgress } = useStorageFile(objectRef)
+    const wrapper = mount(
+      defineComponent({
+        template: 'no',
+        setup() {
+          const { uploadTask, upload, uploadProgress } =
+            useStorageFile(objectRef)
 
-        return { uploadTask, upload, uploadProgress }
-      },
-    })
+          return { uploadTask, upload, uploadProgress }
+        },
+      })
+    )
 
     await nextTick()
 
