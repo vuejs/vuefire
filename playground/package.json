@@ -18,7 +18,7 @@
     "vuex": "^4.1.0"
   },
   "devDependencies": {
-    "@firebase/app-types": "^0.8.1",
+    "@firebase/app-types": "^0.9.0",
     "@types/node": "^18.16.19",
     "@vitejs/plugin-vue": "^4.2.3",
     "@vue/tsconfig": "^0.4.0",

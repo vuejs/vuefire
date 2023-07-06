@@ -11,7 +11,7 @@
     "nuxt": "^3.0.0"
   },
   "dependencies": {
-    "@firebase/app-types": "^0.8.1",
+    "@firebase/app-types": "^0.9.0",
     "firebase": "^9.23.0",
     "nuxt-vuefire": "workspace:*",
     "vuefire": "workspace:*"

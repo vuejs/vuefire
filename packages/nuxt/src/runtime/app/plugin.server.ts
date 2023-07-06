@@ -1,16 +1,16 @@
 import { deleteApp, FirebaseApp, initializeApp } from 'firebase/app'
 import type { User } from 'firebase/auth'
-import LRU from 'lru-cache'
-import { defineNuxtPlugin, useAppConfig } from '#app'
+import { LRUCache } from 'lru-cache'
 import { log } from '../logging'
 import { UserSymbol } from '../constants'
+import { defineNuxtPlugin, useAppConfig } from '#app'
 
 // TODO: allow customizing
 // TODO: find sensible defaults. Should they change depending on the platform?
 // copied from https://github.com/FirebaseExtended/firebase-framework-tools/blob/e69f5bdd44695274ad88dbb4e21aac778ba60cc8/src/constants.ts
 export const LRU_MAX_INSTANCES = 100
 export const LRU_TTL = 1_000 * 60 * 5
-const appCache = new LRU<string, FirebaseApp>({
+const appCache = new LRUCache<string, FirebaseApp>({
   max: LRU_MAX_INSTANCES,
   ttl: LRU_TTL,
   allowStale: true,
