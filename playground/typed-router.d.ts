@@ -176,6 +176,8 @@ declare module 'vue-router/auto' {
     guard: NavigationGuard<RouteNamedMap>
   ): void
 
+  export const RouterLink: RouterLinkTyped<RouteNamedMap>
+
   // Experimental Data Fetching
 
   export function defineLoader<

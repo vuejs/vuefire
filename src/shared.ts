@@ -68,12 +68,7 @@ export function walkSet<T extends object = Record<any, unknown>>(
   const keys = ('' + path).split('.') as Array<keyof T>
   // slipt produces at least one element
   const key = keys.pop()!
-  const target: any = keys.reduce(
-    (target, key) =>
-      // @ts-expect-error:
-      target && target[key],
-    obj
-  )
+  const target = keys.reduce((target, key) => target && target[key], obj)
 
   if (target == null) return
 

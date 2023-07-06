@@ -1,9 +1,9 @@
 import { deleteApp, FirebaseApp, initializeApp } from 'firebase/app'
 import type { User } from 'firebase/auth'
 import LRU from 'lru-cache'
+import { defineNuxtPlugin, useAppConfig } from '#app'
 import { log } from '../logging'
 import { UserSymbol } from '../constants'
-import { defineNuxtPlugin, useAppConfig } from '#app'
 
 // TODO: allow customizing
 // TODO: find sensible defaults. Should they change depending on the platform?
