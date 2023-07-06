@@ -8,7 +8,6 @@ import {
   createResolver,
   defineNuxtModule,
 } from '@nuxt/kit'
-import type { NuxtModule } from '@nuxt/schema'
 // cannot import from firebase/app because the build fails, maybe a nuxt bug?
 import type { FirebaseApp, FirebaseOptions } from '@firebase/app-types'
 import type {
@@ -113,6 +112,18 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
     const hasServiceAccount =
       typeof process.env.GOOGLE_APPLICATION_CREDENTIALS === 'string' &&
       process.env.GOOGLE_APPLICATION_CREDENTIALS.length > 0
+
+    // resolve the credentials in case of monorepos and other projects started from a different folder
+    if (
+      typeof process.env.GOOGLE_APPLICATION_CREDENTIALS === 'string' &&
+      process.env.GOOGLE_APPLICATION_CREDENTIALS?.[0] !== '{'
+    ) {
+      const resolvedCredentials = resolve(
+        nuxt.options.rootDir,
+        process.env.GOOGLE_APPLICATION_CREDENTIALS
+      )
+      process.env.GOOGLE_APPLICATION_CREDENTIALS = resolvedCredentials
+    }
 
     // NOTE: the order of the plugins is reversed, so we end by adding the app plugin which is used by all other
     // plugins
