@@ -114,44 +114,24 @@ All of the properties that can be defined on the `Ref` are defined as [non-enume
 
 ### Fetching data once
 
-To fetch data only _once_, use the [`once`](https://vuefire.vuejs.org/api/interfaces/UseDocumentOptions.html#once) option, which will retrieve a snapshot of the data:
+To fetch data only _once_, pass the [`once`](https://vuefire.vuejs.org/api/interfaces/UseDocumentOptions.html#once) option, which will automatically destroy the subscription as soon as the document or collection is completely fetched:
 
 <FirebaseExample>
 
-```vue
-<script setup>
-import { useDatabaseList } from 'vuefire'
+```ts{3,4}
+import { useDatabaseList, useDatabaseObject } from 'vuefire'
 import { ref as dbRef } from 'firebase/database'
 
 const todos = useDatabaseList(dbRef(db, 'todos'), { once: true })
 const someTodo = useDatabaseObject(dbRef(db, 'todos', 'someId'), { once: true })
-</script>
-
-<template>
-  <ul>
-    <li v-for="todo in todos" :key="todo.id">
-     <span>{{ todo.text }}</span>
-    </li>
-  </ul>
-</template>
 ```
 
-```vue
-<script setup>
+```ts{3,4}
 import { useCollection, useDocument } from 'vuefire'
 import { collection, doc } from 'firebase/firestore'
 
 const todos = useCollection(collection(db, 'todos'), { once: true })
 const someTodo = useDocument(doc(collection(db, 'todos'), 'someId'), { once: true })
-</script>
-
-<template>
-  <ul>
-    <li v-for="todo in todos" :key="todo.id">
-     <span>{{ todo.text }}</span>
-    </li>
-  </ul>
-</template>
 ```
 
 </FirebaseExample>
