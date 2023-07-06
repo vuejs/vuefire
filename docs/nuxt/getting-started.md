@@ -39,17 +39,12 @@ export default defineNuxtConfig({
 })
 ```
 
-If you are using SSR with any auth related feature, you will need to create a [service account](https://firebase.google.com/support/guides/service-accounts) and provide a path to the credentials file in the `serviceAccount` property:
+If you are using SSR with any auth related feature, you will need to create a [service account](https://firebase.google.com/support/guides/service-accounts) and provide its content as an _environment variable_ named `GOOGLE_APPLICATION_CREDENTIALS`.
 
-```ts{5}
-export default defineNuxtConfig({
-  vuefire: {
-    // ...
-    admin: {
-      serviceAccount: 'path/to/credentials.json',
-    }
-  },
-})
+You can also provide the path to the `service-account.json` file. Make sure the path is located
+
+```dotenv
+GOOGLE_APPLICATION_CREDENTIALS=service-account.json
 ```
 
 :::tip
