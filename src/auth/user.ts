@@ -2,11 +2,11 @@ import type { FirebaseApp } from 'firebase/app'
 import {
   getAuth,
   onIdTokenChanged,
-  User,
+  type User,
   updateEmail,
   updateProfile,
   reauthenticateWithCredential,
-  AuthCredential,
+  type AuthCredential,
 } from 'firebase/auth'
 import { computed, Ref } from 'vue-demi'
 import { useFirebaseApp } from '../app'

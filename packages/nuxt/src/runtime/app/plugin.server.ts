@@ -1,5 +1,5 @@
 import { deleteApp, FirebaseApp, initializeApp } from 'firebase/app'
-import { User } from 'firebase/auth'
+import type { User } from 'firebase/auth'
 import LRU from 'lru-cache'
 import { log } from '../logging'
 import { UserSymbol } from '../constants'
