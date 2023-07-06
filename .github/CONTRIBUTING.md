@@ -6,7 +6,7 @@ We accept contributions via Pull Requests on [Github](<https://github.com/>{{ gi
 
 ## Setup
 
-- Use `pnpm@7`
+- Use `pnpm@8`
 - Install `firebase-tools` globally: `npm install -g firebase-tools`
 
 ## Pull Requests
