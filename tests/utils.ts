@@ -47,9 +47,10 @@ export const firestore = getFirestore(firebaseApp)
 export const database = getDatabase(firebaseApp)
 export const storage = getStorage(firebaseApp)
 
-connectFirestoreEmulator(firestore, 'localhost', 8080)
-connectDatabaseEmulator(database, 'localhost', 8081)
-connectStorageEmulator(storage, 'localhost', 9199)
+const HOST = '127.0.0.1'
+connectFirestoreEmulator(firestore, HOST, 8080)
+connectDatabaseEmulator(database, HOST, 8081)
+connectStorageEmulator(storage, HOST, 9199)
 
 let _id = 0
 // wait this ms time after each operation to avoid race conditions
