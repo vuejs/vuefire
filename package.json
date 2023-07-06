@@ -80,8 +80,8 @@
   },
   "devDependencies": {
     "@vitest/coverage-c8": "^0.29.1",
-    "@vue/runtime-core": "^3.2.47",
-    "@vue/test-utils": "^2.3.0",
+    "@vue/runtime-core": "^3.3.4",
+    "@vue/test-utils": "^2.4.0",
     "chalk": "^5.1.2",
     "conventional-changelog-cli": "^2.0.34",
     "enquirer": "^2.3.6",
@@ -102,7 +102,7 @@
     "unbuild": "^1.1.2",
     "vitepress": "1.0.0-alpha.48",
     "vitest": "^0.29.1",
-    "vue": "^3.2.47",
+    "vue": "^3.3.4",
     "yorkie": "^2.0.0"
   },
   "gitHooks": {
