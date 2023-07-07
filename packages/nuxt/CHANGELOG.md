@@ -4,6 +4,9 @@
 
 - allow passing GOOGLE_APPLICATION_CREDENTIALS env variable ([693af39](https://github.com/vuejs/vuefire/commit/693af39a1e086743c2038cde805a6b70d28696b0))
 
+Deprecate `vuefire.admin.serviceAccount` in favor of the environment variable `GOOGLE_APPLICATION_CREDENTIALS`. See the updated [documentation](https://vuefire.vuejs.org/nuxt/getting-started.html#configuration) for more details.
+This allows to align better with how the application can be safely deployed to production.
+
 ### Features
 
 - **admin:** add user to event context ([67dbffd](https://github.com/vuejs/vuefire/commit/67dbffdefe3a5edc51f2bc251fb0e5c4e539fba7))
