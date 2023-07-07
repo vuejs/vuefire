@@ -7,6 +7,7 @@ import {
 } from 'vuefire/server'
 import { getCookie } from 'h3'
 import { UserSymbol } from '../constants'
+import { log } from '../logging'
 import { defineNuxtPlugin, useRequestEvent } from '#app'
 
 /**
@@ -21,9 +22,14 @@ export default defineNuxtPlugin(async (nuxtApp) => {
     getCookie(event, AUTH_COOKIE_NAME),
     adminApp
   )
+
   const user = await Promise.resolve(
     decodedToken && adminAuth.getUser(decodedToken.uid)
-  )
+  ).catch((err) => {
+    log('error', 'Error getting user', err)
+    // consider the user as not logged in and avoid a 500
+    return null
+  })
 
   // expose the user to code
   event.context.user = user
