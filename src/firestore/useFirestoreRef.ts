@@ -25,7 +25,7 @@ import {
   UnbindWithReset,
   noop,
   checkWrittenTarget,
-  isSSR,
+  useIsSSR,
   isDocumentRef,
   ResetOption,
   OperationsType,
@@ -79,7 +79,7 @@ export function _useFirestoreRef(
     }
   }
 
-  if (isSSR()) {
+  if (useIsSSR()) {
     options.once = true
   }
 

@@ -18,7 +18,7 @@ import {
   _Nullable,
   UnbindWithReset,
   checkWrittenTarget,
-  isSSR,
+  useIsSSR,
   noop,
   ResetOption,
 } from '../shared'
@@ -59,7 +59,8 @@ export function _useDatabaseRef(
   }
 
   // During SSR, we should only get data once
-  if (isSSR()) {
+  const isSSR = useIsSSR()
+  if (isSSR) {
     options.once = true
   }
 

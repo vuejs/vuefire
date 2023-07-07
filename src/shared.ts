@@ -272,7 +272,7 @@ export interface _ResolveRejectFn {
  *
  * @internal
  */
-export function isSSR(): boolean {
+export function useIsSSR(): boolean {
   return !!(getCurrentInstance() && inject(ssrContextKey, null))
 }
 
