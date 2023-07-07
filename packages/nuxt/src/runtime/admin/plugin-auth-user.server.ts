@@ -6,8 +6,8 @@ import {
   AUTH_COOKIE_NAME,
 } from 'vuefire/server'
 import { getCookie } from 'h3'
-import { defineNuxtPlugin, useRequestEvent } from '#app'
 import { UserSymbol } from '../constants'
+import { defineNuxtPlugin, useRequestEvent } from '#app'
 
 /**
  * Check if there is a cookie and if it is valid, extracts the user from it. This only requires the admin app.
@@ -21,7 +21,9 @@ export default defineNuxtPlugin(async (nuxtApp) => {
     getCookie(event, AUTH_COOKIE_NAME),
     adminApp
   )
-  const user = await (decodedToken && adminAuth.getUser(decodedToken.uid))
+  const user = await Promise.resolve(
+    decodedToken && adminAuth.getUser(decodedToken.uid)
+  )
 
   // expose the user to code
   event.context.user = user

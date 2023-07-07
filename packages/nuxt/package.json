@@ -37,7 +37,7 @@
     "dev:prepare": "nuxt-module-build --stub"
   },
   "dependencies": {
-    "@nuxt/kit": "^3.0.0",
+    "@nuxt/kit": "^3.6.2",
     "lru-cache": "^10.0.0"
   },
   "peerDependencies": {
@@ -60,14 +60,14 @@
   },
   "devDependencies": {
     "@firebase/app-types": "^0.9.0",
-    "@nuxt/module-builder": "^0.2.1",
-    "@nuxt/schema": "^3.0.0",
+    "@nuxt/module-builder": "^0.4.0",
+    "@nuxt/schema": "^3.6.2",
     "@nuxtjs/eslint-config-typescript": "^12.0.0",
     "eslint": "^8.44.0",
     "firebase": "^9.23.0",
     "firebase-admin": "^11.9.0",
     "firebase-functions": "^4.4.1",
-    "nuxt": "^3.0.0",
+    "nuxt": "^3.6.2",
     "vuefire": "workspace:*"
   }
 }

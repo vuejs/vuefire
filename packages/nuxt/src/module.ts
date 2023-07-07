@@ -94,14 +94,8 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
     nuxt.options.appConfig.firebaseConfig = markRaw(options.config)
     nuxt.options.appConfig.vuefireOptions = markRaw(options)
 
-    // nuxt.options.build.transpile.push(templatesDir)
     nuxt.options.build.transpile.push(runtimeDir)
     nuxt.options.build.transpile.push(templatesDir)
-
-    // FIXME: this is a workaround because of the resolve issue with firebase
-    // without this, we use different firebase packages within vuefire and nuxt-vuefire
-    nuxt.options.build.transpile.push('vuefire')
-    nuxt.options.build.transpile.push('vuefire/server')
 
     // This one is set by servers, we set the GOOGLE_APPLICATION_CREDENTIALS env variable instead that has a lower priority and can be both a path or a JSON string
     // process.env.FIREBASE_CONFIG ||= JSON.stringify(options.config)
@@ -238,38 +232,6 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
       { from: 'vuefire', name: 'useDatabaseList' },
       { from: 'vuefire', name: 'useDatabaseObject' },
     ])
-
-    // TODO: refactor
-    // NOTE: Because of https://github.com/nuxt/framework/issues/9865
-    // otherwise, move to the `hooks` option
-    if (nuxt.options.ssr) {
-      // NOTE: workaround until https://github.com/vitejs/vite/issues/11114 is fixed
-      // TODO: refactor
-      nuxt.addHooks({
-        // Resolve the correct firebase/firestore path on server only since vite is resolving the wrong one in dev
-        'vite:extendConfig': async (config, { isServer }) => {
-          config.resolve ??= {}
-          config.resolve.alias ??= {}
-          const aliases: Record<string, string> = config.resolve
-            .alias as Record<string, string>
-
-          const promises: Promise<void>[] = []
-
-          if (isServer) {
-            promises.push(
-              addMissingAlias(aliases, 'firebase/firestore', 'index.mjs')
-            )
-            promises.push(
-              addMissingAlias(aliases, '@firebase/firestore', 'index.node.mjs')
-            )
-          }
-
-          promises.push(addMissingAlias(aliases, 'firebase/app', 'index.mjs'))
-
-          await Promise.all(promises)
-        },
-      })
-    }
   },
 
   // workaround for vite
@@ -288,6 +250,9 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
         'firebase/auth',
         '@firebase/auth',
         '@firebase/component',
+        'firebase-admin/auth',
+        'firebase-admin/app',
+        'firebase-admin/app-check',
       ]
       viteInlineConfig.resolve.dedupe.push(...deps)
 

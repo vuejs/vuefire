@@ -1,5 +1,6 @@
 // handle aliases of firebase packages until https://github.com/vitejs/vite/issues/11114 is fixed
 
+import { join } from 'node:path'
 import { resolvePath } from '@nuxt/kit'
 
 /**
@@ -18,10 +19,13 @@ export async function addMissingAlias(
   if (!aliases[libToCheck]) {
     // this gives an absolute path which is needed for the alias to work since the firebase package is not including the dist folder in exports
     const resolvedLibFolder = await resolvePath(libToCheck)
-    const resolvedLibFile =
-      resolvedLibFolder.slice(0, resolvedLibFolder.lastIndexOf('dist')) +
-      'dist/' +
+    console.log('resolvedLibFolder', libToCheck, resolvedLibFolder)
+    const resolvedLibFile = join(
+      resolvedLibFolder.slice(0, resolvedLibFolder.lastIndexOf('dist')),
+      'dist',
       filename
+    )
+    console.log('fixedTo', libToCheck, resolvedLibFile)
     aliases[libToCheck] = resolvedLibFile
   }
 }
