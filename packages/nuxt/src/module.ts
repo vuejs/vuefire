@@ -231,6 +231,12 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
       { from: 'vuefire', name: 'useDatabase' },
       { from: 'vuefire', name: 'useDatabaseList' },
       { from: 'vuefire', name: 'useDatabaseObject' },
+
+      // storage
+      { from: 'vuefire', name: 'useFirebaseStorage' },
+      { from: 'vuefire', name: 'useStorageFile' },
+      { from: 'vuefire', name: 'useStorageFileUrl' },
+      { from: 'vuefire', name: 'useStorageFileMetadata' },
     ])
   },
 
