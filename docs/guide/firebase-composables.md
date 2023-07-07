@@ -22,10 +22,6 @@ const storage = useFirebaseStorage()
 
 As [all composables](https://vuejs.org/guide/reusability/composables.html), these must be called within the _setup_ of a component. However, you can call these specific Firebase Services composables anywhere in your application as long as you pass the **Firebase App name as the parameter**.
 
-```ts
-
-```
-
 ::: tip
 The Firebase Name parameter is only needed when using the composable outside of _setup_ and one of these condition are met:
 
