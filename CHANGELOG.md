@@ -1,3 +1,9 @@
+## [3.1.1](https://github.com/vuejs/vuefire/compare/vuefire@3.1.0...vuefire@3.1.1) (2023-07-07)
+
+### Bug Fixes
+
+- use value of currentUser ref in useIsCurrentUserLoaded ([#1344](https://github.com/vuejs/vuefire/issues/1344)) ([d1196d6](https://github.com/vuejs/vuefire/commit/d1196d645ed6cb7f8066ea8bb546c71f4516a20a))
+
 # [3.1.0](https://github.com/vuejs/vuefire/compare/vuefire@3.0.1...vuefire@3.1.0) (2023-02-26)
 
 ### Bug Fixes

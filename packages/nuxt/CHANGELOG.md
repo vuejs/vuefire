@@ -1,3 +1,14 @@
+# [0.2.0](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.1.6...nuxt-vuefire@0.2.0) (2023-07-07)
+
+### Bug Fixes
+
+- allow passing GOOGLE_APPLICATION_CREDENTIALS env variable ([693af39](https://github.com/vuejs/vuefire/commit/693af39a1e086743c2038cde805a6b70d28696b0))
+
+### Features
+
+- **admin:** add user to event context ([67dbffd](https://github.com/vuejs/vuefire/commit/67dbffdefe3a5edc51f2bc251fb0e5c4e539fba7))
+- resolve service account path from env variable ([22938c7](https://github.com/vuejs/vuefire/commit/22938c748df6498e124690b4db142b63763a1d9a))
+
 ## [0.1.6](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.1.5...nuxt-vuefire@0.1.6) (2023-02-26)
 
 This release contains no changes
