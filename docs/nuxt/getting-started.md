@@ -41,7 +41,7 @@ export default defineNuxtConfig({
 
 If you are using SSR with any auth related feature, you will need to create a [service account](https://firebase.google.com/support/guides/service-accounts) and provide its content as an _environment variable_ named `GOOGLE_APPLICATION_CREDENTIALS`.
 
-You can also provide the path to the `service-account.json` file. Make sure the path is located
+In local development it's more convenient to put the `service-account.json` file alongside other files and refer to its path in the environment variable:
 
 ```dotenv
 GOOGLE_APPLICATION_CREDENTIALS=service-account.json
