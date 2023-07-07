@@ -41,11 +41,7 @@ export default defineNuxtConfig({
           measurementId: 'G-RL4BTWXKJ7',
         },
 
-        admin: {
-          // serviceAccount: resolve(
-          //   fileURLToPath(new URL('./service-account.json', import.meta.url))
-          // ),
-        },
+        // admin: {},
       },
     ],
   ],
