@@ -7,6 +7,20 @@ export default defineNuxtConfig({
     layoutTransition: false,
   },
 
+  nitro: {
+    preset: fileURLToPath(new URL('./preset', import.meta.url)),
+    // preset: 'nitro-preset-firebase',
+    runtimeConfig: {
+      firebase: {
+        functions: {
+          httpsOptions: {
+            region: 'europe-west1',
+          },
+        },
+      },
+    },
+  },
+
   alias: {
     // import the dev version directly
     'vuefire/server': fileURLToPath(
