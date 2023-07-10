@@ -89,6 +89,9 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
     const runtimeDir = fileURLToPath(new URL('./runtime', import.meta.url))
     const templatesDir = fileURLToPath(new URL('../templates', import.meta.url))
 
+    // to handle TimeStamp objects
+    addPlugin(resolve(runtimeDir, 'payload-plugin'))
+
     // TODO: I don't think the appConfig is the right place to store these as it makes things reactive
     // Let plugins and the user access the firebase config within the app
     nuxt.options.appConfig.firebaseConfig = markRaw(options.config)
