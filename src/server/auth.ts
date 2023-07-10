@@ -111,14 +111,15 @@ export async function decodeUserToken(
 
     try {
       // TODO: should we check for the revoked status of the token here?
-      return adminAuth.verifyIdToken(token /*, checkRevoked */)
+      // we await to try/catch
+      return await adminAuth.verifyIdToken(token /*, checkRevoked */)
     } catch (err) {
       // TODO: some errors should probably go higher
       // ignore the error and consider the user as not logged in
       if (isFirebaseError(err) && err.code === 'auth/id-token-expired') {
         // Other errors to be handled: auth/argument-error
         // the error is fine, the user is not logged in
-        log('info', 'Token expired -', err)
+        log('info', 'Token expired, client must revalidate')
         // TODO: this error should be accessible somewhere to instruct the user to renew their access token
       } else {
         // ignore the error and consider the user as not logged in
