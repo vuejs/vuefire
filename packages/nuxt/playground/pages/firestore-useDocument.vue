@@ -9,7 +9,7 @@ const configRef = doc(db, 'configs', 'jORwjIykFo2NmkdzTkhU')
 const isDoneFetching = ref(false)
 const isAllDoneFetching = ref(false)
 
-const { data: config, promise } = useDocument(configRef)
+const { data: config, promise } = useDocument(configRef, { wait: true })
 // const { data: hey } = useDocument(configRef)
 
 onMounted(() => {
