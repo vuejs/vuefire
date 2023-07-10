@@ -51,7 +51,7 @@
     "test:unit": "vitest --coverage",
     "firebase:emulators": "firebase emulators:start",
     "test:dev": "vitest",
-    "test": "pnpm run lint && pnpm run test:types && pnpm run build && pnpm run test:unit run"
+    "test": "pnpm run lint && pnpm run test:types && pnpm run build && pnpm run -C packages/nuxt build && pnpm run test:unit run"
   },
   "keywords": [
     "vue",
