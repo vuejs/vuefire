@@ -1,3 +1,13 @@
+## [0.2.1](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.2.0...nuxt-vuefire@0.2.1) (2023-07-10)
+
+### Bug Fixes
+
+- **auth:** avoid errors when user is logged out ([238fd65](https://github.com/vuejs/vuefire/commit/238fd65b06a4727c72e793fbe3fe39105262873f))
+
+### Features
+
+- **ssr:** handles TimeStamps ([9559e71](https://github.com/vuejs/vuefire/commit/9559e71b307fcc60545b9dd9b4d8d0ee47d3894a))
+
 # [0.2.0](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.1.6...nuxt-vuefire@0.2.0) (2023-07-07)
 
 ### Bug Fixes

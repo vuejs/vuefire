@@ -1,3 +1,9 @@
+## [3.1.2](https://github.com/vuejs/vuefire/compare/vuefire@3.1.1...vuefire@3.1.2) (2023-07-10)
+
+### Bug Fixes
+
+- **server:** catch expired tokens ([310b146](https://github.com/vuejs/vuefire/commit/310b1461467f6af74e2c9b66dae23eb8f28dfd80))
+
 ## [3.1.1](https://github.com/vuejs/vuefire/compare/vuefire@3.1.0...vuefire@3.1.1) (2023-07-07)
 
 ### Bug Fixes
