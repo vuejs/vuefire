@@ -112,6 +112,30 @@ Notice how we rename `data` to whatever makes more sense for the context.
 All of the properties that can be defined on the `Ref` are defined as [non-enumerable properties](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty) which means they won't be copied over when using the spread operator e.g. `const { data, ...rest } = useDocument(contactSource)`. This is to ensure they are completely ignored and do not create problems in other places like devtools.
 :::
 
+### Fetching data once
+
+To fetch data only _once_, pass the [`once`](https://vuefire.vuejs.org/api/interfaces/UseDocumentOptions.html#once) option, which will automatically destroy the subscription as soon as the document or collection is completely fetched:
+
+<FirebaseExample>
+
+```ts{3,4}
+import { useDatabaseList, useDatabaseObject } from 'vuefire'
+import { ref as dbRef } from 'firebase/database'
+
+const todos = useDatabaseList(dbRef(db, 'todos'), { once: true })
+const someTodo = useDatabaseObject(dbRef(db, 'todos', 'someId'), { once: true })
+```
+
+```ts{3,4}
+import { useCollection, useDocument } from 'vuefire'
+import { collection, doc } from 'firebase/firestore'
+
+const todos = useCollection(collection(db, 'todos'), { once: true })
+const someTodo = useDocument(doc(collection(db, 'todos'), 'someId'), { once: true })
+```
+
+</FirebaseExample>
+
 ## VueFire additions
 
 VueFire adds a few properties to the data snapshot to make it easier to work with.
