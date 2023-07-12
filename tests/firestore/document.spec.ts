@@ -226,7 +226,7 @@ describe(
           // do nothing
         }
       }
-      const itemRef = doc().withConverter<MyName>({
+      const itemRef = doc().withConverter<MyName, DocumentData>({
         toFirestore: (data) => ({ name: data.name }),
         fromFirestore: (snap) => new MyName(snap.get('name')),
       })
@@ -353,7 +353,7 @@ describe(
       )
       expectType<string>(useDocument<unknown>(doc(db, 'todos', '1')).value!.id)
       useDocument(
-        doc(db, 'todos').withConverter<TodoI>({
+        doc(db, 'todos').withConverter<TodoI, DocumentData>({
           fromFirestore: (snapshot) => {
             const data = snapshot.data()
             return { text: data.text, finished: data.finished }
@@ -370,7 +370,7 @@ describe(
       // @ts-expect-error
       expectType<Ref<string | null>>(useDocument<number>(itemRef))
 
-      const refWithConverter = itemRef.withConverter<number>({
+      const refWithConverter = itemRef.withConverter<number, DocumentData>({
         toFirestore: (data) => ({ n: data }),
         fromFirestore: (snap, options) => snap.data(options).n as number,
       })

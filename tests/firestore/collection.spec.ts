@@ -459,7 +459,7 @@ describe(
         useCollection<unknown>(collection(db, 'todos')).value[0].id
       )
       useCollection(
-        collection(db, 'todos').withConverter<TodoI>({
+        collection(db, 'todos').withConverter<TodoI, DocumentData>({
           fromFirestore: (snapshot) => {
             const data = snapshot.data()
             return { text: data.text, finished: data.finished }
@@ -482,7 +482,10 @@ describe(
       // @ts-expect-error: wrong type
       expectType<Ref<string[]>>(useCollection<TodoI>(collection(db, 'todos')))
 
-      const refWithConverter = collection(db, 'todos').withConverter<number>({
+      const refWithConverter = collection(db, 'todos').withConverter<
+        number,
+        DocumentData
+      >({
         toFirestore: (data) => ({ n: data }),
         fromFirestore: (snap, options) => snap.data(options).n as number,
       })

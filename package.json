@@ -67,7 +67,7 @@
     "vue-demi": "latest"
   },
   "peerDependencies": {
-    "firebase": "^9.0.0",
+    "firebase": "^9.0.0 || ^10.0.0",
     "vue": "^2.7.0 || ^3.2.0"
   },
   "peerDependenciesMeta": {
@@ -86,16 +86,16 @@
     "conventional-changelog-cli": "^2.0.34",
     "enquirer": "^2.3.6",
     "execa": "^7.1.1",
-    "firebase": "^9.23.0",
+    "firebase": "^10.0.0",
     "firebase-admin": "^11.9.0",
     "focus-visible": "^5.2.0",
     "globby": "^13.2.2",
-    "happy-dom": "^10.0.3",
+    "happy-dom": "^10.1.1",
     "lint-staged": "^13.2.3",
     "minimist": "^1.2.8",
     "p-series": "^3.0.0",
     "prettier": "^2.8.8",
-    "semver": "^7.5.3",
+    "semver": "^7.5.4",
     "typedoc": "^0.24.8",
     "typedoc-plugin-markdown": "^3.15.3",
     "typescript": "~5.1.6",
