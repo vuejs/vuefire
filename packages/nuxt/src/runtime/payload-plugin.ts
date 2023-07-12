@@ -1,3 +1,4 @@
+import { Timestamp, GeoPoint } from 'firebase/firestore'
 import {
   definePayloadPlugin,
   definePayloadReducer,
@@ -15,5 +16,17 @@ export default definePayloadPlugin(() => {
       typeof data.toJSON === 'function' &&
       JSON.stringify(data.toJSON())
   )
-  definePayloadReviver('JSONifiable', (data: string) => JSON.parse(data))
+  definePayloadReviver('JSONifiable', (data: string) => {
+    const parsed = JSON.parse(data)
+
+    if ('seconds' in parsed && 'nanoseconds' in parsed) {
+      return new Timestamp(parsed.seconds, parsed.nanoseconds)
+    }
+
+    if ('latitude' in parsed && 'longitude' in parsed) {
+      return new GeoPoint(parsed.latitude, parsed.longitude)
+    }
+
+    return parsed
+  })
 })
