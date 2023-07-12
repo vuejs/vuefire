@@ -18,13 +18,9 @@ import { defineStore } from 'pinia'
 
 export const useTodoStore = defineStore('todos', () => {
   const todos = useCollection(todoListRef)
-  
+
   return { todos }
 })
 ```
 
 Note you will still have to follow the [Firebase API](https://firebase.google.com/docs/firestore/manage-data/structure-data) (e.g. `addDoc()`, `updateDoc()`, etc) to update the data.
-
-## TypeScript
-
-TODO: use type helper to add properties of converter
