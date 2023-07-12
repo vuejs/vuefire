@@ -18,31 +18,9 @@ import { defineStore } from 'pinia'
 
 export const useTodoStore = defineStore('todos', () => {
   const todos = useCollection(todoListRef)
-  
+
   return { todos }
 })
 ```
 
 Note you will still have to follow the [Firebase API](https://firebase.google.com/docs/firestore/manage-data/structure-data) (e.g. `addDoc()`, `updateDoc()`, etc) to update the data.
-
-## TypeScript
-
-Assuming that you declare your types/interfaces in a dedicated `types/index.ts` file like below:
-```ts
-export interface ITodo {
-  done: boolean,
-  title: string
-}
-```
-
-Then, you can import and use your types like this:
-```ts
-import { defineStore } from 'pinia'
-import type { ITodo } from '@/types';
-
-export const useTodoStore = defineStore('todos', () => {
-  const todos = useCollection<ITodo>(todoListRef)
-  
-  return { todos }
-})
-```
