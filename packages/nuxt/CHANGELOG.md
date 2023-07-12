@@ -1,3 +1,10 @@
+## [0.2.2](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.2.1...nuxt-vuefire@0.2.2) (2023-07-12)
+
+### Features
+
+- **ssr:** revive TimeStamp and GeoPoint ([deb2fab](https://github.com/vuejs/vuefire/commit/deb2fabb355c1ffcc8acccfb39784f114e497e6d))
+- support firebase 10 ([3f9853b](https://github.com/vuejs/vuefire/commit/3f9853bfedad80a415c5bff2d96697ca1b2aa199)), closes [#1385](https://github.com/vuejs/vuefire/issues/1385)
+
 ## [0.2.1](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.2.0...nuxt-vuefire@0.2.1) (2023-07-10)
 
 ### Bug Fixes

@@ -1,3 +1,7 @@
+## [3.1.3](https://github.com/vuejs/vuefire/compare/vuefire@3.1.2...vuefire@3.1.3) (2023-07-12)
+
+This release contains no changes.
+
 ## [3.1.2](https://github.com/vuejs/vuefire/compare/vuefire@3.1.1...vuefire@3.1.2) (2023-07-10)
 
 ### Bug Fixes
