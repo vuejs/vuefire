@@ -32,10 +32,9 @@ const route = useRoute()
 const router = useRouter()
 
 // automatically redirect the user if they are logged in but was rejected on the server because of an outdated cookie
-onMounted(async () => {
-  const currentUser = await getCurrentUser()
+watch(user, (user) => {
   if (
-    currentUser &&
+    user &&
     route.query.redirect &&
     typeof route.query.redirect === 'string'
   ) {
