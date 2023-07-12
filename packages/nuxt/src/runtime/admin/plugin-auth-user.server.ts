@@ -18,6 +18,8 @@ export default defineNuxtPlugin(async (nuxtApp) => {
   const adminApp = nuxtApp.$firebaseAdminApp as AdminApp
   const adminAuth = getAdminAuth(adminApp)
 
+  // log('debug', '🔥 Plugin auth user server')
+
   const decodedToken = await decodeUserToken(
     getCookie(event, AUTH_COOKIE_NAME),
     adminApp
@@ -35,6 +37,8 @@ export default defineNuxtPlugin(async (nuxtApp) => {
   event.context.user = user
   // for SSR
   nuxtApp.payload.vuefireUser = user?.toJSON()
+
+  // log('debug', '🧍 User on server', user?.displayName || user?.uid)
 
   // user that has a similar shape for client and server code
   nuxtApp[

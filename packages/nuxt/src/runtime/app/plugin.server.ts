@@ -44,7 +44,7 @@ export default defineNuxtPlugin(async (nuxtApp) => {
       // TODO: do we need a randomId?
       const appName = `auth:${user.uid}:${randomId}`
 
-      log('log', '👤 creating new app', appName)
+      // log('log', '👤 creating new app', appName)
 
       appCache.set(uid, initializeApp(appConfig.firebaseConfig, appName))
       firebaseApp = appCache.get(uid)!

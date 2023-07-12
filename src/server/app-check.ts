@@ -56,17 +56,14 @@ export function VueFireAppCheckServer(
         log('info', 'Getting Admin AppCheck')
         const adminAppCheck = getAdminAppCheck(adminApp)
         // NOTE: appId is checked on the module
-        log(
-          'info',
-          `Getting creating token for app ${firebaseApp.options.appId!}.`
-        )
+        log('info', `Creating token for app ${firebaseApp.options.appId!}.`)
 
         return adminAppCheck
           .createToken(firebaseApp.options.appId!, { ttlMillis })
           .then(({ token, ttlMillis: expireTimeMillis }) => {
             log(
               'info',
-              `Got AppCheck token from the server: ${token}, expires in ${expireTimeMillis}ms.`
+              `Got AppCheck token from the server, expires in ${expireTimeMillis}ms.`
             )
             // expire the token after the ttl
             // TODO: verify this is okay

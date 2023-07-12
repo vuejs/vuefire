@@ -8,5 +8,6 @@ import { defineNuxtPlugin } from '#app'
 export default defineNuxtPlugin((nuxtApp) => {
   const firebaseApp = nuxtApp.$firebaseApp as FirebaseApp
 
+  // @ts-expect-error: FIXME: type it
   VueFireAuth(nuxtApp.payload.vuefireUser)(firebaseApp, nuxtApp.vueApp)
 })
