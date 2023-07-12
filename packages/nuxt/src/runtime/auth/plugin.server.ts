@@ -2,8 +2,8 @@ import type { FirebaseApp } from 'firebase/app'
 import type { User } from 'firebase/auth'
 import { VueFireAuthServer } from 'vuefire/server'
 import type { App } from 'vue'
-import { defineNuxtPlugin } from '#app'
 import { UserSymbol } from '../constants'
+import { defineNuxtPlugin } from '#app'
 
 /**
  * Setups the auth state based on the cookie.

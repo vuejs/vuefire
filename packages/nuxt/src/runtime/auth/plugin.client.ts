@@ -3,7 +3,7 @@ import { VueFireAuth } from 'vuefire'
 import { defineNuxtPlugin } from '#app'
 
 /**
- * Setups VueFireAuth for the client.
+ * Setups VueFireAuth for the client. This version creates some listeners that shouldn't be set on server.
  */
 export default defineNuxtPlugin((nuxtApp) => {
   const firebaseApp = nuxtApp.$firebaseApp as FirebaseApp
