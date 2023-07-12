@@ -34,6 +34,16 @@ onMounted(() => {
     <p>config:</p>
     <p>finished: {{ isDoneFetching }}</p>
     <p>All finished: {{ isAllDoneFetching }}</p>
+    <p>
+      Revive check:
+    </p>
+    <ul>
+      <li>TimeStamp: {{ config?.time }}</li>
+      <li>GeoPoint: {{ config?.loc }}</li>
+    </ul>
+
+    <hr>
+
     <pre>{{ config }}</pre>
   </div>
 </template>
