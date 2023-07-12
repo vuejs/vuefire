@@ -4,6 +4,13 @@ service cloud.firestore {
   	match /todos/{todoId} {
     	allow read, write;
     }
+  	match /tweets/{todoId} {
+    	allow read, write;
+    }
+  	match /users/{todoId} {
+    	allow read: if request.auth.uid != null;
+      allow write: if false;
+    }
     match /demo-todos/{todoId} {
     	allow read, write;
     }
@@ -28,18 +35,19 @@ service cloud.firestore {
     match /configs/jORwjIykFo2NmkdzTkhU {
     	allow read, write;
     }
+
     match /secrets/{userId} {
       allow read, write: if request.auth.uid == userId;
     }
-    match /bug-reports/{issue}/demo-files/{id} {
-    	allow read, write;
+
+    match /bug-reports/{issueId}/objects/{documentId} {
+    	allow read, update;
+      allow create: if false;
+      allow delete: if false;
     }
-    match /bug-reports/{issue}/demo/{id} {
-    	allow read, write;
-    }
+
     match /{document=**} {
-    	allow read;
-      allow write: if false;
+      allow read, write: if false;
     }
   }
 }
