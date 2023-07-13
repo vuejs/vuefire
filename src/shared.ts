@@ -277,14 +277,11 @@ const ssrContextKey = Symbol.for('v-scx')
  */
 export function useIsSSR(): boolean {
   const instance = getCurrentInstance()
-  if (isVue2) {
-    return (
-      !!instance &&
+  return !!(isVue2
+    ? instance &&
       // @ts-expect-error: Vue 2 only API
-      instance.proxy.$isServer
-    )
-  }
-  return !!inject(ssrContextKey, 0)
+      (instance.proxy.$isServer as boolean)
+    : inject(ssrContextKey, 0))
 }
 
 /**
