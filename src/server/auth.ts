@@ -116,7 +116,8 @@ export async function decodeUserToken(
     try {
       // TODO: should we check for the revoked status of the token here?
       // we await to try/catch
-      return await adminAuth.verifyIdToken(token /*, checkRevoked */)
+      // return await adminAuth.verifyIdToken(token /*, checkRevoked */)
+      return await adminAuth.verifySessionCookie(token /** checkRevoked */)
     } catch (err) {
       // TODO: some errors should probably go higher
       // ignore the error and consider the user as not logged in
@@ -127,7 +128,7 @@ export async function decodeUserToken(
         // TODO: this error should be accessible somewhere to instruct the user to renew their access token
       } else {
         // ignore the error and consider the user as not logged in
-        log('error', 'Unknown Error -', err)
+        log('error', 'Unknown Error verifying session cookie -', err)
       }
     }
   }

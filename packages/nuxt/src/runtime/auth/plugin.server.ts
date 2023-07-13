@@ -3,6 +3,7 @@ import type { User } from 'firebase/auth'
 import { VueFireAuthServer } from 'vuefire/server'
 import type { App } from 'vue'
 import { UserSymbol } from '../constants'
+import { log } from '../logging'
 import { defineNuxtPlugin } from '#app'
 
 /**

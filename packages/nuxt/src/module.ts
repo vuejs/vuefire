@@ -137,7 +137,8 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
       if (nuxt.options.ssr && hasServiceAccount) {
         addServerHandler({
           route: '/api/__session',
-          handler: resolve(runtimeDir, './auth/api.session'),
+          // handler: resolve(runtimeDir, './auth/api.session'),
+          handler: resolve(runtimeDir, './auth/api.session-verification'),
         })
 
         // must be added after (which means before in code) the plugin module

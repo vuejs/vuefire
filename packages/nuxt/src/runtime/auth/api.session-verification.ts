@@ -1,4 +1,4 @@
-import { getApp } from 'firebase-admin/app'
+import { getApp as getAdminApp } from 'firebase-admin/app'
 import { getAuth as getAdminAuth } from 'firebase-admin/auth'
 import {
   readBody,
@@ -19,17 +19,14 @@ export default defineEventHandler(async (event) => {
   const { token } = await readBody(event)
 
   // log('debug', 'minting a session cookie')
-  const adminApp = getApp()
+  const adminApp = getAdminApp()
   const adminAuth = getAdminAuth(adminApp)
 
   // log('debug', 'read idToken from Authorization header', token)
   const verifiedIdToken = token ? await adminAuth.verifyIdToken(token) : null
 
   if (verifiedIdToken) {
-    if (
-      new Date().getTime() / 1_000 - verifiedIdToken.auth_time >
-      ID_TOKEN_MAX_AGE
-    ) {
+    if (new Date().getTime() / 1_000 - verifiedIdToken.iat > ID_TOKEN_MAX_AGE) {
       event.node.res.statusCode = 301
       return ''
     } else {
@@ -39,7 +36,7 @@ export default defineEventHandler(async (event) => {
           log('error', 'Error minting the cookie -', e.message)
         })
       if (cookie) {
-        // log('debug', 'minted a session cookie', cookie)
+        log('debug', `minted a session cookie for user ${verifiedIdToken.uid}`)
         setCookie(event, AUTH_COOKIE_NAME, cookie, {
           maxAge: AUTH_COOKIE_MAX_AGE,
           secure: true,

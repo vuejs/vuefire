@@ -1,5 +1,5 @@
 import {
-  initializeApp,
+  initializeApp as initializeAdminApp,
   cert,
   getApp,
   getApps,
@@ -102,7 +102,7 @@ export function getAdminApp(
       //         )
       //         throw new Error('admin-app/missing-credentials')
 
-      initializeApp({
+      initializeAdminApp({
         // TODO: is this really going to be used?
         ...firebaseAdminOptions,
         credential,
