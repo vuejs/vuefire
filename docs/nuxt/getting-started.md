@@ -6,15 +6,39 @@ The Nuxt VueFire module is still a work in progress and it might contain breakin
 
 ## Installation
 
-```bash
+::: code-group
+
+```sh [pnpm]
+pnpm install vuefire nuxt-vuefire firebase
+```
+
+```sh [yarn]
+yarn add vuefire nuxt-vuefire firebase
+```
+
+```sh [npm]
 npm install vuefire nuxt-vuefire firebase
 ```
 
+:::
+
 Additionally, if you are using [SSR](https://nuxt.com/docs/api/configuration/nuxt-config/#ssr), you need to install `firebase-admin` and its peer dependencies:
 
-```bash
-npm install firebase-admin @firebase/app-types
+::: code-group
+
+```sh [pnpm]
+pnpm install firebase-admin firebase-functions @firebase/app-types
 ```
+
+```sh [yarn]
+yarn add firebase-admin firebase-functions @firebase/app-types
+```
+
+```sh [npm]
+npm install firebase-admin firebase-functions @firebase/app-types
+```
+
+:::
 
 ## Configuration
 
@@ -39,6 +63,8 @@ export default defineNuxtConfig({
 })
 ```
 
+### Configuring the Admin SDK
+
 If you are using SSR with any auth related feature, you will need to create a [service account](https://firebase.google.com/support/guides/service-accounts) and provide its content as an _environment variable_ named `GOOGLE_APPLICATION_CREDENTIALS`.
 
 In local development it's more convenient to put the `service-account.json` file alongside other files and refer to its path in the environment variable:
@@ -48,7 +74,12 @@ GOOGLE_APPLICATION_CREDENTIALS=service-account.json
 ```
 
 :::tip
-This service account file contains sensitive information and should **not be committed to your repository**.
+This service account file contains sensitive information and should **not be committed to your repository**. Make sure to exclude it from your version control system:
+
+```sh
+echo service-account.json >> .gitignore
+```
+
 :::
 
 ### Additional configuration

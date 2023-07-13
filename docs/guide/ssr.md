@@ -75,7 +75,8 @@ Note that by default, vite-ssg (used by Vitesse) uses `JSON.stringify()` to seri
 
 ```ts
 // src/main.ts
-import devalue from '@nuxt/devalue'
+// https://github.com/Rich-Harris/devalue#usage
+import devalue from 'devalue'
 import { ViteSSG } from 'vite-ssg'
 import App from './App.vue'
 
@@ -87,7 +88,7 @@ export const createApp = ViteSSG(
   },
   {
     transformState(state) {
-      return import.meta.env.SSR ? devalue(state) : state
+      return import.meta.env.SSR ? devalue.stringify(state) : devalue.parse(state)
     },
   },
 )
@@ -153,13 +154,15 @@ await usePendingPromises()
 
 ## Exclude from hydration
 
-You can exclude data from hydration by passing `false` to the `ssrKey` option:
+You can exclude data from hydration by passing `false` to the `ssrKey` option. This is useful when there is no point in waiting for the data to be fetched on the server, e.g. when the data is not being rendered on the server.
 
 ```ts
 useDocument(..., { ssrKey: false })
 useDatabaseList(..., { ssrKey: false })
 // etc
 ```
+
+This only works if you avoid rendering on server these documents or collections. **If still render them on server, you will get a hydration error on client**.
 
 <!-- TODO: I wonder if we could attach effect scopes to applications so `onServerPrefetch()` is still awaited when attached -->
 

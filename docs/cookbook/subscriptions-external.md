@@ -23,4 +23,4 @@ export const useTodoStore = defineStore('todos', () => {
 })
 ```
 
-Note you will still have to follow the [Firebase API](https://firebase.google.com/docs/firestore/manage-data/structure-data) (e.g. `addDoc()`, `updateDoc()`, etc) to update the data.
+Note you will still have to follow the [Firebase API](https://firebase.google.com/docs/firestore/manage-data/structure-data) (e.g. `addDoc()`, `updateDoc()`, etc) to update the data and you will also need [to wait for the data to be loaded on the server](../guide/ssr.md#usage-outside-of-components).

@@ -20,15 +20,17 @@ defineNuxtConfig({
 
 The Spark plan is a free plan that enable most of firebase functions. With this plan, you want to **prerender your app and deploy it as a static site**. In order to do this, make sure **not to apply the Firebase preset** when bundling your app and to use the `generate` command:
 
-```bash
+```sh
 nuxt generate
 ```
 
 You can then let your CI deploy your app to Firebase or do it manually:
 
-```bash
+```sh
 firebase deploy
 ```
+
+Make sure you **don't have** a `nitro.preset` option set in your `nuxt.config.ts` file.
 
 ## Blaze plan
 
@@ -38,6 +40,10 @@ The Firebase preset is still experimental. It is not recommended to use it in pr
 
 The Blaze plan is a pay-as-you-go that allows you to run Firebase Functions. It's free up to a certain amount of requests. With this plan, you can either do the same as with the [Spark plan](#spark-plan) (cheaper) or build with the Firebase preset and deploy your app as a serverless function:
 
-```bash
+```sh
 NITRO_PRESET=firebase nuxt build
 ```
+
+### Route Rules
+
+On top of prerendering any routes, you can also use [the `routeRules` option](https://nuxt.com/docs/api/configuration/nuxt-config#routerules-1) to apply any headers like cache options, redirects or even static rendering.

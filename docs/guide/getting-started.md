@@ -6,11 +6,21 @@ Before using VueFire, make sure you have a Firebase account and a project setup 
 
 In order to get started make sure to install the latest version of `vuefire` as well as `firebase`:
 
-```sh
-yarn add vuefire firebase
-# or
-npm install vuefire firebase
+::: code-group
+
+```sh [pnpm]
+pnpm i vuefire firebase
 ```
+
+```sh [yarn]
+yarn add vuefire firebase
+```
+
+```sh [npm]
+npm i vuefire firebase
+```
+
+:::
 
 ::: warning
 
@@ -71,7 +81,7 @@ Note that we will refer to `database` and `firestore` as `db` in examples where 
 
 First, install the VueFire Vue plugin. It will allow you to add extra modules like [AppCheck](./app-check.md) or [Auth](./auth.md) to your app.
 
-```ts
+```ts{2,8-15}
 import { createApp } from 'vue'
 import { VueFire, VueFireAuth } from 'vuefire'
 import App from './App.vue'
@@ -93,10 +103,9 @@ app.mount('#app')
 
 This will give you access to some [convenient composables](./firebase-composables.md) like `useFirebaseApp()`, `useFirestore()` and `useDatabase()` in your components:
 
-```vue
+```vue{2-3}
 <script setup>
 import { useFirestore } from 'vuefire'
-
 const db = useFirestore()
 </script>
 
@@ -216,7 +225,7 @@ VueFire can also be used with the Options API, while less flexible, it's still a
 
 <FirebaseExample>
 
-```js
+```js{2,7-10}
 import { createApp } from 'vue'
 import { VueFire, VueFireDatabaseOptionsAPI } from 'vuefire'
 
@@ -224,12 +233,13 @@ const app = createApp(App)
 app.use(VueFire, {
   // ...
   modules: [
+    // Add any modules you want to use here
     VueFireDatabaseOptionsAPI(),
   ],
 })
 ```
 
-```js
+```js{2,7-10}
 import { createApp } from 'vue'
 import { VueFire, VueFireFirestoreOptionsAPI } from 'vuefire'
 
@@ -237,6 +247,7 @@ const app = createApp(App)
 app.use(VueFire, {
   // ...
   modules: [
+    // Add any modules you want to use here
     VueFireFirestoreOptionsAPI(),
   ],
 })
