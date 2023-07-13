@@ -9,8 +9,6 @@ import {
 } from 'h3'
 import { log } from '../logging'
 
-// This version is used at https://github.com/FirebaseExtended/firebase-framework-tools/blob/e69f5bdd44695274ad88dbb4e21aac778ba60cc8/src/firebase-aware.ts#L39 but doesn't work locally. Should it maybe be used in production only? Seems unlikely.
-
 /**
  * Setups an API endpoint to be used by the client to mint a cookie based auth session.
  */
@@ -36,7 +34,7 @@ export default defineEventHandler(async (event) => {
           log('error', 'Error minting the cookie -', e.message)
         })
       if (cookie) {
-        log('debug', `minted a session cookie for user ${verifiedIdToken.uid}`)
+        // log('debug', `minted a session cookie for user ${verifiedIdToken.uid}`)
         setCookie(event, AUTH_COOKIE_NAME, cookie, {
           maxAge: AUTH_COOKIE_MAX_AGE,
           secure: true,
@@ -53,7 +51,7 @@ export default defineEventHandler(async (event) => {
       }
     }
   } else {
-    log('debug', 'deleting the session cookie')
+    // log('debug', 'deleting the session cookie')
     deleteCookie(event, AUTH_COOKIE_NAME)
     event.node.res.statusCode = 204
   }

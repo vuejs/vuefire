@@ -17,7 +17,6 @@ import type {
 } from 'firebase-admin/app'
 import { markRaw } from 'vue'
 import type { NuxtVueFireAppCheckOptions } from './runtime/app-check'
-import { addMissingAlias } from './firebaseAliases'
 import { log } from './runtime/logging'
 
 export interface VueFireNuxtModuleOptions {
@@ -89,7 +88,7 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
     const runtimeDir = fileURLToPath(new URL('./runtime', import.meta.url))
     const templatesDir = fileURLToPath(new URL('../templates', import.meta.url))
 
-    // to handle TimeStamp objects
+    // to handle TimeStamp and GeoPoints objects
     addPlugin(resolve(runtimeDir, 'payload-plugin'))
 
     // TODO: I don't think the appConfig is the right place to store these as it makes things reactive
@@ -129,7 +128,7 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
       if (nuxt.options.ssr && !hasServiceAccount) {
         log(
           'warn',
-          'You activated both SSR and auth but you are not providing an admin config. If you render or prerender any page using auth, you will get an error. In that case, provide an admin config to the nuxt-vuefire module.'
+          'You activated both SSR and auth but you are not providing a service account for the admin SDK. See https://vuefire.vuejs.org/nuxt/getting-started.html#configuring-the-admin-sdk.'
         )
       }
 
@@ -141,8 +140,7 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
         } else if (nuxt.options.ssr) {
           log(
             'warn',
-            'You activated both SSR and app-check but you are not providing an admin config. If you render or prerender any page using app-check, you will get an error. In that case, provide an admin config to the nuxt-vuefire module.'
-            // TODO: link about how to provide admin credentials
+            'You activated both SSR and app-check but you are not providing a service account for the admin SDK. See https://vuefire.vuejs.org/nuxt/getting-started.html#configuring-the-admin-sdk.'
           )
         }
       }

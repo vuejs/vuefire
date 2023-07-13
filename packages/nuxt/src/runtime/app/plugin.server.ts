@@ -1,11 +1,10 @@
 import { deleteApp, type FirebaseApp, initializeApp } from 'firebase/app'
-import { getAuth, signInWithCustomToken, type User } from 'firebase/auth'
-import { type App as AdminApp } from 'firebase-admin/app'
-import { DecodedIdToken, getAuth as getAdminAuth } from 'firebase-admin/auth'
+import { type User } from 'firebase/auth'
+import { DecodedIdToken } from 'firebase-admin/auth'
 import { LRUCache } from 'lru-cache'
 import { log } from '../logging'
-import { DECODED_ID_TOKEN_SYMBOL, UserSymbol } from '../constants'
-import { defineNuxtPlugin, useAppConfig, useRequestEvent } from '#app'
+import { DECODED_ID_TOKEN_SYMBOL } from '../constants'
+import { defineNuxtPlugin, useAppConfig } from '#app'
 
 // TODO: allow customizing
 // TODO: find sensible defaults. Should they change depending on the platform?
@@ -25,7 +24,7 @@ const appCache = new LRUCache<string, FirebaseApp>({
 /**
  * Initializes the app and provides it to others.
  */
-export default defineNuxtPlugin(async (nuxtApp) => {
+export default defineNuxtPlugin((nuxtApp) => {
   const appConfig = useAppConfig()
 
   const decodedToken = nuxtApp[
@@ -34,11 +33,6 @@ export default defineNuxtPlugin(async (nuxtApp) => {
   ] as DecodedIdToken | null | undefined
 
   const uid = decodedToken?.uid
-
-  // // expose the user to code
-  // event.context.user = user
-  // // for SSR
-  // nuxtApp.payload.vuefireUser = user?.toJSON()
 
   let firebaseApp: FirebaseApp | undefined
 
@@ -56,9 +50,10 @@ export default defineNuxtPlugin(async (nuxtApp) => {
       firebaseApp = appCache.get(uid)!
       // console.time('token')
     } else {
-      log('debug', '👤 reusing authenticated app', uid)
+      log('debug', '👤 reusing authenticated app', firebaseApp.name)
     }
   } else {
+    // TODO: is this safe? should we create a new one everytime
     if (!appCache.has('')) {
       appCache.set('', initializeApp(appConfig.firebaseConfig))
     }

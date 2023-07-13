@@ -1,4 +1,4 @@
-import { getAuth, signInWithCustomToken, type User } from 'firebase/auth'
+import { getAuth, signInWithCustomToken } from 'firebase/auth'
 import { DecodedIdToken, getAuth as getAdminAuth } from 'firebase-admin/auth'
 import type { FirebaseApp } from 'firebase/app'
 import type { App as AdminApp } from 'firebase-admin/app'

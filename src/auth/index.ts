@@ -1,5 +1,5 @@
 import type { FirebaseApp } from 'firebase/app'
-import { getAuth, type User } from 'firebase/auth'
+import { getAuth, initializeAuth, type User } from 'firebase/auth'
 import { App, ref } from 'vue-demi'
 import { useFirebaseApp } from '../app'
 import { getGlobalScope } from '../globals'
