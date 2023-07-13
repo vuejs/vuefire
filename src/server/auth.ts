@@ -14,6 +14,10 @@ import { isFirebaseError } from './utils'
 // https://firebase.google.com/docs/hosting/manage-cache#using_cookies
 export const AUTH_COOKIE_NAME = '__session'
 
+/**
+ * Initializes the auth related data on the server.
+ * @experimental This API is experimental and may change in future releases.
+ */
 export function VueFireAuthServer(
   firebaseApp: FirebaseApp,
   app: App<unknown>,
