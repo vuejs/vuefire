@@ -1,3 +1,14 @@
+## [0.2.5](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.2.4...nuxt-vuefire@0.2.5) (2023-07-13)
+
+### Bug Fixes
+
+- **auth:** correct verification of token id ([fd2050b](https://github.com/vuejs/vuefire/commit/fd2050b2c62465e554df16937aeecb4ce0c5e8bf))
+- **ssr:** create user only with auth activated ([078c3ac](https://github.com/vuejs/vuefire/commit/078c3ac9563e5e9788036cc717c4f458a4d9193c))
+
+### Features
+
+- **warn:** doc to docs ([3eec751](https://github.com/vuejs/vuefire/commit/3eec751b31d7e6bc6c6c98cd39d54fa3f775e3b5))
+
 ## [0.2.4](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.2.3...nuxt-vuefire@0.2.4) (2023-07-13)
 
 This release contains no changes.
