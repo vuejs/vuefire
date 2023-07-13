@@ -1,3 +1,9 @@
+## [0.2.6](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.2.5...nuxt-vuefire@0.2.6) (2023-07-13)
+
+### Bug Fixes
+
+- **api:** mutualize admin sdk initialization ([4169e8d](https://github.com/vuejs/vuefire/commit/4169e8d534129f78df6bf04025447913919a870c))
+
 ## [0.2.5](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.2.4...nuxt-vuefire@0.2.5) (2023-07-13)
 
 ### Bug Fixes

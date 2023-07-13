@@ -1,3 +1,7 @@
+## [3.1.7](https://github.com/vuejs/vuefire/compare/vuefire@3.1.6...vuefire@3.1.7) (2023-07-13)
+
+- Deprecated undocumented `decodeUserToken()` in favor of `decodeSessionCookie()`
+
 ## [3.1.6](https://github.com/vuejs/vuefire/compare/vuefire@3.1.5...vuefire@3.1.6) (2023-07-13)
 
 ### Bug Fixes
