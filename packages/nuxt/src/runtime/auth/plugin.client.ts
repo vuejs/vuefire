@@ -1,4 +1,5 @@
 import type { FirebaseApp } from 'firebase/app'
+import type { User } from 'firebase/auth'
 import { VueFireAuth } from 'vuefire'
 import { defineNuxtPlugin } from '#app'
 
@@ -8,7 +9,8 @@ import { defineNuxtPlugin } from '#app'
 export default defineNuxtPlugin((nuxtApp) => {
   const firebaseApp = nuxtApp.$firebaseApp as FirebaseApp
 
-  // @ts-expect-error: FIXME: type it
-  console.log('🔥 Plugin auth client', nuxtApp.payload.vuefireUser)
-  VueFireAuth(nuxtApp.payload.vuefireUser)(firebaseApp, nuxtApp.vueApp)
+  VueFireAuth(nuxtApp.payload.vuefireUser as User | undefined)(
+    firebaseApp,
+    nuxtApp.vueApp
+  )
 })

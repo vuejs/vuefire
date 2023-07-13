@@ -133,11 +133,35 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
         )
       }
 
-      // Add the session handler than mints a cookie for the user
-      if (nuxt.options.ssr && hasServiceAccount) {
+      if (options.appCheck) {
+        addPlugin(resolve(runtimeDir, 'app-check/plugin.client'))
+        // TODO: ensure this is the only necessary check. Maybe we need to check if server
+        if (hasServiceAccount) {
+          addPlugin(resolve(runtimeDir, 'app-check/plugin.server'))
+        } else if (nuxt.options.ssr) {
+          log(
+            'warn',
+            'You activated both SSR and app-check but you are not providing an admin config. If you render or prerender any page using app-check, you will get an error. In that case, provide an admin config to the nuxt-vuefire module.'
+            // TODO: link about how to provide admin credentials
+          )
+        }
+      }
+
+      // this adds the VueFire plugin and handle SSR state serialization and hydration
+      addPluginTemplate({
+        src: normalize(resolve(templatesDir, 'plugin.ejs')),
+
+        options: {
+          ...options,
+          ssr: nuxt.options.ssr,
+        },
+      })
+
+      // if (nuxt.options.ssr && hasServiceAccount) {
+      if (options.auth) {
+        // Add the session handler than mints a cookie for the user
         addServerHandler({
           route: '/api/__session',
-          // handler: resolve(runtimeDir, './auth/api.session'),
           handler: resolve(runtimeDir, './auth/api.session-verification'),
         })
 
@@ -145,8 +169,9 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
         addPlugin(resolve(runtimeDir, 'auth/plugin-mint-cookie.client'))
       }
 
+      // hydrates the user if any
       addPlugin(resolve(runtimeDir, 'auth/plugin.client'))
-      // must be added after the admin module to use the admin app
+      // loads the user on the current app
       addPlugin(resolve(runtimeDir, 'auth/plugin.server'))
 
       addVueFireImports([
@@ -163,30 +188,6 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
       ])
     }
 
-    if (options.appCheck) {
-      addPlugin(resolve(runtimeDir, 'app-check/plugin.client'))
-      // TODO: ensure this is the only necessary check. Maybe we need to check if server
-      if (hasServiceAccount) {
-        addPlugin(resolve(runtimeDir, 'app-check/plugin.server'))
-      } else if (nuxt.options.ssr) {
-        log(
-          'warn',
-          'You activated both SSR and app-check but you are not providing an admin config. If you render or prerender any page using app-check, you will get an error. In that case, provide an admin config to the nuxt-vuefire module.'
-          // TODO: link about how to provide admin credentials
-        )
-      }
-    }
-
-    // this adds the VueFire plugin and handle SSR state serialization and hydration
-    addPluginTemplate({
-      src: normalize(resolve(templatesDir, 'plugin.ejs')),
-
-      options: {
-        ...options,
-        ssr: nuxt.options.ssr,
-      },
-    })
-
     // adds the firebase app to each application
     addPlugin(resolve(runtimeDir, 'app/plugin.client'))
     addPlugin(resolve(runtimeDir, 'app/plugin.server'))
@@ -200,16 +201,18 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
         )
       }
 
-      // TODO: remove this runtime config if it's not needed as it could include sensitive data
-      if (options.admin) {
-        nuxt.options.appConfig.firebaseAdmin = markRaw(options.admin)
-      }
-
+      // TODO: add with ssr
       if (hasServiceAccount) {
-        // this plugin adds the user so it's accessible directly in the app as well
         if (options.auth) {
-          addPlugin(resolve(runtimeDir, 'admin/plugin-auth-user.server'))
+          // decodes user token from cookie if any
+          addPlugin(resolve(runtimeDir, 'auth/plugin-user-token.server'))
         }
+
+        if (options.admin?.options) {
+          // used by the admin app plugin to initialize the admin app
+          nuxt.options.runtimeConfig.vuefireAdminOptions = options.admin.options
+        }
+        // injects firebaseAdminApp
         addPlugin(resolve(runtimeDir, 'admin/plugin.server'))
       }
     }
@@ -284,26 +287,32 @@ export type {
   NuxtVueFireAppCheckOptionsReCaptchaEnterprise,
 } from './runtime/app-check'
 
+interface VueFireRuntimeConfig {
+  /**
+   * Firebase Admin options passed to VueFire module. Only available on the server.
+   *
+   * @internal
+   */
+  vuefireAdminOptions?: Omit<AppOptions, 'credential'>
+}
+
+interface VueFireAppConfig {
+  /**
+   * Firebase config to initialize the app.
+   * @internal
+   */
+  firebaseConfig: FirebaseOptions
+
+  /**
+   * VueFireNuxt options used within plugins.
+   * @internal
+   */
+  vuefireOptions: Pick<VueFireNuxtModuleOptions, 'appCheck' | 'auth'>
+}
+
 declare module '@nuxt/schema' {
-  export interface AppConfig {
-    /**
-     * Firebase config to initialize the app.
-     * @internal
-     */
-    firebaseConfig: FirebaseOptions
-
-    /**
-     * VueFireNuxt options used within plugins.
-     * @internal
-     */
-    vuefireOptions: Pick<VueFireNuxtModuleOptions, 'appCheck' | 'auth'>
-
-    /**
-     * Firebase Admin options passed to VueFire module. Only available on the server.
-     * @internal
-     */
-    firebaseAdmin?: VueFireNuxtModuleOptions['admin']
-  }
+  export interface AppConfig extends VueFireAppConfig {}
+  export interface RuntimeConfig extends VueFireRuntimeConfig {}
 }
 
 // @ts-ignore: #app not found error when building

@@ -45,7 +45,7 @@ export function getAdminApp(
     if (FIREBASE_CONFIG || FUNCTION_NAME) {
       // TODO: last time I tried this one fails on the server
       log('debug', `using FIREBASE_CONFIG env variable for ${FUNCTION_NAME}`)
-      initializeApp()
+      initializeAdminApp()
     } else {
       let credential: FirebaseAdminCredential
 

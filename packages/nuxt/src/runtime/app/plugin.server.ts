@@ -27,7 +27,6 @@ const appCache = new LRUCache<string, FirebaseApp>({
  */
 export default defineNuxtPlugin(async (nuxtApp) => {
   const appConfig = useAppConfig()
-  const event = useRequestEvent()
 
   const decodedToken = nuxtApp[
     // we cannot use a symbol to index
@@ -59,36 +58,6 @@ export default defineNuxtPlugin(async (nuxtApp) => {
     } else {
       log('debug', '👤 reusing authenticated app', uid)
     }
-    // TODO: this should only happen if user enabled auth in config
-    const firebaseAdminApp = nuxtApp.$firebaseAdminApp as AdminApp
-    const adminAuth = getAdminAuth(firebaseAdminApp)
-    const auth = getAuth(firebaseApp)
-
-    // reauthenticate if the user is not the same (e.g. invalidated)
-    if (auth.currentUser?.uid !== uid) {
-      const customToken = await adminAuth
-        .createCustomToken(uid)
-        .catch((err) => {
-          log('error', 'Error creating custom token', err)
-          return null
-        })
-      // console.timeLog('token', `got token for ${user.uid}`)
-      if (customToken) {
-        const auth = getAuth(firebaseApp)
-        await signInWithCustomToken(auth, customToken)
-        // console.timeLog('token', `signed in with token for ${user.uid}`)
-        // console.timeEnd('token')
-        // TODO: token expiration (1h)
-      }
-    }
-    nuxtApp[
-      // we cannot use a symbol to index
-      UserSymbol as unknown as string
-    ] = auth.currentUser
-    // expose the user to code
-    event.context.user = auth.currentUser
-    // for SSR
-    nuxtApp.payload.vuefireUser = auth.currentUser?.toJSON()
   } else {
     if (!appCache.has('')) {
       appCache.set('', initializeApp(appConfig.firebaseConfig))

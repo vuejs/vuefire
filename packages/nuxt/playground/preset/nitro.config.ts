@@ -16,17 +16,3 @@ export default {
 //     }
 //   }
 // }
-
-interface FirebaseUserAppConfig {
-  firebase?: {
-    functions?: {
-      runtimeOptions?: RuntimeOptions
-      httpsOptions?: HttpsOptions
-    }
-  }
-}
-
-declare module '@nuxt/schema' {
-  // interface AppConfig extends FirebaseUserAppConfig {}
-  interface RuntimeConfig extends FirebaseUserAppConfig {}
-}
