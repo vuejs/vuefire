@@ -1,3 +1,9 @@
+## [3.1.5](https://github.com/vuejs/vuefire/compare/vuefire@3.1.4...vuefire@3.1.5) (2023-07-13)
+
+### Features
+
+- **ssr:** extra logs for debugging ([042973b](https://github.com/vuejs/vuefire/commit/042973bf9e50a4731edf34d059f764487f087315))
+
 ## [3.1.4](https://github.com/vuejs/vuefire/compare/vuefire@3.1.3...vuefire@3.1.4) (2023-07-13)
 
 ### Bug Fixes
