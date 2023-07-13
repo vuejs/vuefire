@@ -125,7 +125,14 @@ export interface VueFireOptions {
    * Array of VueFire modules that should be added to the application. e.g. `[VueFireAuth, VueFireDatabase]`. Remember
    * to import them from `vuefire`.
    */
-  modules?: Array<(firebaseApp: FirebaseApp, app: App) => void>
+  modules?: VueFireModule[]
+}
+
+/**
+ * A VueFire module that can be passed to the VueFire Vue plugin in the `modules` option.
+ */
+export interface VueFireModule {
+  (firebaseApp: FirebaseApp, app: App): void
 }
 
 /**
@@ -138,6 +145,9 @@ export function VueFire(
   app.provide(_FirebaseAppInjectionKey, firebaseApp)
 
   for (const firebaseModule of modules) {
-    app.use(firebaseModule.bind(null, firebaseApp))
+    firebaseModule(firebaseApp, app)
+    // NOTE: we cannot use the following because it doesn't work on Vue 2
+    // the version above works since we are just using app.provide and vue-demi adds it
+    // app.use(firebaseModule.bind(null, firebaseApp))
   }
 }

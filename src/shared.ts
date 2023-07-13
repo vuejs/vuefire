@@ -6,7 +6,7 @@ import type {
   Query as FirestoreQuery,
 } from 'firebase/firestore'
 import { StorageReference } from 'firebase/storage'
-import { getCurrentInstance, inject, ssrContextKey } from 'vue-demi'
+import { getCurrentInstance, inject, isVue2 } from 'vue-demi'
 import type { Ref, ShallowRef } from 'vue-demi'
 
 export const noop = () => {}
@@ -267,13 +267,24 @@ export interface _ResolveRejectFn {
   (value: unknown): void
 }
 
+// NOTE: copied from vue core, avoids importing it since it only exists in Vue 3
+const ssrContextKey = Symbol.for('v-scx')
+
 /**
  * Check if we are in an SSR environment within a composable. Used to force `options.once` to `true`.
  *
  * @internal
  */
 export function useIsSSR(): boolean {
-  return !!(getCurrentInstance() && inject(ssrContextKey, null))
+  const instance = getCurrentInstance()
+  if (isVue2) {
+    return (
+      !!instance &&
+      // @ts-expect-error: Vue 2 only API
+      instance.proxy.$isServer
+    )
+  }
+  return !!inject(ssrContextKey, 0)
 }
 
 /**
