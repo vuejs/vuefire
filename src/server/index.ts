@@ -3,6 +3,7 @@ export {
   VueFireAuthServer,
   createServerUser,
   AUTH_COOKIE_NAME,
+  decodeSessionCookie,
   decodeUserToken,
 } from './auth'
 export { getAdminApp } from './admin'

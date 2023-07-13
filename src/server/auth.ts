@@ -103,21 +103,24 @@ function warnInvalidServerGetter<T>(name: string, value: T) {
  * Verifies a cookie token and returns the corresponding decoded token or null if the token is invalid or inexistent.
  * This token contains the user's uid.
  *
- * @param token - token parsed from the cookie
+ * @param sessionCookie - token parsed from the cookie
  * @param adminApp - Firebase Admin App
  */
-export async function decodeUserToken(
-  token: string | undefined,
+export async function decodeSessionCookie(
+  sessionCookie: string | undefined,
   adminApp: AdminApp
 ): Promise<DecodedIdToken | null> {
-  if (token) {
+  if (sessionCookie) {
     const adminAuth = getAdminAuth(adminApp)
 
     try {
       // TODO: should we check for the revoked status of the token here?
       // we await to try/catch
       // return await adminAuth.verifyIdToken(token /*, checkRevoked */)
-      return await adminAuth.verifySessionCookie(token /** checkRevoked */)
+      return await adminAuth.verifySessionCookie(
+        sessionCookie
+        /** checkRevoked */
+      )
     } catch (err) {
       // TODO: some errors should probably go higher
       // ignore the error and consider the user as not logged in
@@ -135,3 +138,8 @@ export async function decodeUserToken(
 
   return null
 }
+
+/**
+ * @deprecated Use `decodeSessionCookie` instead.
+ */
+export const decodeUserToken = decodeSessionCookie
