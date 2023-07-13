@@ -1,4 +1,3 @@
-import { getApp as getAdminApp } from 'firebase-admin/app'
 import { getAuth as getAdminAuth } from 'firebase-admin/auth'
 import {
   readBody,
@@ -7,6 +6,7 @@ import {
   defineEventHandler,
   deleteCookie,
 } from 'h3'
+import { getAdminApp } from 'vuefire/server'
 import { log } from '../logging'
 
 /**
