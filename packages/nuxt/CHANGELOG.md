@@ -1,3 +1,10 @@
+## [0.2.3](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.2.2...nuxt-vuefire@0.2.3) (2023-07-13)
+
+### Bug Fixes
+
+- **auth:** authenticated requests on server ([617edfe](https://github.com/vuejs/vuefire/commit/617edfe8653c22c5e4baaa8d148ff81049bbdf05)), closes [#1310](https://github.com/vuejs/vuefire/issues/1310)
+- up compatibility requirement ([04795b0](https://github.com/vuejs/vuefire/commit/04795b0613b6ce342c239d36edcf6bffe2e50e0b))
+
 ## [0.2.2](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.2.1...nuxt-vuefire@0.2.2) (2023-07-12)
 
 ### Features

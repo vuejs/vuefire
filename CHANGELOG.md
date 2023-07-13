@@ -1,3 +1,9 @@
+## [3.1.4](https://github.com/vuejs/vuefire/compare/vuefire@3.1.3...vuefire@3.1.4) (2023-07-13)
+
+### Bug Fixes
+
+- compatibility with Vue 2 ([b92f8bc](https://github.com/vuejs/vuefire/commit/b92f8bc6de7449ea4c7af8d5a175784c88ccfb78)), closes [vuejs/vuefire#1280](https://github.com/vuejs/vuefire/issues/1280)
+
 ## [3.1.3](https://github.com/vuejs/vuefire/compare/vuefire@3.1.2...vuefire@3.1.3) (2023-07-12)
 
 This release contains no changes.
