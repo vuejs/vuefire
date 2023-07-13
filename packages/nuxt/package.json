@@ -13,8 +13,7 @@
     "./templates/*": "./templates/*",
     "./runtime": {
       "types": "./dist/runtime/index.d.ts",
-      "import": "./dist/runtime/index.mjs",
-      "require": "./dist/runtime/index.mjs"
+      "import": "./dist/runtime/index.mjs"
     }
   },
   "main": "./dist/module.cjs",
