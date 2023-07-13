@@ -33,22 +33,23 @@ export function getAdminApp(
       GOOGLE_APPLICATION_CREDENTIALS,
     } = process.env
 
+    log('debug', 'Detected environment variables', {
+      FIREBASE_PROJECT_ID,
+      FIREBASE_CLIENT_EMAIL,
+      FIREBASE_PRIVATE_KEY: FIREBASE_PRIVATE_KEY && '****',
+      FIREBASE_CONFIG,
+      FUNCTION_NAME,
+      GOOGLE_APPLICATION_CREDENTIALS,
+    })
+
     if (FIREBASE_CONFIG || FUNCTION_NAME) {
-      log('debug', 'using FIREBASE_CONFIG env variable')
+      // TODO: last time I tried this one fails on the server
+      log('debug', `using FIREBASE_CONFIG env variable for ${FUNCTION_NAME}`)
       initializeApp()
     } else {
       let credential: FirebaseAdminCredential
-      // This version should work in Firebase Functions and other providers while applicationDefault() only works on
-      // Firebase deployments
-      if (FIREBASE_PRIVATE_KEY) {
-        log('debug', 'using FIREBASE_PRIVATE_KEY env variable')
-        credential = cert({
-          projectId: FIREBASE_PROJECT_ID,
-          clientEmail: FIREBASE_CLIENT_EMAIL,
-          // replace `\` and `n` character pairs w/ single `\n` character
-          privateKey: FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
-        })
-      } else if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
+
+      if (GOOGLE_APPLICATION_CREDENTIALS) {
         if (
           typeof GOOGLE_APPLICATION_CREDENTIALS === 'string' &&
           // ensure it's an object
@@ -69,22 +70,37 @@ export function getAdminApp(
           }
           credential = cert(certObject)
         } else {
-          // automatically picks up the service account file path from the env variable
-          log('debug', 'using applicationDefault()')
-          credential = applicationDefault()
+          log(
+            'debug',
+            'using GOOGLE_APPLICATION_CREDENTIALS env variable as a file path'
+          )
+          credential = cert(GOOGLE_APPLICATION_CREDENTIALS)
         }
+      } else if (FIREBASE_PRIVATE_KEY) {
+        // This version should work in Firebase Functions and other providers while applicationDefault() only works on
+        // Firebase deployments
+        log('debug', 'using FIREBASE_PRIVATE_KEY env variable')
+        credential = cert({
+          projectId: FIREBASE_PROJECT_ID,
+          clientEmail: FIREBASE_CLIENT_EMAIL,
+          // replace `\` and `n` character pairs w/ single `\n` character
+          privateKey: FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+        })
       } else {
-        // No credentials were provided, this will fail so we throw an explicit error
-        // TODO: add link to vuefire docs
-        log(
-          'warn',
-          `\
-You must provide admin credentials during development. See https://firebase.google.com/docs/admin/setup#initialize-sdk for more information. It must be made available through GOOGLE_APPLICATION_CREDENTIALS env variable as a full resolved path or a JSON string.
-You can also set the FIREBASE_CLIENT_EMAIL, FIREBASE_PRIVATE_KEY and FIREBASE_PROJECT_ID env variables. Note this environment variable is automatically set on Firebase Cloud Functions.\
-`
-        )
-        throw new Error('admin-app/missing-credentials')
+        // automatically picks up the service account file path from the env variable
+        log('debug', 'using applicationDefault()')
+        credential = applicationDefault()
       }
+      // No credentials were provided, this will fail so we throw an explicit error
+      // TODO: add link to vuefire docs
+      //         log(
+      //           'warn',
+      //           `\
+      // You must provide admin credentials during development. See https://firebase.google.com/docs/admin/setup#initialize-sdk for more information. It must be made available through GOOGLE_APPLICATION_CREDENTIALS env variable as a full resolved path or a JSON string.
+      // You can also set the FIREBASE_CLIENT_EMAIL, FIREBASE_PRIVATE_KEY and FIREBASE_PROJECT_ID env variables. Note this environment variable is automatically set on Firebase Cloud Functions.\
+      // `
+      //         )
+      //         throw new Error('admin-app/missing-credentials')
 
       initializeApp({
         // TODO: is this really going to be used?
