@@ -15,13 +15,13 @@ import { log } from '../logging'
  */
 export default defineEventHandler(async (event) => {
   assertMethod(event, 'POST')
-  const { token } = await readBody(event)
+  const { token } = await readBody<{ token?: string }>(event)
 
   log('debug', 'Getting the admin app')
-  const adminApp = getAdminApp()
+  const adminApp = getAdminApp({}, 'session-verification')
   const adminAuth = getAdminAuth(adminApp)
 
-  // log('debug', 'read idToken from Authorization header', token)
+  log('debug', 'read idToken from Authorization header', token)
   const verifiedIdToken = token ? await adminAuth.verifyIdToken(token) : null
 
   if (verifiedIdToken) {
