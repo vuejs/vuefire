@@ -5,6 +5,7 @@ import {
   assertMethod,
   defineEventHandler,
   deleteCookie,
+  setResponseStatus,
 } from 'h3'
 import { getAdminApp } from 'vuefire/server'
 import { log } from '../logging'
@@ -16,7 +17,7 @@ export default defineEventHandler(async (event) => {
   assertMethod(event, 'POST')
   const { token } = await readBody(event)
 
-  // log('debug', 'minting a session cookie')
+  log('debug', 'Getting the admin app')
   const adminApp = getAdminApp()
   const adminAuth = getAdminAuth(adminApp)
 
@@ -25,13 +26,13 @@ export default defineEventHandler(async (event) => {
 
   if (verifiedIdToken) {
     if (new Date().getTime() / 1_000 - verifiedIdToken.iat > ID_TOKEN_MAX_AGE) {
-      event.node.res.statusCode = 301
-      return ''
+      setResponseStatus(event, 301)
     } else {
       const cookie = await adminAuth
         .createSessionCookie(token!, { expiresIn: AUTH_COOKIE_MAX_AGE })
         .catch((e: any) => {
           log('error', 'Error minting the cookie -', e.message)
+          log('error', e)
         })
       if (cookie) {
         // log('debug', `minted a session cookie for user ${verifiedIdToken.uid}`)
@@ -42,18 +43,17 @@ export default defineEventHandler(async (event) => {
           path: '/',
           sameSite: 'lax',
         })
-        event.node.res.statusCode = 201
+        setResponseStatus(event, 201)
         return ''
       } else {
-        log('error', 'failed to mint a session cookie')
-        event.node.res.statusCode = 401
+        setResponseStatus(event, 401)
         return ''
       }
     }
   } else {
     // log('debug', 'deleting the session cookie')
     deleteCookie(event, AUTH_COOKIE_NAME)
-    event.node.res.statusCode = 204
+    setResponseStatus(event, 204)
   }
 
   // empty response
