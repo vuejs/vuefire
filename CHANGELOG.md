@@ -1,3 +1,9 @@
+## [3.1.8](https://github.com/vuejs/vuefire/compare/vuefire@3.1.7...vuefire@3.1.8) (2023-07-16)
+
+### Features
+
+- use const name for admin apps ([6f539d4](https://github.com/vuejs/vuefire/commit/6f539d49e8f90df9b542dbfd984bedf80595ba8f))
+
 ## [3.1.7](https://github.com/vuejs/vuefire/compare/vuefire@3.1.6...vuefire@3.1.7) (2023-07-13)
 
 - Deprecated undocumented `decodeUserToken()` in favor of `decodeSessionCookie()`

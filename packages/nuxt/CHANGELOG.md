@@ -1,3 +1,9 @@
+## [0.2.7](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.2.6...nuxt-vuefire@0.2.7) (2023-07-16)
+
+### Bug Fixes
+
+- **auth:** only apply ssr modules when needed ([671f973](https://github.com/vuejs/vuefire/commit/671f973edd83560e781fd94e89c78ac6748ce847)), closes [vuejs/vuefire#1389](https://github.com/vuejs/vuefire/issues/1389)
+
 ## [0.2.6](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.2.5...nuxt-vuefire@0.2.6) (2023-07-13)
 
 ### Bug Fixes
