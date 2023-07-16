@@ -1,8 +1,7 @@
 import {
   initializeApp as initializeAdminApp,
   cert,
-  getApp,
-  getApps,
+  getApps as getAdminApps,
   applicationDefault,
   // renamed because there seems to be a global Credential type in vscode
   Credential as FirebaseAdminCredential,
@@ -10,17 +9,24 @@ import {
 } from 'firebase-admin/app'
 import { log } from './logging'
 
+const FIREBASE_ADMIN_APP_NAME = 'vuefire-admin'
+
 /**
  * Setups a Firebase Admin App
  *
  * @param firebaseAdminOptions - options to pass to the admin app
+ * @param name - name of the app
  * @experimental this is experimental and may change in the future
  */
 export function getAdminApp(
-  firebaseAdminOptions?: Omit<AppOptions, 'credential'>
+  firebaseAdminOptions?: Omit<AppOptions, 'credential'>,
+  name = FIREBASE_ADMIN_APP_NAME
 ) {
   // only initialize the admin sdk once
-  if (!getApps().length) {
+  log('debug', `💭 Getting admin app "${name}`)
+
+  if (!getAdminApps().find((app) => app.name === name)) {
+    log('debug', `🔶 Initializing admin app "${name}"`)
     const {
       // these can be set by the user on other platforms
       FIREBASE_PROJECT_ID,
@@ -45,7 +51,7 @@ export function getAdminApp(
     if (FIREBASE_CONFIG || FUNCTION_NAME) {
       // TODO: last time I tried this one fails on the server
       log('debug', `using FIREBASE_CONFIG env variable for ${FUNCTION_NAME}`)
-      initializeAdminApp()
+      initializeAdminApp(undefined, name)
     } else {
       let credential: FirebaseAdminCredential
 
@@ -102,14 +108,17 @@ export function getAdminApp(
       //         )
       //         throw new Error('admin-app/missing-credentials')
 
-      initializeAdminApp({
-        // TODO: is this really going to be used?
-        ...firebaseAdminOptions,
-        credential,
-      })
+      initializeAdminApp(
+        {
+          // TODO: is this really going to be used?
+          ...firebaseAdminOptions,
+          credential,
+        },
+        name
+      )
     }
   }
 
   // we know have a valid admin app
-  return getApp()!
+  return getAdminApps().find((app) => app.name === name)!
 }
