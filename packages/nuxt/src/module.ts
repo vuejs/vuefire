@@ -155,8 +155,7 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
         },
       })
 
-      // if (nuxt.options.ssr && hasServiceAccount) {
-      if (options.auth) {
+      if (options.auth && nuxt.options.ssr && hasServiceAccount) {
         // Add the session handler than mints a cookie for the user
         addServerHandler({
           route: '/api/__session',
