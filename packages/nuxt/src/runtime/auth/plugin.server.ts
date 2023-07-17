@@ -4,7 +4,7 @@ import type { FirebaseApp } from 'firebase/app'
 import type { App as AdminApp } from 'firebase-admin/app'
 import { VueFireAuthServer } from 'vuefire/server'
 import { DECODED_ID_TOKEN_SYMBOL, UserSymbol } from '../constants'
-import { log } from '../logging'
+import { logger } from '../logging'
 import { defineNuxtPlugin, useRequestEvent } from '#app'
 
 /**
@@ -30,7 +30,7 @@ export default defineNuxtPlugin(async (nuxtApp) => {
       const customToken = await adminAuth
         .createCustomToken(uid)
         .catch((err) => {
-          log('error', 'Error creating custom token', err)
+          logger.error('Error creating custom token', err)
           return null
         })
       // console.timeLog('token', `got token for ${user.uid}`)
@@ -50,12 +50,14 @@ export default defineNuxtPlugin(async (nuxtApp) => {
       UserSymbol as unknown as string
     ] = user
     // expose the user to requests
+    // FIXME: should be doable in nitro server routes too
+    // use addServerPlugin
     event.context.user = user
     // Hydrates the user
     nuxtApp.payload.vuefireUser = user?.toJSON()
   }
 
-  // log('debug', 'setting up user for app', firebaseApp.name, user?.uid)
+  // logger.debug('setting up user for app', firebaseApp.name, user?.uid)
 
   // provide the user data to the app during ssr
   VueFireAuthServer(firebaseApp, nuxtApp.vueApp, auth.currentUser)

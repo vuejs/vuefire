@@ -16,8 +16,8 @@ import type {
   App as FirebaseAdminApp,
 } from 'firebase-admin/app'
 import { markRaw } from 'vue'
+import { consola } from 'consola'
 import type { NuxtVueFireAppCheckOptions } from './runtime/app-check'
-import { log } from './runtime/logging'
 
 export interface VueFireNuxtModuleOptions {
   /**
@@ -62,6 +62,8 @@ export interface VueFireNuxtModuleOptions {
    */
   auth?: boolean
 }
+
+const logger = consola.withTag('nuxt-vuefire module')
 
 export default defineNuxtModule<VueFireNuxtModuleOptions>({
   meta: {
@@ -126,8 +128,7 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
 
     if (options.auth) {
       if (nuxt.options.ssr && !hasServiceAccount) {
-        log(
-          'warn',
+        logger.warn(
           'You activated both SSR and auth but you are not providing a service account for the admin SDK. See https://vuefire.vuejs.org/nuxt/getting-started.html#configuring-the-admin-sdk.'
         )
       }
@@ -138,8 +139,7 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
         if (hasServiceAccount) {
           addPlugin(resolve(runtimeDir, 'app-check/plugin.server'))
         } else if (nuxt.options.ssr) {
-          log(
-            'warn',
+          logger.warn(
             'You activated both SSR and app-check but you are not providing a service account for the admin SDK. See https://vuefire.vuejs.org/nuxt/getting-started.html#configuring-the-admin-sdk.'
           )
         }
@@ -192,8 +192,7 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
     // we start the admin app before the regular app so we can have access to the user uid everywhere
     if (options.admin || nuxt.options.ssr) {
       if (!nuxt.options.ssr) {
-        log(
-          'warn',
+        logger.warn(
           'The "admin" option is only used during SSR. You should reenable SSR to use it or remove it if you are not doing SSR or SSG.'
         )
       }

@@ -2,7 +2,7 @@ import { deleteApp, type FirebaseApp, initializeApp } from 'firebase/app'
 import { type User } from 'firebase/auth'
 import { DecodedIdToken } from 'firebase-admin/auth'
 import { LRUCache } from 'lru-cache'
-import { log } from '../logging'
+import { logger } from '../logging'
 import { DECODED_ID_TOKEN_SYMBOL } from '../constants'
 import { defineNuxtPlugin, useAppConfig } from '#app'
 
@@ -36,7 +36,7 @@ export default defineNuxtPlugin((nuxtApp) => {
 
   let firebaseApp: FirebaseApp | undefined
 
-  // log('debug', 'initializing app with', appConfig.firebaseConfig)
+  // logger.debug('initializing app with', appConfig.firebaseConfig)
   if (uid) {
     firebaseApp = appCache.get(uid)
     if (!firebaseApp) {
@@ -44,13 +44,13 @@ export default defineNuxtPlugin((nuxtApp) => {
       // TODO: do we need a randomId?
       const appName = `auth:${uid}:${randomId}`
 
-      log('debug', '👤 creating new app', appName)
+      logger.debug('👤 creating new app', appName)
 
       appCache.set(uid, initializeApp(appConfig.firebaseConfig, appName))
       firebaseApp = appCache.get(uid)!
       // console.time('token')
     } else {
-      log('debug', '👤 reusing authenticated app', firebaseApp.name)
+      logger.debug('👤 reusing authenticated app', firebaseApp.name)
     }
   } else {
     // TODO: is this safe? should we create a new one everytime
@@ -59,7 +59,7 @@ export default defineNuxtPlugin((nuxtApp) => {
     }
     firebaseApp = appCache.get('')!
     // anonymous session, just create a new app
-    log('debug', '🥸 anonymous session')
+    logger.debug('🥸 anonymous session')
   }
 
   return {

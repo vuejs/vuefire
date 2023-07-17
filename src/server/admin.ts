@@ -7,7 +7,7 @@ import {
   Credential as FirebaseAdminCredential,
   AppOptions,
 } from 'firebase-admin/app'
-import { log } from './logging'
+import { logger } from './logging'
 
 const FIREBASE_ADMIN_APP_NAME = 'vuefire-admin'
 
@@ -23,10 +23,10 @@ export function getAdminApp(
   name = FIREBASE_ADMIN_APP_NAME
 ) {
   // only initialize the admin sdk once
-  log('debug', `💭 Getting admin app "${name}`)
+  logger.debug(`💭 Getting admin app "${name}"`)
 
   if (!getAdminApps().find((app) => app.name === name)) {
-    log('debug', `🔶 Initializing admin app "${name}"`)
+    logger.debug(`🔶 Initializing admin app "${name}"`)
     const {
       // these can be set by the user on other platforms
       FIREBASE_PROJECT_ID,
@@ -39,7 +39,7 @@ export function getAdminApp(
       GOOGLE_APPLICATION_CREDENTIALS,
     } = process.env
 
-    log('debug', 'Detected environment variables', {
+    logger.debug('Detected environment variables', {
       FIREBASE_PROJECT_ID,
       FIREBASE_CLIENT_EMAIL,
       FIREBASE_PRIVATE_KEY: FIREBASE_PRIVATE_KEY && '****',
@@ -50,7 +50,7 @@ export function getAdminApp(
 
     if (FIREBASE_CONFIG || FUNCTION_NAME) {
       // TODO: last time I tried this one fails on the server
-      log('debug', `using FIREBASE_CONFIG env variable for ${FUNCTION_NAME}`)
+      logger.debug(`using FIREBASE_CONFIG env variable for ${FUNCTION_NAME}`)
       initializeAdminApp(undefined, name)
     } else {
       let credential: FirebaseAdminCredential
@@ -61,8 +61,7 @@ export function getAdminApp(
           // ensure it's an object
           GOOGLE_APPLICATION_CREDENTIALS[0] === '{'
         ) {
-          log(
-            'debug',
+          logger.debug(
             'Parsing GOOGLE_APPLICATION_CREDENTIALS env variable as JSON'
           )
           const certObject = JSON.parse(GOOGLE_APPLICATION_CREDENTIALS)
@@ -76,8 +75,7 @@ export function getAdminApp(
           }
           credential = cert(certObject)
         } else {
-          log(
-            'debug',
+          logger.debug(
             'using GOOGLE_APPLICATION_CREDENTIALS env variable as a file path'
           )
           credential = cert(GOOGLE_APPLICATION_CREDENTIALS)
@@ -85,7 +83,7 @@ export function getAdminApp(
       } else if (FIREBASE_PRIVATE_KEY) {
         // This version should work in Firebase Functions and other providers while applicationDefault() only works on
         // Firebase deployments
-        log('debug', 'using FIREBASE_PRIVATE_KEY env variable')
+        logger.debug('using FIREBASE_PRIVATE_KEY env variable')
         credential = cert({
           projectId: FIREBASE_PROJECT_ID,
           clientEmail: FIREBASE_CLIENT_EMAIL,
@@ -94,13 +92,12 @@ export function getAdminApp(
         })
       } else {
         // automatically picks up the service account file path from the env variable
-        log('debug', 'using applicationDefault()')
+        logger.debug('using applicationDefault()')
         credential = applicationDefault()
       }
       // No credentials were provided, this will fail so we throw an explicit error
       // TODO: add link to vuefire docs
-      //         log(
-      //           'warn',
+      //         logger.warn(
       //           `\
       // You must provide admin credentials during development. See https://firebase.google.com/docs/admin/setup#initialize-sdk for more information. It must be made available through GOOGLE_APPLICATION_CREDENTIALS env variable as a full resolved path or a JSON string.
       // You can also set the FIREBASE_CLIENT_EMAIL, FIREBASE_PRIVATE_KEY and FIREBASE_PROJECT_ID env variables. Note this environment variable is automatically set on Firebase Cloud Functions.\

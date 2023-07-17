@@ -7,7 +7,7 @@ import { getGlobalScope } from '../globals'
 import { type _Nullable } from '../shared'
 import type { App as AdminApp } from 'firebase-admin/app'
 import { getAuth as getAdminAuth } from 'firebase-admin/auth'
-import { log } from './logging'
+import { logger } from './logging'
 import { isFirebaseError } from './utils'
 
 // MUST be named `__session` to be kept in Firebase context, therefore this name is hardcoded
@@ -127,11 +127,11 @@ export async function decodeSessionCookie(
       if (isFirebaseError(err) && err.code === 'auth/id-token-expired') {
         // Other errors to be handled: auth/argument-error
         // the error is fine, the user is not logged in
-        log('info', 'Token expired, client must revalidate')
+        logger.info('Token expired, client must revalidate')
         // TODO: this error should be accessible somewhere to instruct the user to renew their access token
       } else {
         // ignore the error and consider the user as not logged in
-        log('error', 'Unknown Error verifying session cookie -', err)
+        logger.error('Unknown Error verifying session cookie', err)
       }
     }
   }

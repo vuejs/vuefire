@@ -8,7 +8,7 @@ import {
   setResponseStatus,
 } from 'h3'
 import { getAdminApp } from 'vuefire/server'
-import { log } from '../logging'
+import { logger } from '../logging'
 
 /**
  * Setups an API endpoint to be used by the client to mint a cookie based auth session.
@@ -17,11 +17,11 @@ export default defineEventHandler(async (event) => {
   assertMethod(event, 'POST')
   const { token } = await readBody<{ token?: string }>(event)
 
-  log('debug', 'Getting the admin app')
+  logger.debug('Getting the admin app')
   const adminApp = getAdminApp({}, 'session-verification')
   const adminAuth = getAdminAuth(adminApp)
 
-  log('debug', 'read idToken from Authorization header', token)
+  logger.debug(token ? 'Verifying the token' : 'Deleting the session cookie')
   const verifiedIdToken = token ? await adminAuth.verifyIdToken(token) : null
 
   if (verifiedIdToken) {
@@ -31,11 +31,10 @@ export default defineEventHandler(async (event) => {
       const cookie = await adminAuth
         .createSessionCookie(token!, { expiresIn: AUTH_COOKIE_MAX_AGE })
         .catch((e: any) => {
-          log('error', 'Error minting the cookie -', e.message)
-          log('error', e)
+          logger.error('Error minting the cookie', e)
         })
       if (cookie) {
-        // log('debug', `minted a session cookie for user ${verifiedIdToken.uid}`)
+        // logger.debug(`minted a session cookie for user ${verifiedIdToken.uid}`)
         setCookie(event, AUTH_COOKIE_NAME, cookie, {
           maxAge: AUTH_COOKIE_MAX_AGE,
           secure: true,
@@ -51,7 +50,7 @@ export default defineEventHandler(async (event) => {
       }
     }
   } else {
-    // log('debug', 'deleting the session cookie')
+    // logger.debug('deleting the session cookie')
     deleteCookie(event, AUTH_COOKIE_NAME)
     setResponseStatus(event, 204)
   }
