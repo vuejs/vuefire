@@ -36,6 +36,7 @@ export default defineNuxtPlugin(async (nuxtApp) => {
       // console.timeLog('token', `got token for ${user.uid}`)
       if (customToken) {
         const auth = getAuth(firebaseApp)
+        logger.debug('Signing in with custom token')
         await signInWithCustomToken(auth, customToken)
         // console.timeLog('token', `signed in with token for ${user.uid}`)
         // console.timeEnd('token')

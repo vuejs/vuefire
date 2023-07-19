@@ -2,9 +2,9 @@
   "rules": {
     "forbidden": {
       ".read": false,
-      ".write": false,
+      ".write": false
     },
     ".read": true,
-    ".write": true,
+    ".write": true
   }
 }

@@ -37,7 +37,8 @@
   },
   "dependencies": {
     "@nuxt/kit": "^3.6.2",
-    "lru-cache": "^10.0.0"
+    "lru-cache": "^10.0.0",
+    "strip-json-comments": "^5.0.1"
   },
   "peerDependencies": {
     "@firebase/app-types": ">=0.8.1",

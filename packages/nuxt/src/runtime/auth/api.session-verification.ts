@@ -18,7 +18,7 @@ export default defineEventHandler(async (event) => {
   const { token } = await readBody<{ token?: string }>(event)
 
   logger.debug('Getting the admin app')
-  const adminApp = getAdminApp({}, 'session-verification')
+  const adminApp = getAdminApp(undefined, 'session-verification')
   const adminAuth = getAdminAuth(adminApp)
 
   logger.debug(token ? 'Verifying the token' : 'Deleting the session cookie')
