@@ -16,8 +16,8 @@ export default defineNuxtPlugin((nuxtApp) => {
     public: { vuefire },
   } = useRuntimeConfig()
 
-  const host = vuefire?.emulators?.functions?.host
-  const port = vuefire?.emulators?.functions?.port
+  const host = vuefire?.emulators?.storage?.host
+  const port = vuefire?.emulators?.storage?.port
 
   if (!host || !port) {
     return
