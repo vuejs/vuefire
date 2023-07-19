@@ -134,3 +134,24 @@ export function extractRefs(
 
   return dataAndRefs
 }
+
+/**
+ * Custom stringifier for [devalue](https://github.com/Rich-Harris/devalue) to support Firestore Timestamp and GeoPoint
+ * on SSR.
+ */
+export const devalueCustomStringifiers = {
+  TimeStamp: (data: unknown) => data instanceof Timestamp && data.toJSON(),
+  GeoPoint: (data: unknown) => data instanceof GeoPoint && data.toJSON(),
+}
+
+/**
+ * Custom parsers for [devalue](https://github.com/Rich-Harris/devalue) to support Firestore Timestamp and GeoPoint on
+ * SSR.
+ */
+export const devalueCustomParsers = {
+  TimeStamp: (data: ReturnType<Timestamp['toJSON']>) =>
+    new Timestamp(data.seconds, data.nanoseconds),
+
+  GeoPoint: (data: ReturnType<GeoPoint['toJSON']>) =>
+    new GeoPoint(data.latitude, data.longitude),
+}
