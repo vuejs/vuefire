@@ -419,7 +419,13 @@ async function enableEmulators(
     return
   }
 
-  const services = ['auth', 'database', 'firestore', 'functions'] as const
+  const services = [
+    'auth',
+    'database',
+    'firestore',
+    'functions',
+    'storage',
+  ] as const
 
   const defaultHost =
     typeof emulatorOptions === 'object' ? emulatorOptions.host : 'localhost'
@@ -544,8 +550,8 @@ type FirebaseEmulatorService =
   | 'database'
   | 'firestore'
   | 'functions'
-  // | 'hosting' we are the hosting emulator
   | 'storage'
+// | 'hosting' we are the hosting emulator
 
 type FirebaseEmulatorsToEnable = {
   [key in FirebaseEmulatorService]: { host: string; port: number }
