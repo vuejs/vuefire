@@ -20,6 +20,7 @@ export default defineNuxtPlugin((nuxtApp) => {
   const port = vuefire?.emulators?.storage?.port
 
   if (!host || !port) {
+    logger.warn('Storage emulator not connected, missing host or port')
     return
   }
 
