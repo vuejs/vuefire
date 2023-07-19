@@ -208,7 +208,7 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
       options.emulators
     ) {
       const emulators = await enableEmulators(
-        options.emulators,
+        options,
         resolve(nuxt.options.rootDir, 'firebase.json'),
         logger
       )
@@ -389,7 +389,7 @@ declare module '@vue/runtime-core' {
 }
 
 async function enableEmulators(
-  emulatorOptions: VueFireNuxtModuleOptions['emulators'],
+  { emulators: emulatorOptions, auth }: VueFireNuxtModuleOptions,
   firebaseJsonPath: string,
   logger: typeof consola
 ) {
@@ -468,6 +468,12 @@ async function enableEmulators(
     }
     return acc
   }, {} as FirebaseEmulatorsToEnable)
+
+  // remove the emulator if auth is not enabled
+  if (!auth) {
+    // @ts-expect-error: cannot be deleted without ?: but that creates other errors
+    delete emulatorsToEnable.auth
+  }
 
   return emulatorsToEnable
 }
