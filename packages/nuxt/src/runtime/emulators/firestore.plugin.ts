@@ -20,6 +20,7 @@ export default defineNuxtPlugin((nuxtApp) => {
   const port = vuefire?.emulators?.firestore?.port
 
   if (!host || !port) {
+    logger.warn('Firestore emulator not connected, missing host or port')
     return
   }
 

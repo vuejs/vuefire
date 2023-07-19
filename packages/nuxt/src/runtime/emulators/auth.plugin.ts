@@ -20,6 +20,7 @@ export default defineNuxtPlugin((nuxtApp) => {
   const port = vuefire?.emulators?.auth?.port
 
   if (!host || !port) {
+    logger.warn('Auth emulator not connected, missing host or port')
     return
   }
 
