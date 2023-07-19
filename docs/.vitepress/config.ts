@@ -153,7 +153,7 @@ function sidebarGuide(): SidebarGroup {
         link: '/guide/auth',
       },
       {
-        text: 'File Storage',
+        text: 'Storage',
         link: '/guide/storage',
       },
       {

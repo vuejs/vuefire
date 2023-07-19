@@ -71,14 +71,18 @@ export const install: UserModule = ({ isClient, initialState, app }) => {
 }
 ```
 
-Note that by default, vite-ssg (used by Vitesse) uses `JSON.stringify()` to serialize the state, which is faster but doesn't support some values like `Date` objects and also exposes your application to some attacks **if your data comes from the user**. You can use a custom `transformState` function to handle this:
+Note that by default, vite-ssg (used by Vitesse) uses `JSON.stringify()` to serialize the state, which is faster but doesn't support some values like `TimeStamp` and `GeoPoint` objects and also exposes your application to some attacks **if your data comes from the user**. You can use a custom `transformState` function to handle this:
 
-```ts
+```ts{6-9,18-22}
 // src/main.ts
 // https://github.com/Rich-Harris/devalue#usage
 import devalue from 'devalue'
 import { ViteSSG } from 'vite-ssg'
 import App from './App.vue'
+import {
+  devalueCustomParsers,
+  devalueCustomStringifiers,
+} from 'vuefire'
 
 export const createApp = ViteSSG(
   App,
@@ -88,11 +92,17 @@ export const createApp = ViteSSG(
   },
   {
     transformState(state) {
-      return import.meta.env.SSR ? devalue.stringify(state) : devalue.parse(state)
+      return import.meta.env.SSR
+        ? devalue.stringify(state, devalueCustomStringifiers)
+        : devalue.parse(state, devalueCustomParsers)
     },
-  },
+  }
 )
 ```
+
+::: tip
+This is handled out of the box with the [`nuxt-vuefire` plugin in Nuxt projects](../nuxt/getting-started.md).
+:::
 
 Web Security is a broad topic that we cannot cover here. We recommend you to read these resources to dive deeper:
 
@@ -147,7 +157,7 @@ import { usePendingPromises } from 'vuefire'
 // this store internally calls `useDocument()` when created
 const quizStore = useQuizStore()
 
-// since `useDocument()` has been called 
+// since `useDocument()` has been called
 await usePendingPromises()
 </script>
 ```
@@ -166,7 +176,7 @@ This only works if you avoid rendering on server these documents or collections.
 
 <!-- TODO: I wonder if we could attach effect scopes to applications so `onServerPrefetch()` is still awaited when attached -->
 
-<!-- 
+<!--
 
 ## Vue Router Data Loaders
 

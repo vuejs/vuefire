@@ -41,10 +41,10 @@ import {
 } from 'firebase/auth'
 import { useCurrentUser, useFirebaseAuth } from 'vuefire'
 
-const auth = useFirebaseAuth()! // only exists on client side
+const auth = useFirebaseAuth() // only exists on client side
 
 // display errors if any
-const error = ref<Error | null>(null)
+const error = ref(null)
 function signinRedirect() {
   signInWithRedirect(auth, someAuthProvider).catch((reason) => {
     console.error('Failed signinRedirect', reason)
@@ -83,7 +83,7 @@ const auth = useFirebaseAuth()!
 There are multiple ways to add the auth providers to your app like exporting a `new GoogleAuthProvider()` instance from the file where we initialize Firebase. Another way is to create it directly in the component where you need it. make sure to add it into a regular `<script>` since each `<script setup>` is scoped to a component instance:
 
 ```vue{1-4,17}
-<script lang="ts">
+<script>
 import { GoogleAuthProvider } from 'firebase/auth'
 export const googleAuthProvider = new GoogleAuthProvider()
 </script>
@@ -131,7 +131,8 @@ There is also a `getCurrentUser()` function that returns a promise of the curren
 
 ```ts
 router.beforeEach(async (to) => {
-  // routes with `meta: { requiresAuth: true }` will check for the users, others won't
+  // routes with `meta: { requiresAuth: true }` will check for
+  // the users, others won't
   if (to.meta.requiresAuth) {
     const currentUser = await getCurrentUser()
     // if the user is not logged in, redirect to the login page
@@ -139,8 +140,9 @@ router.beforeEach(async (to) => {
       return {
         path: '/login',
         query: {
-          // we keep the current path in the query so we can redirect to it after login
-          // with `router.push(route.query.redirect || '/')`
+          // we keep the current path in the query so we can
+          // redirect to it after login with
+          // `router.push(route.query.redirect || '/')`
           redirect: to.fullPath,
         },
       }

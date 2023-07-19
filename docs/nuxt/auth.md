@@ -1,6 +1,19 @@
 # Authentication
 
-Nuxt VueFire integrates with [Firebase Authentication](https://firebase.google.com/docs/auth) module to automatically synchronize the current user state on the server and the client.
+Nuxt VueFire integrates with [Firebase Authentication](https://firebase.google.com/docs/auth) module to automatically synchronize the current user state on the server and the client. Activate this module by setting the `vuefire.auth` to `true` in `nuxt.config.ts`:
+
+```ts{5}
+export default defineNuxtConfig({
+  // ...
+  vuefire: {
+    // ensures the auth module is enabled
+    auth: true,
+    config: {
+      // ...
+    }
+  },
+})
+```
 
 You can access the current user with the `useCurrentUser()` composable within any component:
 

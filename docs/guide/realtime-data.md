@@ -386,3 +386,9 @@ const todoList = useDocument(
   })
 )
 ```
+
+::: warning
+
+While you can return pretty much anything in `withConverter()`, **if you are using [SSR](./ssr.md)**, make sure you object is serializable. For example, you can't return custom classes or functions.
+
+:::
