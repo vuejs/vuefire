@@ -23,10 +23,9 @@ export function ensureAdminApp(
   name = FIREBASE_ADMIN_APP_NAME
 ) {
   // only initialize the admin sdk once
-  logger.debug(`💭 Getting admin app "${name}"`)
+  logger.debug(`Checking if admin app "${name}" exists...`)
 
   if (!getAdminApps().find((app) => app.name === name)) {
-    logger.debug(`🔶 Initializing admin app "${name}"`)
     const {
       // these can be set by the user on other platforms
       FIREBASE_PROJECT_ID,
@@ -50,7 +49,7 @@ export function ensureAdminApp(
 
     if (FIREBASE_CONFIG || FUNCTION_NAME) {
       // TODO: last time I tried this one fails on the server
-      logger.debug(`using FIREBASE_CONFIG env variable for ${FUNCTION_NAME}`)
+      logger.debug(`Using FIREBASE_CONFIG env variable for ${FUNCTION_NAME}`)
       initializeAdminApp(undefined, name)
     } else {
       let credential: FirebaseAdminCredential
@@ -83,7 +82,7 @@ export function ensureAdminApp(
       } else if (FIREBASE_PRIVATE_KEY) {
         // This version should work in Firebase Functions and other providers while applicationDefault() only works on
         // Firebase deployments
-        logger.debug('using FIREBASE_PRIVATE_KEY env variable')
+        logger.debug('Using FIREBASE_PRIVATE_KEY env variable')
         credential = cert({
           projectId: FIREBASE_PROJECT_ID,
           clientEmail: FIREBASE_CLIENT_EMAIL,
@@ -92,7 +91,7 @@ export function ensureAdminApp(
         })
       } else {
         // automatically picks up the service account file path from the env variable
-        logger.debug('using applicationDefault()')
+        logger.debug('Using applicationDefault()')
         credential = applicationDefault()
       }
       // No credentials were provided, this will fail so we throw an explicit error
@@ -105,6 +104,10 @@ export function ensureAdminApp(
       //         )
       //         throw new Error('admin-app/missing-credentials')
 
+      logger.debug(
+        `Initializing Admin App "${name}" with options:`,
+        firebaseAdminOptions
+      )
       initializeAdminApp(
         {
           // TODO: is this really going to be used?
