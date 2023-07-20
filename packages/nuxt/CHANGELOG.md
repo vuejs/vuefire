@@ -1,3 +1,9 @@
+## [0.2.11](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.2.10...nuxt-vuefire@0.2.11) (2023-07-20)
+
+### Bug Fixes
+
+- **emulators:** activate if emulators is present in config ([c9a5c0e](https://github.com/vuejs/vuefire/commit/c9a5c0e6ba6cbbbe09790939901aeeb364f51a80))
+
 ## [0.2.10](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.2.9...nuxt-vuefire@0.2.10) (2023-07-20)
 
 ### Bug Fixes
