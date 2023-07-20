@@ -1,5 +1,6 @@
 import { deleteApp, type FirebaseApp } from 'firebase/app'
 import { LRUCache } from 'lru-cache'
+import { logger } from '../logging'
 
 // TODO: allow customizing
 // TODO: find sensible defaults. Should they change depending on the platform?
@@ -13,6 +14,7 @@ export const appCache = new LRUCache<string, FirebaseApp>({
   allowStale: true,
   updateAgeOnGet: true,
   dispose: (value) => {
+    logger.debug('Disposing app', value.name)
     deleteApp(value)
   },
 })

@@ -152,6 +152,7 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
         logger
       )
 
+      // expose the detected emulators to the plugins
       nuxt.options.runtimeConfig.public.vuefire ??= {}
       nuxt.options.runtimeConfig.public.vuefire.emulators = emulators
 
@@ -180,7 +181,6 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
         )
       }
 
-      // TODO: add with ssr
       if (hasServiceAccount) {
         if (options.auth) {
           // decodes user token from cookie if any

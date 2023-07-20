@@ -117,6 +117,7 @@ export async function decodeSessionCookie(
       // TODO: should we check for the revoked status of the token here?
       // we await to try/catch
       // return await adminAuth.verifyIdToken(token /*, checkRevoked */)
+      logger.debug('Verifying session cookie')
       return await adminAuth.verifySessionCookie(
         sessionCookie
         /** checkRevoked */

@@ -38,7 +38,7 @@ export default defineNuxtPlugin((nuxtApp) => {
       logger.debug('👤 reusing authenticated app', firebaseApp.name)
     }
   } else {
-    // TODO: is this safe? should we create a new one everytime
+    // TODO: is this safe? should we create a new one every time
     if (!appCache.has('')) {
       appCache.set('', initializeApp(appConfig.firebaseConfig))
     }
