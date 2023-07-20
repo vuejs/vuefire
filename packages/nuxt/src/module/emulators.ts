@@ -84,13 +84,27 @@ export async function detectEmulators(
       host ??= emulatorsServiceConfig?.host || defaultHost
       port ??= emulatorsServiceConfig?.port
 
+      const missingHostServices: FirebaseEmulatorService[] = []
       if (emulatorsServiceConfig?.host == null) {
-        logger.warn(
-          `The "${service}" emulator is enabled but there is no "host" key in the "emulators.${service}" key of your "firebase.json" file. It is recommended to set it to avoid mismatches between origins. You should probably set it to "${defaultHost}" ("vuefire.emulators.host" value).`
-        )
+        // we push to warn later in one single warning
+        missingHostServices.push(service)
       } else if (emulatorsServiceConfig.host !== host) {
         logger.error(
           `The "${service}" emulator is enabled but the "host" property in the "emulators.${service}" section of your "firebase.json" file is different from the "vuefire.emulators.host" value. You might encounter errors in your app if this is not fixed.`
+        )
+      }
+
+      // The default value is 127.0.0.1, so it's fine if the user doesn't set it at all
+      if (missingHostServices.length > 0 && host !== '127.0.0.1') {
+        logger.warn(
+          `The "${service.at(
+            0
+          )!}" emulator is enabled but there is no "host" key in the "emulators.${service}" key of your "firebase.json" file. It is recommended to set it to avoid mismatches between origins. You should probably set it to "${defaultHost}" ("vuefire.emulators.host" value).` +
+            (missingHostServices.length > 1
+              ? ` The following emulators are also missing the "host" key: ${missingHostServices
+                  .slice(1)
+                  .join(', ')}.`
+              : '')
         )
       }
 
