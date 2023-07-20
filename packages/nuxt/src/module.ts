@@ -99,15 +99,13 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
     if (options.appCheck) {
       addPlugin(resolve(runtimeDir, 'app-check/plugin.client'))
       // TODO: ensure this is the only necessary check. Maybe we need to check if server
-      if (!hasEmulatorsEnabled) {
-        if (hasServiceAccount) {
-          // this is needed by the api endpoint to properly work if no service account is provided, otherwise, the projectId is within the service account
-          addPlugin(resolve(runtimeDir, 'app-check/plugin.server'))
-        } else if (nuxt.options.ssr) {
-          logger.warn(
-            'You activated both SSR and app-check but you are not providing a service account for the admin SDK. See https://vuefire.vuejs.org/nuxt/getting-started.html#configuring-the-admin-sdk.'
-          )
-        }
+      if (hasServiceAccount || hasEmulatorsEnabled) {
+        // this is needed by the api endpoint to properly work if no service account is provided, otherwise, the projectId is within the service account
+        addPlugin(resolve(runtimeDir, 'app-check/plugin.server'))
+      } else if (nuxt.options.ssr && !hasEmulatorsEnabled) {
+        logger.warn(
+          'You activated both SSR and app-check but you are not providing a service account for the admin SDK. See https://vuefire.vuejs.org/nuxt/getting-started.html#configuring-the-admin-sdk.'
+        )
       }
     }
 
@@ -205,6 +203,13 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
 
         // injects firebaseAdminApp
         addPlugin(resolve(runtimeDir, 'admin/plugin.server'))
+
+        // We need the projectId to be explicitly set for the admin SDK to work
+        if (hasEmulatorsEnabled) {
+          options.admin ??= {}
+          options.admin.options ??= {}
+          options.admin.options.projectId ??= options.config.projectId
+        }
       }
     }
 
