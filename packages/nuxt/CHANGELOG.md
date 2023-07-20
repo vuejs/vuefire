@@ -1,3 +1,9 @@
+## [0.2.10](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.2.9...nuxt-vuefire@0.2.10) (2023-07-20)
+
+### Bug Fixes
+
+- **emulator:** ensure projectId with Emulators ([7ffdbce](https://github.com/vuejs/vuefire/commit/7ffdbce403397afacab9a3ec6e0c4283acfa2e7c))
+
 ## [0.2.9](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.2.8...nuxt-vuefire@0.2.9) (2023-07-20)
 
 ### Features

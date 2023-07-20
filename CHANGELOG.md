@@ -1,3 +1,9 @@
+## [3.1.11](https://github.com/vuejs/vuefire/compare/vuefire@3.1.10...vuefire@3.1.11) (2023-07-20)
+
+### Features
+
+- **server:** improve logs ([5ab3e2e](https://github.com/vuejs/vuefire/commit/5ab3e2ee6a5b2627788e9f401dfee90af0aecb0c))
+
 ## [3.1.10](https://github.com/vuejs/vuefire/compare/vuefire@3.1.9...vuefire@3.1.10) (2023-07-20)
 
 This release contains no code changes.
