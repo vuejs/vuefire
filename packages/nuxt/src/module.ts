@@ -195,10 +195,6 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
           addPlugin(resolve(runtimeDir, 'auth/plugin-user-token.server'))
         }
 
-        if (options.admin?.options) {
-          // used by the admin app plugin to initialize the admin app
-          nuxt.options.runtimeConfig.vuefireAdminOptions = options.admin.options
-        }
         // injects firebaseAdminApp
         addPlugin(resolve(runtimeDir, 'admin/plugin.server'))
       }
@@ -282,13 +278,6 @@ export type {
  * Augments the Nuxt Runtime Config with the VueFire module options.
  */
 interface VueFireRuntimeConfig {
-  /**
-   * Firebase Admin options passed to VueFire module. Only available on the server.
-   *
-   * @internal
-   */
-  vuefireAdminOptions?: Omit<AppOptions, 'credential'>
-
   /**
    * Runtime config for the VueFire module.
    */
