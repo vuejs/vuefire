@@ -38,7 +38,9 @@ export function VueFireAppCheckServer(
 
   // FIXME: do we need to avoid creating the appcheck instance on the server?
   if (AppCheckMap.has(firebaseApp)) {
-    logger.info('AppCheck already initialized, skipping server initialization.')
+    logger.debug(
+      'AppCheck already initialized, skipping server initialization.'
+    )
     return
   }
 
@@ -50,7 +52,7 @@ export function VueFireAppCheckServer(
       getToken: () => {
         // FIXME: without this there is an infinite loop
         if (currentToken) {
-          logger.info('Using cached AppCheck token on server.')
+          logger.debug('Using cached AppCheck token on server.')
           return Promise.resolve(currentToken)
         }
         logger.debug('Getting Admin AppCheck')
@@ -61,7 +63,7 @@ export function VueFireAppCheckServer(
         return adminAppCheck
           .createToken(firebaseApp.options.appId!, { ttlMillis })
           .then(({ token, ttlMillis: expireTimeMillis }) => {
-            logger.info(
+            logger.debug(
               `Got AppCheck token from the server, expires in ${expireTimeMillis}ms.`
             )
             // expire the token after the ttl
