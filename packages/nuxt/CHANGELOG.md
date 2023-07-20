@@ -1,3 +1,11 @@
+## [0.2.9](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.2.8...nuxt-vuefire@0.2.9) (2023-07-20)
+
+### Features
+
+- **emulators:** allow passing options to auth ([9f5fc27](https://github.com/vuejs/vuefire/commit/9f5fc27ab9382907b96d197318ea961dcd8c87aa))
+- **emulators:** improve warning for missing host ([c076c1b](https://github.com/vuejs/vuefire/commit/c076c1bd0e45cec91f1c9059be61e23b7d62efce))
+- **emulator:** work without a service account ([6b34f36](https://github.com/vuejs/vuefire/commit/6b34f3683d550b8083514645128ba0106c833d48))
+
 ## [0.2.8](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.2.7...nuxt-vuefire@0.2.8) (2023-07-20)
 
 ### Bug Fixes
