@@ -1,3 +1,11 @@
+## [3.1.9](https://github.com/vuejs/vuefire/compare/vuefire@3.1.8...vuefire@3.1.9) (2023-07-20)
+
+### Features
+
+- expose devalue transformers ([7c1ce18](https://github.com/vuejs/vuefire/commit/7c1ce185f2cec5a6b4a2c60b86d2b0c9fdd06211))
+- **logs:** use consola for logs ([f802558](https://github.com/vuejs/vuefire/commit/f8025587aaf3ba4d533ea2d1768d1d96c6799662))
+- **logs:** use debug instead of info ([56eabc8](https://github.com/vuejs/vuefire/commit/56eabc8ca3963688c34f05d8da9bf421581b7fa9))
+
 ## [3.1.8](https://github.com/vuejs/vuefire/compare/vuefire@3.1.7...vuefire@3.1.8) (2023-07-16)
 
 ### Features

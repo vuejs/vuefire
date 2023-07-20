@@ -1,3 +1,16 @@
+## [0.2.8](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.2.7...nuxt-vuefire@0.2.8) (2023-07-20)
+
+### Bug Fixes
+
+- **emulator:** missing storage ([bfd93bc](https://github.com/vuejs/vuefire/commit/bfd93bc5112d6fc541023326cc0f6b5825febd5d))
+
+### Features
+
+- add emulators support ([7f86fa7](https://github.com/vuejs/vuefire/commit/7f86fa7e4f7df10336be120e456e7a56cdf0f02d))
+- avoid enabling auth emulator without auth ([6ee1c49](https://github.com/vuejs/vuefire/commit/6ee1c49df234a5b86311421239a12fe496a75b4d))
+- **emulators:** extra logs to warn user ([728f811](https://github.com/vuejs/vuefire/commit/728f8112cf64f23c0aee3a8256e5d6963cc4d950))
+- **logs:** use consola for logs ([f802558](https://github.com/vuejs/vuefire/commit/f8025587aaf3ba4d533ea2d1768d1d96c6799662))
+
 ## [0.2.7](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.2.6...nuxt-vuefire@0.2.7) (2023-07-16)
 
 ### Bug Fixes
