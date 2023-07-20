@@ -7,6 +7,10 @@ export default defineNuxtConfig({
     layoutTransition: false,
   },
 
+  devtools: {
+    enabled: true,
+  },
+
   nitro: {
     preset: fileURLToPath(new URL('./preset', import.meta.url)),
     // preset: 'nitro-preset-firebase',
