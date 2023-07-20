@@ -9,6 +9,7 @@ import {
 } from 'h3'
 import { getAdminApp } from 'vuefire/server'
 import { logger } from '../logging'
+import { useRuntimeConfig } from '#imports'
 
 /**
  * Setups an API endpoint to be used by the client to mint a cookie based auth session.
@@ -16,9 +17,15 @@ import { logger } from '../logging'
 export default defineEventHandler(async (event) => {
   assertMethod(event, 'POST')
   const { token } = await readBody<{ token?: string }>(event)
+  const { vuefire } = useRuntimeConfig()
 
-  logger.debug('Getting the admin app')
-  const adminApp = getAdminApp(undefined, 'session-verification')
+  const adminApp = getAdminApp(
+    {
+      projectId: vuefire?.options?.config?.projectId,
+      ...vuefire?.options?.admin?.options,
+    },
+    'session-verification'
+  )
   const adminAuth = getAdminAuth(adminApp)
 
   logger.debug(token ? 'Verifying the token' : 'Deleting the session cookie')

@@ -3,24 +3,26 @@ import stripJsonComments from 'strip-json-comments'
 import type { ConsolaInstance } from 'consola'
 import type { VueFireNuxtModuleOptions } from './options'
 
-/**
- * Detects the emulators to enable based on the `firebase.json` file. Returns an object of all the emulators that should
- * be enabled based on the `firebase.json` file and other options and environment variables.
- *
- * @param options - The module options
- * @param firebaseJsonPath - resolved path to the `firebase.json` file
- * @param logger - The logger instance
- */
-export async function detectEmulators(
-  { emulators: _emulatorsOptions, auth }: VueFireNuxtModuleOptions,
+export async function willUseEmulators(
+  { emulators }: VueFireNuxtModuleOptions,
   firebaseJsonPath: string,
   logger: ConsolaInstance
-) {
+): Promise<FirebaseEmulatorsJSON | null> {
+  const isEmulatorEnabled =
+    (typeof emulators === 'object' ? emulators.enabled : !!emulators) &&
+    // Disable emulators on production unless the user explicitly enables them
+    (process.env.NODE_ENV !== 'production' || process.env.VUEFIRE_EMULATORS)
+
+  // Avoid even checking the firebase.json
+  if (!isEmulatorEnabled) {
+    return null
+  }
+
   const fileStats = await stat(firebaseJsonPath)
   if (!fileStats.isFile()) {
-    return
+    return null
   }
-  let firebaseJson: FirebaseEmulatorsJSON
+  let firebaseJson: FirebaseEmulatorsJSON | null = null
   try {
     firebaseJson = JSON.parse(
       stripJsonComments(await readFile(firebaseJsonPath, 'utf8'), {
@@ -30,9 +32,24 @@ export async function detectEmulators(
   } catch (err) {
     logger.error('Error parsing the `firebase.json` file', err)
     logger.error('Cannot enable Emulators')
-    return
   }
 
+  return firebaseJson
+}
+
+/**
+ * Detects the emulators to enable based on the `firebase.json` file. Returns an object of all the emulators that should
+ * be enabled based on the `firebase.json` file and other options and environment variables.
+ *
+ * @param options - The module options
+ * @param firebaseJsonPath - resolved path to the `firebase.json` file
+ * @param logger - The logger instance
+ */
+export function detectEmulators(
+  { emulators: _emulatorsOptions, auth }: VueFireNuxtModuleOptions,
+  firebaseJson: FirebaseEmulatorsJSON,
+  logger: ConsolaInstance
+) {
   // normalize the emulators option
   const emulatorsOptions =
     typeof _emulatorsOptions === 'object'
