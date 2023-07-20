@@ -1,3 +1,4 @@
+import { ensureAdminApp } from './admin'
 export { VueFireAppCheckServer } from './app-check'
 export {
   VueFireAuthServer,
@@ -6,5 +7,9 @@ export {
   decodeSessionCookie,
   decodeUserToken,
 } from './auth'
-export { getAdminApp } from './admin'
+export { ensureAdminApp } from './admin'
+/**
+ * @deprecated use `ensureAdminApp` instead.
+ */
+export const getAdminApp = ensureAdminApp
 export { isFirebaseError } from './utils'

@@ -7,7 +7,7 @@ import {
   deleteCookie,
   setResponseStatus,
 } from 'h3'
-import { getAdminApp } from 'vuefire/server'
+import { ensureAdminApp } from 'vuefire/server'
 import { logger } from '../logging'
 import { useRuntimeConfig } from '#imports'
 
@@ -19,7 +19,7 @@ export default defineEventHandler(async (event) => {
   const { token } = await readBody<{ token?: string }>(event)
   const { vuefire } = useRuntimeConfig()
 
-  const adminApp = getAdminApp(
+  const adminApp = ensureAdminApp(
     {
       projectId: vuefire?.options?.config?.projectId,
       ...vuefire?.options?.admin?.options,

@@ -12,13 +12,13 @@ import { logger } from './logging'
 const FIREBASE_ADMIN_APP_NAME = 'vuefire-admin'
 
 /**
- * Setups a Firebase Admin App
+ * Setups a Firebase Admin App or reuses it
  *
  * @param firebaseAdminOptions - options to pass to the admin app
  * @param name - name of the app
  * @experimental this is experimental and may change in the future
  */
-export function getAdminApp(
+export function ensureAdminApp(
   firebaseAdminOptions?: Omit<AppOptions, 'credential'>,
   name = FIREBASE_ADMIN_APP_NAME
 ) {
