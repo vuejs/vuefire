@@ -12,7 +12,7 @@ import type { VueFireNuxtModuleOptions } from './options'
  * @param logger - The logger instance
  */
 export async function detectEmulators(
-  { emulators: emulatorOptions, auth }: VueFireNuxtModuleOptions,
+  { emulators: _emulatorsOptions, auth }: VueFireNuxtModuleOptions,
   firebaseJsonPath: string,
   logger: ConsolaInstance
 ) {
@@ -33,10 +33,18 @@ export async function detectEmulators(
     return
   }
 
+  // normalize the emulators option
+  const emulatorsOptions =
+    typeof _emulatorsOptions === 'object'
+      ? _emulatorsOptions
+      : {
+          enabled: _emulatorsOptions,
+        }
+
   const { emulators } = firebaseJson
 
   if (!emulators) {
-    if (emulatorOptions === true) {
+    if (emulatorsOptions.enabled !== false) {
       logger.warn(
         'You enabled emulators but there is no `emulators` key in your `firebase.json` file. Emulators will not be enabled.'
       )
@@ -44,8 +52,7 @@ export async function detectEmulators(
     return
   }
 
-  const defaultHost: string =
-    (typeof emulatorOptions === 'object' && emulatorOptions.host) || '127.0.0.1'
+  const defaultHost: string = emulatorsOptions.host || '127.0.0.1'
 
   const emulatorsToEnable = services.reduce((acc, service) => {
     if (emulators[service]) {

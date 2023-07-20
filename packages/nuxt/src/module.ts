@@ -143,11 +143,16 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
     }
 
     // Emulators must be enabled after the app is initialized but before some APIs like auth.signinWithCustomToken() are called
+    const isEmulatorEnabled =
+      typeof options.emulators === 'object'
+        ? options.emulators.enabled
+        : !!options.emulators
+
     if (
       // Disable emulators on production unless the user explicitly enables them
       (process.env.NODE_ENV !== 'production' ||
         process.env.VUEFIRE_EMULATORS) &&
-      options.emulators
+      isEmulatorEnabled
     ) {
       const emulators = await detectEmulators(
         options,
