@@ -20,12 +20,10 @@ export interface VueFireNuxtModuleOptions {
    */
   admin?: {
     /**
-     * Firebase Admin Options passed to `firebase-admin`'s `initializeApp()`. Required if you are using the auth, or the
-     * app-check module.
+     * Firebase Admin Options passed to `firebase-admin`'s `initializeApp()`.
      */
     options?: Omit<AppOptions, 'credential'>
 
-    // TODO: remove, use env variables instead
     /**
      * Firebase Admin Service Account passed to `firebase-admin`'s `initializeApp()`. Required if you are adding an
      * adminConfig.
@@ -46,7 +44,12 @@ export interface VueFireNuxtModuleOptions {
   auth?: boolean
 
   /**
-   * Controls whether to use emulators or not. Pass `false` to disable emulators. When set to `true`, emulators are enabled when they are detected in the `firebase.json` file. You still need to run the emulators in parallel to your app.
+   * Controls whether to use emulators or not. Pass `false` to disable emulators. When set to `true`, emulators are
+   * enabled when they are detected in the `firebase.json` file. You still need to run the emulators in parallel to your
+   * app.
+   *
+   * @default true
+   * @experimental
    */
   emulators?:
     | boolean
