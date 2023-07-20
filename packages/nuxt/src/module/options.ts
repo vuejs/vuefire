@@ -55,8 +55,27 @@ export interface VueFireNuxtModuleOptions {
     | boolean
     | {
         /**
+         * Enables the emulators.
+         */
+        enabled?: boolean
+
+        /**
          * The host for the Firestore emulator. Defaults to `localhost`.
          */
         host?: string
+
+        auth?: {
+          /**
+           * Pass options to `firebase/auth`'s `connectAuthEmulator()`.
+           */
+          options?: Parameters<
+            typeof import('firebase/auth').connectAuthEmulator
+          >[2]
+        }
       }
+}
+
+export interface VueFireNuxtModuleOptionsResolved
+  extends Omit<VueFireNuxtModuleOptions, 'emulators'> {
+  emulators: Exclude<VueFireNuxtModuleOptions['emulators'], boolean>
 }

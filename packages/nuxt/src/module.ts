@@ -13,7 +13,10 @@ import type { FirebaseApp, FirebaseOptions } from '@firebase/app-types'
 import type { AppOptions, App as FirebaseAdminApp } from 'firebase-admin/app'
 import { markRaw } from 'vue'
 import { consola } from 'consola'
-import { VueFireNuxtModuleOptions } from './module/options'
+import {
+  VueFireNuxtModuleOptions,
+  VueFireNuxtModuleOptionsResolved,
+} from './module/options'
 import { FirebaseEmulatorsToEnable, detectEmulators } from './module/emulators'
 
 const logger = consola.withTag('nuxt-vuefire module')
@@ -280,6 +283,17 @@ interface VueFireRuntimeConfig {
    * @internal
    */
   vuefireAdminOptions?: Omit<AppOptions, 'credential'>
+
+  /**
+   * Runtime config for the VueFire module.
+   */
+  vuefire?: {
+    /**
+     * Options passed to the Nuxt VueFire module
+     * @internal
+     */
+    options?: VueFireNuxtModuleOptionsResolved
+  }
 }
 
 interface VueFirePublicRuntimeConfig {
