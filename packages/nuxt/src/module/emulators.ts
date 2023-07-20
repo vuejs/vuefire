@@ -7,7 +7,7 @@ export async function willUseEmulators(
   { emulators }: VueFireNuxtModuleOptions,
   firebaseJsonPath: string,
   logger: ConsolaInstance
-): Promise<FirebaseEmulatorsJSON | null> {
+): Promise<NonNullable<FirebaseEmulatorsJSON['emulators']> | null> {
   const isEmulatorEnabled =
     (typeof emulators === 'object' ? emulators.enabled : !!emulators) &&
     // Disable emulators on production unless the user explicitly enables them
@@ -34,7 +34,7 @@ export async function willUseEmulators(
     logger.error('Cannot enable Emulators')
   }
 
-  return firebaseJson
+  return firebaseJson?.emulators ?? null
 }
 
 /**
@@ -47,7 +47,7 @@ export async function willUseEmulators(
  */
 export function detectEmulators(
   { emulators: _emulatorsOptions, auth }: VueFireNuxtModuleOptions,
-  firebaseJson: FirebaseEmulatorsJSON,
+  emulators: NonNullable<FirebaseEmulatorsJSON['emulators']>,
   logger: ConsolaInstance
 ) {
   // normalize the emulators option
@@ -57,8 +57,6 @@ export function detectEmulators(
       : {
           enabled: _emulatorsOptions,
         }
-
-  const { emulators } = firebaseJson
 
   if (!emulators) {
     if (emulatorsOptions.enabled !== false) {

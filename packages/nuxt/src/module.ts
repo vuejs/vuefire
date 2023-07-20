@@ -52,7 +52,7 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
     const templatesDir = fileURLToPath(new URL('../templates', import.meta.url))
 
     // we need this to avoid some warnings about missing credentials and ssr
-    const hasEmulatorsEnabled = await willUseEmulators(
+    const emulatorsConfig = await willUseEmulators(
       options,
       resolve(nuxt.options.rootDir, 'firebase.json'),
       logger
@@ -98,11 +98,11 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
 
     if (options.appCheck) {
       addPlugin(resolve(runtimeDir, 'app-check/plugin.client'))
-      // TODO: ensure this is the only necessary check. Maybe we need to check if server
-      if (hasServiceAccount || hasEmulatorsEnabled) {
+      // TODO: With emulators a different plugin should be used, one that doesn't instantiate app check as it will error on the server anyway
+      if (hasServiceAccount || emulatorsConfig) {
         // this is needed by the api endpoint to properly work if no service account is provided, otherwise, the projectId is within the service account
         addPlugin(resolve(runtimeDir, 'app-check/plugin.server'))
-      } else if (nuxt.options.ssr && !hasEmulatorsEnabled) {
+      } else if (nuxt.options.ssr && !emulatorsConfig) {
         logger.warn(
           'You activated both SSR and app-check but you are not providing a service account for the admin SDK. See https://vuefire.vuejs.org/nuxt/getting-started.html#configuring-the-admin-sdk.'
         )
@@ -110,8 +110,7 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
     }
 
     if (options.auth) {
-      // TODO: should be fine if emulators are activated
-      if (nuxt.options.ssr && !hasServiceAccount && !hasEmulatorsEnabled) {
+      if (nuxt.options.ssr && !hasServiceAccount && !emulatorsConfig) {
         logger.warn(
           'You activated both SSR and auth but you are not providing a service account for the admin SDK. See https://vuefire.vuejs.org/nuxt/getting-started.html#configuring-the-admin-sdk.'
         )
@@ -130,7 +129,7 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
       if (
         options.auth &&
         nuxt.options.ssr &&
-        (hasServiceAccount || hasEmulatorsEnabled)
+        (hasServiceAccount || emulatorsConfig)
       ) {
         // Add the session handler than mints a cookie for the user
         addServerHandler({
@@ -163,8 +162,8 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
 
     // Emulators must be enabled after the app is initialized but before some APIs like auth.signinWithCustomToken() are called
 
-    if (hasEmulatorsEnabled) {
-      const emulators = detectEmulators(options, hasEmulatorsEnabled, logger)
+    if (emulatorsConfig) {
+      const emulators = detectEmulators(options, emulatorsConfig, logger)
 
       // expose the detected emulators to the plugins
       nuxt.options.runtimeConfig.public.vuefire ??= {}
@@ -195,7 +194,7 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
         )
       }
 
-      if (hasServiceAccount || hasEmulatorsEnabled) {
+      if (hasServiceAccount || emulatorsConfig) {
         if (options.auth) {
           // decodes user token from cookie if any
           addPlugin(resolve(runtimeDir, 'auth/plugin-user-token.server'))
@@ -205,7 +204,7 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
         addPlugin(resolve(runtimeDir, 'admin/plugin.server'))
 
         // We need the projectId to be explicitly set for the admin SDK to work
-        if (hasEmulatorsEnabled) {
+        if (emulatorsConfig) {
           options.admin ??= {}
           options.admin.options ??= {}
           options.admin.options.projectId ??= options.config.projectId
