@@ -2,27 +2,10 @@ import {
   VueFire,
   useSSRInitialState,
 } from 'vuefire'
-import {
-  defineNuxtPlugin,
-  useAppConfig,
-} from '#app'
-import {
-  connectFirestoreEmulator,
-  getFirestore,
-} from 'firebase/firestore'
-import {
-connectDatabaseEmulator,
-getDatabase,
-} from 'firebase/database'
+import { defineNuxtPlugin } from '#app'
 
 export default defineNuxtPlugin((nuxtApp) => {
-  const appConfig = useAppConfig()
-
   const firebaseApp = nuxtApp.$firebaseApp
-
-  // TODO: emulator option
-  // connectFirestoreEmulator(getFirestore(firebaseApp), 'localhost', 8080)
-  // connectDatabaseEmulator(getDatabase(firebaseApp), 'localhost', 8081)
 
   nuxtApp.vueApp.use(VueFire, { firebaseApp })
 
