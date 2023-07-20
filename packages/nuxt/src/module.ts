@@ -14,7 +14,7 @@ import type { AppOptions, App as FirebaseAdminApp } from 'firebase-admin/app'
 import { markRaw } from 'vue'
 import { consola } from 'consola'
 import { VueFireNuxtModuleOptions } from './module/options'
-import { FirebaseEmulatorsToEnable, enableEmulators } from './module/emulators'
+import { FirebaseEmulatorsToEnable, detectEmulators } from './module/emulators'
 
 const logger = consola.withTag('nuxt-vuefire module')
 
@@ -146,7 +146,7 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
         process.env.VUEFIRE_EMULATORS) &&
       options.emulators
     ) {
-      const emulators = await enableEmulators(
+      const emulators = await detectEmulators(
         options,
         resolve(nuxt.options.rootDir, 'firebase.json'),
         logger
