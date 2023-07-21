@@ -1,9 +1,6 @@
 # Server Side Rendering (SSR)
 
-<!-- NOTE: hide until it works -->
-<!-- ::: tip
-If you are using Nuxt.js, read the [Nuxt guide](/nuxt/getting-started.md) instead, most of the things are already configured for you.
-::: -->
+> Manually doing Server Side Rendering can get really complex, it is recommended to use Nuxt. Read the [Nuxt guide](/nuxt/getting-started.md), most of the things are already configured for you.
 
 ::: warning
 SSR support is still experimental. Please report any issues you find.
