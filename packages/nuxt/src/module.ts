@@ -97,6 +97,9 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
     // plugins
 
     if (options.appCheck) {
+      if (process.env.FIREBASE_APPCHECK_DEBUG_TOKEN) {
+        options.appCheck.debug = process.env.FIREBASE_APPCHECK_DEBUG_TOKEN
+      }
       addPlugin(resolve(runtimeDir, 'app-check/plugin.client'))
       // TODO: With emulators a different plugin should be used, one that doesn't instantiate app check as it will error on the server anyway
       if (hasServiceAccount || emulatorsConfig) {
