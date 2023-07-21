@@ -198,6 +198,10 @@ function sidebarNuxt(): SidebarGroup {
         text: 'Deployment',
         link: '/nuxt/deployment',
       },
+      {
+        text: 'Environment Variables',
+        link: '/nuxt/environment-variables',
+      },
     ],
   }
 }
