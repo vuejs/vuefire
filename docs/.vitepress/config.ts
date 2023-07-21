@@ -157,6 +157,10 @@ function sidebarGuide(): SidebarGroup {
         link: '/guide/storage',
       },
       {
+        text: 'App Check',
+        link: '/guide/app-check.md',
+      },
+      {
         text: 'SSR',
         link: '/guide/ssr',
       },
