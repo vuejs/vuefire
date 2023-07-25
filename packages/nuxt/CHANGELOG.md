@@ -1,3 +1,14 @@
+## [0.2.12](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.2.11...nuxt-vuefire@0.2.12) (2023-07-25)
+
+### Bug Fixes
+
+- **app-check:** avoid picking up variable in prod ([f7b956d](https://github.com/vuejs/vuefire/commit/f7b956da8fd287517c500af92b39e26b846af322))
+
+### Features
+
+- **app-check:** automatically pick up env variable ([ea864a6](https://github.com/vuejs/vuefire/commit/ea864a6b68f509c876d3ec5400b2931c31355d59))
+- **app-check:** warn user against production leak appcheck ([5f140cd](https://github.com/vuejs/vuefire/commit/5f140cdf145e7ea82a1727d36ebec3b7c3f27223))
+
 ## [0.2.11](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.2.10...nuxt-vuefire@0.2.11) (2023-07-20)
 
 ### Bug Fixes

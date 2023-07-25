@@ -1,3 +1,9 @@
+## [3.1.12](https://github.com/vuejs/vuefire/compare/vuefire@3.1.11...vuefire@3.1.12) (2023-07-25)
+
+### Features
+
+- **app-check:** automatically pick up env variable ([ea864a6](https://github.com/vuejs/vuefire/commit/ea864a6b68f509c876d3ec5400b2931c31355d59))
+
 ## [3.1.11](https://github.com/vuejs/vuefire/compare/vuefire@3.1.10...vuefire@3.1.11) (2023-07-20)
 
 ### Features
