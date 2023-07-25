@@ -107,6 +107,11 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
         logger.debug(
           `Using app check debug token from env variable "${process.env.FIREBASE_APPCHECK_DEBUG_TOKEN}"`
         )
+        if (process.env.NODE_ENV === 'production' && options.appCheck.debug) {
+          logger.warn(
+            'You are using a debug token in production, DO NOT DEPLOY THIS BUILD. If you do, you will leak your debug app check token.'
+          )
+        }
         options.appCheck.debug = process.env.FIREBASE_APPCHECK_DEBUG_TOKEN
       }
       addPlugin(resolve(runtimeDir, 'app-check/plugin.client'))
