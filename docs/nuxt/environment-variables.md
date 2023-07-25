@@ -21,3 +21,5 @@ FIREBASE_APPCHECK_DEBUG_TOKEN=********-****-****-****-************
 ```
 
 These can be generated on the Firebase Console > AppCheck > Apps > Manage Debug Tokens.
+
+This variable will not be used in production unless `debug: true` is passed during a build or generate command. This allows you to still test locally using a debug token without having to worry about accidentally deploying it to production.
