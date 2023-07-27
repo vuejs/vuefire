@@ -29,4 +29,25 @@ export default definePayloadPlugin(() => {
 
     return parsed
   })
+  // to handle the `id` non-enumerable property
+  definePayloadReducer(
+    'DocumentData',
+    (data: any) =>
+      data &&
+      typeof data === 'object' &&
+      'id' in data &&
+      JSON.stringify({
+        id: data.id,
+        ...data,
+      })
+  )
+  definePayloadReviver('DocumentData', (data: string) => {
+    const parsed = JSON.parse(data)
+    // preserve the non-enumerable property
+    // we need to delete it first
+    delete parsed.id
+    return Object.defineProperty(parsed, 'id', {
+      value: parsed.id,
+    })
+  })
 })
