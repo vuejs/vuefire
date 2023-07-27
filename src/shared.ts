@@ -121,9 +121,12 @@ export function isFirestoreDataReference<T = unknown>(
   return isDocumentRef(source) || isCollectionRef(source)
 }
 
-export function isFirestoreQuery(
+export function isFirestoreQuery<
+  AppModelType = DocumentData,
+  DbModelType extends DocumentData = DocumentData
+>(
   source: unknown
-): source is FirestoreQuery<unknown> & { path: undefined } {
+): source is FirestoreQuery<AppModelType, DbModelType> & { path: undefined } {
   // makes some types so much easier
   return isObject(source) && source.type === 'query'
 }

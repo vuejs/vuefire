@@ -31,7 +31,6 @@ import {
   OperationsType,
   walkSet,
   _RefWithState,
-  isCollectionRef,
 } from '../shared'
 import { getInitialValue } from '../ssr/initialState'
 import { addPendingPromise } from '../ssr/plugin'
@@ -49,6 +48,8 @@ export interface _UseFirestoreRefOptions extends FirestoreRefOptions {
    */
   converter?: FirestoreDataConverter<unknown>
 }
+
+const NO_INITIAL_VALUE = Symbol()
 
 /**
  * Internal version of `useDocument()` and `useCollection()`.
@@ -87,18 +88,14 @@ export function _useFirestoreRef(
   const initialValue = getInitialValue(
     initialSourceValue,
     options.ssrKey,
-    data.value,
+    NO_INITIAL_VALUE,
     useFirebaseApp()
   )
-  data.value = initialValue
-  const hasInitialValue =
-    // TODO: we need a stricter check for collections and queries and the initial target is passed as a ref([]) but
-    // maybe that [] should be set here instead. It's also worth taking into account that a custom ref can be passed as
-    // target as it should probably be initially empty but maybe this is too much to ask.
-    // TODO: add and test || isFirestoreQuery()
-    isCollectionRef(initialSourceValue)
-      ? ((initialValue || []) as unknown[]).length > 0
-      : initialValue !== undefined
+
+  const hasInitialValue = initialValue !== NO_INITIAL_VALUE
+  if (hasInitialValue) {
+    data.value = initialValue
+  }
 
   // if no initial value is found (ssr), we should set pending to true
   let shouldStartAsPending = !hasInitialValue

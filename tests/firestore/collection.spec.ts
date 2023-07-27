@@ -71,14 +71,17 @@ describe(
       }
     }
 
-    function factoryQuery<T = DocumentData>({
+    function factoryQuery<
+      AppModelType = DocumentData,
+      DbModelType extends DocumentData = DocumentData
+    >({
       options,
       ref,
     }: {
       options?: UseCollectionOptions
-      ref?: _MaybeRef<_Nullable<CollectionReference<T> | Query<T>>>
+      ref?: _MaybeRef<_Nullable<Query<AppModelType, DbModelType>>>
     } = {}) {
-      let data!: _RefFirestore<VueFirestoreQueryData<T>>
+      let data!: _RefFirestore<VueFirestoreQueryData<AppModelType>>
 
       const wrapper = mount(
         defineComponent({
@@ -88,7 +91,10 @@ describe(
             data = useCollection(
               // split for ts
               ref,
-              options
+              {
+                ssrKey: Math.random().toString(36),
+                ...options,
+              }
             )
             const { data: list, pending, error, promise, stop } = data
             return { list, pending, error, promise, stop }
@@ -100,6 +106,7 @@ describe(
         wrapper,
         // non enumerable properties cannot be spread
         data: data.data,
+        listQuery: unref(ref)!,
         pending: data.pending,
         error: data.error,
         promise: data.promise,
@@ -169,6 +176,19 @@ describe(
 
     it('sets pending while loading', async () => {
       const { wrapper, listRef, pending, promise } = factory<{ name: string }>()
+
+      expect(pending.value).toBe(true)
+      await promise.value
+      expect(pending.value).toBe(false)
+    })
+
+    it('sets pending while loading with a query', async () => {
+      const listRef = collection<{ name: string }>()
+      const { wrapper, listQuery, pending, promise } = factoryQuery<{
+        name: string
+      }>({
+        ref: query(listRef, where('name', '==', 'a')),
+      })
 
       expect(pending.value).toBe(true)
       await promise.value
@@ -497,5 +517,5 @@ describe(
       expectType<Ref<string[]>>(useCollection(refWithConverter))
     })
   },
-  { retry: 3 }
+  { retry: process.env.CI ? 3 : 1 }
 )
