@@ -57,7 +57,7 @@ export function useIsCurrentUserLoaded(name?: string) {
 export function updateCurrentUserProfile(profile: {
   displayName?: _Nullable<string>
   photoURL?: _Nullable<string>
-}) {
+}): Promise<void> {
   return getCurrentUser().then((user) => {
     if (user) {
       return updateProfile(user, profile).then(() => user.reload())
