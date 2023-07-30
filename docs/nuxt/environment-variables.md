@@ -4,13 +4,19 @@ Nuxt VueFire automatically picks up a few environment variables to configure Fir
 
 ## Admin SDK
 
-If you are doing SSR, you will need to provide the `GOOGLE_APPLICATION_CREDENTIALS` environment variable with the path to the service account file. This is usually a JSON file that you can download from the Firebase Console > Project Settings > Service Accounts > Generate new private key.
+If you are doing SSR, you will need to provide the `GOOGLE_APPLICATION_CREDENTIALS` environment variable with the path to the service account file. This is usually a JSON file that you can download from the Firebase Console > Project Settings > Service Accounts > Generate new private key. 
 
 ```
 GOOGLE_APPLICATION_CREDENTIALS=service-account.json
 ```
 
 Make sure **to exclude this file from your version control system**.
+
+The GOOGLE_APPLICATION_CREDENTIALS value can also be set to the content of a service account file. This can be useful when trying to deploy to for instance Vercel, where it is not possible to add files to the file system.
+
+```
+GOOGLE_APPLICATION_CREDENTIALS={ "type": "service_account", "project_id": ...} 
+```
 
 ## AppCheck
 
