@@ -1,4 +1,4 @@
-import { readFile, stat } from 'node:fs/promises'
+import { readFile, stat, access, constants } from 'node:fs/promises'
 import stripJsonComments from 'strip-json-comments'
 import type { ConsolaInstance } from 'consola'
 import type { VueFireNuxtModuleOptions } from './options'
@@ -15,6 +15,11 @@ export async function willUseEmulators(
 
   // Avoid even checking the firebase.json
   if (!isEmulatorEnabled) {
+    return null
+  }
+
+  // return true if the file doesn't exist instead of throwing
+  if (await access(firebaseJsonPath, constants.F_OK).catch(() => true)) {
     return null
   }
 
