@@ -4,6 +4,21 @@ service cloud.firestore {
     match /__tests/{document=**} {
       allow read, write;
     }
+
+    match /todos/{todoId} {
+      allow read, write;
+    }
+    match /tweets/{todoId} {
+      allow read, write;
+    }
+    match /users/{todoId} {
+      allow read: if request.auth.uid != null;
+      allow write: if false;
+    }
+    match /configs/jORwjIykFo2NmkdzTkhU {
+      allow read, write;
+    }
+
     match /{document=**} {
       allow read, write: if false;
     }
