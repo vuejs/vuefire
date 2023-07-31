@@ -249,6 +249,15 @@ const services = [
   'storage',
 ] as const
 
-export type FirebaseEmulatorsToEnable = {
+export type FirebaseEmulatorsToEnableBase = {
   [key in FirebaseEmulatorService]: { host: string; port: number }
+}
+
+export interface FirebaseEmulatorsToEnable
+  extends FirebaseEmulatorsToEnableBase {
+  auth: {
+    host: string
+    port: number
+    options?: Parameters<typeof import('firebase/auth').connectAuthEmulator>[2]
+  }
 }

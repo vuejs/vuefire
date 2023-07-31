@@ -66,7 +66,19 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
     nuxt.options.appConfig.firebaseConfig = markRaw(options.config)
     nuxt.options.appConfig.vuefireOptions = markRaw(options)
 
-    nuxt.options.runtimeConfig.vuefire = { options }
+    nuxt.options.runtimeConfig.vuefire = {
+      options: {
+        ...options,
+        // ensure the resolved version easier to consume
+        emulators: {
+          enabled:
+            typeof options.emulators === 'object'
+              ? options.emulators.enabled
+              : !!options.emulators,
+          ...(typeof options.emulators === 'object' ? options.emulators : {}),
+        },
+      },
+    }
 
     nuxt.options.build.transpile.push(runtimeDir)
     nuxt.options.build.transpile.push(templatesDir)
@@ -181,6 +193,11 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
 
     if (emulatorsConfig) {
       const emulators = detectEmulators(options, emulatorsConfig, logger)
+      // add the option to disable the warning. It only exists in Auth
+      if (emulators?.auth) {
+        emulators.auth.options =
+          nuxt.options.runtimeConfig.vuefire.options?.emulators?.auth?.options
+      }
 
       // expose the detected emulators to the plugins
       nuxt.options.runtimeConfig.public.vuefire ??= {}
@@ -315,7 +332,7 @@ interface VueFireRuntimeConfig {
      * Options passed to the Nuxt VueFire module
      * @internal
      */
-    options?: VueFireNuxtModuleOptions
+    options?: VueFireNuxtModuleOptionsResolved
   }
 }
 

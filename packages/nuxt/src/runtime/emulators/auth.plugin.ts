@@ -13,7 +13,6 @@ export default defineNuxtPlugin((nuxtApp) => {
   }
 
   const {
-    vuefire,
     public: { vuefire: publicVuefire },
   } = useRuntimeConfig()
 
@@ -28,7 +27,7 @@ export default defineNuxtPlugin((nuxtApp) => {
   connectAuthEmulator(
     getAuth(firebaseApp),
     `http://${host}:${port}`,
-    vuefire?.options?.emulators?.auth?.options
+    publicVuefire?.emulators?.auth?.options
   )
   logger.info(`Auth emulator connected to http://${host}:${port}`)
   connectedEmulators.set(firebaseApp, true)
