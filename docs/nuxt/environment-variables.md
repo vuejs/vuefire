@@ -10,7 +10,11 @@ If you are doing SSR, you will need to provide the `GOOGLE_APPLICATION_CREDENTIA
 GOOGLE_APPLICATION_CREDENTIALS=service-account.json
 ```
 
-Make sure **to exclude this file from your version control system**.
+Make sure **to exclude both, the `.env` and `service-account.json` files from your version control system**.
+
+::: tip
+When deploying outside of Firebase, the `GOOGLE_APPLICATION_CREDENTIALS` environment variable has to be set manually. Instead of setting it to the path of the service account file, you can set it to the content of the file itself. Note it will have to fit in **one single line**.
+:::
 
 ## AppCheck
 
