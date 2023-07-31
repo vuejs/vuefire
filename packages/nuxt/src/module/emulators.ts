@@ -20,6 +20,9 @@ export async function willUseEmulators(
 
   // return true if the file doesn't exist instead of throwing
   if (await access(firebaseJsonPath, constants.F_OK).catch(() => true)) {
+    logger.warn(
+      `The "firebase.json" file doesn't exist at "${firebaseJsonPath}".`
+    )
     return null
   }
 
