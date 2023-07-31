@@ -9,7 +9,7 @@ import {
   defineNuxtModule,
 } from '@nuxt/kit'
 // cannot import from firebase/app because the build fails, maybe a nuxt bug?
-import type { FirebaseApp, FirebaseOptions } from '@firebase/app-types'
+import type { FirebaseApp, FirebaseOptions } from 'firebase/app'
 import type { App as FirebaseAdminApp } from 'firebase-admin/app'
 import { markRaw } from 'vue'
 import { consola } from 'consola'

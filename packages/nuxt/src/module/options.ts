@@ -1,4 +1,4 @@
-import type { FirebaseOptions } from '@firebase/app-types'
+import type { FirebaseOptions } from 'firebase/app'
 import type { AppOptions, ServiceAccount } from 'firebase-admin'
 import type { NuxtVueFireAppCheckOptions } from '../runtime/app-check'
 
