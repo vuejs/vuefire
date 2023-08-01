@@ -1,3 +1,10 @@
+## [3.1.13](https://github.com/vuejs/vuefire/compare/vuefire@3.1.12...vuefire@3.1.13) (2023-08-01)
+
+### Bug Fixes
+
+- **app-check:** app-check is actually defined on server too ([359f9d0](https://github.com/vuejs/vuefire/commit/359f9d0014dc35e4b37506db99fd9848204b22a4))
+- **firestore:** set pending on queries ([61513f6](https://github.com/vuejs/vuefire/commit/61513f68e9be84887ff716ae83cbb7c390844cd8)), closes [vuejs/vuefire#1317](https://github.com/vuejs/vuefire/issues/1317)
+
 ## [3.1.12](https://github.com/vuejs/vuefire/compare/vuefire@3.1.11...vuefire@3.1.12) (2023-07-25)
 
 ### Features

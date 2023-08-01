@@ -1,3 +1,17 @@
+## [0.2.13](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.2.12...nuxt-vuefire@0.2.13) (2023-08-01)
+
+### Bug Fixes
+
+- **emulators:** activate without enabled option in dev ([c2c7267](https://github.com/vuejs/vuefire/commit/c2c7267953913ee92a09087e6734f24dbc8bb4f3))
+- **emulators:** do not crash without firebase.json file ([e68977b](https://github.com/vuejs/vuefire/commit/e68977bb7e554805358a0203c06148b9defdb58f))
+- **emulators:** pass client side option to hide auth warning ([8424077](https://github.com/vuejs/vuefire/commit/8424077c8817a902a89f026551ba5de712d25c5b))
+- **ssr:** serialize non enumerable id ([fa2778a](https://github.com/vuejs/vuefire/commit/fa2778a51145491240c5f2b6140375ae4b01dc10)), closes [vuejs/vuefire#1398](https://github.com/vuejs/vuefire/issues/1398)
+
+### Features
+
+- **app-check:** allow debug in production with VUEFIRE_APPCHECK_DEBUG ([fd5db49](https://github.com/vuejs/vuefire/commit/fd5db491e2da0e112c5b9d0501b7e63561066642))
+- **emulators:** warn if firebase.json file is missing ([06f7d70](https://github.com/vuejs/vuefire/commit/06f7d70f7056aa0677c2e208126416cb14b9c594))
+
 ## [0.2.12](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.2.11...nuxt-vuefire@0.2.12) (2023-07-25)
 
 ### Bug Fixes
