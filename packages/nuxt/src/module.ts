@@ -36,7 +36,7 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
 
   defaults: {
     optionsApiPlugin: false,
-    emulators: true,
+    emulators: { enabled: true },
   },
 
   async setup(options, nuxt) {
@@ -51,16 +51,6 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
     const runtimeDir = fileURLToPath(new URL('./runtime', import.meta.url))
     const templatesDir = fileURLToPath(new URL('../templates', import.meta.url))
 
-    // we need this to avoid some warnings about missing credentials and ssr
-    const emulatorsConfig = await willUseEmulators(
-      options,
-      resolve(nuxt.options.rootDir, 'firebase.json'),
-      logger
-    )
-
-    // to handle TimeStamp and GeoPoints objects
-    addPlugin(resolve(runtimeDir, 'payload-plugin'))
-
     // TODO: I don't think the appConfig is the right place to store these as it makes things reactive
     // Let plugins and the user access the firebase config within the app
     nuxt.options.appConfig.firebaseConfig = markRaw(options.config)
@@ -73,12 +63,22 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
         emulators: {
           enabled:
             typeof options.emulators === 'object'
-              ? options.emulators.enabled
+              ? options.emulators.enabled ?? true // allows user to comment out enabled: false
               : !!options.emulators,
           ...(typeof options.emulators === 'object' ? options.emulators : {}),
         },
       },
     }
+
+    // we need this to avoid some warnings about missing credentials and ssr
+    const emulatorsConfig = await willUseEmulators(
+      nuxt.options.runtimeConfig.vuefire.options!,
+      resolve(nuxt.options.rootDir, 'firebase.json'),
+      logger
+    )
+
+    // to handle TimeStamp and GeoPoints objects
+    addPlugin(resolve(runtimeDir, 'payload-plugin'))
 
     nuxt.options.build.transpile.push(runtimeDir)
     nuxt.options.build.transpile.push(templatesDir)
@@ -194,7 +194,11 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
     // Emulators must be enabled after the app is initialized but before some APIs like auth.signinWithCustomToken() are called
 
     if (emulatorsConfig) {
-      const emulators = detectEmulators(options, emulatorsConfig, logger)
+      const emulators = detectEmulators(
+        nuxt.options.runtimeConfig.vuefire.options!,
+        emulatorsConfig,
+        logger
+      )
       // add the option to disable the warning. It only exists in Auth
       if (emulators?.auth) {
         emulators.auth.options =

@@ -1,15 +1,16 @@
-import { readFile, stat, access, constants } from 'node:fs/promises'
+import { readFile, access, constants } from 'node:fs/promises'
 import stripJsonComments from 'strip-json-comments'
 import type { ConsolaInstance } from 'consola'
-import type { VueFireNuxtModuleOptions } from './options'
+import type { VueFireNuxtModuleOptionsResolved } from './options'
 
 export async function willUseEmulators(
-  { emulators }: VueFireNuxtModuleOptions,
+  { emulators }: VueFireNuxtModuleOptionsResolved,
   firebaseJsonPath: string,
   logger: ConsolaInstance
 ): Promise<NonNullable<FirebaseEmulatorsJSON['emulators']> | null> {
   const isEmulatorEnabled =
-    (typeof emulators === 'object' ? emulators.enabled : !!emulators) &&
+    // emulators is always defined
+    emulators.enabled &&
     // Disable emulators on production unless the user explicitly enables them
     (process.env.NODE_ENV !== 'production' || process.env.VUEFIRE_EMULATORS)
 
@@ -26,10 +27,6 @@ export async function willUseEmulators(
     return null
   }
 
-  const fileStats = await stat(firebaseJsonPath)
-  if (!fileStats.isFile()) {
-    return null
-  }
   let firebaseJson: FirebaseEmulatorsJSON | null = null
   try {
     firebaseJson = JSON.parse(
@@ -54,20 +51,23 @@ export async function willUseEmulators(
  * @param logger - The logger instance
  */
 export function detectEmulators(
-  { emulators: _emulatorsOptions, auth }: VueFireNuxtModuleOptions,
-  emulators: NonNullable<FirebaseEmulatorsJSON['emulators']>,
+  {
+    emulators: _vuefireEmulatorsOptions,
+    auth,
+  }: VueFireNuxtModuleOptionsResolved,
+  firebaseEmulatorsConfig: NonNullable<FirebaseEmulatorsJSON['emulators']>,
   logger: ConsolaInstance
 ) {
   // normalize the emulators option
-  const emulatorsOptions =
-    typeof _emulatorsOptions === 'object'
-      ? _emulatorsOptions
+  const vuefireEmulatorsOptions =
+    typeof _vuefireEmulatorsOptions === 'object'
+      ? _vuefireEmulatorsOptions
       : {
-          enabled: _emulatorsOptions,
+          enabled: _vuefireEmulatorsOptions,
         }
 
-  if (!emulators) {
-    if (emulatorsOptions.enabled !== false) {
+  if (!firebaseEmulatorsConfig) {
+    if (vuefireEmulatorsOptions.enabled !== false) {
       logger.warn(
         'You enabled emulators but there is no `emulators` key in your `firebase.json` file. Emulators will not be enabled.'
       )
@@ -75,10 +75,10 @@ export function detectEmulators(
     return
   }
 
-  const defaultHost: string = emulatorsOptions.host || '127.0.0.1'
+  const defaultHost: string = vuefireEmulatorsOptions.host || '127.0.0.1'
 
   const emulatorsToEnable = services.reduce((acc, service) => {
-    if (emulators[service]) {
+    if (firebaseEmulatorsConfig[service]) {
       // these env variables are automatically picked up by the admin SDK too
       // https://firebase.google.com/docs/emulator-suite/connect_rtdb?hl=en&authuser=0#admin_sdks
       // Also, Firestore is the only one that has a different env variable
@@ -109,7 +109,7 @@ export function detectEmulators(
       }
 
       // take the values from the firebase.json file
-      const emulatorsServiceConfig = emulators[service]
+      const emulatorsServiceConfig = firebaseEmulatorsConfig[service]
       // they might be picked up from the environment variables
       host ??= emulatorsServiceConfig?.host || defaultHost
       port ??= emulatorsServiceConfig?.port

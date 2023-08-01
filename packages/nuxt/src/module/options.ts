@@ -77,5 +77,5 @@ export interface VueFireNuxtModuleOptions {
 
 export interface VueFireNuxtModuleOptionsResolved
   extends Omit<VueFireNuxtModuleOptions, 'emulators'> {
-  emulators: Exclude<VueFireNuxtModuleOptions['emulators'], boolean>
+  emulators: Exclude<VueFireNuxtModuleOptions['emulators'], boolean | undefined>
 }
