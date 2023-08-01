@@ -69,7 +69,7 @@ If you are using SSR with any auth related feature, you will need to create a [s
 
 In local development it's more convenient to put the `service-account.json` file alongside other files and refer to its path in the environment variable:
 
-```dotenv
+```text
 GOOGLE_APPLICATION_CREDENTIALS=service-account.json
 ```
 

@@ -102,7 +102,7 @@
     "prettier": "^2.8.8",
     "semver": "^7.5.4",
     "typedoc": "^0.24.8",
-    "typedoc-plugin-markdown": "^3.15.3",
+    "typedoc-plugin-markdown": "^3.15.4",
     "typescript": "~5.1.6",
     "unbuild": "^1.2.1",
     "vitepress": "1.0.0-beta.7",

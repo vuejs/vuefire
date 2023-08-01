@@ -18,13 +18,17 @@ export default defineConfig({
 
   markdown: {
     theme: {
-      dark: 'dracula-soft',
-      light: 'vitesse-light',
+      dark: 'one-dark-pro',
+      light: 'github-light',
     },
 
     attrs: {
       leftDelimiter: '%{',
       rightDelimiter: '}%',
+    },
+
+    anchor: {
+      slugify: (s: string) => s.replace(/\s+/g, '-'),
     },
   },
 
