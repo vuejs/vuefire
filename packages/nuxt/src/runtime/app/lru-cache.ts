@@ -14,7 +14,7 @@ export const appCache = new LRUCache<string, FirebaseApp>({
   allowStale: true,
   updateAgeOnGet: true,
   dispose: (value) => {
-    logger.debug('Disposing app', value.name)
+    logger.debug('Deleting Firebase app', value.name)
     deleteApp(value)
   },
 })
