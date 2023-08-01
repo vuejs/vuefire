@@ -15,6 +15,19 @@ export default defineConfig({
   lang: 'en-US',
   title: headTitle,
   description: headDescription,
+
+  markdown: {
+    theme: {
+      dark: 'dracula-soft',
+      light: 'vitesse-light',
+    },
+
+    attrs: {
+      leftDelimiter: '%{',
+      rightDelimiter: '}%',
+    },
+  },
+
   head: [
     ['meta', { name: 'theme-color', content: '#ffe183' }],
     ['link', { rel: 'icon', href: '/logo.svg', type: 'image/svg+xml' }],
@@ -76,7 +89,7 @@ export default defineConfig({
     footer: {
       message: 'Released under the MIT License.',
       copyright:
-        'Copyright © 2016-PRESENT Eduardo San Martin Morote and VueFire contributors',
+        'Copyright © 2016-present Eduardo San Martin Morote and VueFire contributors',
     },
 
     carbonAds: {
@@ -125,12 +138,12 @@ export default defineConfig({
   },
 })
 
-type SidebarGroup = DefaultTheme.SidebarGroup
+type SidebarGroup = DefaultTheme.SidebarItem
 
 function sidebarGuide(): SidebarGroup {
   return {
     text: 'Guide',
-    collapsible: true,
+    collapsed: false,
     items: [
       {
         text: 'Why VueFire',
@@ -183,7 +196,7 @@ function sidebarGuide(): SidebarGroup {
 
 function sidebarNuxt(): SidebarGroup {
   return {
-    collapsible: true,
+    collapsed: false,
     text: 'Nuxt',
     items: [
       {
@@ -212,7 +225,7 @@ function sidebarNuxt(): SidebarGroup {
 
 function sidebarCookbook(): SidebarGroup {
   return {
-    collapsible: true,
+    collapsed: false,
     text: 'Cookbook',
     items: [
       {
@@ -233,7 +246,6 @@ function sidebarCookbook(): SidebarGroup {
 
 function sidebarApi(): SidebarGroup {
   return {
-    collapsible: false,
     text: 'API',
     items: [
       {
