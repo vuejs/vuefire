@@ -27,3 +27,14 @@ FIREBASE_APPCHECK_DEBUG_TOKEN=********-****-****-****-************
 These can be generated on the Firebase Console > AppCheck > Apps > Manage Debug Tokens.
 
 This variable will not be used in production unless `debug: true` is passed during a build or generate command. This allows you to still test locally using a debug token without having to worry about accidentally deploying it to production.
+
+## Debugging utilities
+
+You can activate these while developing or building locally by setting them before running the command:
+
+```bash
+VUEFIRE_APPCHECK_DEBUG=true VUEFIRE_EMULATORS=true pnpm run build
+```
+
+- `VUEFIRE_APPCHECK_DEBUG=true` will activate the AppCheck debug even in production.
+- `VUEFIRE_EMULATORS=true` will activate the Firebase Emulators even in production.

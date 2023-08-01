@@ -113,6 +113,8 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
         process.env.FIREBASE_APPCHECK_DEBUG_TOKEN &&
         // only use the debug token if the user explicitly set debug to true or if nothing was provided and we are not in production
         (options.appCheck.debug === true ||
+          // allow a manual override from the console before bundling
+          process.env.VUEFIRE_APPCHECK_DEBUG ||
           (options.appCheck.debug == null &&
             process.env.NODE_ENV !== 'production'))
       ) {
