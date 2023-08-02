@@ -1,6 +1,10 @@
 {
-  "include": ["../src/**/*.ts"],
-  "exclude": ["**/*.spec.ts"],
+  "include": ["../src/**/*.ts", "../packages/nuxt/src/**/*.ts"],
+  "exclude": [
+    "**/*.spec.ts",
+    "../packages/nuxt/playground",
+    "../packages/nuxt/src/runtime"
+  ],
   "compilerOptions": {
     "baseUrl": ".",
     "rootDir": "..",
@@ -8,7 +12,8 @@
     "sourceMap": false,
     "noEmit": true,
     "paths": {
-      "vuefire": ["../src"]
+      "vuefire": ["../src"],
+      "nuxt-vuefire": ["../packages/nuxt/src/module.ts"]
     },
 
     "target": "esnext",
@@ -30,6 +35,7 @@
     "esModuleInterop": true,
     "removeComments": false,
     "jsx": "preserve",
-    "lib": ["esnext", "dom"]
+    "lib": ["esnext", "dom"],
+    "types": ["node"]
   }
 }

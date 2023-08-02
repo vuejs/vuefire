@@ -129,7 +129,7 @@ export default defineConfig({
 
     nav: [
       { text: 'Guide', link: '/guide/' },
-      { text: 'API', link: '/api/' },
+      { text: 'API', link: '/api/', activeMatch: '^/api/' },
       {
         text: `v${version}`,
         items: [
@@ -181,10 +181,6 @@ function sidebarGuide(): SidebarGroup {
         link: '/guide/realtime-data',
       },
       {
-        text: 'Options API',
-        link: '/guide/options-api-realtime-data',
-      },
-      {
         text: 'Authentication',
         link: '/guide/auth',
       },
@@ -199,6 +195,10 @@ function sidebarGuide(): SidebarGroup {
       {
         text: 'SSR',
         link: '/guide/ssr',
+      },
+      {
+        text: 'Options API',
+        link: '/guide/options-api-realtime-data',
       },
       // NOTE: hide until it works
       // {
@@ -269,12 +269,11 @@ function sidebarCookbook(): SidebarGroup {
 
 function sidebarApi(): SidebarGroup {
   return {
-    text: 'API',
+    text: 'API Reference',
     items: [
-      {
-        text: 'API Reference',
-        link: '/api/',
-      },
+      { text: 'Package List', link: '/api/' },
+      { text: 'nuxt-vuefire', link: '/api/modules/nuxt_vuefire.html' },
+      { text: 'vuefire', link: '/api/modules/vuefire.html' },
     ],
   }
 }

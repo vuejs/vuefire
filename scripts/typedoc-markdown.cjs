@@ -41,12 +41,13 @@ exports.createTypeDocApp = function createTypeDocApp(config = {}) {
      * @param {import('typedoc/dist/lib/output/events').PageEvent} page
      */
     (page) => {
-      if (page.url !== 'index.md' && page.contents) {
-        page.contents = prependYAML(page.contents, {
-          // TODO: figure out a way to point to the source files?
-          editLink: false,
-        })
+      if (!page.contents) {
+        return
       }
+      page.contents = prependYAML(page.contents, {
+        // TODO: figure out a way to point to the source files?
+        editLink: false,
+      })
     }
   )
 

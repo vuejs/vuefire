@@ -1,3 +1,6 @@
+/**
+ * @module nuxt-vuefire
+ */
 import { fileURLToPath } from 'node:url'
 import { normalize } from 'node:path'
 import {
