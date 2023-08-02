@@ -52,7 +52,7 @@ export default defineConfig({
   },
 
   head: [
-    ['meta', { name: 'theme-color', content: '#ffe183' }],
+    ['meta', { name: 'theme-color', content: '#ffca28' }],
     ['link', { rel: 'icon', href: '/logo.svg', type: 'image/svg+xml' }],
     [
       'link',
