@@ -9,7 +9,7 @@ body:
     id: reproduction
     attributes:
       label: Reproduction
-      description: "If possible, provide a boiled down editable reproduction using a service like JSFiddle, Codepen, CodeSandbox, or a GitHub repository with minimal dependencies (avoid testing, linting, and other unrelated dependencies). A failing unit test is even better! Otherwise provide as much information as possible to reproduce the problem. If no reproduction is provided and the information is not enough to reproduce the problem, we won't be able to give it a look **and the issue will be converted into a question and moved to discussions**."
+      description: "If possible, provide a boiled down editable reproduction based off [this vite template](https://github.com/posva/vuefire-repro-template) or [this nuxt template](https://github.com/posva/nuxt--vuefire-repro-template) with minimal dependencies (avoid testing, linting, and other unrelated dependencies). A failing unit test is even better! Otherwise provide as much information as possible to reproduce the problem. If no reproduction is provided and the information is not enough to reproduce the problem, we won't be able to give it a look **and the issue will be converted into a question and moved to discussions**."
       placeholder: Reproduction
     validations:
       required: true
