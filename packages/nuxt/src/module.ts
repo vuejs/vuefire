@@ -112,34 +112,44 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
     // plugins
 
     if (options.appCheck) {
-      if (
-        process.env.FIREBASE_APPCHECK_DEBUG_TOKEN &&
-        // only use the debug token if the user explicitly set debug to true or if nothing was provided and we are not in production
-        (options.appCheck.debug === true ||
-          // allow a manual override from the console before bundling
-          process.env.VUEFIRE_APPCHECK_DEBUG ||
-          (options.appCheck.debug == null &&
-            process.env.NODE_ENV !== 'production'))
-      ) {
-        logger.debug(
-          `Using app check debug token from env variable "${process.env.FIREBASE_APPCHECK_DEBUG_TOKEN}"`
+      if (!process.env.GOOGLE_APPLICATION_CREDENTIALS && emulatorsConfig) {
+        logger.info(
+          'Disabling App Check in the context of emulators as no "GOOGLE_APPLICATION_CREDENTIALS" env variable was defined.'
         )
-        if (process.env.NODE_ENV === 'production' && options.appCheck.debug) {
+      } else {
+        if (
+          process.env.FIREBASE_APPCHECK_DEBUG_TOKEN &&
+          // only use the debug token if the user explicitly set debug to true or if nothing was provided and we are not in production
+          (options.appCheck.debug === true ||
+            // allow a manual override from the console before bundling
+            process.env.VUEFIRE_APPCHECK_DEBUG ||
+            (options.appCheck.debug == null &&
+              process.env.NODE_ENV !== 'production'))
+        ) {
+          logger.debug(
+            `Using app check debug token from env variable "${process.env.FIREBASE_APPCHECK_DEBUG_TOKEN}"`
+          )
+          if (process.env.NODE_ENV === 'production' && options.appCheck.debug) {
+            logger.warn(
+              'You are using a debug token in production, DO NOT DEPLOY THIS BUILD. If you do, you will leak your debug app check token.'
+            )
+          }
+          options.appCheck.debug = process.env.FIREBASE_APPCHECK_DEBUG_TOKEN
+        } else if (emulatorsConfig) {
+          logger.debug('Detected Emulators environment, using debug App Check')
+          options.appCheck.debug ??= true
+        }
+
+        addPlugin(resolve(runtimeDir, 'app-check/plugin.client'))
+        // TODO: With emulators a different plugin should be used, one that doesn't instantiate app check as it will error on the server anyway
+        if (hasServiceAccount || emulatorsConfig) {
+          // this is needed by the api endpoint to properly work if no service account is provided, otherwise, the projectId is within the service account
+          addPlugin(resolve(runtimeDir, 'app-check/plugin.server'))
+        } else if (nuxt.options.ssr && !emulatorsConfig) {
           logger.warn(
-            'You are using a debug token in production, DO NOT DEPLOY THIS BUILD. If you do, you will leak your debug app check token.'
+            'You activated both SSR and app-check but you are not providing a service account for the admin SDK. See https://vuefire.vuejs.org/nuxt/getting-started.html#configuring-the-admin-sdk.'
           )
         }
-        options.appCheck.debug = process.env.FIREBASE_APPCHECK_DEBUG_TOKEN
-      }
-      addPlugin(resolve(runtimeDir, 'app-check/plugin.client'))
-      // TODO: With emulators a different plugin should be used, one that doesn't instantiate app check as it will error on the server anyway
-      if (hasServiceAccount || emulatorsConfig) {
-        // this is needed by the api endpoint to properly work if no service account is provided, otherwise, the projectId is within the service account
-        addPlugin(resolve(runtimeDir, 'app-check/plugin.server'))
-      } else if (nuxt.options.ssr && !emulatorsConfig) {
-        logger.warn(
-          'You activated both SSR and app-check but you are not providing a service account for the admin SDK. See https://vuefire.vuejs.org/nuxt/getting-started.html#configuring-the-admin-sdk.'
-        )
       }
     }
 
