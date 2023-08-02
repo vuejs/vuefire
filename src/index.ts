@@ -51,6 +51,7 @@ export type {
  * Database Options API
  */
 export {
+  // TODO: remove in next major
   databasePlugin,
   // To ease migration
   databasePlugin as rtdbPlugin,
