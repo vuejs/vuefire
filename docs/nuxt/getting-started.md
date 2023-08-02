@@ -84,7 +84,7 @@ echo service-account.json >> .gitignore
 
 ### Additional configuration
 
-If you are using the [Authentication](https://firebase.google.com/docs/auth) module or [AppCheck](https://firebase.google.com/docs/app-check), make sure to enable them as well:
+If you are using the [Authentication](https://firebase.google.com/docs/auth) module or [AppCheck](https://firebase.google.com/docs/app-check#web), make sure to enable them as well:
 
 ```ts{5,6-13}
 export default defineNuxtConfig({

@@ -1,6 +1,6 @@
 # Firebase App Check
 
-[Firebase App Check](https://firebase.google.com/docs/app-check) helps protect your API resources from abuse by preventing unauthorized clients from accessing your backend resources. It works with both Firebase services, Google Cloud services, and your own APIs to keep your resources safe.
+[Firebase App Check](https://firebase.google.com/docs/app-check#web) helps protect your API resources from abuse by preventing unauthorized clients from accessing your backend resources. It works with both Firebase services, Google Cloud services, and your own APIs to keep your resources safe.
 
 ## Installation
 
@@ -19,7 +19,7 @@ app.use(VueFire, {
 })
 ```
 
-In order to use App Check you need to enable it in the Firebase Console > App Check. You also need to setup [a reCAPTCHA provider](https://firebase.google.com/docs/app-check), then provide it in the `VueFireAppCheck` module:
+In order to use App Check you need to enable it in the Firebase Console > App Check. You also need to setup [a reCAPTCHA provider](https://firebase.google.com/docs/app-check#web), then provide it in the `VueFireAppCheck` module:
 
 ```ts{2,9}
 import { VueFire, VueFireAuth } from 'vuefire'

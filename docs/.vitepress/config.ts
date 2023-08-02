@@ -235,6 +235,10 @@ function sidebarNuxt(): SidebarGroup {
         link: '/nuxt/auth',
       },
       {
+        text: 'App Check',
+        link: '/nuxt/app-check',
+      },
+      {
         text: 'Server Side Rendering',
         link: '/nuxt/ssr',
       },
