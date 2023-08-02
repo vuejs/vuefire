@@ -193,6 +193,10 @@ function sidebarGuide(): SidebarGroup {
         link: '/guide/app-check.md',
       },
       {
+        text: 'Other Firebase Services',
+        link: '/guide/other-firebase-services.md',
+      },
+      {
         text: 'SSR',
         link: '/guide/ssr',
       },
