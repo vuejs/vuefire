@@ -71,7 +71,7 @@ export const todosRef = collection(db, 'todos')
 
 </FirebaseExample>
 
-Note that exporting Database and Firestore isn't necessary as you can always access Firebase services within your components with [`useFirebaseApp()` and other composables](./firebase-composables.md).
+Note that exporting Database and Firestore isn't necessary as you can always access Firebase services within your components with `useFirebaseApp()` and other composables.
 
 ::: tip
 Note that we will refer to `database` and `firestore` as `db` in examples where only one of them is used.
@@ -101,7 +101,7 @@ app.use(VueFire, {
 app.mount('#app')
 ```
 
-This will give you access to some [convenient composables](./firebase-composables.md) like `useFirebaseApp()`, `useFirestore()` and `useDatabase()` in your components:
+This will give you access to some convenient composables like `useFirebaseApp()`, `useFirestore()` and `useDatabase()` in your components:
 
 ```vue{2-3}
 <script setup>

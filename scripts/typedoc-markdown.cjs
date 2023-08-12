@@ -13,6 +13,7 @@ const DEFAULT_OPTIONS = {
   entryDocument: 'index.md',
   hideBreadcrumbs: false,
   hideInPageTOC: true,
+  preserveAnchorCasing: true,
 }
 
 /**

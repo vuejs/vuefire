@@ -112,7 +112,7 @@ All of the properties that can be defined on the `Ref` are defined as [non-enume
 
 ### Fetching data once
 
-To fetch data only _once_, pass the [`once`](https://vuefire.vuejs.org/api/interfaces/UseDocumentOptions.html#once) option, which will automatically destroy the subscription as soon as the document or collection is completely fetched:
+To fetch data only _once_, pass the [`once`](../api/interfaces/vuefire.UseDocumentOptions.html#once) option, which will automatically destroy the subscription as soon as the document or collection is completely fetched:
 
 <FirebaseExample>
 
@@ -295,7 +295,7 @@ In the example above, `documents` is an array of References. Let's look at the d
 
 `documents.sharedWith.documents` end up as arrays of strings. Those strings are actually _paths_ that can be passed to `doc()` as in `doc(db, 'documents/leon-book')` to get the actual reference to the document. By being a string instead of a Reference, it is possible to display a bound document with VueFire as plain text.
 
-It is possible to customize this behavior by providing a [`maxRefDepth` option](../api/interfaces/UseDocumentOptions.md#maxrefdepth):
+It is possible to customize this behavior by providing a [`maxRefDepth` option](../api/interfaces/vuefire.UseDocumentOptions.html#maxRefDepth):
 
 ```js
 // override the default value of 2 for maxRefDepth
