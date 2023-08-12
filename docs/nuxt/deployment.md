@@ -2,6 +2,11 @@
 
 > This section is a work in progress.
 
+Given the amount of steps needed to fully provision a Firebase Project, you can directly use these templates instead:
+
+- [Spark Plan](https://github.com/posva/nuxt--vuefire-example-spark-plan)
+- [Blaze Plan](https://github.com/posva/nuxt--vuefire-example-blaze-plan)
+
 ## Spark plan
 
 The Spark plan is a free plan that enable most of firebase services. With this plan, you want to **prerender your app and deploy it as a static site**. In order to do this, make sure **not to apply the Firebase preset** when bundling your app and to use the `generate` command:
