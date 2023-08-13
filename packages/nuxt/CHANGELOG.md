@@ -1,3 +1,13 @@
+## [0.2.14](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.2.13...nuxt-vuefire@0.2.14) (2023-08-13)
+
+### Bug Fixes
+
+- **nuxt:** use fork of lru-cache ([a11bf4c](https://github.com/vuejs/vuefire/commit/a11bf4cc039468a1251545dfd3cd903c11632eae))
+
+### Features
+
+- **app-check:** disable with emulators and no service account ([76c8b21](https://github.com/vuejs/vuefire/commit/76c8b2117c1af3351c7989d2d07dbfbc2a3fd661))
+
 ## [0.2.13](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.2.12...nuxt-vuefire@0.2.13) (2023-08-01)
 
 ### Bug Fixes
