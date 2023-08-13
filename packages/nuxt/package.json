@@ -37,7 +37,7 @@
   },
   "dependencies": {
     "@nuxt/kit": "^3.6.2",
-    "lru-cache": "^10.0.0",
+    "@posva/lru-cache": "^10.0.1",
     "strip-json-comments": "^5.0.1"
   },
   "peerDependencies": {

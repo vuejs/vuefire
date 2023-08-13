@@ -1,5 +1,5 @@
 import { deleteApp, type FirebaseApp } from 'firebase/app'
-import { LRUCache } from 'lru-cache'
+import { LRUCache } from '@posva/lru-cache'
 import { logger } from '../logging'
 
 // TODO: allow customizing
