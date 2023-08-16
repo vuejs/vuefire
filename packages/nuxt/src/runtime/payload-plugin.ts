@@ -37,17 +37,18 @@ export default definePayloadPlugin(() => {
       typeof data === 'object' &&
       'id' in data &&
       JSON.stringify({
-        id: data.id,
         ...data,
+        id: data.id,
       })
   )
   definePayloadReviver('DocumentData', (data: string) => {
     const parsed = JSON.parse(data)
     // preserve the non-enumerable property
     // we need to delete it first
+    const idValue = parsed.id
     delete parsed.id
     return Object.defineProperty(parsed, 'id', {
-      value: parsed.id,
+      value: idValue,
     })
   })
 })
