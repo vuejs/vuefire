@@ -1,3 +1,9 @@
+## [3.1.15](https://github.com/vuejs/vuefire/compare/vuefire@3.1.14...vuefire@3.1.15) (2023-08-16)
+
+### Bug Fixes
+
+- **rtdb:** use ssrKey if given ([c40d517](https://github.com/vuejs/vuefire/commit/c40d51706deb985600bb3e3e568bef32a572969e))
+
 ## [3.1.14](https://github.com/vuejs/vuefire/compare/vuefire@3.1.13...vuefire@3.1.14) (2023-08-13)
 
 There are no changes in this release.

@@ -1,3 +1,10 @@
+## [0.2.15](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.2.14...nuxt-vuefire@0.2.15) (2023-08-16)
+
+### Bug Fixes
+
+- **admin:** avoid deleting stale apps on get ([1596a52](https://github.com/vuejs/vuefire/commit/1596a528992590ed1acd9f39fd42b840cfbad1cb))
+- correctly preserve id ([f9b0ef5](https://github.com/vuejs/vuefire/commit/f9b0ef52c6aebf0d3ca7108fb85d488116f660d7))
+
 ## [0.2.14](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.2.13...nuxt-vuefire@0.2.14) (2023-08-13)
 
 ### Bug Fixes
