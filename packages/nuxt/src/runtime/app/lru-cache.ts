@@ -12,9 +12,13 @@ export const appCache = new LRUCache<string, FirebaseApp>({
   max: LRU_MAX_INSTANCES,
   ttl: LRU_TTL,
   allowStale: true,
+  // by default the cache deletes the app when getting it and it's stale
+  // which creates errors about using a deleted app
+  noDeleteOnStaleGet: true,
   updateAgeOnGet: true,
-  dispose: (value) => {
-    logger.debug('Deleting Firebase app', value.name)
-    deleteApp(value)
+  updateAgeOnHas: true,
+  dispose: (firebaseApp) => {
+    logger.debug('Deleting Firebase app', firebaseApp.name)
+    deleteApp(firebaseApp)
   },
 })
