@@ -1,3 +1,13 @@
+## [0.2.16](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.2.15...nuxt-vuefire@0.2.16) (2023-08-16)
+
+### Bug Fixes
+
+- **ssr:** apply multiple reducers for complex data ([eb00e3e](https://github.com/vuejs/vuefire/commit/eb00e3edacded285e9272352ea39478c36448a36))
+
+### Features
+
+- **emulators:** allow disabling emulators with env variable ([ce1c02c](https://github.com/vuejs/vuefire/commit/ce1c02c7abfa799a399e112a0116c6f56f53c2de))
+
 ## [0.2.15](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.2.14...nuxt-vuefire@0.2.15) (2023-08-16)
 
 ### Bug Fixes
