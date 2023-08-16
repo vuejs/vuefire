@@ -1,3 +1,139 @@
+## [0.2.16](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.2.15...nuxt-vuefire@0.2.16) (2023-08-16)
+
+### Bug Fixes
+
+- **ssr:** apply multiple reducers for complex data ([eb00e3e](https://github.com/vuejs/vuefire/commit/eb00e3edacded285e9272352ea39478c36448a36))
+
+### Features
+
+- **emulators:** allow disabling emulators with env variable ([ce1c02c](https://github.com/vuejs/vuefire/commit/ce1c02c7abfa799a399e112a0116c6f56f53c2de))
+
+## [0.2.15](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.2.14...nuxt-vuefire@0.2.15) (2023-08-16)
+
+### Bug Fixes
+
+- **admin:** avoid deleting stale apps on get ([1596a52](https://github.com/vuejs/vuefire/commit/1596a528992590ed1acd9f39fd42b840cfbad1cb))
+- correctly preserve id ([f9b0ef5](https://github.com/vuejs/vuefire/commit/f9b0ef52c6aebf0d3ca7108fb85d488116f660d7))
+
+## [0.2.14](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.2.13...nuxt-vuefire@0.2.14) (2023-08-13)
+
+### Bug Fixes
+
+- **nuxt:** use fork of lru-cache ([a11bf4c](https://github.com/vuejs/vuefire/commit/a11bf4cc039468a1251545dfd3cd903c11632eae))
+
+### Features
+
+- **app-check:** disable with emulators and no service account ([76c8b21](https://github.com/vuejs/vuefire/commit/76c8b2117c1af3351c7989d2d07dbfbc2a3fd661))
+
+## [0.2.13](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.2.12...nuxt-vuefire@0.2.13) (2023-08-01)
+
+### Bug Fixes
+
+- **emulators:** activate without enabled option in dev ([c2c7267](https://github.com/vuejs/vuefire/commit/c2c7267953913ee92a09087e6734f24dbc8bb4f3))
+- **emulators:** do not crash without firebase.json file ([e68977b](https://github.com/vuejs/vuefire/commit/e68977bb7e554805358a0203c06148b9defdb58f))
+- **emulators:** pass client side option to hide auth warning ([8424077](https://github.com/vuejs/vuefire/commit/8424077c8817a902a89f026551ba5de712d25c5b))
+- **ssr:** serialize non enumerable id ([fa2778a](https://github.com/vuejs/vuefire/commit/fa2778a51145491240c5f2b6140375ae4b01dc10)), closes [vuejs/vuefire#1398](https://github.com/vuejs/vuefire/issues/1398)
+
+### Features
+
+- **app-check:** allow debug in production with VUEFIRE_APPCHECK_DEBUG ([fd5db49](https://github.com/vuejs/vuefire/commit/fd5db491e2da0e112c5b9d0501b7e63561066642))
+- **emulators:** warn if firebase.json file is missing ([06f7d70](https://github.com/vuejs/vuefire/commit/06f7d70f7056aa0677c2e208126416cb14b9c594))
+
+## [0.2.12](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.2.11...nuxt-vuefire@0.2.12) (2023-07-25)
+
+### Bug Fixes
+
+- **app-check:** avoid picking up variable in prod ([f7b956d](https://github.com/vuejs/vuefire/commit/f7b956da8fd287517c500af92b39e26b846af322))
+
+### Features
+
+- **app-check:** automatically pick up env variable ([ea864a6](https://github.com/vuejs/vuefire/commit/ea864a6b68f509c876d3ec5400b2931c31355d59))
+- **app-check:** warn user against production leak appcheck ([5f140cd](https://github.com/vuejs/vuefire/commit/5f140cdf145e7ea82a1727d36ebec3b7c3f27223))
+
+## [0.2.11](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.2.10...nuxt-vuefire@0.2.11) (2023-07-20)
+
+### Bug Fixes
+
+- **emulators:** activate if emulators is present in config ([c9a5c0e](https://github.com/vuejs/vuefire/commit/c9a5c0e6ba6cbbbe09790939901aeeb364f51a80))
+
+## [0.2.10](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.2.9...nuxt-vuefire@0.2.10) (2023-07-20)
+
+### Bug Fixes
+
+- **emulator:** ensure projectId with Emulators ([7ffdbce](https://github.com/vuejs/vuefire/commit/7ffdbce403397afacab9a3ec6e0c4283acfa2e7c))
+
+## [0.2.9](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.2.8...nuxt-vuefire@0.2.9) (2023-07-20)
+
+### Features
+
+- **emulators:** allow passing options to auth ([9f5fc27](https://github.com/vuejs/vuefire/commit/9f5fc27ab9382907b96d197318ea961dcd8c87aa))
+- **emulators:** improve warning for missing host ([c076c1b](https://github.com/vuejs/vuefire/commit/c076c1bd0e45cec91f1c9059be61e23b7d62efce))
+- **emulator:** work without a service account ([6b34f36](https://github.com/vuejs/vuefire/commit/6b34f3683d550b8083514645128ba0106c833d48))
+
+## [0.2.8](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.2.7...nuxt-vuefire@0.2.8) (2023-07-20)
+
+### Bug Fixes
+
+- **emulator:** missing storage ([bfd93bc](https://github.com/vuejs/vuefire/commit/bfd93bc5112d6fc541023326cc0f6b5825febd5d))
+
+### Features
+
+- add emulators support ([7f86fa7](https://github.com/vuejs/vuefire/commit/7f86fa7e4f7df10336be120e456e7a56cdf0f02d))
+- avoid enabling auth emulator without auth ([6ee1c49](https://github.com/vuejs/vuefire/commit/6ee1c49df234a5b86311421239a12fe496a75b4d))
+- **emulators:** extra logs to warn user ([728f811](https://github.com/vuejs/vuefire/commit/728f8112cf64f23c0aee3a8256e5d6963cc4d950))
+- **logs:** use consola for logs ([f802558](https://github.com/vuejs/vuefire/commit/f8025587aaf3ba4d533ea2d1768d1d96c6799662))
+
+## [0.2.7](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.2.6...nuxt-vuefire@0.2.7) (2023-07-16)
+
+### Bug Fixes
+
+- **auth:** only apply ssr modules when needed ([671f973](https://github.com/vuejs/vuefire/commit/671f973edd83560e781fd94e89c78ac6748ce847)), closes [vuejs/vuefire#1389](https://github.com/vuejs/vuefire/issues/1389)
+
+## [0.2.6](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.2.5...nuxt-vuefire@0.2.6) (2023-07-13)
+
+### Bug Fixes
+
+- **api:** mutualize admin sdk initialization ([4169e8d](https://github.com/vuejs/vuefire/commit/4169e8d534129f78df6bf04025447913919a870c))
+
+## [0.2.5](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.2.4...nuxt-vuefire@0.2.5) (2023-07-13)
+
+### Bug Fixes
+
+- **auth:** correct verification of token id ([fd2050b](https://github.com/vuejs/vuefire/commit/fd2050b2c62465e554df16937aeecb4ce0c5e8bf))
+- **ssr:** create user only with auth activated ([078c3ac](https://github.com/vuejs/vuefire/commit/078c3ac9563e5e9788036cc717c4f458a4d9193c))
+
+### Features
+
+- **warn:** doc to docs ([3eec751](https://github.com/vuejs/vuefire/commit/3eec751b31d7e6bc6c6c98cd39d54fa3f775e3b5))
+
+## [0.2.4](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.2.3...nuxt-vuefire@0.2.4) (2023-07-13)
+
+This release contains no changes.
+
+## [0.2.3](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.2.2...nuxt-vuefire@0.2.3) (2023-07-13)
+
+### Bug Fixes
+
+- **auth:** authenticated requests on server ([617edfe](https://github.com/vuejs/vuefire/commit/617edfe8653c22c5e4baaa8d148ff81049bbdf05)), closes [#1310](https://github.com/vuejs/vuefire/issues/1310)
+- up compatibility requirement ([04795b0](https://github.com/vuejs/vuefire/commit/04795b0613b6ce342c239d36edcf6bffe2e50e0b))
+
+## [0.2.2](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.2.1...nuxt-vuefire@0.2.2) (2023-07-12)
+
+### Features
+
+- **ssr:** revive TimeStamp and GeoPoint ([deb2fab](https://github.com/vuejs/vuefire/commit/deb2fabb355c1ffcc8acccfb39784f114e497e6d))
+- support firebase 10 ([3f9853b](https://github.com/vuejs/vuefire/commit/3f9853bfedad80a415c5bff2d96697ca1b2aa199)), closes [#1385](https://github.com/vuejs/vuefire/issues/1385)
+
+## [0.2.1](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.2.0...nuxt-vuefire@0.2.1) (2023-07-10)
+
+### Bug Fixes
+
+- **auth:** avoid errors when user is logged out ([238fd65](https://github.com/vuejs/vuefire/commit/238fd65b06a4727c72e793fbe3fe39105262873f))
+
+### Features
+
+- **ssr:** handles TimeStamps ([9559e71](https://github.com/vuejs/vuefire/commit/9559e71b307fcc60545b9dd9b4d8d0ee47d3894a))
+
 # [0.2.0](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.1.6...nuxt-vuefire@0.2.0) (2023-07-07)
 
 ### Bug Fixes

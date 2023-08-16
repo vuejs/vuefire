@@ -1,5 +1,5 @@
 <template>
-  <div class="tab-container" :id="id">
+  <div class="tab-container vp-adaptive-theme" :id="id">
     <nav ref="nav">
       <button
         :id="id + '_rtdb'"
@@ -88,13 +88,6 @@ export default {
 </script>
 
 <style>
-:root {
-  --code-bg-color-lighter: #323232;
-  --code-bg-color-lightest: #616161;
-}
-</style>
-
-<style>
 .tab-container > nav {
   display: flex;
   align-items: flex-end;
@@ -123,7 +116,7 @@ export default {
   border-bottom: none;
   /* filter: brightness(1.1); */
   /* background-color: lighten(var(--code-bg-color), 10%); */
-  background-color: var(--code-bg-color-lighter);
+  background-color: var(--vp-code-copy-code-hover-bg);
 }
 
 .tab-container > nav > button svg {
@@ -153,7 +146,7 @@ export default {
 .tab-container > nav > button:not([disabled]):not(.is-selected):hover {
   cursor: pointer;
   /* background-color: lighten(var(--code-bg-color), 30%); */
-  background-color: var(--code-bg-color-lightest);
+  background-color: var(--vp-code-copy-code-hover-bg);
   /* filter: brightness(1.3); */
 }
 

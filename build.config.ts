@@ -29,6 +29,7 @@ export default defineBuildConfig({
     'firebase-admin/auth',
     'firebase-functions',
     'firebase-functions/params',
+    'consola',
   ],
 
   rollup: {

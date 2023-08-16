@@ -9,7 +9,7 @@ import {
 import { type App, ref } from 'vue-demi'
 import { AppCheckMap, AppCheckTokenInjectSymbol } from '../app-check'
 import { getGlobalScope } from '../globals'
-import { log } from './logging'
+import { logger } from './logging'
 
 /**
  * Adds AppCheck using the Firebase Admin SDK. This is necessary on the Server if you have configured AppCheck on the
@@ -38,11 +38,13 @@ export function VueFireAppCheckServer(
 
   // FIXME: do we need to avoid creating the appcheck instance on the server?
   if (AppCheckMap.has(firebaseApp)) {
-    log('info', 'AppCheck already initialized, skipping server initialization.')
+    logger.debug(
+      'AppCheck already initialized, skipping server initialization.'
+    )
     return
   }
 
-  console.log('[VueFire]: Initializing AppCheck on the server')
+  logger.debug('Initializing AppCheck on the server')
 
   let currentToken: AppCheckToken | undefined
   const appCheck = initializeAppCheck(firebaseApp, {
@@ -50,23 +52,19 @@ export function VueFireAppCheckServer(
       getToken: () => {
         // FIXME: without this there is an infinite loop
         if (currentToken) {
-          log('info', 'Using cached AppCheck token on server.')
+          logger.debug('Using cached AppCheck token on server.')
           return Promise.resolve(currentToken)
         }
-        log('info', 'Getting Admin AppCheck')
+        logger.debug('Getting Admin AppCheck')
         const adminAppCheck = getAdminAppCheck(adminApp)
         // NOTE: appId is checked on the module
-        log(
-          'info',
-          `Getting creating token for app ${firebaseApp.options.appId!}.`
-        )
+        logger.debug(`Creating token for app ${firebaseApp.options.appId!}.`)
 
         return adminAppCheck
           .createToken(firebaseApp.options.appId!, { ttlMillis })
           .then(({ token, ttlMillis: expireTimeMillis }) => {
-            log(
-              'info',
-              `Got AppCheck token from the server: ${token}, expires in ${expireTimeMillis}ms.`
+            logger.debug(
+              `Got AppCheck token from the server, expires in ${expireTimeMillis}ms.`
             )
             // expire the token after the ttl
             // TODO: verify this is okay
@@ -81,8 +79,7 @@ export function VueFireAppCheckServer(
             return currentToken
           })
           .catch((reason) => {
-            log(
-              'error',
+            logger.error(
               'Error getting AppCheck token from the server:',
               reason
             )

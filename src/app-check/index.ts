@@ -25,7 +25,7 @@ export function useAppCheckToken() {
 export interface VueFireAppCheckOptions extends AppCheckOptions {
   /**
    * Setups the debug token global. See https://firebase.google.com/docs/app-check/web/debug-provider. Note you should
-   * set to false in production (or not set it at all). It can be set to a string to force a specific token.
+   * set to false in production (or not set it at all). It can be set to a string to force a specific debug token.
    */
   debug?: boolean | string
 }
@@ -67,21 +67,20 @@ export function VueFireAppCheck(options: VueFireAppCheckOptions) {
   }
 }
 
+// TODO: remove this as getAppCheck() already kinda does this
 /**
  * To retrieve the current app check
  * @internal
  */
 export const AppCheckMap = new WeakMap<FirebaseApp, AppCheck>()
 
-// TODO: this should be available on the server too
 /**
- * Retrieves the Firebase App Check instance. Note this is only available on the client and will be `undefined` on the
- * server.
+ * Retrieves the Firebase App Check instance.
  *
  * @param name - name of the application
  */
 export function useAppCheck(name?: string) {
-  return AppCheckMap.get(useFirebaseApp(name))
+  return AppCheckMap.get(useFirebaseApp(name))!
 }
 
 /**

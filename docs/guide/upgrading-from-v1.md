@@ -8,7 +8,7 @@ If you didn't follow during the alpha releases, **no worries**, you can easily c
 
 ## Renamed import for the _RTDB_
 
-Because we support both _RTDB_ and _Firestore_, there are now named exports instead of one single _default_ export. The injected methods `$firestoreBind` and `$firestoreUnbind` are now reserved by default to _Firestore_, but [this can also be customized](https://vuefire.vuejs.org/api/vuefire.html#rtdbplugin).
+Because we support both _RTDB_ and _Firestore_, there are now named exports instead of one single _default_ export. The injected methods `$firestoreBind` and `$firestoreUnbind` are now reserved by default to _Firestore_, but [this can also be customized](../api/modules/vuefire.html#rtdbPlugin).
 
 ```diff
 import Vue from 'vue'

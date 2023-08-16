@@ -27,7 +27,7 @@ When adapting `serialize`/`converter` or using `.withConverter()`, **you need to
 <FirebaseExample>
 
 ```ts
-import { databaseDefaultSerializer } from 'vuefire'
+import { databaseDefaultSerializer, globalDatabaseOptions } from 'vuefire'
 
 globalDatabaseOptions.serialize = (snapshot) => {
   const data = databaseDefaultSerializer(snapshot)
@@ -38,7 +38,7 @@ globalDatabaseOptions.serialize = (snapshot) => {
 ```
 
 ```ts
-import { firestoreDefaultConverter } from 'vuefire'
+import { firestoreDefaultConverter, globalFirestoreOptions } from 'vuefire'
 
 globalFirestoreOptions.converter = {
   // the default converter just returns the data: (data) => data

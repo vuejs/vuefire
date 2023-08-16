@@ -1,7 +1,7 @@
 {
   "name": "nuxt-vuefire",
   "description": "Nuxt.js module for VueFire",
-  "version": "0.2.0",
+  "version": "0.2.16",
   "license": "MIT",
   "type": "module",
   "exports": {
@@ -11,10 +11,9 @@
       "require": "./dist/module.cjs"
     },
     "./templates/*": "./templates/*",
-    "./runtime": {
-      "types": "./dist/runtime/index.d.ts",
-      "import": "./dist/runtime/index.mjs",
-      "require": "./dist/runtime/index.mjs"
+    "./runtime/*": {
+      "types": "./dist/runtime/*",
+      "import": "./dist/runtime/*"
     }
   },
   "main": "./dist/module.cjs",
@@ -38,14 +37,15 @@
   },
   "dependencies": {
     "@nuxt/kit": "^3.6.2",
-    "lru-cache": "^10.0.0"
+    "@posva/lru-cache": "^10.0.1",
+    "strip-json-comments": "^5.0.1"
   },
   "peerDependencies": {
     "@firebase/app-types": ">=0.8.1",
-    "firebase": "^9.0.0",
+    "firebase": "^9.0.0 || ^10.0.0",
     "firebase-admin": "^11.3.0",
     "firebase-functions": "^4.1.0",
-    "vuefire": ">=3.1.1"
+    "vuefire": ">=3.1.15"
   },
   "peerDependenciesMeta": {
     "@firebase/app-types": {
@@ -64,7 +64,7 @@
     "@nuxt/schema": "^3.6.2",
     "@nuxtjs/eslint-config-typescript": "^12.0.0",
     "eslint": "^8.44.0",
-    "firebase": "^9.23.0",
+    "firebase": "^10.0.0",
     "firebase-admin": "^11.9.0",
     "firebase-functions": "^4.4.1",
     "nuxt": "^3.6.2",

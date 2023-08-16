@@ -1,15 +1,12 @@
 {
   "functions": {
+    "runtime": "nodejs18",
     "source": ".output/server"
   },
   "hosting": {
     "public": ".output/public",
     "cleanUrls": true,
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
-    ],
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
     "rewrites": [
       {
         "source": "**",
@@ -28,19 +25,28 @@
     "rules": "storage.rules"
   },
   "emulators": {
+    "auth": {
+      "host": "127.0.0.1",
+      "port": 9099
+    },
     "functions": {
+      "host": "127.0.0.1",
       "port": 5001
     },
     "firestore": {
+      "host": "127.0.0.1",
       "port": 8080
     },
     "database": {
-      "port": 9050
+      "host": "127.0.0.1",
+      "port": 8081
     },
     "hosting": {
+      "host": "127.0.0.1",
       "port": 5050
     },
     "storage": {
+      "host": "127.0.0.1",
       "port": 9199
     },
     "ui": {

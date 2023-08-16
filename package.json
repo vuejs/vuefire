@@ -1,10 +1,10 @@
 {
   "name": "vuefire",
-  "version": "3.1.1",
+  "version": "3.1.15",
   "description": "Official Firebase bindings for Vue.js",
   "packageManager": "pnpm@8.6.6",
   "engines": {
-    "node": "18"
+    "node": ">=18"
   },
   "volta": {
     "node": "18.16.1"
@@ -51,7 +51,7 @@
     "test:unit": "vitest --coverage",
     "firebase:emulators": "firebase emulators:start",
     "test:dev": "vitest",
-    "test": "pnpm run lint && pnpm run test:types && pnpm run build && pnpm run test:unit run"
+    "test": "pnpm run lint && pnpm run test:types && pnpm run build && pnpm run -C packages/nuxt build && pnpm run test:unit run"
   },
   "keywords": [
     "vue",
@@ -67,7 +67,8 @@
     "vue-demi": "latest"
   },
   "peerDependencies": {
-    "firebase": "^9.0.0",
+    "consola": "^3.2.3",
+    "firebase": "^9.0.0 || ^10.0.0",
     "vue": "^2.7.0 || ^3.2.0"
   },
   "peerDependenciesMeta": {
@@ -76,6 +77,9 @@
     },
     "@vue/composition-api": {
       "optional": true
+    },
+    "consola": {
+      "optional": true
     }
   },
   "devDependencies": {
@@ -83,24 +87,25 @@
     "@vue/runtime-core": "^3.3.4",
     "@vue/test-utils": "^2.4.0",
     "chalk": "^5.3.0",
+    "consola": "^3.2.3",
     "conventional-changelog-cli": "^2.0.34",
     "enquirer": "^2.3.6",
     "execa": "^7.1.1",
-    "firebase": "^9.23.0",
+    "firebase": "^10.0.0",
     "firebase-admin": "^11.9.0",
     "focus-visible": "^5.2.0",
     "globby": "^13.2.2",
-    "happy-dom": "^10.0.3",
+    "happy-dom": "^10.1.1",
     "lint-staged": "^13.2.3",
     "minimist": "^1.2.8",
     "p-series": "^3.0.0",
     "prettier": "^2.8.8",
-    "semver": "^7.5.3",
+    "semver": "^7.5.4",
     "typedoc": "^0.24.8",
-    "typedoc-plugin-markdown": "^3.15.3",
+    "typedoc-plugin-markdown": "^3.15.4",
     "typescript": "~5.1.6",
     "unbuild": "^1.2.1",
-    "vitepress": "1.0.0-beta.5",
+    "vitepress": "1.0.0-beta.7",
     "vitest": "^0.33.0",
     "vue": "^3.3.4",
     "yorkie": "^2.0.0"

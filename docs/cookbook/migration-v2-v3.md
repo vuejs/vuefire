@@ -17,17 +17,17 @@ Terms starting with _rtdb_ are now prefixed with _database_ to match the Firebas
 
 The `firestorePlugin` and `rtdbPlugin` are now deprecated in favor of _modules_. They are still available but will be removed in the next major version. You should use `VueFire`, `VueFireFirestoreOptionsAPI` and `VueFireDatabaseOptionsAPI` instead:
 
-```diff
+```ts
  const app = createApp({})
 
  // for firestore
--app.use(firestorePlugin)
-+app.use(VueFire, { modules: [VueFireFirestoreOptionsAPI] })
+app.use(firestorePlugin, options) // [!code --]
+app.use(VueFire, { modules: [VueFireFirestoreOptionsAPI(options)] }) // [!code ++]
 
  // for database
--app.use(rtdbPlugin)
-+app.use(VueFire, { modules: [VueFireDatabaseOptionsAPI] })
-````
+app.use(rtdbPlugin, options) // [!code --]
+app.use(VueFire, { modules: [VueFireDatabaseOptionsAPI(options)] }) // [!code ++]
+```
 
 ## Breaking changes
 

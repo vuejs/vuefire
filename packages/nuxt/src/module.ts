@@ -1,3 +1,6 @@
+/**
+ * @module nuxt-vuefire
+ */
 import { fileURLToPath } from 'node:url'
 import { normalize } from 'node:path'
 import {
@@ -9,75 +12,37 @@ import {
   defineNuxtModule,
 } from '@nuxt/kit'
 // cannot import from firebase/app because the build fails, maybe a nuxt bug?
-import type { FirebaseApp, FirebaseOptions } from '@firebase/app-types'
-import type {
-  AppOptions,
-  ServiceAccount,
-  App as FirebaseAdminApp,
-} from 'firebase-admin/app'
+import type { FirebaseApp, FirebaseOptions } from 'firebase/app'
+import type { App as FirebaseAdminApp } from 'firebase-admin/app'
 import { markRaw } from 'vue'
-import type { NuxtVueFireAppCheckOptions } from './runtime/app-check'
-import { addMissingAlias } from './firebaseAliases'
-import { log } from './runtime/logging'
+import { consola } from 'consola'
+import {
+  VueFireNuxtModuleOptions,
+  VueFireNuxtModuleOptionsResolved,
+} from './module/options'
+import {
+  FirebaseEmulatorsToEnable,
+  detectEmulators,
+  willUseEmulators,
+} from './module/emulators'
 
-export interface VueFireNuxtModuleOptions {
-  /**
-   * Should we add the `VueFireFirestoreOptionsAPI` and `VueFireRealtimeDatabaseOptionsAPI` modules?. Pass `true` to add
-   * both, or `'firestore'` or `'realtime-database'` to add only one. Pass false to disable.
-   * @default false
-   */
-  optionsApiPlugin?: boolean | 'firestore' | 'database'
-
-  /**
-   * Firebase Options passed to `firebase/app`'s `initializeApp()`.
-   */
-  config?: FirebaseOptions
-
-  /**
-   * Firebase Admin Options.
-   */
-  admin?: {
-    /**
-     * Firebase Admin Options passed to `firebase-admin`'s `initializeApp()`. Required if you are using the auth, or the
-     * app-check module.
-     */
-    options?: Omit<AppOptions, 'credential'>
-
-    // TODO: remove, use env variables instead
-    /**
-     * Firebase Admin Service Account passed to `firebase-admin`'s `initializeApp()`. Required if you are adding an
-     * adminConfig.
-     * @deprecated use GOOGLE_APPLICATION_CREDENTIALS env variable instead with the service-account JSON content
-     */
-    serviceAccount?: string | ServiceAccount
-  }
-
-  /**
-   * Enables AppCheck on the client and server. Note you only need to pass the options for the client, on the server,
-   * the configuration will be handled automatically.
-   */
-  appCheck?: NuxtVueFireAppCheckOptions
-
-  /**
-   * Enables Authentication
-   */
-  auth?: boolean
-}
+const logger = consola.withTag('nuxt-vuefire module')
 
 export default defineNuxtModule<VueFireNuxtModuleOptions>({
   meta: {
     name: 'vuefire',
     configKey: 'vuefire',
     compatibility: {
-      nuxt: '^3.0.0',
+      nuxt: '^3.1.0',
     },
   },
 
   defaults: {
     optionsApiPlugin: false,
+    emulators: { enabled: true },
   },
 
-  setup(options, nuxt) {
+  async setup(options, nuxt) {
     // ensure provided options are valid
     if (!options.config) {
       throw new Error(
@@ -93,6 +58,30 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
     // Let plugins and the user access the firebase config within the app
     nuxt.options.appConfig.firebaseConfig = markRaw(options.config)
     nuxt.options.appConfig.vuefireOptions = markRaw(options)
+
+    nuxt.options.runtimeConfig.vuefire = {
+      options: {
+        ...options,
+        // ensure the resolved version easier to consume
+        emulators: {
+          enabled:
+            typeof options.emulators === 'object'
+              ? options.emulators.enabled ?? true // allows user to comment out enabled: false
+              : !!options.emulators,
+          ...(typeof options.emulators === 'object' ? options.emulators : {}),
+        },
+      },
+    }
+
+    // we need this to avoid some warnings about missing credentials and ssr
+    const emulatorsConfig = await willUseEmulators(
+      nuxt.options.runtimeConfig.vuefire.options!,
+      resolve(nuxt.options.rootDir, 'firebase.json'),
+      logger
+    )
+
+    // to handle TimeStamp and GeoPoints objects
+    addPlugin(resolve(runtimeDir, 'payload-plugin'))
 
     nuxt.options.build.transpile.push(runtimeDir)
     nuxt.options.build.transpile.push(templatesDir)
@@ -122,27 +111,83 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
     // NOTE: the order of the plugins is reversed, so we end by adding the app plugin which is used by all other
     // plugins
 
+    if (options.appCheck) {
+      if (!process.env.GOOGLE_APPLICATION_CREDENTIALS && emulatorsConfig) {
+        logger.info(
+          'Disabling App Check in the context of emulators as no "GOOGLE_APPLICATION_CREDENTIALS" env variable was defined.'
+        )
+      } else {
+        if (
+          process.env.FIREBASE_APPCHECK_DEBUG_TOKEN &&
+          // only use the debug token if the user explicitly set debug to true or if nothing was provided and we are not in production
+          (options.appCheck.debug === true ||
+            // allow a manual override from the console before bundling
+            process.env.VUEFIRE_APPCHECK_DEBUG ||
+            (options.appCheck.debug == null &&
+              process.env.NODE_ENV !== 'production'))
+        ) {
+          logger.debug(
+            `Using app check debug token from env variable "${process.env.FIREBASE_APPCHECK_DEBUG_TOKEN}"`
+          )
+          if (process.env.NODE_ENV === 'production' && options.appCheck.debug) {
+            logger.warn(
+              'You are using a debug token in production, DO NOT DEPLOY THIS BUILD. If you do, you will leak your debug app check token.'
+            )
+          }
+          options.appCheck.debug = process.env.FIREBASE_APPCHECK_DEBUG_TOKEN
+        } else if (emulatorsConfig) {
+          logger.debug('Detected Emulators environment, using debug App Check')
+          options.appCheck.debug ??= true
+        }
+
+        addPlugin(resolve(runtimeDir, 'app-check/plugin.client'))
+        // TODO: With emulators a different plugin should be used, one that doesn't instantiate app check as it will error on the server anyway
+        if (hasServiceAccount || emulatorsConfig) {
+          // this is needed by the api endpoint to properly work if no service account is provided, otherwise, the projectId is within the service account
+          addPlugin(resolve(runtimeDir, 'app-check/plugin.server'))
+        } else if (nuxt.options.ssr && !emulatorsConfig) {
+          logger.warn(
+            'You activated both SSR and app-check but you are not providing a service account for the admin SDK. See https://vuefire.vuejs.org/nuxt/getting-started.html#configuring-the-admin-sdk.'
+          )
+        }
+      }
+    }
+
     if (options.auth) {
-      if (nuxt.options.ssr && !hasServiceAccount) {
-        log(
-          'warn',
-          'You activated both SSR and auth but you are not providing an admin config. If you render or prerender any page using auth, you will get an error. In that case, provide an admin config to the nuxt-vuefire module.'
+      if (nuxt.options.ssr && !hasServiceAccount && !emulatorsConfig) {
+        logger.warn(
+          'You activated both SSR and auth but you are not providing a service account for the admin SDK. See https://vuefire.vuejs.org/nuxt/getting-started.html#configuring-the-admin-sdk.'
         )
       }
 
-      // Add the session handler than mints a cookie for the user
-      if (nuxt.options.ssr && hasServiceAccount) {
+      // this adds the VueFire plugin and handle SSR state serialization and hydration
+      addPluginTemplate({
+        src: normalize(resolve(templatesDir, 'plugin.ejs')),
+
+        options: {
+          ...options,
+          ssr: nuxt.options.ssr,
+        },
+      })
+
+      if (
+        options.auth &&
+        nuxt.options.ssr &&
+        (hasServiceAccount || emulatorsConfig)
+      ) {
+        // Add the session handler than mints a cookie for the user
         addServerHandler({
           route: '/api/__session',
-          handler: resolve(runtimeDir, './auth/api.session'),
+          handler: resolve(runtimeDir, './auth/api.session-verification'),
         })
 
         // must be added after (which means before in code) the plugin module
         addPlugin(resolve(runtimeDir, 'auth/plugin-mint-cookie.client'))
       }
 
+      // hydrates the user if any
       addPlugin(resolve(runtimeDir, 'auth/plugin.client'))
-      // must be added after the admin module to use the admin app
+      // loads the user on the current app
       addPlugin(resolve(runtimeDir, 'auth/plugin.server'))
 
       addVueFireImports([
@@ -159,29 +204,36 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
       ])
     }
 
-    if (options.appCheck) {
-      addPlugin(resolve(runtimeDir, 'app-check/plugin.client'))
-      // TODO: ensure this is the only necessary check. Maybe we need to check if server
-      if (hasServiceAccount) {
-        addPlugin(resolve(runtimeDir, 'app-check/plugin.server'))
-      } else if (nuxt.options.ssr) {
-        log(
-          'warn',
-          'You activated both SSR and app-check but you are not providing an admin config. If you render or prerender any page using app-check, you will get an error. In that case, provide an admin config to the nuxt-vuefire module.'
-          // TODO: link about how to provide admin credentials
-        )
+    // Emulators must be enabled after the app is initialized but before some APIs like auth.signinWithCustomToken() are called
+
+    if (emulatorsConfig) {
+      const emulators = detectEmulators(
+        nuxt.options.runtimeConfig.vuefire.options!,
+        emulatorsConfig,
+        logger
+      )
+      // add the option to disable the warning. It only exists in Auth
+      if (emulators?.auth) {
+        emulators.auth.options =
+          nuxt.options.runtimeConfig.vuefire.options?.emulators?.auth?.options
+      }
+
+      // expose the detected emulators to the plugins
+      nuxt.options.runtimeConfig.public.vuefire ??= {}
+      nuxt.options.runtimeConfig.public.vuefire.emulators = emulators
+
+      for (const serviceName in emulators) {
+        const { host, port } = emulators[serviceName as keyof typeof emulators]
+        // set the env variables so they are picked up automatically by the admin SDK
+        process.env[
+          serviceName === 'firestore'
+            ? 'FIRESTORE_EMULATOR_HOST'
+            : `FIREBASE_${serviceName.toUpperCase()}_EMULATOR_HOST`
+        ] = `${host}:${port}`
+        logger.info(`Enabling ${serviceName} emulator at ${host}:${port}`)
+        addPlugin(resolve(runtimeDir, `emulators/${serviceName}.plugin`))
       }
     }
-
-    // this adds the VueFire plugin and handle SSR state serialization and hydration
-    addPluginTemplate({
-      src: normalize(resolve(templatesDir, 'plugin.ejs')),
-
-      options: {
-        ...options,
-        ssr: nuxt.options.ssr,
-      },
-    })
 
     // adds the firebase app to each application
     addPlugin(resolve(runtimeDir, 'app/plugin.client'))
@@ -190,23 +242,26 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
     // we start the admin app before the regular app so we can have access to the user uid everywhere
     if (options.admin || nuxt.options.ssr) {
       if (!nuxt.options.ssr) {
-        log(
-          'warn',
+        logger.warn(
           'The "admin" option is only used during SSR. You should reenable SSR to use it or remove it if you are not doing SSR or SSG.'
         )
       }
 
-      // TODO: remove this runtime config if it's not needed as it could include sensitive data
-      if (options.admin) {
-        nuxt.options.appConfig.firebaseAdmin = markRaw(options.admin)
-      }
-
-      if (hasServiceAccount) {
-        // this plugin adds the user so it's accessible directly in the app as well
+      if (hasServiceAccount || emulatorsConfig) {
         if (options.auth) {
-          addPlugin(resolve(runtimeDir, 'admin/plugin-auth-user.server'))
+          // decodes user token from cookie if any
+          addPlugin(resolve(runtimeDir, 'auth/plugin-user-token.server'))
         }
+
+        // injects firebaseAdminApp
         addPlugin(resolve(runtimeDir, 'admin/plugin.server'))
+
+        // We need the projectId to be explicitly set for the admin SDK to work
+        if (emulatorsConfig) {
+          options.admin ??= {}
+          options.admin.options ??= {}
+          options.admin.options.projectId ??= options.config.projectId
+        }
       }
     }
 
@@ -286,26 +341,55 @@ export type {
   NuxtVueFireAppCheckOptionsReCaptchaEnterprise,
 } from './runtime/app-check'
 
-declare module '@nuxt/schema' {
-  export interface AppConfig {
-    /**
-     * Firebase config to initialize the app.
-     * @internal
-     */
-    firebaseConfig: FirebaseOptions
+/**
+ * Type Extensions
+ */
 
+/**
+ * Augments the Nuxt Runtime Config with the VueFire module options.
+ */
+interface VueFireRuntimeConfig {
+  /**
+   * Runtime config for the VueFire module.
+   */
+  vuefire?: {
     /**
-     * VueFireNuxt options used within plugins.
+     * Options passed to the Nuxt VueFire module
      * @internal
      */
-    vuefireOptions: Pick<VueFireNuxtModuleOptions, 'appCheck' | 'auth'>
-
-    /**
-     * Firebase Admin options passed to VueFire module. Only available on the server.
-     * @internal
-     */
-    firebaseAdmin?: VueFireNuxtModuleOptions['admin']
+    options?: VueFireNuxtModuleOptionsResolved
   }
+}
+
+interface VueFirePublicRuntimeConfig {
+  vuefire?: {
+    /**
+     * Emulators to enable.
+     *
+     * @internal
+     */
+    emulators?: FirebaseEmulatorsToEnable
+  }
+}
+
+interface VueFireAppConfig {
+  /**
+   * Firebase config to initialize the app.
+   * @internal
+   */
+  firebaseConfig: FirebaseOptions
+
+  /**
+   * VueFireNuxt options used within plugins.
+   * @internal
+   */
+  vuefireOptions: Pick<VueFireNuxtModuleOptions, 'appCheck' | 'auth'>
+}
+
+declare module '@nuxt/schema' {
+  export interface AppConfig extends VueFireAppConfig {}
+  export interface RuntimeConfig extends VueFireRuntimeConfig {}
+  export interface PublicRuntimeConfig extends VueFirePublicRuntimeConfig {}
 }
 
 // @ts-ignore: #app not found error when building

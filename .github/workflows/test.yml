@@ -77,4 +77,8 @@ jobs:
       - name: Build
         run: pnpm run build
 
+      - name: Nuxt module build
+        working-directory: ./packages/nuxt
+        run: pnpm run build
+
       - uses: codecov/codecov-action@v2

@@ -140,7 +140,11 @@ export function _useDatabaseRef(
 
   // only add the first promise to the pending ones
   if (initialSourceValue) {
-    removePendingPromise = addPendingPromise(promise.value, initialSourceValue)
+    removePendingPromise = addPendingPromise(
+      promise.value,
+      initialSourceValue,
+      options.ssrKey
+    )
   }
 
   if (hasCurrentScope) {

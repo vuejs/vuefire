@@ -7,6 +7,24 @@ export default defineNuxtConfig({
     layoutTransition: false,
   },
 
+  devtools: {
+    enabled: true,
+  },
+
+  nitro: {
+    preset: fileURLToPath(new URL('./preset', import.meta.url)),
+    // preset: 'nitro-preset-firebase',
+    runtimeConfig: {
+      firebase: {
+        functions: {
+          httpsOptions: {
+            region: 'europe-west1',
+          },
+        },
+      },
+    },
+  },
+
   alias: {
     // import the dev version directly
     'vuefire/server': fileURLToPath(
@@ -28,6 +46,17 @@ export default defineNuxtConfig({
           isTokenAutoRefreshEnabled: true,
           provider: 'ReCaptchaV3',
           key: '6LfJ0vgiAAAAAHheQE7GQVdG_c9m8xipBESx_SKI',
+        },
+
+        emulators: {
+          enabled: true,
+
+          auth: {
+            options: {
+              // removes the HTML footer and console warning
+              disableWarnings: process.env.NODE_ENV === 'development',
+            },
+          },
         },
 
         config: {

@@ -1,3 +1,87 @@
+## [3.1.15](https://github.com/vuejs/vuefire/compare/vuefire@3.1.14...vuefire@3.1.15) (2023-08-16)
+
+### Bug Fixes
+
+- **rtdb:** use ssrKey if given ([c40d517](https://github.com/vuejs/vuefire/commit/c40d51706deb985600bb3e3e568bef32a572969e))
+
+## [3.1.14](https://github.com/vuejs/vuefire/compare/vuefire@3.1.13...vuefire@3.1.14) (2023-08-13)
+
+There are no changes in this release.
+
+## [3.1.13](https://github.com/vuejs/vuefire/compare/vuefire@3.1.12...vuefire@3.1.13) (2023-08-01)
+
+### Bug Fixes
+
+- **app-check:** app-check is actually defined on server too ([359f9d0](https://github.com/vuejs/vuefire/commit/359f9d0014dc35e4b37506db99fd9848204b22a4))
+- **firestore:** set pending on queries ([61513f6](https://github.com/vuejs/vuefire/commit/61513f68e9be84887ff716ae83cbb7c390844cd8)), closes [vuejs/vuefire#1317](https://github.com/vuejs/vuefire/issues/1317)
+
+## [3.1.12](https://github.com/vuejs/vuefire/compare/vuefire@3.1.11...vuefire@3.1.12) (2023-07-25)
+
+### Features
+
+- **app-check:** automatically pick up env variable ([ea864a6](https://github.com/vuejs/vuefire/commit/ea864a6b68f509c876d3ec5400b2931c31355d59))
+
+## [3.1.11](https://github.com/vuejs/vuefire/compare/vuefire@3.1.10...vuefire@3.1.11) (2023-07-20)
+
+### Features
+
+- **server:** improve logs ([5ab3e2e](https://github.com/vuejs/vuefire/commit/5ab3e2ee6a5b2627788e9f401dfee90af0aecb0c))
+
+## [3.1.10](https://github.com/vuejs/vuefire/compare/vuefire@3.1.9...vuefire@3.1.10) (2023-07-20)
+
+This release contains no code changes.
+
+## [3.1.9](https://github.com/vuejs/vuefire/compare/vuefire@3.1.8...vuefire@3.1.9) (2023-07-20)
+
+### Features
+
+- expose devalue transformers ([7c1ce18](https://github.com/vuejs/vuefire/commit/7c1ce185f2cec5a6b4a2c60b86d2b0c9fdd06211))
+- **logs:** use consola for logs ([f802558](https://github.com/vuejs/vuefire/commit/f8025587aaf3ba4d533ea2d1768d1d96c6799662))
+- **logs:** use debug instead of info ([56eabc8](https://github.com/vuejs/vuefire/commit/56eabc8ca3963688c34f05d8da9bf421581b7fa9))
+
+## [3.1.8](https://github.com/vuejs/vuefire/compare/vuefire@3.1.7...vuefire@3.1.8) (2023-07-16)
+
+### Features
+
+- use const name for admin apps ([6f539d4](https://github.com/vuejs/vuefire/commit/6f539d49e8f90df9b542dbfd984bedf80595ba8f))
+
+## [3.1.7](https://github.com/vuejs/vuefire/compare/vuefire@3.1.6...vuefire@3.1.7) (2023-07-13)
+
+- Deprecated undocumented `decodeUserToken()` in favor of `decodeSessionCookie()`
+
+## [3.1.6](https://github.com/vuejs/vuefire/compare/vuefire@3.1.5...vuefire@3.1.6) (2023-07-13)
+
+### Bug Fixes
+
+- **auth:** correct verification of token id ([fd2050b](https://github.com/vuejs/vuefire/commit/fd2050b2c62465e554df16937aeecb4ce0c5e8bf))
+- **ssr:** create user only with auth activated ([078c3ac](https://github.com/vuejs/vuefire/commit/078c3ac9563e5e9788036cc717c4f458a4d9193c))
+
+### Features
+
+- **warn:** doc to docs ([3eec751](https://github.com/vuejs/vuefire/commit/3eec751b31d7e6bc6c6c98cd39d54fa3f775e3b5))
+
+## [3.1.5](https://github.com/vuejs/vuefire/compare/vuefire@3.1.4...vuefire@3.1.5) (2023-07-13)
+
+### Features
+
+- **ssr:** extra logs for debugging ([042973b](https://github.com/vuejs/vuefire/commit/042973bf9e50a4731edf34d059f764487f087315))
+
+## [3.1.4](https://github.com/vuejs/vuefire/compare/vuefire@3.1.3...vuefire@3.1.4) (2023-07-13)
+
+### Bug Fixes
+
+- compatibility with Vue 2 ([b92f8bc](https://github.com/vuejs/vuefire/commit/b92f8bc6de7449ea4c7af8d5a175784c88ccfb78)), closes [vuejs/vuefire#1280](https://github.com/vuejs/vuefire/issues/1280)
+
+## [3.1.3](https://github.com/vuejs/vuefire/compare/vuefire@3.1.2...vuefire@3.1.3) (2023-07-12)
+
+This release contains no changes.
+
+## [3.1.2](https://github.com/vuejs/vuefire/compare/vuefire@3.1.1...vuefire@3.1.2) (2023-07-10)
+
+### Bug Fixes
+
+- **server:** catch expired tokens ([310b146](https://github.com/vuejs/vuefire/commit/310b1461467f6af74e2c9b66dae23eb8f28dfd80))
+
 ## [3.1.1](https://github.com/vuejs/vuefire/compare/vuefire@3.1.0...vuefire@3.1.1) (2023-07-07)
 
 ### Bug Fixes

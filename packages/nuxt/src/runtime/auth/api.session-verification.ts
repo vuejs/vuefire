@@ -1,4 +1,3 @@
-import { getApp } from 'firebase-admin/app'
 import { getAuth as getAdminAuth } from 'firebase-admin/auth'
 import {
   readBody,
@@ -6,40 +5,43 @@ import {
   assertMethod,
   defineEventHandler,
   deleteCookie,
+  setResponseStatus,
 } from 'h3'
-import { log } from '../logging'
-
-// This version is used at https://github.com/FirebaseExtended/firebase-framework-tools/blob/e69f5bdd44695274ad88dbb4e21aac778ba60cc8/src/firebase-aware.ts#L39 but doesn't work locally. Should it maybe be used in production only? Seems unlikely.
+import { ensureAdminApp } from 'vuefire/server'
+import { logger } from '../logging'
+import { useRuntimeConfig } from '#imports'
 
 /**
  * Setups an API endpoint to be used by the client to mint a cookie based auth session.
  */
 export default defineEventHandler(async (event) => {
   assertMethod(event, 'POST')
-  const { token } = await readBody(event)
+  const { token } = await readBody<{ token?: string }>(event)
+  const { vuefire } = useRuntimeConfig()
 
-  // log('debug', 'minting a session cookie')
-  const adminApp = getApp()
+  const adminApp = ensureAdminApp(
+    {
+      projectId: vuefire?.options?.config?.projectId,
+      ...vuefire?.options?.admin?.options,
+    },
+    'session-verification'
+  )
   const adminAuth = getAdminAuth(adminApp)
 
-  // log('debug', 'read idToken from Authorization header', token)
+  logger.debug(token ? 'Verifying the token' : 'Deleting the session cookie')
   const verifiedIdToken = token ? await adminAuth.verifyIdToken(token) : null
 
   if (verifiedIdToken) {
-    if (
-      new Date().getTime() / 1_000 - verifiedIdToken.auth_time >
-      ID_TOKEN_MAX_AGE
-    ) {
-      event.node.res.statusCode = 301
-      return ''
+    if (new Date().getTime() / 1_000 - verifiedIdToken.iat > ID_TOKEN_MAX_AGE) {
+      setResponseStatus(event, 301)
     } else {
       const cookie = await adminAuth
         .createSessionCookie(token!, { expiresIn: AUTH_COOKIE_MAX_AGE })
         .catch((e: any) => {
-          log('error', 'Error minting the cookie -', e.message)
+          logger.error('Error minting the cookie', e)
         })
       if (cookie) {
-        // log('debug', 'minted a session cookie', cookie)
+        // logger.debug(`minted a session cookie for user ${verifiedIdToken.uid}`)
         setCookie(event, AUTH_COOKIE_NAME, cookie, {
           maxAge: AUTH_COOKIE_MAX_AGE,
           secure: true,
@@ -47,18 +49,17 @@ export default defineEventHandler(async (event) => {
           path: '/',
           sameSite: 'lax',
         })
-        event.node.res.statusCode = 201
+        setResponseStatus(event, 201)
         return ''
       } else {
-        log('error', 'failed to mint a session cookie')
-        event.node.res.statusCode = 401
+        setResponseStatus(event, 401)
         return ''
       }
     }
   } else {
-    log('debug', 'deleting the session cookie')
+    // logger.debug('deleting the session cookie')
     deleteCookie(event, AUTH_COOKIE_NAME)
-    event.node.res.statusCode = 204
+    setResponseStatus(event, 204)
   }
 
   // empty response

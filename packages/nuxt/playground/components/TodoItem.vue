@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import { computed, nextTick, ref } from 'vue'
-
 export interface Todo {
   created: Date
   finished: boolean
@@ -25,7 +23,9 @@ function startEdit() {
 }
 
 function saveTodo() {
-  if (!isEditing.value) { return }
+  if (!isEditing.value) {
+    return
+  }
 
   emit('update:todo', props.todo.id, {
     ...props.todo,

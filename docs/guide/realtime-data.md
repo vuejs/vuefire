@@ -26,7 +26,7 @@ const someTodo = useDatabaseObject(dbRef(db, 'todos', 'someId'))
 <template>
   <ul>
     <li v-for="todo in todos" :key="todo.id">
-     <span>{{ todo.text }}</span>
+      <span>{{ todo.text }}</span>
     </li>
   </ul>
 </template>
@@ -44,7 +44,7 @@ const someTodo = useDocument(doc(collection(db, 'todos'), 'someId'))
 <template>
   <ul>
     <li v-for="todo in todos" :key="todo.id">
-     <span>{{ todo.text }}</span>
+      <span>{{ todo.text }}</span>
     </li>
   </ul>
 </template>
@@ -61,9 +61,7 @@ Sometimes, you need to start observing a different document or collection, let's
 ```ts
 const route = useRoute()
 // since route is reactive, `contactSource` will be reactive too
-const contactSource = computed(
-  () => dbRef(db, 'contacts/' + route.params.id)
-)
+const contactSource = computed(() => dbRef(db, 'contacts/' + route.params.id))
 // contact will always be in sync with the data source
 const contact = useDatabaseObject(contactSource)
 ```
@@ -71,8 +69,8 @@ const contact = useDatabaseObject(contactSource)
 ```ts
 const route = useRoute()
 // since route is reactive, `contactSource` will be reactive too
-const contactSource = computed(
-  () => doc(collection(db, 'contacts'), route.params.id)
+const contactSource = computed(() =>
+  doc(collection(db, 'contacts'), route.params.id)
 )
 // contact will always be in sync with the data source
 const contact = useDocument(contactSource)
@@ -102,7 +100,7 @@ const {
   // did the subscription fail?
   error,
   // A promise that resolves or rejects when the initial state is loaded
-  promise
+  promise,
 } = useDocument(contactSource)
 ```
 
@@ -111,6 +109,38 @@ Notice how we rename `data` to whatever makes more sense for the context.
 ::: warning
 All of the properties that can be defined on the `Ref` are defined as [non-enumerable properties](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty) which means they won't be copied over when using the spread operator e.g. `const { data, ...rest } = useDocument(contactSource)`. This is to ensure they are completely ignored and do not create problems in other places like devtools.
 :::
+
+### Fetching data once
+
+To fetch data only _once_, pass the [`once`](../api/interfaces/vuefire.UseDocumentOptions.html#once) option, which will automatically destroy the subscription as soon as the document or collection is completely fetched:
+
+<FirebaseExample>
+
+```ts{5,8}
+import { useDatabaseList, useDatabaseObject } from 'vuefire'
+import { ref as dbRef } from 'firebase/database'
+
+const todos = useDatabaseList(dbRef(db, 'todos'), {
+  once: true,
+})
+const someTodo = useDatabaseObject(dbRef(db, 'todos', 'someId'), {
+  once: true,
+})
+```
+
+```ts{5,8}
+import { useCollection, useDocument } from 'vuefire'
+import { collection, doc } from 'firebase/firestore'
+
+const todos = useCollection(collection(db, 'todos'), {
+  once: true,
+})
+const someTodo = useDocument(doc(collection(db, 'todos'), 'someId'), {
+  once: true,
+})
+```
+
+</FirebaseExample>
 
 ## VueFire additions
 
@@ -215,7 +245,7 @@ Given some _users_ with _documents_ that are being viewed by other _users_. This
 
 ```js
 {
-  name: 'Jessica',
+  name: 'Claire',
   documents: [
     // The document is stored somewhere else. Here we are only holding a reference
     doc(collection(db, 'documents'), 'gift-list'),
@@ -239,22 +269,22 @@ In the example above, `documents` is an array of References. Let's look at the d
 
 ```js
 {
-  name: 'Jessica',
+  name: 'Claire',
   documents: [
     {
       content: '...',
       sharedWith: [
         {
-          name: 'Alex',
+          name: 'Chris',
           documents: [
-            'documents/alex-todo-list',
+            'documents/chris-todo-list',
           ]
         },
         {
-          name: 'Robin',
+          name: 'Leon',
           documents: [
-            'documents/robin-todo-list',
-            'documents/robin-book',
+            'documents/leon-todo-list',
+            'documents/leon-book',
           ],
         },
       ],
@@ -263,9 +293,9 @@ In the example above, `documents` is an array of References. Let's look at the d
 }
 ```
 
-`documents.sharedWith.documents` end up as arrays of strings. Those strings are actually _paths_ that can be passed to `doc()` as in `doc(db, 'documents/robin-book')` to get the actual reference to the document. By being a string instead of a Reference, it is possible to display a bound document with VueFire as plain text.
+`documents.sharedWith.documents` end up as arrays of strings. Those strings are actually _paths_ that can be passed to `doc()` as in `doc(db, 'documents/leon-book')` to get the actual reference to the document. By being a string instead of a Reference, it is possible to display a bound document with VueFire as plain text.
 
-It is possible to customize this behavior by providing a [`maxRefDepth` option](../api/interfaces/UseDocumentOptions.md#maxrefdepth):
+It is possible to customize this behavior by providing a [`maxRefDepth` option](../api/interfaces/vuefire.UseDocumentOptions.html#maxRefDepth):
 
 ```js
 // override the default value of 2 for maxRefDepth
@@ -343,3 +373,22 @@ const todoList = useDocument(
   })
 )
 ```
+
+In Firebase 10, `withConverter()` takes two generics instead of one:
+
+```ts{2,5}
+// ...
+import type { DocumentData } from 'firebase/firestore'
+
+const todoList = useDocument(
+  doc(db, 'todos').withConverter<TodoI, DocumentData>({
+    // ...
+  })
+)
+```
+
+::: warning
+
+While you can return pretty much anything in `withConverter()`, **if you are using [SSR](./ssr.md)**, make sure you object is serializable. For example, you can't return custom classes or functions.
+
+:::

@@ -11,12 +11,48 @@ import {
   releases,
 } from './meta'
 
+const rControl = /[\u0000-\u001f]/g
+const rSpecial = /[\s~`!@#$%^&*()\-_+=[\]{}|\\;:"'“”‘’<>,.?/]+/g
+const rCombining = /[\u0300-\u036F]/g
+
+/**
+ * Default slugification function
+ */
+export const slugify = (str: string): string =>
+  str
+    .normalize('NFKD')
+    // Remove accents
+    .replace(rCombining, '')
+    // Remove control characters
+    .replace(rControl, '')
+    // Replace special characters
+    .replace(rSpecial, '-')
+    // ensure it doesn't start with a number
+    .replace(/^(\d)/, '_$1')
+
 export default defineConfig({
   lang: 'en-US',
   title: headTitle,
   description: headDescription,
+
+  markdown: {
+    theme: {
+      dark: 'one-dark-pro',
+      light: 'github-light',
+    },
+
+    attrs: {
+      leftDelimiter: '%{',
+      rightDelimiter: '}%',
+    },
+
+    anchor: {
+      slugify,
+    },
+  },
+
   head: [
-    ['meta', { name: 'theme-color', content: '#ffe183' }],
+    ['meta', { name: 'theme-color', content: '#ffca28' }],
     ['link', { rel: 'icon', href: '/logo.svg', type: 'image/svg+xml' }],
     [
       'link',
@@ -76,7 +112,7 @@ export default defineConfig({
     footer: {
       message: 'Released under the MIT License.',
       copyright:
-        'Copyright © 2016-PRESENT Eduardo San Martin Morote and VueFire contributors',
+        'Copyright © 2016-present Eduardo San Martin Morote and VueFire contributors',
     },
 
     carbonAds: {
@@ -93,7 +129,7 @@ export default defineConfig({
 
     nav: [
       { text: 'Guide', link: '/guide/' },
-      { text: 'API', link: '/api/' },
+      { text: 'API', link: '/api/', activeMatch: '^/api/' },
       {
         text: `v${version}`,
         items: [
@@ -125,12 +161,12 @@ export default defineConfig({
   },
 })
 
-type SidebarGroup = DefaultTheme.SidebarGroup
+type SidebarGroup = DefaultTheme.SidebarItem
 
 function sidebarGuide(): SidebarGroup {
   return {
     text: 'Guide',
-    collapsible: true,
+    collapsed: false,
     items: [
       {
         text: 'Why VueFire',
@@ -145,20 +181,28 @@ function sidebarGuide(): SidebarGroup {
         link: '/guide/realtime-data',
       },
       {
-        text: 'Options API',
-        link: '/guide/options-api-realtime-data',
-      },
-      {
         text: 'Authentication',
         link: '/guide/auth',
       },
       {
-        text: 'File Storage',
+        text: 'Storage',
         link: '/guide/storage',
+      },
+      {
+        text: 'App Check',
+        link: '/guide/app-check.md',
+      },
+      {
+        text: 'Other Firebase Services',
+        link: '/guide/other-firebase-services.md',
       },
       {
         text: 'SSR',
         link: '/guide/ssr',
+      },
+      {
+        text: 'Options API',
+        link: '/guide/options-api-realtime-data',
       },
       // NOTE: hide until it works
       // {
@@ -179,7 +223,7 @@ function sidebarGuide(): SidebarGroup {
 
 function sidebarNuxt(): SidebarGroup {
   return {
-    collapsible: true,
+    collapsed: false,
     text: 'Nuxt',
     items: [
       {
@@ -191,6 +235,10 @@ function sidebarNuxt(): SidebarGroup {
         link: '/nuxt/auth',
       },
       {
+        text: 'App Check',
+        link: '/nuxt/app-check',
+      },
+      {
         text: 'Server Side Rendering',
         link: '/nuxt/ssr',
       },
@@ -198,13 +246,17 @@ function sidebarNuxt(): SidebarGroup {
         text: 'Deployment',
         link: '/nuxt/deployment',
       },
+      {
+        text: 'Environment Variables',
+        link: '/nuxt/environment-variables',
+      },
     ],
   }
 }
 
 function sidebarCookbook(): SidebarGroup {
   return {
-    collapsible: true,
+    collapsed: false,
     text: 'Cookbook',
     items: [
       {
@@ -225,13 +277,11 @@ function sidebarCookbook(): SidebarGroup {
 
 function sidebarApi(): SidebarGroup {
   return {
-    collapsible: false,
-    text: 'API',
+    text: 'API Reference',
     items: [
-      {
-        text: 'API Reference',
-        link: '/api/',
-      },
+      { text: 'Package List', link: '/api/' },
+      { text: 'nuxt-vuefire', link: '/api/modules/nuxt_vuefire.html' },
+      { text: 'vuefire', link: '/api/modules/vuefire.html' },
     ],
   }
 }

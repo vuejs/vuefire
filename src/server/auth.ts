@@ -7,13 +7,17 @@ import { getGlobalScope } from '../globals'
 import { type _Nullable } from '../shared'
 import type { App as AdminApp } from 'firebase-admin/app'
 import { getAuth as getAdminAuth } from 'firebase-admin/auth'
-import { log } from './logging'
+import { logger } from './logging'
 import { isFirebaseError } from './utils'
 
 // MUST be named `__session` to be kept in Firebase context, therefore this name is hardcoded
 // https://firebase.google.com/docs/hosting/manage-cache#using_cookies
 export const AUTH_COOKIE_NAME = '__session'
 
+/**
+ * Initializes the auth related data on the server.
+ * @experimental This API is experimental and may change in future releases.
+ */
 export function VueFireAuthServer(
   firebaseApp: FirebaseApp,
   app: App<unknown>,
@@ -99,33 +103,44 @@ function warnInvalidServerGetter<T>(name: string, value: T) {
  * Verifies a cookie token and returns the corresponding decoded token or null if the token is invalid or inexistent.
  * This token contains the user's uid.
  *
- * @param token - token parsed from the cookie
+ * @param sessionCookie - token parsed from the cookie
  * @param adminApp - Firebase Admin App
  */
-export async function decodeUserToken(
-  token: string | undefined,
+export async function decodeSessionCookie(
+  sessionCookie: string | undefined,
   adminApp: AdminApp
 ): Promise<DecodedIdToken | null> {
-  if (token) {
+  if (sessionCookie) {
     const adminAuth = getAdminAuth(adminApp)
 
     try {
       // TODO: should we check for the revoked status of the token here?
-      return adminAuth.verifyIdToken(token /*, checkRevoked */)
+      // we await to try/catch
+      // return await adminAuth.verifyIdToken(token /*, checkRevoked */)
+      logger.debug('Verifying session cookie')
+      return await adminAuth.verifySessionCookie(
+        sessionCookie
+        /** checkRevoked */
+      )
     } catch (err) {
       // TODO: some errors should probably go higher
       // ignore the error and consider the user as not logged in
       if (isFirebaseError(err) && err.code === 'auth/id-token-expired') {
         // Other errors to be handled: auth/argument-error
         // the error is fine, the user is not logged in
-        log('info', 'Token expired -', err)
+        logger.info('Token expired, client must revalidate')
         // TODO: this error should be accessible somewhere to instruct the user to renew their access token
       } else {
         // ignore the error and consider the user as not logged in
-        log('error', 'Unknown Error -', err)
+        logger.error('Unknown Error verifying session cookie', err)
       }
     }
   }
 
   return null
 }
+
+/**
+ * @deprecated Use `decodeSessionCookie` instead.
+ */
+export const decodeUserToken = decodeSessionCookie
