@@ -12,7 +12,9 @@ export async function willUseEmulators(
     // emulators is always defined
     emulators.enabled &&
     // Disable emulators on production unless the user explicitly enables them
-    (process.env.NODE_ENV !== 'production' || process.env.VUEFIRE_EMULATORS)
+    (process.env.NODE_ENV !== 'production' ||
+      (process.env.VUEFIRE_EMULATORS &&
+        process.env.VUEFIRE_EMULATORS !== 'false'))
 
   // Avoid even checking the firebase.json
   if (!isEmulatorEnabled) {
