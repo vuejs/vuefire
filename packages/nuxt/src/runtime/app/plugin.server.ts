@@ -38,9 +38,11 @@ export default defineNuxtPlugin((nuxtApp) => {
       logger.debug('👤 reusing authenticated app', firebaseApp.name)
     }
   } else {
+    firebaseApp = appCache.get('')
     // TODO: is this safe? should we create a new one every time
-    if (!appCache.has('')) {
-      appCache.set('', (firebaseApp = initializeApp(appConfig.firebaseConfig)))
+    if (!firebaseApp) {
+      firebaseApp = initializeApp(appConfig.firebaseConfig)
+      appCache.set('', firebaseApp)
     }
     // anonymous session, just create a new app
     logger.debug('🥸 anonymous session')
@@ -48,7 +50,7 @@ export default defineNuxtPlugin((nuxtApp) => {
 
   return {
     provide: {
-      firebaseApp,
+      firebaseApp: firebaseApp satisfies FirebaseApp,
     },
   }
 })
