@@ -1,3 +1,9 @@
+## [0.2.17](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.2.16...nuxt-vuefire@0.2.17) (2023-08-17)
+
+### Bug Fixes
+
+- wrong handling of auth sessions ([9636336](https://github.com/vuejs/vuefire/commit/96363364876dc7fa9095ea8acf64dd11e89d8887)), closes [#1410](https://github.com/vuejs/vuefire/issues/1410)
+
 ## [0.2.16](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.2.15...nuxt-vuefire@0.2.16) (2023-08-16)
 
 ### Bug Fixes
