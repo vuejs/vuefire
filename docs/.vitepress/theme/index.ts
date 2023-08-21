@@ -1,5 +1,5 @@
 import Theme from 'vitepress/theme'
-import '../sytle/vars.css'
+import '../style/vars.css'
 import { h } from 'vue'
 // import Layout from './Layout.vue'
 // import HomeSponsors from '../components/HomeSponsors.vue'
