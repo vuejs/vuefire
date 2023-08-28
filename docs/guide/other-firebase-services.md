@@ -46,6 +46,29 @@ const messaging = getMessaging(firebaseApp)
 </script>
 ```
 
+If you find yourself using this very often, you can create a composable for it:
+
+::: code-group
+
+```ts [composables/firebase-messaging.ts]
+import { getMessaging } from 'firebase/messaging'
+import { useFirebaseApp } from 'vuefire'
+
+export function useFirebaseMessaging() {
+  return getMessaging(useFirebaseApp())
+}
+```
+
+```vue [MyComponent.vue]
+<script setup>
+import { useFirebaseMessaging } from '~/composables/firebase-messaging'
+
+const messaging = useFirebaseMessaging()
+</script>
+```
+
+:::
+
 In the case of Services that require initialization, you should do it alongside the initialization of the Firebase App:
 
 ```ts
