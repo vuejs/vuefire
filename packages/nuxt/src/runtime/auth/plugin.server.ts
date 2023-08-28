@@ -24,6 +24,7 @@ export default defineNuxtPlugin(async (nuxtApp) => {
 
   const uid = decodedToken?.uid
 
+  // this is also undefined if the user hasn't enabled the session cookie option
   if (uid) {
     // reauthenticate if the user is not the same (e.g. invalidated)
     if (auth.currentUser?.uid !== uid) {

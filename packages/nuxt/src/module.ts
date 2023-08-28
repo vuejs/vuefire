@@ -59,18 +59,34 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
     nuxt.options.appConfig.firebaseConfig = markRaw(options.config)
     nuxt.options.appConfig.vuefireOptions = markRaw(options)
 
-    nuxt.options.runtimeConfig.vuefire = {
-      options: {
-        ...options,
-        // ensure the resolved version easier to consume
-        emulators: {
-          enabled:
-            typeof options.emulators === 'object'
-              ? options.emulators.enabled ?? true // allows user to comment out enabled: false
-              : !!options.emulators,
-          ...(typeof options.emulators === 'object' ? options.emulators : {}),
-        },
+    const isAuthEnabled =
+      typeof options.auth === 'object'
+        ? options.auth.enabled ?? true // allows user to comment out enabled: false
+        : !!options.auth
+
+    const resolvedVueFireOptions = {
+      ...options,
+      // ensure the resolved version easier to consume
+      emulators: {
+        enabled:
+          typeof options.emulators === 'object'
+            ? options.emulators.enabled ?? true // allows user to comment out enabled: false
+            : !!options.emulators,
+        ...(typeof options.emulators === 'object' ? options.emulators : {}),
       },
+      auth: {
+        enabled: isAuthEnabled,
+        // enable session cookie when auth is `true`
+        sessionCookie:
+          typeof options.auth === 'object'
+            ? isAuthEnabled && options.auth.sessionCookie // deactivating auth also deactivates the session cookie
+            : !!options.auth, // fallback to the boolean value of options.auth
+        ...(typeof options.auth === 'object' ? options.auth : {}),
+      },
+    } satisfies VueFireNuxtModuleOptionsResolved
+
+    nuxt.options.runtimeConfig.vuefire = {
+      options: resolvedVueFireOptions,
     }
 
     // we need this to avoid some warnings about missing credentials and ssr
@@ -169,7 +185,11 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
         )
       }
 
-      if (nuxt.options.ssr && (hasServiceAccount || emulatorsConfig)) {
+      if (
+        nuxt.options.ssr &&
+        (hasServiceAccount || emulatorsConfig) &&
+        resolvedVueFireOptions.auth.sessionCookie
+      ) {
         // Add the session handler than mints a cookie for the user
         addServerHandler({
           route: '/api/__session',
@@ -243,7 +263,7 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
       }
 
       if (hasServiceAccount || emulatorsConfig) {
-        if (options.auth) {
+        if (resolvedVueFireOptions.auth.sessionCookie) {
           // decodes user token from cookie if any
           addPlugin(resolve(runtimeDir, 'auth/plugin-user-token.server'))
         }

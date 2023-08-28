@@ -39,16 +39,34 @@ export interface VueFireNuxtModuleOptions {
   appCheck?: NuxtVueFireAppCheckOptions
 
   /**
-   * Enables Authentication
+   * Enables the Authentication module and the session cookie. Pass an object to individually customize the modules.
+   * @defaultValue `false`
    */
-  auth?: boolean
+  auth?:
+    | boolean
+    | {
+        /**
+         * Adds the Authentication module to VueFire.
+         * @defaultValue `true` if `options.auth` is an object.
+         */
+        enabled?: boolean
+
+        /**
+         * Enables the `/api/__session` endpoint to mint cookies and verifying the user during SSR. This requires you to
+         * configure a [valid Service
+         * Account](https://vuefire.vuejs.org/nuxt/getting-started.html#Configuring-the-Admin-SDK) and the valid
+         * permissions on your Google Cloud project. You can find more information about what happens behind the scenes
+         * in Firebase docs: [Manage Session Cookies](https://firebase.google.com/docs/auth/admin/manage-cookies).
+         */
+        sessionCookie?: boolean
+      }
 
   /**
    * Controls whether to use emulators or not. Pass `false` to disable emulators. When set to `true`, emulators are
    * enabled when they are detected in the `firebase.json` file. You still need to run the emulators in parallel to your
    * app.
    *
-   * @default true
+   * @defaultValue `true`
    * @experimental
    */
   emulators?:
@@ -76,6 +94,7 @@ export interface VueFireNuxtModuleOptions {
 }
 
 export interface VueFireNuxtModuleOptionsResolved
-  extends Omit<VueFireNuxtModuleOptions, 'emulators'> {
+  extends Omit<VueFireNuxtModuleOptions, 'emulators' | 'auth'> {
   emulators: Exclude<VueFireNuxtModuleOptions['emulators'], boolean | undefined>
+  auth: Exclude<VueFireNuxtModuleOptions['auth'], boolean | undefined>
 }
