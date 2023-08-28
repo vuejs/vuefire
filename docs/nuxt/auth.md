@@ -2,12 +2,14 @@
 
 Nuxt VueFire integrates with [Firebase Authentication](https://firebase.google.com/docs/auth) module to automatically synchronize the current user state on the server and the client. Activate this module by setting the `vuefire.auth` to `true` in `nuxt.config.ts`:
 
-```ts{5}
+```ts{5-7}
 export default defineNuxtConfig({
   // ...
   vuefire: {
     // ensures the auth module is enabled
-    auth: true,
+    auth: {
+      enabled: true
+    },
     config: {
       // ...
     }
@@ -73,4 +75,23 @@ onMounted(() => {
   })
 })
 </script>
+```
+
+## Session Cookie
+
+When doing SSR and if a service account is provided, Nuxt VueFire automatically mints a cookie when the user logs in. This cookie is passed to each request and allows the server to authenticate the user while rendering the page, limiting what the user can see based on their permissions.
+
+In order to use this feature, you must provide a service account and ensure you have the correct permissions set in your Google Cloud project. I recommend you to take a look at [this template and its instructions to setup Authentication](https://github.com/posva/nuxt--vuefire-example-blaze-plan#authentication).
+
+```ts{7}
+export default defineNuxtConfig({
+  // ...
+  vuefire: {
+    // ensures the auth module is enabled
+    auth: {
+      enabled: true
+      sessionCookie: true
+    },
+  },
+})
 ```

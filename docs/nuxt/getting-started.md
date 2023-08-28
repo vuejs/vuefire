@@ -86,12 +86,14 @@ echo service-account.json >> .gitignore
 
 If you are using the [Authentication](https://firebase.google.com/docs/auth) module or [AppCheck](https://firebase.google.com/docs/app-check#web), make sure to enable them as well:
 
-```ts{5,6-13}
+```ts{5-7,8-13}
 export default defineNuxtConfig({
   // ...
   vuefire: {
     // ensures the auth module is enabled
-    auth: true,
+    auth: {
+      enabled: true
+    },
     appCheck: {
       // Allows you to use a debug token in development
       debug: process.env.NODE_ENV !== 'production',
