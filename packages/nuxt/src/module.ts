@@ -153,6 +153,15 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
       }
     }
 
+    // this adds the VueFire plugin and handle SSR state serialization and hydration
+    addPluginTemplate({
+      src: normalize(resolve(templatesDir, 'plugin.ejs')),
+      options: {
+        ...options,
+        ssr: nuxt.options.ssr,
+      },
+    })
+
     if (options.auth) {
       if (nuxt.options.ssr && !hasServiceAccount && !emulatorsConfig) {
         logger.warn(
@@ -160,21 +169,7 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
         )
       }
 
-      // this adds the VueFire plugin and handle SSR state serialization and hydration
-      addPluginTemplate({
-        src: normalize(resolve(templatesDir, 'plugin.ejs')),
-
-        options: {
-          ...options,
-          ssr: nuxt.options.ssr,
-        },
-      })
-
-      if (
-        options.auth &&
-        nuxt.options.ssr &&
-        (hasServiceAccount || emulatorsConfig)
-      ) {
+      if (nuxt.options.ssr && (hasServiceAccount || emulatorsConfig)) {
         // Add the session handler than mints a cookie for the user
         addServerHandler({
           route: '/api/__session',
