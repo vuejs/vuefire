@@ -6,7 +6,7 @@ export interface VueFireNuxtModuleOptions {
   /**
    * Should we add the `VueFireFirestoreOptionsAPI` and `VueFireRealtimeDatabaseOptionsAPI` modules?. Pass `true` to add
    * both, or `'firestore'` or `'realtime-database'` to add only one. Pass false to disable.
-   * @default false
+   * @defaultValue `false`
    */
   optionsApiPlugin?: boolean | 'firestore' | 'database'
 
