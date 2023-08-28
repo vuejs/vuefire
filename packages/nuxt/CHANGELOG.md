@@ -1,3 +1,15 @@
+## [0.2.18](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.2.17...nuxt-vuefire@0.2.18) (2023-08-28)
+
+### Bug Fixes
+
+- use VueFire plugin without auth ([82ce282](https://github.com/vuejs/vuefire/commit/82ce28210a6faded4caeac84ef0b34204ad7320c))
+
+### Features
+
+- **auth:** allow turning off session cookie ([9af5c99](https://github.com/vuejs/vuefire/commit/9af5c997f083b2817fdcab0397ef7ae734778481))
+- expose options type ([def6241](https://github.com/vuejs/vuefire/commit/def6241b5e03f6cc1a22f373c820cdf318a4130b))
+- **nuxt:** Add storage composables auto-imports ([#1384](https://github.com/vuejs/vuefire/issues/1384)) ([b4ffc4e](https://github.com/vuejs/vuefire/commit/b4ffc4e7ee5478e5cad05014c16d095646ee84c1))
+
 ## [0.2.17](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.2.16...nuxt-vuefire@0.2.17) (2023-08-17)
 
 ### Bug Fixes
