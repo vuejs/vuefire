@@ -356,6 +356,8 @@ export type {
   NuxtVueFireAppCheckOptionsReCaptchaEnterprise,
 } from './runtime/app-check'
 
+export type { VueFireNuxtModuleOptions } from './module/options'
+
 /**
  * Type Extensions
  */
