@@ -321,6 +321,9 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
         'firebase',
         'firebase/app',
         '@firebase/app',
+        // NOTE: some of these do not seem to change anything
+        'firebase/app-check',
+        '@firebase/app-check',
         'firebase/firestore',
         '@firebase/firestore',
         'firebase/auth',
