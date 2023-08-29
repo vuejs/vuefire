@@ -44,7 +44,9 @@ export function VueFireAppCheckServer(
     return
   }
 
-  logger.debug('Initializing AppCheck on the server')
+  logger.debug(
+    `Initializing AppCheck on the server for app "${firebaseApp.name}".`
+  )
 
   let currentToken: AppCheckToken | undefined
   const appCheck = initializeAppCheck(firebaseApp, {
