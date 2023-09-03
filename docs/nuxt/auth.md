@@ -95,3 +95,54 @@ export default defineNuxtConfig({
   },
 })
 ```
+
+**Note:** The session cookie doesn't get verified automatically in the server routes yet. Till the time this is supported natively, you can authenticate incoming requests using your own implementation. For e.g.
+
+```ts
+import { H3Event } from "h3";
+
+import {
+  App,
+  getApps,
+  initializeApp,
+  applicationDefault,
+} from "firebase-admin/app";
+import { getAuth } from "firebase-admin/auth";
+
+const useFirebase = () => {
+  let app: App;
+  if (!getApps().length) {
+    app = initializeApp({
+      credential: applicationDefault(),
+    });
+  } else {
+    [app] = getApps();
+  }
+
+  const auth = getAuth(app);
+
+  return {
+    app,
+    auth,
+  };
+};
+
+export const authenticateRequest = async (event: H3Event) => {
+  const { auth } = useFirebase();
+
+  const sessCookie = getCookie(event, "__session");
+  if (sessCookie) {
+    try {
+      const decodedUser = await auth.verifySessionCookie(sessCookie);
+
+      return decodedUser;
+    } catch (error) {
+      console.log("failed to authenticate request", error);
+    }
+  }
+
+  return null;
+};
+```
+
+For `applicationDefault` to work, you must set the env var `GOOGLE_APPLICATION_CREDENTIALS` with your `service-account.json` file path or its content.
