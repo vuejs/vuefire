@@ -34,6 +34,7 @@
   "sideEffects": false,
   "files": [
     "dist",
+    "server.d.ts",
     "LICENSE",
     "README.md"
   ],
