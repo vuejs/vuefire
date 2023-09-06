@@ -1,3 +1,7 @@
+## [0.2.19](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.2.18...nuxt-vuefire@0.2.19) (2023-09-06)
+
+This version contains no changes.
+
 ## [0.2.18](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.2.17...nuxt-vuefire@0.2.18) (2023-08-28)
 
 ### Bug Fixes

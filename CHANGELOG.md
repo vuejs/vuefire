@@ -1,3 +1,11 @@
+## [3.1.16](https://github.com/vuejs/vuefire/compare/vuefire@3.1.15...vuefire@3.1.16) (2023-09-06)
+
+This version includes fixes in the `package.json` file for TypeScript users.
+
+### Features
+
+- **log:** show name of app ([a3df0b1](https://github.com/vuejs/vuefire/commit/a3df0b10e06d250a9369d8d7b70bf66781f99a61))
+
 ## [3.1.15](https://github.com/vuejs/vuefire/compare/vuefire@3.1.14...vuefire@3.1.15) (2023-08-16)
 
 ### Bug Fixes
