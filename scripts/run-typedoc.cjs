@@ -12,4 +12,4 @@ createTypeDocApp({
     path.resolve(__dirname, '../src/index.ts'),
     path.resolve(__dirname, '../packages/nuxt/src/module.ts'),
   ],
-}).build()
+}).then((app) => app.build())

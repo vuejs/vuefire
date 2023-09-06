@@ -9,7 +9,7 @@
   },
   "devDependencies": {
     "@nuxt/devtools": "^0.8.2",
-    "nuxt": "^3.7.0"
+    "nuxt": "^3.7.1"
   },
   "dependencies": {
     "@firebase/app-types": "^0.9.0",

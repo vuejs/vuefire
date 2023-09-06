@@ -1,8 +1,7 @@
 // @ts-check
 const fs = require('node:fs/promises')
 const path = require('node:path')
-const TypeDoc = require('typedoc')
-const { PageEvent } = TypeDoc
+const { Application, TSConfigReader, PageEvent } = require('typedoc')
 
 const DEFAULT_OPTIONS = {
   // disableOutputCheck: true,
@@ -20,17 +19,16 @@ const DEFAULT_OPTIONS = {
  *
  * @param {Partial<import('typedoc').TypeDocOptions>} config
  */
-exports.createTypeDocApp = function createTypeDocApp(config = {}) {
+exports.createTypeDocApp = async function createTypeDocApp(config = {}) {
   const options = {
     ...DEFAULT_OPTIONS,
     ...config,
   }
 
-  const app = new TypeDoc.Application()
+  const app = await Application.bootstrapWithPlugins(options)
 
   // If you want TypeDoc to load tsconfig.json / typedoc.json files
-  app.options.addReader(new TypeDoc.TSConfigReader())
-  // app.options.addReader(new TypeDoc.TypeDocReader())
+  app.options.addReader(new TSConfigReader())
 
   /** @type {'build' | 'serve'} */
   let targetMode = 'build'
@@ -53,7 +51,6 @@ exports.createTypeDocApp = function createTypeDocApp(config = {}) {
   )
 
   async function serve() {
-    await app.bootstrapWithPlugins(options)
     app.convertAndWatch(handleProject)
   }
 
@@ -64,8 +61,7 @@ exports.createTypeDocApp = function createTypeDocApp(config = {}) {
     ) {
       await fs.rm(options.out, { recursive: true })
     }
-    await app.bootstrapWithPlugins(options)
-    const project = app.convert()
+    const project = await app.convert()
     return handleProject(project)
   }
 
