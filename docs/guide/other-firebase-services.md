@@ -117,4 +117,4 @@ export default defineNuxtPlugin(async () => {
 
 :::
 
-The `.client` suffix is important for services that only run on the client, like analytics. For services that also run on the server, you should omit it.server` suffix.
+The `.client` suffix is important for services that only run on the client, like analytics. For services that also run on the server, you should omit it. You can use the `.server` suffix for services that should only run on the server. See the [Nuxt docs](https://nuxt.com/docs/guide/directory-structure/plugins) for more information.
