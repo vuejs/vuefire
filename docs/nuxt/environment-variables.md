@@ -14,6 +14,7 @@ Make sure **to exclude both, the `.env` and `service-account.json` files from yo
 
 ::: tip
 When deploying outside of Firebase, the `GOOGLE_APPLICATION_CREDENTIALS` environment variable has to be set manually. Instead of setting it to the path of the service account file, you can set it to the content of the file itself. Note it will have to fit in **one single line**.
+For example, if you are using Netlify, go to SITE CONFIGURATION --> ENVIRONMENT VARIABLES --> ADD A VARIABLE --> ADD A SINGLE VARIABLE and add "GOOGLE_APPLICATION_CREDENTIALS" (without quotes) as the KEY name and paste in the entire content of the `service-account.json` file into the VALUES field.
 :::
 
 ## AppCheck
