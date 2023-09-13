@@ -1,3 +1,9 @@
+# [0.3.0](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.2.19...nuxt-vuefire@0.3.0) (2023-09-13)
+
+### Bug Fixes
+
+- remove duplication of configs ([81c613c](https://github.com/vuejs/vuefire/commit/81c613c32fbd6a96e1bdb85e5d47fd1fafb4c6bb)), closes [vuejs/vuefire#1411](https://github.com/vuejs/vuefire/issues/1411)
+
 ## [0.2.19](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.2.18...nuxt-vuefire@0.2.19) (2023-09-06)
 
 This version contains no changes.

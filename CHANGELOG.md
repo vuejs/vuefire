@@ -1,3 +1,13 @@
+## [3.1.17](https://github.com/vuejs/vuefire/compare/vuefire@3.1.16...vuefire@3.1.17) (2023-09-13)
+
+### Bug Fixes
+
+- **options:** run with context for bind ([d988f13](https://github.com/vuejs/vuefire/commit/d988f1389449350e8fa48317a2d9019a8d7f27ab))
+
+### Features
+
+- allow getters to functions ([8b8b26e](https://github.com/vuejs/vuefire/commit/8b8b26ebc428b4c0af81cb72cf91d8799f230215))
+
 ## [3.1.16](https://github.com/vuejs/vuefire/compare/vuefire@3.1.15...vuefire@3.1.16) (2023-09-06)
 
 This version includes fixes in the `package.json` file for TypeScript users.
