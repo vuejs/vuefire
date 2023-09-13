@@ -3,13 +3,12 @@ import {
   walkGet,
   callOnceWithArg,
   OperationsType,
-  _MaybeRef,
   ResetOption,
   _DataSourceOptions,
   noop,
   _ResolveRejectFn,
 } from '../shared'
-import { ref, Ref, unref } from 'vue-demi'
+import { ref, Ref, toValue } from 'vue-demi'
 import type {
   CollectionReference,
   DocumentChange,
@@ -323,7 +322,7 @@ export function bindCollection<T = unknown>(
         subs,
         options
       )
-      ops.add(unref(arrayRef), newIndex, data)
+      ops.add(toValue(arrayRef), newIndex, data)
       subscribeToRefs(
         options,
         arrayRef,
@@ -337,7 +336,7 @@ export function bindCollection<T = unknown>(
       )
     },
     modified: ({ oldIndex, newIndex, doc }: DocumentChange<T>) => {
-      const array = unref(arrayRef)
+      const array = toValue(arrayRef)
       const subs = arraySubs[oldIndex]
       const oldData = array[oldIndex]
       const [data, refs] = extractRefs(
@@ -365,7 +364,7 @@ export function bindCollection<T = unknown>(
       )
     },
     removed: ({ oldIndex }: DocumentChange<T>) => {
-      const array = unref(arrayRef)
+      const array = toValue(arrayRef)
       ops.remove(array, oldIndex)
       unsubscribeAll(arraySubs.splice(oldIndex, 1)[0])
     },
@@ -396,10 +395,10 @@ export function bindCollection<T = unknown>(
           if (++count >= expectedItems) {
             // if wait is true, finally set the array
             if (wait) {
-              ops.set(target, key, unref(arrayRef))
+              ops.set(target, key, toValue(arrayRef))
               arrayRef = target
             }
-            originalResolve(unref(arrayRef))
+            originalResolve(toValue(arrayRef))
             // reset resolve to noop
             resolve = noop
           }
@@ -417,10 +416,10 @@ export function bindCollection<T = unknown>(
     // being called multiple times
     if (!docChanges.length) {
       if (wait) {
-        ops.set(target, key, unref(arrayRef))
+        ops.set(target, key, toValue(arrayRef))
         arrayRef = target
       }
-      resolve(unref(arrayRef))
+      resolve(toValue(arrayRef))
     }
   }
 

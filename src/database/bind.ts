@@ -8,10 +8,9 @@ import {
   noop,
   ResetOption,
   _DataSourceOptions,
-  _MaybeRef,
   _ResolveRejectFn,
 } from '../shared'
-import { Ref, unref } from 'vue-demi'
+import { Ref, toValue, MaybeRefOrGetter } from 'vue-demi'
 import {
   onValue,
   onChildAdded,
@@ -117,7 +116,9 @@ export function bindAsArray(
 ) {
   const options = Object.assign({}, DEFAULT_OPTIONS, extraOptions)
 
-  let arrayRef: _MaybeRef<VueDatabaseQueryData> = options.wait ? [] : target
+  let arrayRef: MaybeRefOrGetter<VueDatabaseQueryData> = options.wait
+    ? []
+    : target
   // by default we wait, if not, set the value to an empty array so it can be populated correctly
   if (!options.wait) {
     target.value = []
@@ -146,7 +147,7 @@ export function bindAsArray(
     removeChildAddedListener = onChildAdded(
       collection,
       (snapshot, prevKey) => {
-        const array = unref(arrayRef)
+        const array = toValue(arrayRef)
         const index = prevKey ? indexForKey(array, prevKey) + 1 : 0
         // cannot be null because it exists
         array.splice(index, 0, options.serialize(snapshot)!)
@@ -158,7 +159,7 @@ export function bindAsArray(
       collection,
 
       (snapshot) => {
-        const array = unref(arrayRef)
+        const array = toValue(arrayRef)
         array.splice(indexForKey(array, snapshot.key), 1)
       },
       reject
@@ -167,7 +168,7 @@ export function bindAsArray(
     removeChildChangedListener = onChildChanged(
       collection,
       (snapshot) => {
-        const array = unref(arrayRef)
+        const array = toValue(arrayRef)
         array.splice(
           indexForKey(array, snapshot.key),
           1,
@@ -181,7 +182,7 @@ export function bindAsArray(
     removeChildMovedListener = onChildMoved(
       collection,
       (snapshot, prevKey) => {
-        const array = unref(arrayRef)
+        const array = toValue(arrayRef)
         const index = indexForKey(array, snapshot.key)
         const oldRecord = array.splice(index, 1)[0]
         const newIndex = prevKey ? indexForKey(array, prevKey) + 1 : 0
@@ -194,7 +195,7 @@ export function bindAsArray(
     removeValueListener = onValue(
       collection,
       () => {
-        const array = unref(arrayRef)
+        const array = toValue(arrayRef)
         if (options.wait) {
           target.value = array
           // switch to the target so all changes happen into the target

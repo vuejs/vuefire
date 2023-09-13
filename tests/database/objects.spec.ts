@@ -19,12 +19,13 @@ import {
   nextTick,
   ref,
   shallowRef,
-  unref,
+  toValue,
   type Ref,
   defineComponent,
+  type MaybeRefOrGetter,
 } from 'vue'
 import { DatabaseReference, get, ref as _databaseRef } from 'firebase/database'
-import { _MaybeRef, _Nullable } from '../../src/shared'
+import { _Nullable } from '../../src/shared'
 import { mockWarn } from '../vitest-mock-warn'
 import { _initialStatesMap } from '../../src/ssr/initialState'
 
@@ -37,7 +38,7 @@ describe('Database objects', () => {
     ref = databaseRef(),
   }: {
     options?: UseDatabaseRefOptions
-    ref?: _MaybeRef<DatabaseReference>
+    ref?: MaybeRefOrGetter<DatabaseReference>
   } = {}) {
     let data!: _RefDatabase<VueDatabaseDocumentData<T> | undefined>
 
@@ -54,7 +55,7 @@ describe('Database objects', () => {
 
     return {
       wrapper,
-      itemRef: unref(ref),
+      itemRef: toValue(ref),
       // non enumerable properties cannot be spread
       data: data.data,
       pending: data.pending,

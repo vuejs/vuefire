@@ -1,6 +1,7 @@
 import type { DatabaseReference, Query } from 'firebase/database'
 import {
-  unref,
+  MaybeRefOrGetter,
+  toValue,
   ref,
   shallowRef,
   ShallowRef,
@@ -14,7 +15,6 @@ import {
 } from 'vue-demi'
 import { useFirebaseApp } from '../app'
 import {
-  _MaybeRef,
   _Nullable,
   UnbindWithReset,
   checkWrittenTarget,
@@ -38,13 +38,13 @@ import { _RefDatabase } from './utils'
 export interface UseDatabaseRefOptions extends _DatabaseRefOptions {}
 
 export function _useDatabaseRef(
-  reference: _MaybeRef<_Nullable<DatabaseReference | Query>>,
+  reference: MaybeRefOrGetter<_Nullable<DatabaseReference | Query>>,
   localOptions: UseDatabaseRefOptions = {},
   isList = false
 ): _RefDatabase<unknown> {
   let unbind: UnbindWithReset = noop
   const options = Object.assign({}, globalDatabaseOptions, localOptions)
-  const initialSourceValue = unref(reference)
+  const initialSourceValue = toValue(reference)
   const data = options.target || ref<unknown | null>()
 
   // dev only warning
@@ -88,7 +88,7 @@ export function _useDatabaseRef(
   let removePendingPromise = noop
 
   function bindDatabaseRef() {
-    const referenceValue = unref(reference)
+    const referenceValue = toValue(reference)
 
     const newPromise = new Promise<unknown | null>((resolve, reject) => {
       unbind(options.reset)

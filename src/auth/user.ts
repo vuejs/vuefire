@@ -10,7 +10,7 @@ import {
 } from 'firebase/auth'
 import { computed, Ref } from 'vue-demi'
 import { useFirebaseApp } from '../app'
-import type { _MaybeRef, _Nullable } from '../shared'
+import type { _Nullable } from '../shared'
 
 /**
  * Maps an application to a user

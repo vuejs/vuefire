@@ -18,11 +18,12 @@ import {
   nextTick,
   ref,
   shallowRef,
-  unref,
+  toValue,
   type Ref,
+  type MaybeRefOrGetter,
   defineComponent,
 } from 'vue'
-import { isPOJO, _MaybeRef, _Nullable } from '../../src/shared'
+import { isPOJO, _Nullable } from '../../src/shared'
 import {
   useDocument,
   VueFirestoreDocumentData,
@@ -46,7 +47,7 @@ describe(
       ref = doc(),
     }: {
       options?: UseDocumentOptions
-      ref?: _MaybeRef<DocumentReference<T>>
+      ref?: MaybeRefOrGetter<DocumentReference<T>>
     } = {}) {
       let data!: _RefFirestore<VueFirestoreDocumentData<T>>
 
@@ -66,7 +67,7 @@ describe(
 
       return {
         wrapper,
-        itemRef: unref(ref),
+        itemRef: toValue(ref),
         // non enumerable properties cannot be spread
         data: data.data,
         pending: data.pending,
@@ -206,7 +207,7 @@ describe(
       await setDoc(itemRef, { name: 'a' })
       const { promise, error, data } = factory({ ref: itemRef })
 
-      await expect(unref(promise)).resolves.toEqual(expect.anything())
+      await expect(toValue(promise)).resolves.toEqual(expect.anything())
       expect(data.value).toEqual({ name: 'a' })
       expect(error.value).toBeUndefined()
     })

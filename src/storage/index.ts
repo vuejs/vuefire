@@ -22,11 +22,12 @@ import {
   onServerPrefetch,
   ref,
   shallowRef,
-  unref,
+  toValue,
   watch,
+  MaybeRefOrGetter,
 } from 'vue-demi'
 import { useFirebaseApp } from '../app'
-import { noop, _MaybeRef, _Nullable } from '../shared'
+import { noop, _Nullable } from '../shared'
 import { getInitialValue } from '../ssr/initialState'
 import { addPendingPromise } from '../ssr/plugin'
 
@@ -46,9 +47,9 @@ export function useFirebaseStorage(name?: string) {
  * @param storageRef - StorageReference
  */
 export function useStorageFileUrl(
-  storageRef: _MaybeRef<_Nullable<StorageReference>>
+  storageRef: MaybeRefOrGetter<_Nullable<StorageReference>>
 ) {
-  const initialSourceValue = unref(storageRef)
+  const initialSourceValue = toValue(storageRef)
   const url = ref<string | null>()
   url.value = getInitialValue(
     initialSourceValue,
@@ -61,7 +62,7 @@ export function useStorageFileUrl(
   let removePendingPromise = noop
 
   function refresh() {
-    const storageSource = unref(storageRef)
+    const storageSource = toValue(storageRef)
     if (storageSource) {
       promise.value = getDownloadURL(storageSource)
         .then((downloadUrl) => (url.value = downloadUrl))
@@ -100,9 +101,9 @@ export function useStorageFileUrl(
  * @param storageRef - StorageReference
  */
 export function useStorageFileMetadata(
-  storageRef: _MaybeRef<_Nullable<StorageReference>>
+  storageRef: MaybeRefOrGetter<_Nullable<StorageReference>>
 ) {
-  const initialSourceValue = unref(storageRef)
+  const initialSourceValue = toValue(storageRef)
   const metadata = shallowRef<FullMetadata | null>()
   if (initialSourceValue) {
     metadata.value = getInitialValue(
@@ -119,7 +120,7 @@ export function useStorageFileMetadata(
   let removePendingPromise = noop
 
   function refresh() {
-    const storageSource = unref(storageRef)
+    const storageSource = toValue(storageRef)
     if (storageSource) {
       promise.value = getMetadata(storageSource)
         .then((data) => (metadata.value = data))
@@ -132,7 +133,7 @@ export function useStorageFileMetadata(
   }
 
   function update(newMetadata: SettableMetadata) {
-    const storageSource = unref(storageRef)
+    const storageSource = toValue(storageRef)
     if (storageSource) {
       promise.value = updateMetadata(storageSource, newMetadata).then(
         (newData) => {
@@ -171,7 +172,7 @@ export function useStorageFileMetadata(
  * @param storageRef - StorageReference
  */
 export function useStorageFile(
-  storageRef: _MaybeRef<_Nullable<StorageReference>>
+  storageRef: MaybeRefOrGetter<_Nullable<StorageReference>>
 ) {
   const { url, refresh: refreshUrl } = useStorageFileUrl(storageRef)
   const {
@@ -185,7 +186,7 @@ export function useStorageFile(
   const uploadError = shallowRef<StorageError | null>()
 
   const uploadProgress = computed(() => {
-    const snap = unref(snapshot)
+    const snap = toValue(snapshot)
     return snap ? snap.bytesTransferred / snap.totalBytes : null
   })
 
@@ -196,8 +197,8 @@ export function useStorageFile(
     newData: Blob | Uint8Array | ArrayBuffer,
     newMetadata?: UploadMetadata
   ) {
-    const storageSource = unref(storageRef)
-    const currentTask = unref(uploadTask)
+    const storageSource = toValue(storageRef)
+    const currentTask = toValue(uploadTask)
 
     // cancel previous task
     if (currentTask) {
@@ -239,7 +240,7 @@ export function useStorageFile(
   }
 
   function _deleteObject() {
-    const storageSource = unref(storageRef)
+    const storageSource = toValue(storageRef)
     if (storageSource) {
       deleteObject(storageSource)
       metadata.value = null

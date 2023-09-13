@@ -6,14 +6,9 @@ import {
   DocumentReference,
 } from 'firebase/firestore'
 import { setupFirestoreRefs, sleep } from '../utils'
-import { defineComponent, unref } from 'vue'
+import { defineComponent, toValue, MaybeRefOrGetter } from 'vue'
 import { VueFirestoreDocumentData, _RefFirestore } from '../../src/firestore'
-import {
-  UseDocumentOptions,
-  VueFirestoreQueryData,
-  useDocument,
-} from '../../src'
-import { _MaybeRef } from '../../src/shared'
+import { UseDocumentOptions, useDocument } from '../../src'
 
 describe('Firestore refs in documents', async () => {
   const { collection, query, addDoc, setDoc, updateDoc, deleteDoc, doc } =
@@ -24,7 +19,7 @@ describe('Firestore refs in documents', async () => {
     ref = doc(),
   }: {
     options?: UseDocumentOptions
-    ref?: _MaybeRef<DocumentReference<T>>
+    ref?: MaybeRefOrGetter<DocumentReference<T>>
   } = {}) {
     let data!: _RefFirestore<VueFirestoreDocumentData<T>>
 
@@ -44,7 +39,7 @@ describe('Firestore refs in documents', async () => {
 
     return {
       wrapper,
-      listRef: unref(ref),
+      listRef: toValue(ref),
       // non enumerable properties cannot be spread
       data: data.data,
       pending: data.pending,

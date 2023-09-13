@@ -4,9 +4,9 @@ import {
   Query,
   getFirestore,
 } from 'firebase/firestore'
-import { ref } from 'vue-demi'
+import { ref, MaybeRefOrGetter } from 'vue-demi'
 import { useFirebaseApp } from '../app'
-import type { _MaybeRef, _Nullable, _RefWithState } from '../shared'
+import type { _Nullable, _RefWithState } from '../shared'
 import {
   VueFirestoreDocumentData,
   VueFirestoreQueryData,
@@ -30,7 +30,7 @@ export function useCollection<
   // explicit generic as unknown to allow arbitrary types like numbers or strings
   R extends CollectionReference<unknown> | Query<unknown>
 >(
-  collectionRef: _MaybeRef<_Nullable<R>>,
+  collectionRef: MaybeRefOrGetter<_Nullable<R>>,
   options?: UseCollectionOptions
 ): _RefFirestore<_InferReferenceType<R>[]>
 
@@ -43,12 +43,12 @@ export function useCollection<
  * @param options - optional options
  */
 export function useCollection<T>(
-  collectionRef: _MaybeRef<_Nullable<CollectionReference | Query>>,
+  collectionRef: MaybeRefOrGetter<_Nullable<CollectionReference | Query>>,
   options?: UseCollectionOptions
 ): _RefFirestore<VueFirestoreQueryData<T>>
 
 export function useCollection<T>(
-  collectionRef: _MaybeRef<
+  collectionRef: MaybeRefOrGetter<
     _Nullable<CollectionReference<unknown> | Query<unknown>>
   >,
   options?: UseCollectionOptions
@@ -71,7 +71,7 @@ export function useDocument<
   // explicit generic as unknown to allow arbitrary types like numbers or strings
   R extends DocumentReference<unknown>
 >(
-  documentRef: _MaybeRef<_Nullable<R>>,
+  documentRef: MaybeRefOrGetter<_Nullable<R>>,
   options?: UseDocumentOptions
 ): _RefFirestore<_InferReferenceType<R> | undefined> // this one can't be null or should be specified in the converter
 
@@ -84,12 +84,12 @@ export function useDocument<
  * @param options - optional options
  */
 export function useDocument<T>(
-  documentRef: _MaybeRef<_Nullable<DocumentReference>>,
+  documentRef: MaybeRefOrGetter<_Nullable<DocumentReference>>,
   options?: UseDocumentOptions
 ): _RefFirestore<VueFirestoreDocumentData<T> | undefined>
 
 export function useDocument<T>(
-  documentRef: _MaybeRef<_Nullable<DocumentReference<unknown>>>,
+  documentRef: MaybeRefOrGetter<_Nullable<DocumentReference<unknown>>>,
   options?: UseDocumentOptions
 ): _RefFirestore<VueFirestoreDocumentData<T> | undefined> {
   // no unwrapRef to have a simpler type

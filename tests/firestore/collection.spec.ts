@@ -13,9 +13,10 @@ import {
   computed,
   nextTick,
   ref,
-  unref,
+  toValue,
   watch,
   type Ref,
+  type MaybeRefOrGetter,
   defineComponent,
 } from 'vue'
 import { _RefFirestore } from '../../src/firestore'
@@ -24,7 +25,7 @@ import {
   UseCollectionOptions,
   VueFirestoreQueryData,
 } from '../../src'
-import { _MaybeRef, _Nullable } from '../../src/shared'
+import { _Nullable } from '../../src/shared'
 import { mockWarn } from '../vitest-mock-warn'
 
 describe(
@@ -40,7 +41,7 @@ describe(
       ref = collection(),
     }: {
       options?: UseCollectionOptions
-      ref?: _MaybeRef<_Nullable<CollectionReference<T>>>
+      ref?: MaybeRefOrGetter<_Nullable<CollectionReference<T>>>
     } = {}) {
       let data!: _RefFirestore<VueFirestoreQueryData<T>>
 
@@ -61,7 +62,7 @@ describe(
       return {
         wrapper,
         // to simplify types
-        listRef: unref(ref)!,
+        listRef: toValue(ref)!,
         // non enumerable properties cannot be spread
         data: data.data,
         pending: data.pending,
@@ -79,7 +80,7 @@ describe(
       ref,
     }: {
       options?: UseCollectionOptions
-      ref?: _MaybeRef<_Nullable<Query<AppModelType, DbModelType>>>
+      ref?: MaybeRefOrGetter<_Nullable<Query<AppModelType, DbModelType>>>
     } = {}) {
       let data!: _RefFirestore<VueFirestoreQueryData<AppModelType>>
 
@@ -106,7 +107,7 @@ describe(
         wrapper,
         // non enumerable properties cannot be spread
         data: data.data,
-        listQuery: unref(ref)!,
+        listQuery: toValue(ref)!,
         pending: data.pending,
         error: data.error,
         promise: data.promise,
@@ -262,7 +263,7 @@ describe(
       })
 
       expect(error.value).toBeUndefined()
-      await expect(unref(promise)).rejects.toThrow()
+      await expect(toValue(promise)).rejects.toThrow()
       expect(error.value).toBeTruthy()
     })
 
@@ -272,7 +273,7 @@ describe(
       await addDoc(ref, { name: 'b' })
       const { error, promise, data } = factory({ ref })
 
-      await expect(unref(promise)).resolves.toEqual(expect.anything())
+      await expect(toValue(promise)).resolves.toEqual(expect.anything())
       expect(data.value).toContainEqual({ name: 'a' })
       expect(data.value).toContainEqual({ name: 'b' })
       expect(error.value).toBeUndefined()

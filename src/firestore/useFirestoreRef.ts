@@ -7,7 +7,8 @@ import type {
   FirestoreDataConverter,
 } from 'firebase/firestore'
 import {
-  unref,
+  MaybeRefOrGetter,
+  toValue,
   ref,
   shallowRef,
   ShallowRef,
@@ -20,7 +21,6 @@ import {
 } from 'vue-demi'
 import { useFirebaseApp } from '../app'
 import {
-  _MaybeRef,
   _Nullable,
   UnbindWithReset,
   noop,
@@ -57,7 +57,7 @@ const NO_INITIAL_VALUE = Symbol()
  * @internal
  */
 export function _useFirestoreRef(
-  docOrCollectionRef: _MaybeRef<
+  docOrCollectionRef: MaybeRefOrGetter<
     _Nullable<
       DocumentReference<unknown> | Query<unknown> | CollectionReference<unknown>
     >
@@ -66,7 +66,7 @@ export function _useFirestoreRef(
 ): _RefFirestore<unknown> {
   let unbind: UnbindWithReset = noop
   const options = Object.assign({}, firestoreOptionsDefaults, localOptions)
-  const initialSourceValue = unref(docOrCollectionRef)
+  const initialSourceValue = toValue(docOrCollectionRef)
   const data = options.target || ref<unknown | null>()
 
   // dev only warning
@@ -108,7 +108,7 @@ export function _useFirestoreRef(
   let removePendingPromise = noop
 
   function bindFirestoreRef() {
-    let docRefValue = unref(docOrCollectionRef)
+    let docRefValue = toValue(docOrCollectionRef)
 
     const newPromise = new Promise<unknown | null>((resolve, reject) => {
       // stop the previous subscription

@@ -224,11 +224,6 @@ export interface _RefWithState<T, E = Error> extends Ref<T> {
 }
 
 /**
- * @internal
- */
-export type _MaybeRef<T> = T | Ref<T>
-
-/**
  * Base options for the data source options in both Firestore and Realtime Database.
  *
  * @internal

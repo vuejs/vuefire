@@ -15,6 +15,7 @@ import {
   watch,
   type Ref,
   defineComponent,
+  MaybeRefOrGetter,
 } from 'vue'
 import {
   DatabaseReference,
@@ -23,7 +24,6 @@ import {
   Query,
   ref as _databaseRef,
 } from 'firebase/database'
-import { _MaybeRef } from '../../src/shared'
 import { mockWarn } from '../vitest-mock-warn'
 
 describe('Database lists', () => {
@@ -35,7 +35,7 @@ describe('Database lists', () => {
     ref = databaseRef(),
   }: {
     options?: UseDatabaseRefOptions
-    ref?: _MaybeRef<DatabaseReference | Query>
+    ref?: MaybeRefOrGetter<DatabaseReference | Query>
   } = {}) {
     let data!: _RefDatabase<VueDatabaseQueryData<T>>
 

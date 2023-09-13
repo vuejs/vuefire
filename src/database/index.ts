@@ -1,6 +1,6 @@
-import { Ref, ref } from 'vue-demi'
+import { Ref, ref, MaybeRefOrGetter } from 'vue-demi'
 import { DatabaseReference, getDatabase, Query } from 'firebase/database'
-import { _MaybeRef, _Nullable, _RefWithState } from '../shared'
+import { _Nullable, _RefWithState } from '../shared'
 import { _DatabaseRefOptions } from './bind'
 import {
   VueDatabaseDocumentData,
@@ -24,7 +24,7 @@ export type UseListOptions = UseDatabaseRefOptions
  * @param options - optional options
  */
 export function useDatabaseList<T = unknown>(
-  reference: _MaybeRef<DatabaseReference | Query>,
+  reference: MaybeRefOrGetter<DatabaseReference | Query>,
   options?: UseListOptions
 ): _RefDatabase<VueDatabaseQueryData<T>> {
   const data = ref<T[]>([]) as Ref<T[]>
@@ -54,7 +54,7 @@ export type UseObjectOptions = UseDatabaseRefOptions
  * @param options - optional options
  */
 export function useDatabaseObject<T = unknown>(
-  reference: _MaybeRef<DatabaseReference>,
+  reference: MaybeRefOrGetter<DatabaseReference>,
   options?: UseObjectOptions
 ): _RefDatabase<VueDatabaseDocumentData<T> | undefined> {
   const data = ref<T | null>()
