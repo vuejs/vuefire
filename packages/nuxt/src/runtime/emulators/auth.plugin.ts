@@ -1,7 +1,7 @@
 import { connectAuthEmulator, getAuth } from 'firebase/auth'
 import type { FirebaseApp } from 'firebase/app'
 import { logger } from '../logging'
-import { defineNuxtPlugin, useRuntimeConfig, useAppConfig } from '#app'
+import { defineNuxtPlugin, useRuntimeConfig } from '#app'
 
 /**
  * Setups the auth Emulators
@@ -13,11 +13,11 @@ export default defineNuxtPlugin((nuxtApp) => {
   }
 
   const {
-    public: { vuefire: publicVuefire },
+    public: { vuefire },
   } = useRuntimeConfig()
 
-  const host = publicVuefire?.emulators?.auth?.host
-  const port = publicVuefire?.emulators?.auth?.port
+  const host = vuefire?.emulators?.auth?.host
+  const port = vuefire?.emulators?.auth?.port
 
   if (!host || !port) {
     logger.warn('Auth emulator not connected, missing host or port')
@@ -27,7 +27,7 @@ export default defineNuxtPlugin((nuxtApp) => {
   connectAuthEmulator(
     getAuth(firebaseApp),
     `http://${host}:${port}`,
-    publicVuefire?.emulators?.auth?.options
+    vuefire?.emulators?.auth?.options
   )
   logger.info(`Auth emulator connected to http://${host}:${port}`)
   connectedEmulators.set(firebaseApp, true)

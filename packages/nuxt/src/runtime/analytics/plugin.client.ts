@@ -1,15 +1,15 @@
 import type { FirebaseApp } from 'firebase/app'
 import { isSupported, initializeAnalytics } from 'firebase/analytics'
-import { defineNuxtPlugin, useAppConfig } from '#app'
+import { defineNuxtPlugin, useRuntimeConfig } from '#app'
 
 /**
  * Plugin to initialize the analytics module.
  * @experimental: NOT YET RELEASED
  */
 export default defineNuxtPlugin(async (nuxtApp) => {
-  const appConfig = useAppConfig()
-  // @ts-expect-error: not implemented yet
-  const options = appConfig.vuefireOptions.analytics
+  const runtimeConfig = useRuntimeConfig()
+  // @ts-expect-error: not implemented yet, needs to be added to the type
+  const options = runtimeConfig.public.vuefire.analytics
   const firebaseApp = nuxtApp.$firebaseApp as FirebaseApp
 
   if (await isSupported()) {

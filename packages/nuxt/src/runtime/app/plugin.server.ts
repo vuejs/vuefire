@@ -4,13 +4,13 @@ import { DecodedIdToken } from 'firebase-admin/auth'
 import { logger } from '../logging'
 import { DECODED_ID_TOKEN_SYMBOL } from '../constants'
 import { appCache } from './lru-cache'
-import { defineNuxtPlugin, useAppConfig } from '#app'
+import { defineNuxtPlugin, useRuntimeConfig } from '#app'
 
 /**
  * Initializes the app and provides it to others.
  */
 export default defineNuxtPlugin((nuxtApp) => {
-  const appConfig = useAppConfig()
+  const runtimeConfig = useRuntimeConfig()
 
   const decodedToken = nuxtApp[
     // we cannot use a symbol to index
@@ -21,7 +21,7 @@ export default defineNuxtPlugin((nuxtApp) => {
 
   let firebaseApp: FirebaseApp | undefined
 
-  // logger.debug('initializing app with', appConfig.firebaseConfig)
+  // logger.debug('initializing app with', runtimeConfig.public.vuefire!.config!)
   if (uid) {
     firebaseApp = appCache.get(uid)
     if (!firebaseApp) {
@@ -31,7 +31,10 @@ export default defineNuxtPlugin((nuxtApp) => {
 
       logger.debug('👤 creating new app', appName)
 
-      firebaseApp = initializeApp(appConfig.firebaseConfig, appName)
+      firebaseApp = initializeApp(
+        runtimeConfig.public.vuefire!.config!,
+        appName
+      )
       appCache.set(uid, firebaseApp)
       // console.time('token')
     } else {
@@ -41,7 +44,7 @@ export default defineNuxtPlugin((nuxtApp) => {
     firebaseApp = appCache.get('')
     // TODO: is this safe? should we create a new one every time
     if (!firebaseApp) {
-      firebaseApp = initializeApp(appConfig.firebaseConfig)
+      firebaseApp = initializeApp(runtimeConfig.public.vuefire!.config!)
       appCache.set('', firebaseApp)
     }
     // anonymous session, just create a new app

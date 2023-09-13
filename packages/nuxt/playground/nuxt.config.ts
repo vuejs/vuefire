@@ -1,5 +1,4 @@
 import { fileURLToPath } from 'node:url'
-import { resolve } from 'node:path'
 
 export default defineNuxtConfig({
   app: {
@@ -12,14 +11,12 @@ export default defineNuxtConfig({
   },
 
   nitro: {
-    preset: fileURLToPath(new URL('./preset', import.meta.url)),
-    // preset: 'nitro-preset-firebase',
-    runtimeConfig: {
-      firebase: {
-        functions: {
-          httpsOptions: {
-            region: 'europe-west1',
-          },
+    preset: 'firebase',
+    firebase: {
+      gen: 2,
+      functions: {
+        httpsOptions: {
+          region: 'europe-west1',
         },
       },
     },

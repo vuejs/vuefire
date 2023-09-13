@@ -6,15 +6,15 @@ import {
   AppCheckOptions,
 } from 'firebase/app-check'
 import { VueFireAppCheck } from 'vuefire'
-import { defineNuxtPlugin, useAppConfig } from '#app'
+import { defineNuxtPlugin, useRuntimeConfig } from '#app'
 
 /**
  * Plugin to initialize the appCheck module on the server.
  */
 export default defineNuxtPlugin((nuxtApp) => {
-  const appConfig = useAppConfig()
+  const runtimeConfig = useRuntimeConfig()
   // NOTE: appCheck is present because of the check in module.ts
-  const options = appConfig.vuefireOptions.appCheck!
+  const options = runtimeConfig.public.vuefire!.appCheck!
   const firebaseApp = nuxtApp.$firebaseApp as FirebaseApp
 
   let provider: AppCheckOptions['provider']

@@ -17,12 +17,13 @@ import { useRuntimeConfig } from '#imports'
 export default defineEventHandler(async (event) => {
   assertMethod(event, 'POST')
   const { token } = await readBody<{ token?: string }>(event)
-  const { vuefire } = useRuntimeConfig()
+  const runtimeConfig = useRuntimeConfig()
 
   const adminApp = ensureAdminApp(
     {
-      projectId: vuefire?.options?.config?.projectId,
-      ...vuefire?.options?.admin?.options,
+      // NOTE: ensured by the module
+      projectId: runtimeConfig.public.vuefire!.config!.projectId,
+      ...runtimeConfig.vuefire?.admin?.options,
     },
     'session-verification'
   )

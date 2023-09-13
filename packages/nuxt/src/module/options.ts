@@ -94,7 +94,8 @@ export interface VueFireNuxtModuleOptions {
 }
 
 export interface VueFireNuxtModuleOptionsResolved
-  extends Omit<VueFireNuxtModuleOptions, 'emulators' | 'auth'> {
+  extends Omit<VueFireNuxtModuleOptions, 'emulators' | 'auth' | 'config'> {
+  config: Exclude<VueFireNuxtModuleOptions['config'], undefined>
   emulators: Exclude<VueFireNuxtModuleOptions['emulators'], boolean | undefined>
   auth: Exclude<VueFireNuxtModuleOptions['auth'], boolean | undefined>
 }

@@ -6,7 +6,7 @@ export default defineNuxtPlugin(() => {
   const event = useRequestEvent()
   const { vuefire } = useRuntimeConfig()
 
-  const firebaseAdminApp = ensureAdminApp(vuefire?.options?.admin?.options)
+  const firebaseAdminApp = ensureAdminApp(vuefire?.admin?.options)
 
   // TODO: Is this accessible within middlewares and api routes? or should we use a middleware to add it
   event.context.firebaseApp = firebaseAdminApp

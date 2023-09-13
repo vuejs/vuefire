@@ -42,56 +42,62 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
     emulators: { enabled: true },
   },
 
-  async setup(options, nuxt) {
+  async setup(_options, nuxt) {
     // ensure provided options are valid
-    if (!options.config) {
+    if (!_options.config) {
       throw new Error(
         '[nuxt-vuefire]: Missing firebase config. Provide a "config" option to the VueFire module options.'
       )
     }
 
-    const { resolve } = createResolver(import.meta.url)
-    const runtimeDir = fileURLToPath(new URL('./runtime', import.meta.url))
-    const templatesDir = fileURLToPath(new URL('../templates', import.meta.url))
-
-    // TODO: I don't think the appConfig is the right place to store these as it makes things reactive
-    // Let plugins and the user access the firebase config within the app
-    nuxt.options.appConfig.firebaseConfig = markRaw(options.config)
-    nuxt.options.appConfig.vuefireOptions = markRaw(options)
-
+    // resolve options
     const isAuthEnabled =
-      typeof options.auth === 'object'
-        ? options.auth.enabled ?? true // allows user to comment out enabled: false
-        : !!options.auth
+      typeof _options.auth === 'object'
+        ? _options.auth.enabled ?? true // allows user to comment out enabled: false
+        : !!_options.auth
 
-    const resolvedVueFireOptions = {
-      ...options,
+    const options = {
+      ..._options,
+      // NOTE: TS complains otherwise
+      config: _options.config,
       // ensure the resolved version easier to consume
       emulators: {
         enabled:
-          typeof options.emulators === 'object'
-            ? options.emulators.enabled ?? true // allows user to comment out enabled: false
-            : !!options.emulators,
-        ...(typeof options.emulators === 'object' ? options.emulators : {}),
+          typeof _options.emulators === 'object'
+            ? _options.emulators.enabled ?? true // allows user to comment out enabled: false
+            : !!_options.emulators,
+        ...(typeof _options.emulators === 'object' ? _options.emulators : {}),
       },
       auth: {
         enabled: isAuthEnabled,
         // enable session cookie when auth is `true`
         sessionCookie:
-          typeof options.auth === 'object'
-            ? isAuthEnabled && options.auth.sessionCookie // deactivating auth also deactivates the session cookie
-            : !!options.auth, // fallback to the boolean value of options.auth
-        ...(typeof options.auth === 'object' ? options.auth : {}),
+          typeof _options.auth === 'object'
+            ? isAuthEnabled && _options.auth.sessionCookie // deactivating auth also deactivates the session cookie
+            : !!_options.auth, // fallback to the boolean value of options.auth
+        ...(typeof _options.auth === 'object' ? _options.auth : {}),
       },
     } satisfies VueFireNuxtModuleOptionsResolved
 
-    nuxt.options.runtimeConfig.vuefire = {
-      options: resolvedVueFireOptions,
-    }
+    nuxt.options.runtimeConfig.public.vuefire ??= {}
+    // avoid any nested reactivity as it's not needed
+    markRaw(nuxt.options.runtimeConfig.public.vuefire)
+    // Let plugins and the user access the firebase config within the app
+    nuxt.options.runtimeConfig.public.vuefire.config = _options.config
+    nuxt.options.runtimeConfig.public.vuefire.appCheck = options.appCheck
+
+    nuxt.options.runtimeConfig.vuefire ??= {}
+    markRaw(nuxt.options.runtimeConfig.vuefire)
+    nuxt.options.runtimeConfig.vuefire.admin ??= options.admin
+
+    // configure transpilation
+    const { resolve } = createResolver(import.meta.url)
+    const runtimeDir = fileURLToPath(new URL('./runtime', import.meta.url))
+    const templatesDir = fileURLToPath(new URL('../templates', import.meta.url))
 
     // we need this to avoid some warnings about missing credentials and ssr
     const emulatorsConfig = await willUseEmulators(
-      nuxt.options.runtimeConfig.vuefire.options!,
+      options,
       resolve(nuxt.options.rootDir, 'firebase.json'),
       logger
     )
@@ -104,6 +110,7 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
 
     // This one is set by servers, we set the GOOGLE_APPLICATION_CREDENTIALS env variable instead that has a lower priority and can be both a path or a JSON string
     // process.env.FIREBASE_CONFIG ||= JSON.stringify(options.config)
+    // FIXME: remove deprecation in next release
     if (typeof options.admin?.serviceAccount === 'string') {
       process.env.GOOGLE_APPLICATION_CREDENTIALS ||=
         options.admin.serviceAccount
@@ -173,12 +180,13 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
     addPluginTemplate({
       src: normalize(resolve(templatesDir, 'plugin.ejs')),
       options: {
+        // FIXME: not needed
         ...options,
         ssr: nuxt.options.ssr,
       },
     })
 
-    if (options.auth) {
+    if (_options.auth) {
       if (nuxt.options.ssr && !hasServiceAccount && !emulatorsConfig) {
         logger.warn(
           'You activated both SSR and auth but you are not providing a service account for the admin SDK. See https://vuefire.vuejs.org/nuxt/getting-started.html#configuring-the-admin-sdk.'
@@ -188,7 +196,7 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
       if (
         nuxt.options.ssr &&
         (hasServiceAccount || emulatorsConfig) &&
-        resolvedVueFireOptions.auth.sessionCookie
+        options.auth.sessionCookie
       ) {
         // Add the session handler than mints a cookie for the user
         addServerHandler({
@@ -222,19 +230,13 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
     // Emulators must be enabled after the app is initialized but before some APIs like auth.signinWithCustomToken() are called
 
     if (emulatorsConfig) {
-      const emulators = detectEmulators(
-        nuxt.options.runtimeConfig.vuefire.options!,
-        emulatorsConfig,
-        logger
-      )
+      const emulators = detectEmulators(options, emulatorsConfig, logger)
       // add the option to disable the warning. It only exists in Auth
       if (emulators?.auth) {
-        emulators.auth.options =
-          nuxt.options.runtimeConfig.vuefire.options?.emulators?.auth?.options
+        emulators.auth.options = options.emulators.auth?.options
       }
 
       // expose the detected emulators to the plugins
-      nuxt.options.runtimeConfig.public.vuefire ??= {}
       nuxt.options.runtimeConfig.public.vuefire.emulators = emulators
 
       for (const serviceName in emulators) {
@@ -263,7 +265,7 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
       }
 
       if (hasServiceAccount || emulatorsConfig) {
-        if (resolvedVueFireOptions.auth.sessionCookie) {
+        if (options.auth.sessionCookie) {
           // decodes user token from cookie if any
           addPlugin(resolve(runtimeDir, 'auth/plugin-user-token.server'))
         }
@@ -374,14 +376,17 @@ interface VueFireRuntimeConfig {
    */
   vuefire?: {
     /**
-     * Options passed to the Nuxt VueFire module
+     * Firebase Admin SDK Options passed to the Nuxt VueFire module
      * @internal
      */
-    options?: VueFireNuxtModuleOptionsResolved
+    admin?: VueFireNuxtModuleOptionsResolved['admin']
   }
 }
 
 interface VueFirePublicRuntimeConfig {
+  /**
+   * Public Runtime config for the VueFire module.
+   */
   vuefire?: {
     /**
      * Emulators to enable.
@@ -389,25 +394,22 @@ interface VueFirePublicRuntimeConfig {
      * @internal
      */
     emulators?: FirebaseEmulatorsToEnable
+
+    /**
+     * Firebase config to initialize the app.
+     * @internal
+     */
+    config?: FirebaseOptions
+
+    /**
+     * AppCheck options.
+     * @internal
+     */
+    appCheck?: VueFireNuxtModuleOptionsResolved['appCheck']
   }
 }
 
-interface VueFireAppConfig {
-  /**
-   * Firebase config to initialize the app.
-   * @internal
-   */
-  firebaseConfig: FirebaseOptions
-
-  /**
-   * VueFireNuxt options used within plugins.
-   * @internal
-   */
-  vuefireOptions: Pick<VueFireNuxtModuleOptions, 'appCheck' | 'auth'>
-}
-
 declare module '@nuxt/schema' {
-  export interface AppConfig extends VueFireAppConfig {}
   export interface RuntimeConfig extends VueFireRuntimeConfig {}
   export interface PublicRuntimeConfig extends VueFirePublicRuntimeConfig {}
 }
