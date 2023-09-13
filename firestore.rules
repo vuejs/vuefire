@@ -19,6 +19,10 @@ service cloud.firestore {
       allow read, write;
     }
 
+    match /playground/pinia-counter {
+      allow read, write;
+    }
+
     match /{document=**} {
       allow read, write: if false;
     }

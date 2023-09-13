@@ -1,6 +1,6 @@
 import { ref, computed } from 'vue'
 import { acceptHMRUpdate, defineStore } from 'pinia'
-import { doc, setDoc, updateDoc } from 'firebase/firestore'
+import { doc, setDoc, updateDoc, type DocumentData } from 'firebase/firestore'
 import { useDocument, useFirestore } from 'vuefire'
 
 export const useCounterStore = defineStore('counter', () => {
@@ -9,16 +9,17 @@ export const useCounterStore = defineStore('counter', () => {
 
   const db = useFirestore()
 
-  const countRef = doc(db, 'playground', 'pinia-counter').withConverter<number>(
-    {
-      toFirestore(n) {
-        return { n }
-      },
-      fromFirestore(snapshot) {
-        return snapshot.data().n as number
-      },
-    }
-  )
+  const countRef = doc(db, 'playground', 'pinia-counter').withConverter<
+    number,
+    DocumentData
+  >({
+    toFirestore(n) {
+      return { n }
+    },
+    fromFirestore(snapshot) {
+      return snapshot.data().n as number
+    },
+  })
 
   useDocument(countRef, {
     target: count,
