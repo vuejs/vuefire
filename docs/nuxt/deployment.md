@@ -1,7 +1,5 @@
 # Deployment
 
-> This section is a work in progress.
-
 Given the amount of steps needed to fully provision a Firebase Project, you can directly use these templates instead:
 
 - [Spark Plan](https://github.com/posva/nuxt--vuefire-example-spark-plan)
@@ -35,7 +33,7 @@ The Blaze plan is a pay-as-you-go that allows you to run Firebase Functions. **I
 NITRO_PRESET=firebase nuxt build
 ```
 
-alternatively, you can use the `nitro.preset` option in your `nuxt.config.ts`, which will only be applied during builds.
+Alternatively, you can use the `nitro.preset` option in your `nuxt.config.ts`, which will only be applied during builds.
 
 ```ts{3}
 export default defineNuxtConfig({
