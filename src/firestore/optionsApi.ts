@@ -104,12 +104,16 @@ export const firestorePlugin = function firestorePlugin(
       effectScope()
     )!
 
-    const { promise, stop: _unbind } = scope.run(() =>
-      _useFirestoreRef(docOrCollectionRef, {
-        target,
-        ...options,
-      })
-    )!
+    // allow usage of global injects in some composables
+    const { promise, stop: _unbind } = app.runWithContext(
+      () =>
+        scope.run(() =>
+          _useFirestoreRef(docOrCollectionRef, {
+            target,
+            ...options,
+          })
+        )!
+    )
 
     // override the unbind to also free th variables created
     const unbind: UnbindWithReset = (reset) => {

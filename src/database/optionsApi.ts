@@ -104,9 +104,10 @@ export function databasePlugin(
       effectScope()
     )!
 
-    const { promise, stop: _unbind } = scope.run(() =>
-      _useDatabaseRef(source, { target, ...options })
-    )!
+    // add access to global inject
+    const { promise, stop: _unbind } = app.runWithContext(
+      () => scope.run(() => _useDatabaseRef(source, { target, ...options }))!
+    )
 
     // override the unbind to also free th variables created
     const unbind: UnbindWithReset = (reset) => {
