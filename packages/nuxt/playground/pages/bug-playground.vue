@@ -24,7 +24,9 @@ promise.value.then(() => {
 
 const active = ref(false)
 useIntervalFn(async () => {
-  if (!active.value) return
+  if (!active.value) {
+    return
+  }
   if (thing.value?.ref) {
     await updateDoc(thingRef.value, {
       ref: null,
@@ -40,7 +42,7 @@ useIntervalFn(async () => {
 <template>
   <div>
     <label>
-      <input type="checkbox" v-model="active" />Toggle the nested `ref` every
+      <input v-model="active" type="checkbox" />Toggle the nested `ref` every
       3s.
     </label>
     <p v-if="thing">Actual: {{ thing }}</p>
