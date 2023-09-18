@@ -81,8 +81,47 @@ const contact = useDocument(contactSource)
 This way, when the route changes, the document will be updated to the new one, automatically unsubscribing from the previous one and subscribing to the new one.
 
 ::: tip
-If you can't use a `computed()`, use `shallowRef()`s instead of `ref()`s to store the data sources. This is because `shallowRef()` doesn't try to recursively observe the object it's given, which in the case of a Firebase data source, would be worse in terms of performance.
+
+`contactSource` can either be a _getter_, a `computed()`, or a `ref()`. If you are using a `ref()`, make sure to use `shallowRef()` instead of `ref()` for better performance.
+
+```ts
+const asRef = shallowRef(dbRef(db, 'contacts/' + route.params.id))
+useDocument(asRef)
+const asComputed = computed(() => dbRef(db, 'contacts/' + route.params.id))
+useDocument(asComputed)
+// a getter is the lightest option
+useDocument(() => dbRef(db, 'contacts/' + route.params.id))
+```
+
 :::
+
+On top of that, VueFire also allows `null` as a value for the data source. This is useful when you want to start observing a document or collection later in the lifecycle of your component, or if you cannot computed a valid document path, e.g. when the user is not logged in:
+
+<FirebaseExample>
+
+```ts
+const user = useCurrentUser()
+const myContactList = useCollection(() =>
+  user.value
+    ? // Firebase will error if a null value is passed to `collection()`
+      collection(db, 'users', user.value.id, 'contacts')
+    : // this will be considered as no data source
+      null
+)
+```
+
+```ts
+const user = useCurrentUser()
+const myContactList = useDatabaseList(() =>
+  user.value
+    ? // Firebase will error if a null value is passed to `dbRef()`
+      dbRef(db, 'users', user.value.id, 'contacts')
+    : // this will be considered as no data source
+      null
+)
+```
+
+</FirebaseExample>
 
 ### Subscription state
 
