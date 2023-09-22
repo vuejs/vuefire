@@ -16,7 +16,7 @@
 - Works with Vue >=2.7 and Vue 3
 - Supports Composition and Options API
 - Supports Vuex, Pinia, and anything that gives you a Vue `ref()`
-- Built for Firebase 9 for optimal tree shaking
+- Built for Modular Firebase >=9 for optimal tree shaking
 - Automatically listen for changes in nested references
 
 [**📚 Documentation**](https://vuefire.vuejs.org/)
@@ -38,17 +38,20 @@ VueFire requires the `firebase` package to be installed as well as `vuefire`:
 npm install vuefire firebase
 ```
 
+Check [the documentation](https://vuefire.vuejs.org/nuxt/getting-started.html) for Nuxt instructions.
+
 ## Usage
 
 - [Getting Started](https://vuefire.vuejs.org/guide/getting-started.html)
 - [Vite Demo](https://github.com/posva/vuefire-vite-example)
-- _Coming soon_: Nuxt Demo.
+- [Nuxt demo - Spark Plan](https://github.com/posva/nuxt--vuefire-example-spark-plan)
+- [Nuxt demo - Blaze Plan](https://github.com/posva/nuxt--vuefire-example-blaze-plan)
 
 ## Related
 
 - [Firebase Web Docs](https://firebase.google.com/docs/web/setup)
   - [Realtime database](https://firebase.google.com/docs/database/)
-  - [Cloud Firestore](https://firebase.google.com/docs/firestore/) (You should try this one which is also realtime)
+  - [Cloud Firestore](https://firebase.google.com/docs/firestore/)
 
 ## License
 
