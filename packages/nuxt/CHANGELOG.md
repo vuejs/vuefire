@@ -1,3 +1,40 @@
+# [0.4.0](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.3.1...nuxt-vuefire@0.4.0) (2023-10-02)
+
+### Code Refactoring
+
+- remove deprecated serviceAccount ([4144bd8](https://github.com/vuejs/vuefire/commit/4144bd80999f78904cc1b58e1a26dd3df3ccf6b7))
+
+### Features
+
+- **auth:** disable sessionCookie by default ([4281242](https://github.com/vuejs/vuefire/commit/4281242e3a413b775f6b71727f94ef2ee21d3eea))
+
+### BREAKING CHANGES
+
+- **auth:** The session cookie feature is now disabled by default.
+  It must be explicitely enabled alongside `auth`. If you were using SSR,
+  change your `vuefire` config in `nuxt.config.ts`:
+
+```diff
+-  auth: true,
++  auth: {
++    enabled: true,
++    sessionCookie: true,
++  },
+```
+
+Or, if you were already using `auth.enabled`:
+
+```diff
+-  auth: { enabled: true },
++  auth: {
++    enabled: true,
++    sessionCookie: true,
++  },
+```
+
+- Removed deprecated `admin.serviceAccount` option. Refer
+  to the previous version for migration instructions.
+
 ## [0.3.1](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.3.0...nuxt-vuefire@0.3.1) (2023-10-02)
 
 ### Bug Fixes
