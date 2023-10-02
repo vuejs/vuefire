@@ -1,3 +1,13 @@
+## [0.3.1](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.3.0...nuxt-vuefire@0.3.1) (2023-10-02)
+
+### Bug Fixes
+
+- **ssr:** stricter payload plugin ([1c22769](https://github.com/vuejs/vuefire/commit/1c22769450c648e726fc95fe74eca8adfee7713a))
+
+### Features
+
+- **logs:** log cookie endpoint ([04b006b](https://github.com/vuejs/vuefire/commit/04b006bd2efc2c716341e6f93b96981ddcbc2832))
+
 # [0.3.0](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.2.19...nuxt-vuefire@0.3.0) (2023-09-13)
 
 ### Bug Fixes
