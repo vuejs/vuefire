@@ -110,11 +110,6 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
 
     // This one is set by servers, we set the GOOGLE_APPLICATION_CREDENTIALS env variable instead that has a lower priority and can be both a path or a JSON string
     // process.env.FIREBASE_CONFIG ||= JSON.stringify(options.config)
-    // FIXME: remove deprecation in next release
-    if (typeof options.admin?.serviceAccount === 'string') {
-      process.env.GOOGLE_APPLICATION_CREDENTIALS ||=
-        options.admin.serviceAccount
-    }
     const hasServiceAccount =
       typeof process.env.GOOGLE_APPLICATION_CREDENTIALS === 'string' &&
       process.env.GOOGLE_APPLICATION_CREDENTIALS.length > 0

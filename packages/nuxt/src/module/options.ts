@@ -1,5 +1,5 @@
 import type { FirebaseOptions } from 'firebase/app'
-import type { AppOptions, ServiceAccount } from 'firebase-admin'
+import type { AppOptions } from 'firebase-admin'
 import type { NuxtVueFireAppCheckOptions } from '../runtime/app-check'
 
 export interface VueFireNuxtModuleOptions {
@@ -23,13 +23,6 @@ export interface VueFireNuxtModuleOptions {
      * Firebase Admin Options passed to `firebase-admin`'s `initializeApp()`.
      */
     options?: Omit<AppOptions, 'credential'>
-
-    /**
-     * Firebase Admin Service Account passed to `firebase-admin`'s `initializeApp()`. Required if you are adding an
-     * adminConfig.
-     * @deprecated use GOOGLE_APPLICATION_CREDENTIALS env variable instead with the service-account JSON content
-     */
-    serviceAccount?: string | ServiceAccount
   }
 
   /**
