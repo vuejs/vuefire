@@ -32,7 +32,7 @@ export interface VueFireNuxtModuleOptions {
   appCheck?: NuxtVueFireAppCheckOptions
 
   /**
-   * Enables the Authentication module and the session cookie. Pass an object to individually customize the modules.
+   * Enables the Authentication module without the session cookie. Pass an object to enable other features.
    * @defaultValue `false`
    */
   auth?:

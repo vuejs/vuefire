@@ -70,11 +70,6 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
       },
       auth: {
         enabled: isAuthEnabled,
-        // enable session cookie when auth is `true`
-        sessionCookie:
-          typeof _options.auth === 'object'
-            ? isAuthEnabled && _options.auth.sessionCookie // deactivating auth also deactivates the session cookie
-            : !!_options.auth, // fallback to the boolean value of options.auth
         ...(typeof _options.auth === 'object' ? _options.auth : {}),
       },
     } satisfies VueFireNuxtModuleOptionsResolved
@@ -181,7 +176,7 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
       },
     })
 
-    if (_options.auth) {
+    if (options.auth.enabled) {
       if (nuxt.options.ssr && !hasServiceAccount && !emulatorsConfig) {
         logger.warn(
           'You activated both SSR and auth but you are not providing a service account for the admin SDK. See https://vuefire.vuejs.org/nuxt/getting-started.html#configuring-the-admin-sdk.'
@@ -261,7 +256,7 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
       }
 
       if (hasServiceAccount || emulatorsConfig) {
-        if (options.auth.sessionCookie) {
+        if (options.auth.enabled && options.auth.sessionCookie) {
           // decodes user token from cookie if any
           addPlugin(resolve(runtimeDir, 'auth/plugin-user-token.server'))
         }
