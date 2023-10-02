@@ -198,6 +198,7 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
         (hasServiceAccount || emulatorsConfig) &&
         options.auth.sessionCookie
       ) {
+        logger.debug('Enabling session cookie verification endpoint')
         // Add the session handler than mints a cookie for the user
         addServerHandler({
           route: '/api/__session',
