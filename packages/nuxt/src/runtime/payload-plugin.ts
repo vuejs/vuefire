@@ -7,28 +7,26 @@ import {
 } from '#app'
 
 /**
- * Handles Firestore Timestamps and other JSONifiable objects
+ * Handles Firestore Timestamps, GeoPoint, and other types that needs special handling for serialization.
  */
 export default definePayloadPlugin(() => {
   definePayloadReducer(
-    'JSONifiable',
-    (data: any) =>
-      data != null &&
-      typeof data.toJSON === 'function' &&
-      JSON.stringify(data.toJSON())
+    'FirebaseTimestamp',
+    (data: unknown) =>
+      data instanceof Timestamp && JSON.stringify(data.toJSON())
   )
-  definePayloadReviver('JSONifiable', (data: string) => {
+  definePayloadReviver('FirebaseTimestamp', (data: string) => {
     const parsed = JSON.parse(data)
+    return markRaw(new Timestamp(parsed.seconds, parsed.nanoseconds))
+  })
 
-    if ('seconds' in parsed && 'nanoseconds' in parsed) {
-      return markRaw(new Timestamp(parsed.seconds, parsed.nanoseconds))
-    }
-
-    if ('latitude' in parsed && 'longitude' in parsed) {
-      return markRaw(new GeoPoint(parsed.latitude, parsed.longitude))
-    }
-
-    return parsed
+  definePayloadReducer(
+    'FirebaseGeoPoint',
+    (data: unknown) => data instanceof GeoPoint && JSON.stringify(data.toJSON())
+  )
+  definePayloadReviver('FirebaseGeoPoint', (data: string) => {
+    const parsed = JSON.parse(data)
+    return markRaw(new GeoPoint(parsed.latitude, parsed.longitude))
   })
 
   // to handle the `id` non-enumerable property
