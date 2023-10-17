@@ -125,7 +125,7 @@ const user = useCurrentUser()
 
 ### Wait for the user to be loaded
 
-The `useCurrentUser()` composable will give you an `undefined` value until the user is loaded. It will then become `null` or the user object itself. If you need to wait for the user to be loaded in a declarative fashion, you can use the `useIsCurrentUserLoaded()` composable. Internally it's just a computed property that returns `true` when if user is not `undefined`.
+The `useCurrentUser()` composable will give you an `undefined` value until the user is loaded. It will then become `null` or the user object itself. If you need to wait for the user to be loaded in a declarative fashion, you can use the `useIsCurrentUserLoaded()` composable. Internally it's just a computed property that returns `true` when the user is not `undefined`.
 
 There is also a `getCurrentUser()` function that returns a promise of the current user. This is useful if you want to wait for the user to be loaded before doing anything. You can, for example, await it within a navigation guard:
 
