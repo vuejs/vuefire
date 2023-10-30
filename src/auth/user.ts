@@ -20,7 +20,7 @@ export const authUserMap = new WeakMap<FirebaseApp, Ref<_Nullable<User>>>()
 
 /**
  * Returns a reactive variable of the currently authenticated user in the firebase app. The ref is null if no user is
- * authenticated or when the user logs out. The ref is undefined when the user is not yet loaded. Note th
+ * authenticated or when the user logs out. The ref is undefined until the user is initially loaded.
  * @param name - name of the application
  */
 export function useCurrentUser(name?: string) {
