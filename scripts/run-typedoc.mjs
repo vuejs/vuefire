@@ -1,5 +1,7 @@
-const { createTypeDocApp } = require('./typedoc-markdown.cjs')
-const path = require('node:path')
+import path from 'node:path'
+import { createTypeDocApp } from './typedoc-markdown.mjs'
+
+const __dirname = path.dirname(new URL(import.meta.url).pathname)
 
 createTypeDocApp({
   name: 'API Documentation',

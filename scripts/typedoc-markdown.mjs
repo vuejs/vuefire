@@ -1,7 +1,9 @@
 // @ts-check
-const fs = require('node:fs/promises')
-const path = require('node:path')
-const { Application, TSConfigReader, PageEvent } = require('typedoc')
+import fs from 'node:fs/promises'
+import path from 'node:path'
+import { Application, TSConfigReader, PageEvent } from 'typedoc'
+
+const __dirname = path.dirname(new URL(import.meta.url).pathname)
 
 const DEFAULT_OPTIONS = {
   // disableOutputCheck: true,
@@ -19,7 +21,7 @@ const DEFAULT_OPTIONS = {
  *
  * @param {Partial<import('typedoc').TypeDocOptions>} config
  */
-exports.createTypeDocApp = async function createTypeDocApp(config = {}) {
+export async function createTypeDocApp(config = {}) {
   const options = {
     ...DEFAULT_OPTIONS,
     ...config,
@@ -30,14 +32,11 @@ exports.createTypeDocApp = async function createTypeDocApp(config = {}) {
   // If you want TypeDoc to load tsconfig.json / typedoc.json files
   app.options.addReader(new TSConfigReader())
 
-  /** @type {'build' | 'serve'} */
-  let targetMode = 'build'
-
   app.renderer.on(
     PageEvent.END,
     /**
      *
-     * @param {import('typedoc/dist/lib/output/events').PageEvent} page
+     * @param {import('typedoc').PageEvent} page
      */
     (page) => {
       if (!page.contents) {
@@ -86,13 +85,6 @@ exports.createTypeDocApp = async function createTypeDocApp(config = {}) {
   return {
     build,
     serve,
-    /**
-     *
-     * @param {'build' | 'serve'} command
-     */
-    setTargetMode(command) {
-      targetMode = command
-    },
   }
 }
 
