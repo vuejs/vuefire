@@ -90,15 +90,15 @@
   },
   "devDependencies": {
     "@vitest/coverage-v8": "^0.34.4",
-    "@vue/runtime-core": "^3.3.4",
+    "@vue/runtime-core": "^3.3.7",
     "@vue/test-utils": "^2.4.1",
     "chalk": "^5.3.0",
     "consola": "^3.2.3",
     "conventional-changelog-cli": "^2.0.34",
     "enquirer": "^2.4.1",
     "execa": "^8.0.1",
-    "firebase": "^10.3.1",
-    "firebase-admin": "^11.10.1",
+    "firebase": "^10.5.2",
+    "firebase-admin": "^11.11.0",
     "focus-visible": "^5.2.0",
     "globby": "^13.2.2",
     "happy-dom": "^11.0.2",
@@ -113,7 +113,7 @@
     "unbuild": "^2.0.0",
     "vitepress": "1.0.0-rc.12",
     "vitest": "^0.34.4",
-    "vue": "^3.3.4",
+    "vue": "^3.3.7",
     "yorkie": "^2.0.0"
   },
   "gitHooks": {
