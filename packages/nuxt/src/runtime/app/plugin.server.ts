@@ -1,6 +1,6 @@
 import { type FirebaseApp, initializeApp } from 'firebase/app'
 import { type User } from 'firebase/auth'
-import { DecodedIdToken } from 'firebase-admin/auth'
+import { type DecodedIdToken } from 'firebase-admin/auth'
 import { logger } from '../logging'
 import { DECODED_ID_TOKEN_SYMBOL } from '../constants'
 import { appCache } from './lru-cache'

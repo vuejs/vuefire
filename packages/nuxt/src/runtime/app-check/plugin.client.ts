@@ -3,7 +3,7 @@ import {
   ReCaptchaV3Provider,
   ReCaptchaEnterpriseProvider,
   CustomProvider,
-  AppCheckOptions,
+  type AppCheckOptions,
 } from 'firebase/app-check'
 import { VueFireAppCheck } from 'vuefire'
 import { defineNuxtPlugin, useRuntimeConfig } from '#app'

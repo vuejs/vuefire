@@ -40,7 +40,7 @@ export interface VueFireNuxtModuleOptions {
     | {
         /**
          * Adds the Authentication module to VueFire.
-         * @defaultValue `true` if `options.auth` is an object.
+         * @defaultValue `false`
          */
         enabled?: boolean
 

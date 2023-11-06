@@ -3,7 +3,7 @@ import {
   getAuth,
   onIdTokenChanged,
   beforeAuthStateChanged,
-  User,
+  type User,
 } from 'firebase/auth'
 import { defineNuxtPlugin } from '#app'
 

@@ -1,4 +1,4 @@
-import { App as AdminApp } from 'firebase-admin/app'
+import { type App as AdminApp } from 'firebase-admin/app'
 import { ensureAdminApp } from 'vuefire/server'
 import { defineNuxtPlugin, useRequestEvent, useRuntimeConfig } from '#app'
 

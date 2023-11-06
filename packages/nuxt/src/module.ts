@@ -17,11 +17,11 @@ import type { App as FirebaseAdminApp } from 'firebase-admin/app'
 import { markRaw } from 'vue'
 import { consola } from 'consola'
 import {
-  VueFireNuxtModuleOptions,
-  VueFireNuxtModuleOptionsResolved,
+  type VueFireNuxtModuleOptions,
+  type VueFireNuxtModuleOptionsResolved,
 } from './module/options'
 import {
-  FirebaseEmulatorsToEnable,
+  type FirebaseEmulatorsToEnable,
   detectEmulators,
   willUseEmulators,
 } from './module/emulators'

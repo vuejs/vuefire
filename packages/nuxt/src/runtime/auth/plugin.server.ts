@@ -1,5 +1,8 @@
 import { getAuth, signInWithCustomToken } from 'firebase/auth'
-import { DecodedIdToken, getAuth as getAdminAuth } from 'firebase-admin/auth'
+import {
+  type DecodedIdToken,
+  getAuth as getAdminAuth,
+} from 'firebase-admin/auth'
 import type { FirebaseApp } from 'firebase/app'
 import type { App as AdminApp } from 'firebase-admin/app'
 import { VueFireAuthServer } from 'vuefire/server'
