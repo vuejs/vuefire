@@ -11,7 +11,7 @@
 ### BREAKING CHANGES
 
 - **auth:** The session cookie feature is now disabled by default.
-  It must be explicitely enabled alongside `auth`. If you were using SSR,
+  It must be explicitly enabled alongside `auth`. If you were using SSR,
   change your `vuefire` config in `nuxt.config.ts`:
 
 ```diff
