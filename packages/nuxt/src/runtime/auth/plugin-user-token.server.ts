@@ -2,7 +2,7 @@ import type { App as AdminApp } from 'firebase-admin/app'
 import { decodeSessionCookie, AUTH_COOKIE_NAME } from 'vuefire/server'
 import { getCookie } from 'h3'
 import { DECODED_ID_TOKEN_SYMBOL } from '../constants'
-import { defineNuxtPlugin, useRequestEvent } from '#app'
+import { defineNuxtPlugin, useRequestEvent } from '#imports'
 
 /**
  * Decodes the user token if any. Should only be added on the server and before the firebase/app

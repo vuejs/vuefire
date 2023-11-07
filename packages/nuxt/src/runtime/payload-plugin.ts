@@ -4,7 +4,7 @@ import {
   definePayloadPlugin,
   definePayloadReducer,
   definePayloadReviver,
-} from '#app'
+} from '#imports'
 
 /**
  * Handles Firestore Timestamps, GeoPoint, and other types that needs special handling for serialization.

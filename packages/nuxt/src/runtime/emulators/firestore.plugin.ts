@@ -1,7 +1,7 @@
 import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore'
 import type { FirebaseApp } from 'firebase/app'
 import { logger } from '../logging'
-import { defineNuxtPlugin, useRuntimeConfig } from '#app'
+import { defineNuxtPlugin, useRuntimeConfig } from '#imports'
 
 /**
  * Setups the Firestore Emulators

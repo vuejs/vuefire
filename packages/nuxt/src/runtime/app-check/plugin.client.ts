@@ -6,7 +6,7 @@ import {
   type AppCheckOptions,
 } from 'firebase/app-check'
 import { VueFireAppCheck } from 'vuefire'
-import { defineNuxtPlugin, useRuntimeConfig } from '#app'
+import { defineNuxtPlugin, useRuntimeConfig } from '#imports'
 
 /**
  * Plugin to initialize the appCheck module on the server.
