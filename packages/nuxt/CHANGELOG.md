@@ -1,3 +1,9 @@
+## [0.4.1](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.4.0...nuxt-vuefire@0.4.1) (2023-11-08)
+
+### Bug Fixes
+
+- **nuxt:** import nuxt composables from #imports ([#1457](https://github.com/vuejs/vuefire/issues/1457)) ([7e1a273](https://github.com/vuejs/vuefire/commit/7e1a273e9cff683208f2c10e7755e2a65f1cd615))
+
 # [0.4.0](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.3.1...nuxt-vuefire@0.4.0) (2023-10-02)
 
 ### Code Refactoring
