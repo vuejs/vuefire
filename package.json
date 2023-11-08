@@ -90,7 +90,7 @@
   },
   "devDependencies": {
     "@vitest/coverage-v8": "^0.34.4",
-    "@vue/runtime-core": "^3.3.7",
+    "@vue/runtime-core": "^3.3.8",
     "@vue/test-utils": "^2.4.1",
     "chalk": "^5.3.0",
     "consola": "^3.2.3",
@@ -108,12 +108,12 @@
     "prettier": "^2.8.8",
     "semver": "^7.5.4",
     "typedoc": "^0.25.3",
-    "typedoc-plugin-markdown": "^3.16.0",
+    "typedoc-plugin-markdown": "^3.17.1",
     "typescript": "~5.2.2",
     "unbuild": "^2.0.0",
-    "vitepress": "1.0.0-rc.12",
+    "vitepress": "1.0.0-rc.25",
     "vitest": "^0.34.4",
-    "vue": "^3.3.7",
+    "vue": "^3.3.8",
     "yorkie": "^2.0.0"
   },
   "gitHooks": {
