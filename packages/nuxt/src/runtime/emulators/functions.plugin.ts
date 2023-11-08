@@ -1,7 +1,7 @@
 import { getFunctions, connectFunctionsEmulator } from 'firebase/functions'
 import type { FirebaseApp } from 'firebase/app'
 import { logger } from '../logging'
-import { defineNuxtPlugin, useRuntimeConfig } from '#app'
+import { defineNuxtPlugin, useRuntimeConfig } from '#imports'
 
 /**
  * Setups the Functions Emulators

@@ -4,7 +4,7 @@ import { type DecodedIdToken } from 'firebase-admin/auth'
 import { logger } from '../logging'
 import { DECODED_ID_TOKEN_SYMBOL } from '../constants'
 import { appCache } from './lru-cache'
-import { defineNuxtPlugin, useRuntimeConfig } from '#app'
+import { defineNuxtPlugin, useRuntimeConfig } from '#imports'
 
 /**
  * Initializes the app and provides it to others.

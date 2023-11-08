@@ -1,7 +1,7 @@
 import { getStorage, connectStorageEmulator } from 'firebase/storage'
 import type { FirebaseApp } from 'firebase/app'
 import { logger } from '../logging'
-import { defineNuxtPlugin, useRuntimeConfig } from '#app'
+import { defineNuxtPlugin, useRuntimeConfig } from '#imports'
 
 /**
  * Setups the Storage Emulators

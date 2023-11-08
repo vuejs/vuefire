@@ -1,7 +1,7 @@
 import { connectAuthEmulator, getAuth } from 'firebase/auth'
 import type { FirebaseApp } from 'firebase/app'
 import { logger } from '../logging'
-import { defineNuxtPlugin, useRuntimeConfig } from '#app'
+import { defineNuxtPlugin, useRuntimeConfig } from '#imports'
 
 /**
  * Setups the auth Emulators

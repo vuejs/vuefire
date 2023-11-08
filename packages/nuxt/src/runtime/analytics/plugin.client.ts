@@ -1,6 +1,6 @@
 import type { FirebaseApp } from 'firebase/app'
 import { isSupported, initializeAnalytics } from 'firebase/analytics'
-import { defineNuxtPlugin, useRuntimeConfig } from '#app'
+import { defineNuxtPlugin, useRuntimeConfig } from '#imports'
 
 /**
  * Plugin to initialize the analytics module.

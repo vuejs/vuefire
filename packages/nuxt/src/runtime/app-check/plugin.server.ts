@@ -1,7 +1,7 @@
 import type { App as FirebaseAdminApp } from 'firebase-admin/app'
 import type { FirebaseApp } from 'firebase/app'
 import { VueFireAppCheckServer } from 'vuefire/server'
-import { defineNuxtPlugin } from '#app'
+import { defineNuxtPlugin } from '#imports'
 
 /**
  * Makes AppCheck work on the server. This requires SSR and the admin SDK to be available

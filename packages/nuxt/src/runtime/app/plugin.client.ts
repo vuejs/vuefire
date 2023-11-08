@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app'
-import { defineNuxtPlugin, useRuntimeConfig } from '#app'
+import { defineNuxtPlugin, useRuntimeConfig } from '#imports'
 
 /**
  * Initializes the app and provides it to others.

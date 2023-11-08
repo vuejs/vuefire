@@ -8,7 +8,7 @@ import type { App as AdminApp } from 'firebase-admin/app'
 import { VueFireAuthServer } from 'vuefire/server'
 import { DECODED_ID_TOKEN_SYMBOL, UserSymbol } from '../constants'
 import { logger } from '../logging'
-import { defineNuxtPlugin, useRequestEvent } from '#app'
+import { defineNuxtPlugin, useRequestEvent } from '#imports'
 
 /**
  * Setups the auth state based on the cookie.

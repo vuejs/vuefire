@@ -5,7 +5,7 @@ import {
   beforeAuthStateChanged,
   type User,
 } from 'firebase/auth'
-import { defineNuxtPlugin } from '#app'
+import { defineNuxtPlugin } from '#imports'
 
 /**
  * Sets up a watcher that mints a cookie based auth session. On the server, it reads the cookie to
