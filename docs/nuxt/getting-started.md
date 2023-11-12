@@ -65,7 +65,7 @@ export default defineNuxtConfig({
 
 ### Configuring the Admin SDK
 
-If you are using SSR with any auth related feature, you will need to create a [service account](https://firebase.google.com/support/guides/service-accounts) and provide its content as an _environment variable_ named `GOOGLE_APPLICATION_CREDENTIALS`. This should be kept in a .env file. 
+If you are using SSR with any auth related feature, you will need to create a [service account](https://firebase.google.com/support/guides/service-accounts) and provide its content as an _environment variable_ named `GOOGLE_APPLICATION_CREDENTIALS` in the `.env` file. 
 
 In local development it's more convenient to put the `service-account.json` file alongside other files and refer to its path in the environment variable:
 
