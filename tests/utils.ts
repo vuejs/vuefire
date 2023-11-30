@@ -68,7 +68,7 @@ export function setupStorageRefs() {
       storage
     const _path =
       (typeof storageRefOrPath === 'string' ? storageRefOrPath : path) ||
-      `test/${_id++}.jpg`
+      `tests/${_id++}.jpg`
     return storageRef(_storage, bucket + _path)
   }
 
