@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {
   GeoPoint,
+  Timestamp,
   doc,
   getDoc,
   serverTimestamp,
@@ -80,8 +81,14 @@ setupNestedDocument()
     <p>All finished: {{ isAllDoneFetching }}</p>
     <p>Revive check:</p>
     <ul>
-      <li>TimeStamp: {{ config?.time }}</li>
-      <li>GeoPoint: {{ config?.loc }}</li>
+      <li>
+        TimeStamp: {{ config?.time }}. toMillis:
+        {{ (config?.time as Timestamp).toMillis() }}
+      </li>
+      <li>
+        GeoPoint: {{ config?.loc }}. isEqual:
+        {{ (config?.loc as GeoPoint).isEqual(new GeoPoint(0, 0)) }}
+      </li>
     </ul>
 
     <hr />

@@ -46,7 +46,8 @@ function toggleTodos() {
 
 <template>
   <div>
-    <button @click="toggleTodos">Toggle todos</button> <br />
+    <button @click="toggleTodos">Toggle todos</button>
+    <br />
     <form @submit.prevent="addTodo">
       <input v-model.trim="newTodoText" placeholder="Add new todo" />
       <button>Add Todo</button>
