@@ -12,22 +12,25 @@ import {
 export default definePayloadPlugin(() => {
   definePayloadReducer(
     'FirebaseTimestamp',
-    (data: unknown) =>
-      data instanceof Timestamp && JSON.stringify(data.toJSON())
+    (data: unknown) => data instanceof Timestamp && data.toJSON()
   )
-  definePayloadReviver('FirebaseTimestamp', (data: string) => {
-    const parsed = JSON.parse(data)
-    return markRaw(new Timestamp(parsed.seconds, parsed.nanoseconds))
-  })
+  definePayloadReviver(
+    'FirebaseTimestamp',
+    (data: ReturnType<Timestamp['toJSON']>) => {
+      return markRaw(new Timestamp(data.seconds, data.nanoseconds))
+    }
+  )
 
   definePayloadReducer(
     'FirebaseGeoPoint',
-    (data: unknown) => data instanceof GeoPoint && JSON.stringify(data.toJSON())
+    (data: unknown) => data instanceof GeoPoint && data.toJSON()
   )
-  definePayloadReviver('FirebaseGeoPoint', (data: string) => {
-    const parsed = JSON.parse(data)
-    return markRaw(new GeoPoint(parsed.latitude, parsed.longitude))
-  })
+  definePayloadReviver(
+    'FirebaseGeoPoint',
+    (data: ReturnType<GeoPoint['toJSON']>) => {
+      return markRaw(new GeoPoint(data.latitude, data.longitude))
+    }
+  )
 
   // to handle the `id` non-enumerable property
   definePayloadReducer('DocumentData', (data: any) => {
