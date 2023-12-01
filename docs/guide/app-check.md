@@ -7,7 +7,7 @@
 Start by adding the `VueFireAppCheck` module to the `VueFire` plugin:
 
 ```ts
-import { VueFire, VueFireAuth } from 'vuefire'
+import { VueFire, VueFireAppCheck } from 'vuefire'
 app.use(VueFire, {
   firebaseApp: createFirebaseApp(),
   modules: [
@@ -22,7 +22,7 @@ app.use(VueFire, {
 In order to use App Check you need to enable it in the Firebase Console > App Check. You also need to setup [a reCAPTCHA provider](https://firebase.google.com/docs/app-check#web), then provide it in the `VueFireAppCheck` module:
 
 ```ts{2,9}
-import { VueFire, VueFireAuth } from 'vuefire'
+import { VueFire, VueFireAppCheck } from 'vuefire'
 import { ReCaptchaV3Provider } from 'firebase/app-check'
 
 app.use(VueFire, {
@@ -40,7 +40,7 @@ app.use(VueFire, {
 During development, it might be convenient to use a debug token by setting `debug` to `true`. You can then add it to your debug tokens in the Firebase Console > App Check > Apps > Manage Debug Tokens.
 
 ```ts{10-11}
-import { VueFire, VueFireAuth } from 'vuefire'
+import { VueFire, VueFireAppCheck } from 'vuefire'
 import { ReCaptchaV3Provider } from 'firebase/app-check'
 
 app.use(VueFire, {
