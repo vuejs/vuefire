@@ -2,7 +2,6 @@ import { createApp, nextTick } from 'vue'
 import { createPinia } from 'pinia'
 import {
   VueFire,
-  VueFireAuth,
   VueFireAppCheck,
   VueFireFirestoreOptionsAPI,
   VueFireDatabaseOptionsAPI,
