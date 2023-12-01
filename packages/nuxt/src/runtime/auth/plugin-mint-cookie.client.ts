@@ -1,9 +1,8 @@
-import type { FirebaseApp } from 'firebase/app'
 import {
-  getAuth,
   onIdTokenChanged,
   beforeAuthStateChanged,
   type User,
+  type Auth,
 } from 'firebase/auth'
 import { defineNuxtPlugin } from '#imports'
 
@@ -12,9 +11,8 @@ import { defineNuxtPlugin } from '#imports'
  * generate the proper auth state. **Must be added after the firebase auth plugin.**
  */
 export default defineNuxtPlugin((nuxtApp) => {
-  const firebaseApp = nuxtApp.$firebaseApp as FirebaseApp
+  const auth = nuxtApp.$firebaseAuth as Auth
 
-  const auth = getAuth(firebaseApp)
   // send a post request to the server when auth state changes to mint a cookie
   beforeAuthStateChanged(
     auth,

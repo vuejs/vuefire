@@ -70,6 +70,9 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
       },
       auth: {
         enabled: isAuthEnabled,
+        errorMap: process.env.NODE_ENV !== 'production' ? 'debug' : 'prod',
+        persistence: ['indexedDBLocal', 'browserLocal'],
+        popupRedirectResolver: 'browser',
         ...(typeof _options.auth === 'object' ? _options.auth : {}),
       },
     } satisfies VueFireNuxtModuleOptionsResolved
@@ -199,23 +202,8 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
         addPlugin(resolve(runtimeDir, 'auth/plugin-mint-cookie.client'))
       }
 
-      // hydrates the user if any
-      addPlugin(resolve(runtimeDir, 'auth/plugin.client'))
       // loads the user on the current app
       addPlugin(resolve(runtimeDir, 'auth/plugin.server'))
-
-      addVueFireImports([
-        // auth
-        { from: 'vuefire', name: 'useFirebaseAuth' },
-        { from: 'vuefire', name: 'useCurrentUser' },
-      ])
-      // these are improved for nuxt to avoid the need to pass the app name
-      addImports([
-        {
-          from: resolve(runtimeDir, 'auth/composables'),
-          name: 'getCurrentUser',
-        },
-      ])
     }
 
     // Emulators must be enabled after the app is initialized but before some APIs like auth.signinWithCustomToken() are called
@@ -241,6 +229,31 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
         logger.info(`Enabling ${serviceName} emulator at ${host}:${port}`)
         addPlugin(resolve(runtimeDir, `emulators/${serviceName}.plugin`))
       }
+    }
+
+    // we must initialize auth before emulators
+    if (options.auth.enabled) {
+      // hydrates the user if any
+      addPluginTemplate({
+        src: normalize(resolve(runtimeDir, 'auth/plugin.client.ejs')),
+        options: {
+          ...options.auth,
+        },
+      })
+      addPlugin(resolve(runtimeDir, 'auth/plugin-base.server'))
+
+      addVueFireImports([
+        // auth
+        { from: 'vuefire', name: 'useFirebaseAuth' },
+        { from: 'vuefire', name: 'useCurrentUser' },
+      ])
+      // these are improved for nuxt to avoid the need to pass the app name
+      addImports([
+        {
+          from: resolve(runtimeDir, 'auth/composables'),
+          name: 'getCurrentUser',
+        },
+      ])
     }
 
     // adds the firebase app to each application

@@ -2,6 +2,26 @@ import type { FirebaseOptions } from 'firebase/app'
 import type { AppOptions } from 'firebase-admin'
 import type { NuxtVueFireAppCheckOptions } from '../runtime/app-check'
 
+export interface VueFireNuxtAuthDependencies {
+  /**
+   * Map of errors. Defaults to debug during dev and to prod during production. Should not be changed unless you know
+   * what you are doing.
+   */
+  errorMap?: 'debug' | 'prod' | false
+
+  /**
+   * The popup redirect resolver. Defaults to `browser`. Can be set to `false` to disable it.
+   */
+  popupRedirectResolver?: 'browser' | false
+
+  /**
+   * The persistence to use. Defaults to `['indexedDBLocal', 'browserLocal']`.
+   */
+  persistence?: Array<
+    'indexedDBLocal' | 'browserLocal' | 'browserSession' | 'inMemory'
+  >
+}
+
 export interface VueFireNuxtModuleOptions {
   /**
    * Should we add the `VueFireFirestoreOptionsAPI` and `VueFireRealtimeDatabaseOptionsAPI` modules?. Pass `true` to add
@@ -37,7 +57,7 @@ export interface VueFireNuxtModuleOptions {
    */
   auth?:
     | boolean
-    | {
+    | ({
         /**
          * Adds the Authentication module to VueFire.
          * @defaultValue `false`
@@ -52,7 +72,7 @@ export interface VueFireNuxtModuleOptions {
          * in Firebase docs: [Manage Session Cookies](https://firebase.google.com/docs/auth/admin/manage-cookies).
          */
         sessionCookie?: boolean
-      }
+      } & VueFireNuxtAuthDependencies)
 
   /**
    * Controls whether to use emulators or not. Pass `false` to disable emulators. When set to `true`, emulators are

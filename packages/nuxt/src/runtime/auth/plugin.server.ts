@@ -1,4 +1,4 @@
-import { getAuth, signInWithCustomToken } from 'firebase/auth'
+import { signInWithCustomToken, getAuth, type Auth } from 'firebase/auth'
 import {
   type DecodedIdToken,
   getAuth as getAdminAuth,
@@ -18,7 +18,7 @@ export default defineNuxtPlugin(async (nuxtApp) => {
   const firebaseApp = nuxtApp.$firebaseApp as FirebaseApp
   const firebaseAdminApp = nuxtApp.$firebaseAdminApp as AdminApp
   const adminAuth = getAdminAuth(firebaseAdminApp)
-  const auth = getAuth(firebaseApp)
+  const auth = nuxtApp.$firebaseAuth as Auth
 
   const decodedToken = nuxtApp[
     // we cannot use a symbol to index
@@ -39,8 +39,8 @@ export default defineNuxtPlugin(async (nuxtApp) => {
         })
       // console.timeLog('token', `got token for ${user.uid}`)
       if (customToken) {
-        const auth = getAuth(firebaseApp)
         logger.debug('Signing in with custom token')
+        // TODO: allow user to handle error?
         await signInWithCustomToken(auth, customToken)
         // console.timeLog('token', `signed in with token for ${user.uid}`)
         // console.timeEnd('token')

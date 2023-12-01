@@ -1,0 +1,52 @@
+import { VueFireAuthWithDependencies, _VueFireAuthKey } from 'vuefire'
+import { defineNuxtPlugin } from '#imports'
+import { inject } from 'vue'
+import {
+  <% if(options.persistence) { %>
+    <% options.persistence.forEach((persistenceName) => { %>
+      <%= persistenceName %>Persistence,
+    <% }) %>
+  <% } %>
+
+  <% if(options.popupRedirectResolver) { %>
+    <%= options.popupRedirectResolver %>PopupRedirectResolver,
+  <% } %>
+
+  <% if(options.errorMap) { %>
+    <%= options.errorMap %>ErrorMap,
+  <% } %>
+} from 'firebase/auth'
+
+/**
+ * Setups VueFireAuth for the client. This version creates some listeners that shouldn't be set on server.
+ */
+export default defineNuxtPlugin((nuxtApp) => {
+  const firebaseApp = nuxtApp.$firebaseApp
+
+  VueFireAuthWithDependencies({
+    initialUser: nuxtApp.payload.vuefireUser,
+    dependencies: {
+      <% if(options.errorMap) { %>
+        errorMap: <%= options.errorMap %>ErrorMap,
+      <% } %>
+
+      <% if(options.persistence) { %>
+        persistence: [
+        <% options.persistence.forEach((persistenceName) => { %>
+          <%= persistenceName %>Persistence,
+        <% }) %>
+        ],
+      <% } %>
+
+      <% if(options.popupRedirectResolver) { %>
+        popupRedirectResolver: <%= options.popupRedirectResolver %>PopupRedirectResolver,
+      <% } %>
+    },
+  })(firebaseApp, nuxtApp.vueApp)
+
+  return {
+    provide: {
+      firebaseAuth: nuxtApp.vueApp.runWithContext(() => inject(_VueFireAuthKey))
+    },
+  }
+})
