@@ -1,5 +1,5 @@
 import type { FirebaseApp } from 'firebase/app'
-import type { User } from 'firebase/auth'
+import { type User } from 'firebase/auth'
 import type { DecodedIdToken, UserRecord } from 'firebase-admin/auth'
 import { App, ref } from 'vue'
 import { authUserMap, _setInitialUser } from '../auth/user'
@@ -9,6 +9,7 @@ import type { App as AdminApp } from 'firebase-admin/app'
 import { getAuth as getAdminAuth } from 'firebase-admin/auth'
 import { logger } from './logging'
 import { isFirebaseError } from './utils'
+import { _VueFireAuthKey } from '../auth'
 
 // MUST be named `__session` to be kept in Firebase context, therefore this name is hardcoded
 // https://firebase.google.com/docs/hosting/manage-cache#using_cookies
@@ -21,10 +22,10 @@ export const AUTH_COOKIE_NAME = '__session'
 export function VueFireAuthServer(
   firebaseApp: FirebaseApp,
   app: App<unknown>,
-  userRecord: _Nullable<User>
+  initialUser: _Nullable<User>
 ) {
   const user = getGlobalScope(firebaseApp, app).run(() =>
-    ref<_Nullable<User>>(userRecord)
+    ref<_Nullable<User>>(initialUser)
   )!
   authUserMap.set(firebaseApp, user)
   _setInitialUser(firebaseApp, user)

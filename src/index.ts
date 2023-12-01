@@ -90,7 +90,9 @@ export {
   type VueFireAuthOptions,
   VueFireAuth,
   VueFireAuthWithDependencies,
+  _VueFireAuthInit,
   useFirebaseAuth,
+  _VueFireAuthKey,
   getCurrentUser,
   updateCurrentUserProfile,
 } from './auth'

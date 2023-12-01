@@ -77,6 +77,7 @@ export function VueFireAuth(initialUser?: _Nullable<User>): VueFireModule {
 /**
  * Key to be used to inject the auth instance into components. It allows avoiding to call `getAuth()`, which isn't tree
  * shakable.
+ * @internal
  */
 export const _VueFireAuthKey = Symbol('VueFireAuth')
 
@@ -91,15 +92,35 @@ export function VueFireAuthWithDependencies({
   initialUser,
 }: VueFireAuthOptions): VueFireModule {
   return (firebaseApp: FirebaseApp, app: App) => {
-    const user = getGlobalScope(firebaseApp, app).run(() =>
-      ref<_Nullable<User>>(initialUser)
-    )!
-    // this should only be on client
-    authUserMap.set(firebaseApp, user)
-    const auth = initializeAuth(firebaseApp, dependencies)
-    app.provide(_VueFireAuthKey, auth)
+    const [user, auth] = _VueFireAuthInit(
+      firebaseApp,
+      app,
+      initialUser,
+      dependencies
+    )
     setupOnAuthStateChanged(user, auth)
   }
+}
+
+/**
+ * initializes auth for both the server and client.
+ * @internal
+ */
+export function _VueFireAuthInit(
+  firebaseApp: FirebaseApp,
+  app: App,
+  initialUser: _Nullable<User>,
+  dependencies: AuthDependencies
+) {
+  const user = getGlobalScope(firebaseApp, app).run(() =>
+    ref<_Nullable<User>>(initialUser)
+  )!
+  // TODO: Is it okay to have it both server and client?
+  authUserMap.set(firebaseApp, user)
+  const auth = initializeAuth(firebaseApp, dependencies)
+  app.provide(_VueFireAuthKey, auth)
+
+  return [user, auth] as const
 }
 
 /**
