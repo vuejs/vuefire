@@ -30,6 +30,7 @@
   "funding": "https://github.com/sponsors/posva",
   "scripts": {
     "build": "nuxt-module-build build",
+    "lint": "eslint --ext .ts --ignore-path .gitignore src",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s --commit-path . -l nuxt-vuefire -r 1",
     "dev": "nuxi dev playground",
     "dev:build": "nuxi build playground",
