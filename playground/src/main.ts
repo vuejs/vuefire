@@ -16,7 +16,9 @@ import { VueFireAuthWithDependencies } from '../../src/auth'
 import {
   browserLocalPersistence,
   browserPopupRedirectResolver,
+  debugErrorMap,
   indexedDBLocalPersistence,
+  prodErrorMap,
 } from 'firebase/auth'
 
 const router = createRouter({
@@ -50,11 +52,16 @@ app
     modules: [
       VueFireAuthWithDependencies({
         dependencies: {
+          errorMap:
+            process.env.NODE_ENV !== 'production'
+              ? debugErrorMap
+              : prodErrorMap,
           popupRedirectResolver: browserPopupRedirectResolver,
           persistence: [
             indexedDBLocalPersistence,
             browserLocalPersistence,
             // browserSessionPersistence,
+            // inMemoryPersistence,
           ],
         },
       }),
