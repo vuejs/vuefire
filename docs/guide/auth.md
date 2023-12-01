@@ -20,6 +20,39 @@ app.use(VueFire, {
 
 This will automatically initialize and inject the [Auth module](https://firebase.google.com/docs/auth/web/start#add-initialize-sdk) as well as the other features described in this page.
 
+Alternatively, you can also use `VueFireAuthWithDependencies()` if you want manually specify its dependencies:
+
+```ts{14-24}
+import { VueFire, VueFireAuthWithDependencies } from 'vuefire'
+import {
+  browserLocalPersistence,
+  debugErrorMap,
+  indexedDBLocalPersistence,
+  prodErrorMap,
+} from 'firebase/auth'
+
+app.use(VueFire, {
+  firebaseApp: createFirebaseApp(),
+  modules: [
+    // ... other modules
+    VueFireAuthWithDependencies({
+      dependencies: {
+        errorMap:
+          process.env.NODE_ENV !== 'production'
+            ? debugErrorMap
+            : prodErrorMap,
+        persistence: [
+          indexedDBLocalPersistence,
+          browserLocalPersistence,
+        ]
+      }
+    }),
+  ],
+})
+```
+
+Doing so will allow you to use VueFire in environments other than the browser. See [Firebase Docs](https://firebase.google.com/docs/auth/web/custom-dependencies) for more information.
+
 ## Auth instance
 
 You can access the current Auth instance in any component with the `useFirebaseAuth()` composable:
