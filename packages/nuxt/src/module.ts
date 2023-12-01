@@ -22,8 +22,7 @@ import {
 } from './module/options'
 import {
   type FirebaseEmulatorsToEnable,
-  detectEmulators,
-  willUseEmulators,
+  autodetectEmulators,
 } from './module/emulators'
 
 const logger = consola.withTag('nuxt-vuefire module')
@@ -97,11 +96,7 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
     const templatesDir = fileURLToPath(new URL('../templates', import.meta.url))
 
     // we need this to avoid some warnings about missing credentials and ssr
-    const emulatorsConfig = await willUseEmulators(
-      options,
-      resolve(nuxt.options.rootDir, 'firebase.json'),
-      logger
-    )
+    const emulatorsConfig = await autodetectEmulators(options, logger)
 
     // to handle TimeStamp and GeoPoints objects
     addPlugin(resolve(runtimeDir, 'payload-plugin'))
@@ -210,7 +205,7 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
     // Emulators must be enabled after the app is initialized but before some APIs like auth.signinWithCustomToken() are called
 
     if (emulatorsConfig) {
-      const emulators = detectEmulators(options, emulatorsConfig, logger)
+      const emulators = emulatorsConfig
       // add the option to disable the warning. It only exists in Auth
       if (emulators?.auth) {
         emulators.auth.options = options.emulators.auth?.options

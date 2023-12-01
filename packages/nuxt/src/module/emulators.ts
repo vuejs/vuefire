@@ -1,16 +1,21 @@
-import { readFile, access, constants } from 'node:fs/promises'
-import stripJsonComments from 'strip-json-comments'
 import type { ConsolaInstance } from 'consola'
 import type { VueFireNuxtModuleOptionsResolved } from './options'
 
-export async function willUseEmulators(
-  { emulators }: VueFireNuxtModuleOptionsResolved,
-  firebaseJsonPath: string,
+/**
+ * Detects the emulators to enable based on their API. Returns an object of all the emulators that should be enabled.
+ *
+ * @param options - The module options
+ * @param logger - The logger instance
+ */
+export async function autodetectEmulators(
+  { emulators: options, auth }: VueFireNuxtModuleOptionsResolved,
   logger: ConsolaInstance
-): Promise<NonNullable<FirebaseEmulatorsJSON['emulators']> | null> {
+) {
+  const defaultHost: string = options.host || '127.0.0.1'
+
   const isEmulatorEnabled =
     // emulators is always defined
-    emulators.enabled &&
+    options.enabled &&
     // Disable emulators on production unless the user explicitly enables them
     (process.env.NODE_ENV !== 'production' ||
       (process.env.VUEFIRE_EMULATORS &&
@@ -21,66 +26,33 @@ export async function willUseEmulators(
     return null
   }
 
-  // return true if the file doesn't exist instead of throwing
-  if (await access(firebaseJsonPath, constants.F_OK).catch(() => true)) {
-    logger.warn(
-      `The "firebase.json" file doesn't exist at "${firebaseJsonPath}".`
-    )
+  const emulatorsResponse: EmulatorsAPIResponse | null = await fetch(
+    `http://${defaultHost}:4400/emulators`
+  )
+    .then((res) => {
+      return res.status === 200 ? res.json() : null
+    })
+    .catch((err: Error) => {
+      // skip errors of emulators not running
+      if (
+        err instanceof Error &&
+        typeof err.cause === 'object' &&
+        // @ts-expect-error: not in the types
+        err.cause?.code !== 'ECONNREFUSED'
+      ) {
+        logger.error('Error fetching emulators', err)
+      }
+      return null
+    })
+
+  if (!emulatorsResponse) {
     return null
   }
 
-  let firebaseJson: FirebaseEmulatorsJSON | null = null
-  try {
-    firebaseJson = JSON.parse(
-      stripJsonComments(await readFile(firebaseJsonPath, 'utf8'), {
-        trailingCommas: true,
-      })
-    )
-  } catch (err) {
-    logger.error('Error parsing the `firebase.json` file', err)
-    logger.error('Cannot enable Emulators')
-  }
-
-  return firebaseJson?.emulators ?? null
-}
-
-/**
- * Detects the emulators to enable based on the `firebase.json` file. Returns an object of all the emulators that should
- * be enabled based on the `firebase.json` file and other options and environment variables.
- *
- * @param options - The module options
- * @param firebaseJsonPath - resolved path to the `firebase.json` file
- * @param logger - The logger instance
- */
-export function detectEmulators(
-  {
-    emulators: _vuefireEmulatorsOptions,
-    auth,
-  }: VueFireNuxtModuleOptionsResolved,
-  firebaseEmulatorsConfig: NonNullable<FirebaseEmulatorsJSON['emulators']>,
-  logger: ConsolaInstance
-) {
-  // normalize the emulators option
-  const vuefireEmulatorsOptions =
-    typeof _vuefireEmulatorsOptions === 'object'
-      ? _vuefireEmulatorsOptions
-      : {
-          enabled: _vuefireEmulatorsOptions,
-        }
-
-  if (!firebaseEmulatorsConfig) {
-    if (vuefireEmulatorsOptions.enabled !== false) {
-      logger.warn(
-        'You enabled emulators but there is no `emulators` key in your `firebase.json` file. Emulators will not be enabled.'
-      )
-    }
-    return
-  }
-
-  const defaultHost: string = vuefireEmulatorsOptions.host || '127.0.0.1'
-
   const emulatorsToEnable = services.reduce((acc, service) => {
-    if (firebaseEmulatorsConfig[service]) {
+    if (emulatorsResponse[service]) {
+      let { host, port } = emulatorsResponse[service]!
+
       // these env variables are automatically picked up by the admin SDK too
       // https://firebase.google.com/docs/emulator-suite/connect_rtdb?hl=en&authuser=0#admin_sdks
       // Also, Firestore is the only one that has a different env variable
@@ -89,8 +61,6 @@ export function detectEmulators(
           ? 'FIRESTORE_EMULATOR_HOST'
           : `FIREBASE_${service.toUpperCase()}_EMULATOR_HOST`
 
-      let host: string | undefined
-      let port: number | undefined
       // Pick up the values from the env variables if set by the user
       if (process.env[envKey]) {
         logger.debug(
@@ -110,52 +80,7 @@ export function detectEmulators(
         }
       }
 
-      // take the values from the firebase.json file
-      const emulatorsServiceConfig = firebaseEmulatorsConfig[service]
-      // they might be picked up from the environment variables
-      host ??= emulatorsServiceConfig?.host || defaultHost
-      port ??= emulatorsServiceConfig?.port
-
-      const missingHostServices: FirebaseEmulatorService[] = []
-      if (emulatorsServiceConfig?.host == null) {
-        // we push to warn later in one single warning
-        missingHostServices.push(service)
-      } else if (emulatorsServiceConfig.host !== host) {
-        logger.error(
-          `The "${service}" emulator is enabled but the "host" property in the "emulators.${service}" section of your "firebase.json" file is different from the "vuefire.emulators.host" value. You might encounter errors in your app if this is not fixed.`
-        )
-      }
-
-      // The default value is 127.0.0.1, so it's fine if the user doesn't set it at all
-      if (missingHostServices.length > 0 && host !== '127.0.0.1') {
-        logger.warn(
-          `The "${service.at(
-            0
-          )!}" emulator is enabled but there is no "host" key in the "emulators.${service}" key of your "firebase.json" file. It is recommended to set it to avoid mismatches between origins. You should probably set it to "${defaultHost}" ("vuefire.emulators.host" value).` +
-            (missingHostServices.length > 1
-              ? ` The following emulators are also missing the "host" key: ${missingHostServices
-                  .slice(1)
-                  .join(', ')}.`
-              : '')
-        )
-      }
-
-      if (!port) {
-        logger.error(
-          `The "${service}" emulator is enabled but there is no "port" property in the "emulators" section of your "firebase.json" file. It must be specified to enable emulators. The "${service}" emulator won't be enabled.`
-        )
-        return acc
-        // if the port is set in the config, it must match the env variable
-      } else if (
-        emulatorsServiceConfig &&
-        emulatorsServiceConfig.port !== port
-      ) {
-        logger.error(
-          `The "${service}" emulator is enabled but the "port" property in the "emulators.${service}" section of your "firebase.json" file is different from the "${envKey}" env variable. You might encounter errors in your app if this is not fixed.`
-        )
-      }
-
-      // add the emulator to the list
+      // add them
       acc[service] = { host, port }
     }
     return acc
@@ -175,67 +100,6 @@ export function detectEmulators(
   }
 
   return emulatorsToEnable
-}
-
-/**
- * Extracted from as we cannot install firebase-tools just for the types
- * - https://github.com/firebase/firebase-tools/blob/master/src/firebaseConfig.ts#L183
- * - https://github.com/firebase/firebase-tools/blob/master/schema/firebase-config.json
- * @internal
- */
-export interface FirebaseEmulatorsJSON {
-  emulators?: {
-    auth?: {
-      host?: string
-      port?: number
-    }
-    database?: {
-      host?: string
-      port?: number
-    }
-    eventarc?: {
-      host?: string
-      port?: number
-    }
-    extensions?: {
-      [k: string]: unknown
-    }
-    firestore?: {
-      host?: string
-      port?: number
-      websocketPort?: number
-    }
-    functions?: {
-      host?: string
-      port?: number
-    }
-    hosting?: {
-      host?: string
-      port?: number
-    }
-    hub?: {
-      host?: string
-      port?: number
-    }
-    logging?: {
-      host?: string
-      port?: number
-    }
-    pubsub?: {
-      host?: string
-      port?: number
-    }
-    singleProjectMode?: boolean
-    storage?: {
-      host?: string
-      port?: number
-    }
-    ui?: {
-      enabled?: boolean
-      host?: string
-      port?: string | number
-    }
-  }
 }
 
 export type FirebaseEmulatorService =
@@ -265,4 +129,33 @@ export interface FirebaseEmulatorsToEnable
     port: number
     options?: Parameters<typeof import('firebase/auth').connectAuthEmulator>[2]
   }
+}
+
+interface EmulatorServiceAddressInfo {
+  address: string
+  family: string // Assuming this will contain valid IPv4 or IPv6 strings
+  port: number
+}
+
+interface EmulatorService {
+  listen: EmulatorServiceAddressInfo[]
+  name: string
+  host: string
+  port: number
+  pid?: number // Assuming this field is optional
+  reservedPorts?: number[] // Assuming this field is optional and can be an array of numbers
+  webSocketHost?: string // Assuming this field is optional
+  webSocketPort?: number // Assuming this field is optional
+}
+
+interface EmulatorsAPIResponse {
+  hub?: EmulatorService
+  ui?: EmulatorService
+  logging?: EmulatorService
+  auth?: EmulatorService
+  functions?: EmulatorService
+  firestore?: EmulatorService
+  database?: EmulatorService
+  hosting?: EmulatorService
+  storage?: EmulatorService
 }
