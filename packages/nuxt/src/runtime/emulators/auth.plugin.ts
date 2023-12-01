@@ -25,6 +25,7 @@ export default defineNuxtPlugin((nuxtApp) => {
   }
 
   connectAuthEmulator(
+    // NOTE: it's fine to use getAuth here because emulators are for dev only
     getAuth(firebaseApp),
     `http://${host}:${port}`,
     vuefire?.emulators?.auth?.options
