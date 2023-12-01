@@ -1,3 +1,15 @@
+# [1.0.0](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.4.1...nuxt-vuefire@1.0.0) (2023-12-01)
+
+### Features
+
+- **auth:** allow customizing auth initialization ([28e9409](https://github.com/vuejs/vuefire/commit/28e940914dadc42878a25c2ff031aa9992ab8a3e)), closes [vuejs/vuefire#1351](https://github.com/vuejs/vuefire/issues/1351)
+- **auth:** allow customizing cookie options ([3a18102](https://github.com/vuejs/vuefire/commit/3a18102b193932e35df70325325491a0d4a3b632)), closes [vuejs/vuefire#1458](https://github.com/vuejs/vuefire/issues/1458)
+- **emulators:** auto detect with running API ([1e260b9](https://github.com/vuejs/vuefire/commit/1e260b93c77aed7eef5f827eb162fe1a9d63fb44)), closes [vuejs/vuefire#1429](https://github.com/vuejs/vuefire/issues/1429)
+
+### Performance Improvements
+
+- remove unnecessary JSON.parse/stringify ([75fccf0](https://github.com/vuejs/vuefire/commit/75fccf0b034e56af82d0316887a6b9885730cefd))
+
 ## [0.4.1](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.4.0...nuxt-vuefire@0.4.1) (2023-11-08)
 
 ### Bug Fixes

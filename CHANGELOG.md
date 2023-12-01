@@ -1,3 +1,15 @@
+## [3.1.19](https://github.com/vuejs/vuefire/compare/vuefire@3.1.18...vuefire@3.1.19) (2023-12-01)
+
+### Bug Fixes
+
+- **auth:** allow treeshaking with explicit initialization ([7d94183](https://github.com/vuejs/vuefire/commit/7d941838722c5e78d5a2f2d09714690f1cb83ac3)), closes [vuejs/vuefire#1459](https://github.com/vuejs/vuefire/issues/1459)
+
+IMPORTANT NOTE: if you were using multiple apps and passing a `name` argument to `useFirebaseAuth()`, this will be a breaking change. You will have a warning in the console explaining how to fix it.
+
+### Features
+
+- **auth:** expose internal utils for SSR ([486b415](https://github.com/vuejs/vuefire/commit/486b415a93cdcf203f9e66a9edd03f3b10834262))
+
 ## [3.1.18](https://github.com/vuejs/vuefire/compare/vuefire@3.1.17...vuefire@3.1.18) (2023-11-08)
 
 This release contain no changes
