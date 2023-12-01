@@ -203,7 +203,7 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
       }
 
       // loads the user on the current app
-      addPlugin(resolve(runtimeDir, 'auth/plugin.server'))
+      addPlugin(resolve(runtimeDir, 'auth/plugin-authenticate-user.server'))
     }
 
     // Emulators must be enabled after the app is initialized but before some APIs like auth.signinWithCustomToken() are called
