@@ -39,6 +39,8 @@ export default defineNuxtConfig({
         auth: {
           enabled: true,
           sessionCookie: true,
+          // popupRedirectResolver: false,
+          // persistence: ['indexedDBLocal']
         },
         appCheck: {
           // TODO: could automatically pick up a debug token defined as an env variable

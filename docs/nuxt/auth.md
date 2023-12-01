@@ -77,6 +77,32 @@ onMounted(() => {
 </script>
 ```
 
+## Customizing your Auth dependencies
+
+You can customize how the auth module is initialized as well:
+
+```ts{5-7}
+export default defineNuxtConfig({
+  // ...
+  vuefire: {
+    auth: {
+      errorMap: 'debug',
+      // disable the poupup redirect resolver dependency
+      popupRedirectResolver: false,
+      persistence: ['indexedDBLocal']
+    },
+  },
+})
+```
+
+By default, the auth module will
+
+- Will use debug error maps for development, and production error maps for production.
+- Will use the browser popup redirect resolver dependency (`browserPopupRedirectResolver`).
+- Will use the indexedDB local persistence dependency (`indexedDBLocalPersistence` and `browserLocalPersistence`).
+
+See [Firebase Docs](https://firebase.google.com/docs/auth/web/custom-dependencies) for more information.
+
 ## Session Cookie
 
 When doing SSR and if a service account is provided, Nuxt VueFire can automatically mint a cookie when the user logs in. This cookie is passed to each request and allows the server to authenticate the user while rendering the page, limiting what the user can see based on their permissions.
