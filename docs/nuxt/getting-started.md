@@ -1,8 +1,6 @@
 # Nuxt.js
 
-::: warning
-The Nuxt VueFire module is still a work in progress and it might contain breaking changes in the future. If you find any issues, please open an issue on GitHub.
-:::
+VueFire comes with an official Nuxt module that automatically handles most of the hassle of setting up VueFire in your Nuxt project.
 
 ## Installation
 
@@ -65,7 +63,7 @@ export default defineNuxtConfig({
 
 ### Configuring the Admin SDK
 
-If you are using SSR with any auth related feature, you will need to create a [service account](https://firebase.google.com/support/guides/service-accounts) and provide its content as an _environment variable_ named `GOOGLE_APPLICATION_CREDENTIALS` in the `.env` file. 
+If you are using SSR with any auth related feature, you will need to create a [service account](https://firebase.google.com/support/guides/service-accounts) and provide its content as an _environment variable_ named `GOOGLE_APPLICATION_CREDENTIALS` in the `.env` file.
 
 In local development it's more convenient to put the `service-account.json` file alongside other files and refer to its path in the environment variable:
 
