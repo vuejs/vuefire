@@ -142,7 +142,7 @@ export function useFirebaseAuth(): Auth | null
  * @returns the Auth instance
  */
 export function useFirebaseAuth(name?: string) {
-  if (__DEV__ && name != null) {
+  if (process.env.NODE_ENV !== 'production' && name != null) {
     console.warn(
       `[VueFire] useFirebaseAuth() no longer accepts a name parameter to enable tree shaking. If you have multiple applications, you must use "getAuth(firebaseApp)" or "getAuth(useFirebaseApp(name))" instead.`
     )
