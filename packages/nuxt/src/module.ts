@@ -84,9 +84,12 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
     nuxt.options.runtimeConfig.public.vuefire.config = _options.config
     nuxt.options.runtimeConfig.public.vuefire.appCheck = options.appCheck
 
+    // server only options
     nuxt.options.runtimeConfig.vuefire ??= {}
     markRaw(nuxt.options.runtimeConfig.vuefire)
     nuxt.options.runtimeConfig.vuefire.admin ??= options.admin
+    // allows getting the session cookie options
+    nuxt.options.runtimeConfig.vuefire.auth ??= options.auth
 
     // configure transpilation
     const { resolve } = createResolver(import.meta.url)
@@ -173,8 +176,6 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
     addPluginTemplate({
       src: normalize(resolve(templatesDir, 'plugin.ejs')),
       options: {
-        // FIXME: not needed
-        ...options,
         ssr: nuxt.options.ssr,
       },
     })
@@ -384,6 +385,12 @@ interface VueFireRuntimeConfig {
      * @internal
      */
     admin?: VueFireNuxtModuleOptionsResolved['admin']
+
+    /**
+     * Authentication options.
+     * @internal
+     */
+    auth?: VueFireNuxtModuleOptionsResolved['auth']
   }
 }
 

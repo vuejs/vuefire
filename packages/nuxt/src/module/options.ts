@@ -71,7 +71,30 @@ export interface VueFireNuxtModuleOptions {
          * permissions on your Google Cloud project. You can find more information about what happens behind the scenes
          * in Firebase docs: [Manage Session Cookies](https://firebase.google.com/docs/auth/admin/manage-cookies).
          */
-        sessionCookie?: boolean
+        sessionCookie?:
+          | boolean
+          | {
+              /**
+               * maxAge property of the cookie. Defaults to 5 days.
+               */
+              maxAge?: number
+              /**
+               * Whether to use a secure cookie. Defaults to `true`.
+               */
+              secure?: boolean
+              /**
+               * Whether to use a httpOnly cookie. Defaults to `true`.
+               */
+              httpOnly?: boolean
+              /**
+               * The path of the cookie. Defaults to `/`.
+               */
+              path: string
+              /**
+               * The sameSite property of the cookie. Defaults to `lax`.
+               */
+              sameSite: 'lax' | 'strict' | 'none'
+            }
       } & VueFireNuxtAuthDependencies)
 
   /**

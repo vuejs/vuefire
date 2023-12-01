@@ -49,6 +49,10 @@ export default defineEventHandler(async (event) => {
           httpOnly: true,
           path: '/',
           sameSite: 'lax',
+          // add user overrides
+          ...(typeof runtimeConfig.vuefire?.auth?.sessionCookie === 'object'
+            ? runtimeConfig.vuefire?.auth?.sessionCookie
+            : {}),
         })
         setResponseStatus(event, 201)
         return ''
