@@ -13,6 +13,12 @@ import { createFirebaseApp } from './firebase'
 import { createWebHistory, createRouter } from 'vue-router/auto'
 import { createStore } from 'vuex'
 import { ReCaptchaV3Provider } from 'firebase/app-check'
+import { VueFireAuthWithDependencies } from '../../src/auth'
+import {
+  browserLocalPersistence,
+  browserPopupRedirectResolver,
+  indexedDBLocalPersistence,
+} from 'firebase/auth'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -43,7 +49,16 @@ app
   .use(VueFire, {
     firebaseApp: createFirebaseApp(),
     modules: [
-      VueFireAuth(),
+      VueFireAuthWithDependencies({
+        dependencies: {
+          popupRedirectResolver: browserPopupRedirectResolver,
+          persistence: [
+            indexedDBLocalPersistence,
+            browserLocalPersistence,
+            // browserSessionPersistence,
+          ],
+        },
+      }),
       VueFireAppCheck({
         debug: process.env.NODE_ENV !== 'production',
         isTokenAutoRefreshEnabled: true,

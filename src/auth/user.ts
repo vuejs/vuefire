@@ -1,12 +1,12 @@
 import type { FirebaseApp } from 'firebase/app'
 import {
-  getAuth,
   onIdTokenChanged,
   type User,
   updateEmail,
   updateProfile,
   reauthenticateWithCredential,
   type AuthCredential,
+  type Auth,
 } from 'firebase/auth'
 import { computed, Ref } from 'vue-demi'
 import { useFirebaseApp } from '../app'
@@ -168,10 +168,8 @@ export function getCurrentUser(name?: string): Promise<_Nullable<User>> {
 
 export function setupOnAuthStateChanged(
   user: Ref<_Nullable<User>>,
-  app?: FirebaseApp
+  auth: Auth
 ) {
-  const auth = getAuth(app)
-
   // onAuthStateChanged doesn't trigger in all scenarios like when the user goes links an existing account and their
   // data is updated
   // https://github.com/firebase/firebase-js-sdk/issues/4227
