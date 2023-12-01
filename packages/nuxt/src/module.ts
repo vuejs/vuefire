@@ -240,7 +240,7 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
           ...options.auth,
         },
       })
-      addPlugin(resolve(runtimeDir, 'auth/plugin-base.server'))
+      addPlugin(resolve(runtimeDir, 'auth/plugin.server'))
 
       addVueFireImports([
         // auth
