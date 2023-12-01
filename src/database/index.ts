@@ -24,7 +24,7 @@ export type UseListOptions = UseDatabaseRefOptions
  * @param options - optional options
  */
 export function useDatabaseList<T = unknown>(
-  reference: MaybeRefOrGetter<DatabaseReference | Query>,
+  reference: MaybeRefOrGetter<_Nullable<DatabaseReference | Query>>,
   options?: UseListOptions
 ): _RefDatabase<VueDatabaseQueryData<T>> {
   const data = ref<T[]>([]) as Ref<T[]>
@@ -54,7 +54,7 @@ export type UseObjectOptions = UseDatabaseRefOptions
  * @param options - optional options
  */
 export function useDatabaseObject<T = unknown>(
-  reference: MaybeRefOrGetter<DatabaseReference>,
+  reference: MaybeRefOrGetter<_Nullable<DatabaseReference>>,
   options?: UseObjectOptions
 ): _RefDatabase<VueDatabaseDocumentData<T> | undefined> {
   const data = ref<T | null>()
