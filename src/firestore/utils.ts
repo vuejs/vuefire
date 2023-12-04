@@ -15,7 +15,7 @@ import { _FirestoreRefOptionsWithDefaults } from './bind'
 export type FirestoreReference = Query | DocumentReference | CollectionReference
 
 /**
- * Default converter for Firestore data. Can be overridden by setting the
+ * Default converter for Firestore data. Can be overridden globally by setting `globalFirestoreOptions.converter`.
  */
 export const firestoreDefaultConverter: FirestoreDataConverter<VueFirestoreDocumentData> =
   {

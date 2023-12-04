@@ -62,7 +62,8 @@ export function useCollection<T>(
 export interface UseDocumentOptions extends _UseFirestoreRefOptions {}
 
 /**
- * Creates a reactive document from a document ref from Firestore. Extracts the type of the converter
+ * Creates a reactive document from a document ref from Firestore. Automatically extracts the type of the converter or
+ * the document.
  *
  * @param documentRef - document reference
  * @param options - optional options
