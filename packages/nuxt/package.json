@@ -32,6 +32,7 @@
     "build": "nuxt-module-build build",
     "lint": "eslint src",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s --commit-path . -l nuxt-vuefire -r 1",
+    "test": "vitest",
     "dev": "nuxi dev playground",
     "dev:build": "nuxi build playground",
     "dev:prepare": "nuxt-module-build --stub"
@@ -64,6 +65,7 @@
     "@nuxt/eslint-config": "^0.2.0",
     "@nuxt/module-builder": "^0.5.4",
     "@nuxt/schema": "^3.8.2",
+    "@nuxt/test-utils": "^3.8.1",
     "eslint": "^8.55.0",
     "firebase": "^10.7.0",
     "firebase-admin": "^11.11.1",
