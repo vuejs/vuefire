@@ -30,7 +30,7 @@
   "funding": "https://github.com/sponsors/posva",
   "scripts": {
     "build": "nuxt-module-build build",
-    "lint": "eslint --ext .ts --ignore-path .gitignore src",
+    "lint": "eslint src",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s --commit-path . -l nuxt-vuefire -r 1",
     "dev": "nuxi dev playground",
     "dev:build": "nuxi build playground",
@@ -61,9 +61,9 @@
   },
   "devDependencies": {
     "@firebase/app-types": "^0.9.0",
+    "@nuxt/eslint-config": "^0.2.0",
     "@nuxt/module-builder": "^0.5.4",
     "@nuxt/schema": "^3.8.2",
-    "@nuxtjs/eslint-config-typescript": "^12.1.0",
     "eslint": "^8.55.0",
     "firebase": "^10.7.0",
     "firebase-admin": "^11.11.1",

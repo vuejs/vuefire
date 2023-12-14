@@ -1,6 +1,7 @@
 {
+  "root": true,
   "extends": [
-    "@nuxtjs/eslint-config-typescript"
+    "@nuxt/eslint-config"
   ],
   "rules": {
     // TS already checks this
@@ -26,6 +27,6 @@
         "functions": "only-multiline"
       }
     ],
-    "vue/require-v-for-key": "off",
+    "vue/require-v-for-key": "off"
   }
 }
