@@ -59,7 +59,8 @@ export function useCollection<T>(
   }) as _RefFirestore<VueFirestoreQueryData<T>>
 }
 
-export interface UseDocumentOptions extends _UseFirestoreRefOptions {}
+export interface UseDocumentOptions<TData = unknown>
+  extends _UseFirestoreRefOptions<TData> {}
 
 /**
  * Creates a reactive document from a document ref from Firestore. Automatically extracts the type of the converter or
@@ -73,7 +74,7 @@ export function useDocument<
   R extends DocumentReference<unknown>
 >(
   documentRef: MaybeRefOrGetter<_Nullable<R>>,
-  options?: UseDocumentOptions
+  options?: UseDocumentOptions<_InferReferenceType<R>>
 ): _RefFirestore<_InferReferenceType<R> | undefined> // this one can't be null or should be specified in the converter
 
 /**
@@ -86,12 +87,12 @@ export function useDocument<
  */
 export function useDocument<T>(
   documentRef: MaybeRefOrGetter<_Nullable<DocumentReference>>,
-  options?: UseDocumentOptions
+  options?: UseDocumentOptions<T>
 ): _RefFirestore<VueFirestoreDocumentData<T> | undefined>
 
 export function useDocument<T>(
   documentRef: MaybeRefOrGetter<_Nullable<DocumentReference<unknown>>>,
-  options?: UseDocumentOptions
+  options?: UseDocumentOptions<T>
 ): _RefFirestore<VueFirestoreDocumentData<T> | undefined> {
   // no unwrapRef to have a simpler type
   return _useFirestoreRef(documentRef, options) as _RefFirestore<

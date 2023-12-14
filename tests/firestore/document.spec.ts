@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { beforeEach, describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, expectTypeOf, it } from 'vitest'
 import {
   addDoc,
   doc as originalDoc,
@@ -46,7 +46,7 @@ describe(
       options,
       ref = doc(),
     }: {
-      options?: UseDocumentOptions
+      options?: UseDocumentOptions<T>
       ref?: MaybeRefOrGetter<DocumentReference<T>>
     } = {}) {
       let data!: _RefFirestore<VueFirestoreDocumentData<T>>
@@ -341,18 +341,28 @@ describe(
         finished: boolean
       }
 
-      expectType<Ref<DocumentData | null | undefined>>(useDocument(itemRef))
-      // @ts-expect-error
-      expectType<Ref<number | null>>(useDocument(itemRef))
+      expectTypeOf(useDocument(itemRef).value).toEqualTypeOf<
+        DocumentData | undefined
+      >()
 
       // Adds the id
+
       // FIXME: this one is any but the test passes
-      expectType<string>(useDocument(doc(db, 'todos', '1')).value?.id)
-      expectType<string>(useDocument<TodoI>(doc(db, 'todos', '1')).value!.id)
-      expectType<_Nullable<TodoI>>(
+      expectTypeOf(
+        useDocument(doc(db, 'todos', '1')).value!.id
+        // @ts-expect-error:
+      ).toEqualTypeOf<string>()
+
+      expectTypeOf(
         useDocument<TodoI>(doc(db, 'todos', '1')).value
-      )
-      expectType<string>(useDocument<unknown>(doc(db, 'todos', '1')).value!.id)
+      ).toMatchTypeOf<_Nullable<TodoI>>()
+      expectTypeOf(
+        useDocument<unknown>(doc(db, 'todos', '1')).value!.id
+      ).toBeString()
+      expectTypeOf(
+        useDocument<TodoI>(doc(db, 'todos', '1')).value!.id
+      ).toBeString()
+
       useDocument(
         doc(db, 'todos').withConverter<TodoI, DocumentData>({
           fromFirestore: (snapshot) => {
@@ -364,7 +374,10 @@ describe(
         // @ts-expect-error: no id with custom converter
       ).value?.id
 
-      expectType<Ref<number | null | undefined>>(useDocument<number>(itemRef))
+      expectTypeOf(useDocument<number>(itemRef)).toMatchTypeOf<
+        Ref<_Nullable<number | null | undefined>>
+      >()
+
       expectType<Ref<number | null | undefined>>(
         useDocument<number>(itemRef).data
       )
@@ -375,12 +388,15 @@ describe(
         toFirestore: (data) => ({ n: data }),
         fromFirestore: (snap, options) => snap.data(options).n as number,
       })
-      expectType<Ref<number | number | undefined>>(
-        useDocument(refWithConverter)
-      )
-      expectType<Ref<number | number | undefined>>(
-        useDocument(refWithConverter).data
-      )
+      expectTypeOf(useDocument(refWithConverter)).toMatchTypeOf<
+        Ref<number | undefined>
+      >()
+      expectTypeOf(useDocument(refWithConverter).value).toEqualTypeOf<
+        number | undefined
+      >()
+      expectTypeOf(useDocument(refWithConverter).data).toEqualTypeOf<
+        Ref<number | undefined>
+      >()
       // should not be null
       useDocument(refWithConverter).value?.toFixed(14)
       // @ts-expect-error: string is not assignable to number
@@ -389,11 +405,13 @@ describe(
       useDocument(refWithConverter).value.id
 
       // destructuring
-      expectType<Ref<DocumentData | null | undefined>>(
-        useDocument(itemRef).data
-      )
-      expectType<Ref<FirestoreError | undefined>>(useDocument(itemRef).error)
-      expectType<Ref<boolean>>(useDocument(itemRef).pending)
+      expectTypeOf(useDocument(itemRef).data).toEqualTypeOf<
+        Ref<DocumentData | undefined>
+      >()
+      expectTypeOf(useDocument(itemRef).error).toEqualTypeOf<
+        Ref<FirestoreError | undefined>
+      >()
+      expectTypeOf(useDocument(itemRef).pending).toEqualTypeOf<Ref<boolean>>()
     })
   },
   { retry: 3 }

@@ -31,6 +31,13 @@ export interface OperationsType {
 export type ResetOption = boolean | (() => unknown)
 
 /**
+ * Flattens out a type.
+ *
+ * @internal
+ */
+export type _Simplify<T> = { [KeyType in keyof T]: T[KeyType] } & {}
+
+/**
  * Return type of `$databaseBind()` and `$firestoreBind()`
  */
 export type UnbindWithReset = (reset?: ResetOption) => void
@@ -228,11 +235,11 @@ export interface _RefWithState<T, E = Error> extends Ref<T> {
  *
  * @internal
  */
-export interface _DataSourceOptions {
+export interface _DataSourceOptions<DataT = unknown> {
   /**
    * Use the `target` ref instead of creating one.
    */
-  target?: Ref<unknown>
+  target?: Ref<DataT>
 
   /**
    * Optional key to handle SSR hydration. **Necessary for Queries** or when the same source is used in multiple places

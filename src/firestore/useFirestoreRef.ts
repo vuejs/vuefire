@@ -42,7 +42,8 @@ import {
   _FirestoreRefOptionsWithDefaults,
 } from './bind'
 
-export interface _UseFirestoreRefOptions extends FirestoreRefOptions {
+export interface _UseFirestoreRefOptions<TData = unknown>
+  extends FirestoreRefOptions<TData> {
   /**
    * @deprecated: use `.withConverter()` instead
    */

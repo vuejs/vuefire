@@ -27,7 +27,8 @@ import { onSnapshot } from 'firebase/firestore'
 /**
  * Options when binding a Firestore document or collection.
  */
-export interface FirestoreRefOptions extends _DataSourceOptions {
+export interface FirestoreRefOptions<TData = unknown>
+  extends _DataSourceOptions<TData> {
   /**
    * The maximum depth to bind nested refs. A nested ref that isn't bound will stay as the ref path while a bound ref
    * will contain the same data as if the ref was bound directly.
