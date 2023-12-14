@@ -102,7 +102,7 @@
     "focus-visible": "^5.2.0",
     "globby": "^14.0.0",
     "happy-dom": "^12.10.3",
-    "lint-staged": "^15.1.0",
+    "lint-staged": "^15.2.0",
     "minimist": "^1.2.8",
     "p-series": "^3.0.0",
     "prettier": "^2.8.8",

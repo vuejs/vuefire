@@ -64,7 +64,7 @@
     "@nuxt/module-builder": "^0.5.4",
     "@nuxt/schema": "^3.8.2",
     "@nuxtjs/eslint-config-typescript": "^12.1.0",
-    "eslint": "^8.54.0",
+    "eslint": "^8.55.0",
     "firebase": "^10.7.0",
     "firebase-admin": "^11.11.1",
     "firebase-functions": "^4.5.0",
