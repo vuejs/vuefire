@@ -1,6 +1,6 @@
 import { isObject } from '../shared'
 import type { DataSnapshot } from 'firebase/database'
-import type { _RefWithState } from '../shared'
+import type { _RefWithState, _Simplify } from '../shared'
 
 /**
  * Convert firebase Database snapshot of a ref **that exists** into a bindable data record.
@@ -67,5 +67,5 @@ export type VueDatabaseDocumentData<T = unknown> =
  * Same as VueDatabaseDocumentData but for a query.
  */
 export type VueDatabaseQueryData<T = unknown> = Array<
-  NonNullable<VueDatabaseDocumentData<T>>
+  _Simplify<NonNullable<VueDatabaseDocumentData<T>>>
 >
