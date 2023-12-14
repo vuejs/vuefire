@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, expectTypeOf } from 'vitest'
 import {
   UseDatabaseRefOptions,
   useDatabaseList,
@@ -34,7 +34,7 @@ describe('Database lists', () => {
     options,
     ref = databaseRef(),
   }: {
-    options?: UseDatabaseRefOptions
+    options?: UseDatabaseRefOptions<T>
     ref?: MaybeRefOrGetter<DatabaseReference | Query>
   } = {}) {
     let data!: _RefDatabase<VueDatabaseQueryData<T>>
@@ -402,6 +402,24 @@ describe('Database lists', () => {
     expectType<Ref<VueDatabaseQueryData<number>>>(
       useDatabaseList<number>(databaseRef(db, 'todos'))
     )
+
+    expectTypeOf(useDatabaseList(databaseRef(db, 'todos'))).not.toMatchTypeOf<
+      Ref<VueDatabaseQueryData<{ name: string }>>
+    >()
+
+    expectTypeOf(useDatabaseList(databaseRef(db, 'todos'))).toMatchTypeOf<
+      Ref<VueDatabaseQueryData<unknown>>
+    >()
+
+    expectTypeOf(
+      useDatabaseList<{ name: string }>(databaseRef(db, 'todos'))
+    ).toMatchTypeOf<Ref<VueDatabaseQueryData<{ name: string }>>>()
+
+    expectTypeOf(
+      useDatabaseList(databaseRef(db, 'todos'), {
+        target: ref<{ name: string }>({ name: 'a' }),
+      })
+    ).toMatchTypeOf<Ref<VueDatabaseQueryData<{ name: string }>>>()
 
     // TODO: tests for id field
   })

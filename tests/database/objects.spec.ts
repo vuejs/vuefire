@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { beforeEach, describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, expectTypeOf, it } from 'vitest'
 import {
   UseDatabaseRefOptions,
   useDatabaseObject,
@@ -37,7 +37,7 @@ describe('Database objects', () => {
     options,
     ref = databaseRef(),
   }: {
-    options?: UseDatabaseRefOptions
+    options?: UseDatabaseRefOptions<T>
     ref?: MaybeRefOrGetter<DatabaseReference>
   } = {}) {
     let data!: _RefDatabase<VueDatabaseDocumentData<T> | undefined>
@@ -299,5 +299,19 @@ describe('Database objects', () => {
     expectType<Ref<number | null | undefined>>(
       useDatabaseObject<number>(databaseRef(db, 'todo'))
     )
+
+    expectTypeOf(useDatabaseObject(databaseRef(db, 'oh'))).toMatchTypeOf<
+      Ref<unknown>
+    >()
+
+    expectTypeOf(
+      useDatabaseObject<{ name: string }>(databaseRef(db, 'todo'))
+    ).toMatchTypeOf<Ref<_Nullable<{ name: string }>>>()
+
+    expectTypeOf(
+      useDatabaseObject(databaseRef(db, 'todo'), {
+        target: ref<{ name: string }>({ name: 'a' }),
+      })
+    ).toMatchTypeOf<Ref<_Nullable<{ name: string }>>>()
   })
 })

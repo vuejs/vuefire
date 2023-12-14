@@ -35,7 +35,8 @@ import { _RefDatabase } from './utils'
 /**
  * Options when calling `useDatabaseList()` and `useDatabaseObject()`.
  */
-export interface UseDatabaseRefOptions extends _DatabaseRefOptions {}
+export interface UseDatabaseRefOptions<DataT = unknown>
+  extends _DatabaseRefOptions<DataT> {}
 
 export function _useDatabaseRef(
   reference: MaybeRefOrGetter<_Nullable<DatabaseReference | Query>>,

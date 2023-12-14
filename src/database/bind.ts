@@ -25,7 +25,8 @@ import type { Query, DatabaseReference, DataSnapshot } from 'firebase/database'
  * Global option type when binding one database reference
  * @internal
  */
-export interface _DatabaseRefOptions extends _DataSourceOptions {
+export interface _DatabaseRefOptions<DataT = unknown>
+  extends _DataSourceOptions<DataT> {
   /**
    * Function to transform snapshots into data. **Make sure to reuse the original serializer to add the object `id`**.
    * See https://vuefire.vuejs.org/guide/global-options.html
@@ -37,7 +38,7 @@ export interface _DatabaseRefOptions extends _DataSourceOptions {
  * Global defaults type override options for all database bindings. This type remove make some optional values required.
  * @internal
  */
-interface _DatabaseRefOptionsWithDefaults extends _DatabaseRefOptions {
+interface _DatabaseRefOptionsWithDefaults extends _DatabaseRefOptions<unknown> {
   /**
    * @defaultValue `false`
    */

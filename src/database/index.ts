@@ -1,7 +1,6 @@
 import { Ref, ref, MaybeRefOrGetter } from 'vue-demi'
 import { DatabaseReference, getDatabase, Query } from 'firebase/database'
 import { _Nullable, _RefWithState } from '../shared'
-import { _DatabaseRefOptions } from './bind'
 import {
   VueDatabaseDocumentData,
   VueDatabaseQueryData,
@@ -13,7 +12,7 @@ import { UseDatabaseRefOptions, _useDatabaseRef } from './useDatabaseRef'
 export { globalDatabaseOptions } from './bind'
 export type { UseDatabaseRefOptions }
 
-export type UseListOptions = UseDatabaseRefOptions
+export type UseListOptions<DataT = unknown> = UseDatabaseRefOptions<DataT>
 
 /**
  * Creates a reactive variable connected to the database as an array. Each element in the array will contain an `id`
@@ -25,7 +24,7 @@ export type UseListOptions = UseDatabaseRefOptions
  */
 export function useDatabaseList<T = unknown>(
   reference: MaybeRefOrGetter<_Nullable<DatabaseReference | Query>>,
-  options?: UseListOptions
+  options?: UseListOptions<T>
 ): _RefDatabase<VueDatabaseQueryData<T>> {
   const data = ref<T[]>([]) as Ref<T[]>
   return _useDatabaseRef(
@@ -43,7 +42,7 @@ export function useDatabaseList<T = unknown>(
  */
 export const useList = useDatabaseList
 
-export type UseObjectOptions = UseDatabaseRefOptions
+export type UseObjectOptions<DataT = unknown> = UseDatabaseRefOptions<DataT>
 
 /**
  * Creates a reactive variable connected to the database as an object. If the reference is a primitive, it will be
@@ -55,7 +54,7 @@ export type UseObjectOptions = UseDatabaseRefOptions
  */
 export function useDatabaseObject<T = unknown>(
   reference: MaybeRefOrGetter<_Nullable<DatabaseReference>>,
-  options?: UseObjectOptions
+  options?: UseObjectOptions<T>
 ): _RefDatabase<VueDatabaseDocumentData<T> | undefined> {
   const data = ref<T | null>()
   return _useDatabaseRef(reference, {
