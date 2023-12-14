@@ -1,3 +1,2 @@
-./playground/typed-router.d.ts
-./packages/nuxt/templates
+typed-router.d.ts
 *.ejs
