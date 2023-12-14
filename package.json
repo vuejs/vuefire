@@ -89,8 +89,8 @@
     }
   },
   "devDependencies": {
-    "@vitest/coverage-v8": "^0.34.4",
-    "@vue/runtime-core": "^3.3.9",
+    "@vitest/coverage-v8": "^1.0.4",
+    "@vue/runtime-core": "^3.3.11",
     "@vue/test-utils": "^2.4.3",
     "chalk": "^5.3.0",
     "consola": "^3.2.3",
@@ -109,11 +109,11 @@
     "semver": "^7.5.4",
     "typedoc": "^0.25.4",
     "typedoc-plugin-markdown": "^3.17.1",
-    "typescript": "~5.3.2",
+    "typescript": "~5.3.3",
     "unbuild": "^2.0.0",
     "vitepress": "1.0.0-rc.31",
-    "vitest": "^0.34.6",
-    "vue": "^3.3.9",
+    "vitest": "^1.0.4",
+    "vue": "^3.3.11",
     "yorkie": "^2.0.0"
   },
   "gitHooks": {
