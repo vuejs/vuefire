@@ -31,6 +31,7 @@ import {
   OperationsType,
   walkSet,
   _RefWithState,
+  _Simplify,
 } from '../shared'
 import { getInitialValue } from '../ssr/initialState'
 import { addPendingPromise } from '../ssr/plugin'
@@ -234,7 +235,7 @@ export type VueFirestoreDocumentData<T = DocumentData> =
     })
 
 export type VueFirestoreQueryData<T = DocumentData> = Array<
-  Exclude<VueFirestoreDocumentData<T>, null>
+  _Simplify<NonNullable<VueFirestoreDocumentData<T>>>
 >
 
 /**

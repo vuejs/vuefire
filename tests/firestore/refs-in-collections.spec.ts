@@ -22,7 +22,7 @@ describe('Firestore refs in collections', async () => {
     options,
     ref = collection(),
   }: {
-    options?: UseCollectionOptions
+    options?: UseCollectionOptions<T[]>
     ref?: MaybeRefOrGetter<CollectionReference<T>>
   } = {}) {
     let data!: _RefFirestore<VueFirestoreQueryData<T>>

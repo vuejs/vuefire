@@ -289,16 +289,14 @@ describe('Database objects', () => {
   tds(() => {
     const db = database
     const databaseRef = _databaseRef
-    expectType<Ref<unknown>>(useDatabaseObject(databaseRef(db, 'todo')))
-    expectType<Ref<{ name: string } | null | undefined>>(
-      useDatabaseObject<{ name: string }>(databaseRef(db, 'todo'))
-    )
-    expectType<undefined | string>(
-      useDatabaseObject(databaseRef(db, 'todo')).value?.id
-    )
-    expectType<Ref<number | null | undefined>>(
+
+    expectTypeOf(
+      useDatabaseObject(databaseRef(db, 'todo')).value!.id
+    ).toBeString()
+
+    expectTypeOf(
       useDatabaseObject<number>(databaseRef(db, 'todo'))
-    )
+    ).toMatchTypeOf<Ref<number | null | undefined>>()
 
     expectTypeOf(useDatabaseObject(databaseRef(db, 'oh'))).toMatchTypeOf<
       Ref<unknown>

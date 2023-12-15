@@ -16,7 +16,8 @@ import {
   _UseFirestoreRefOptions,
 } from './useFirestoreRef'
 
-export interface UseCollectionOptions extends _UseFirestoreRefOptions {}
+export interface UseCollectionOptions<TData = unknown>
+  extends _UseFirestoreRefOptions<TData> {}
 export type { _RefFirestore, VueFirestoreDocumentData, VueFirestoreQueryData }
 
 /**
@@ -31,7 +32,7 @@ export function useCollection<
   R extends CollectionReference<unknown> | Query<unknown>
 >(
   collectionRef: MaybeRefOrGetter<_Nullable<R>>,
-  options?: UseCollectionOptions
+  options?: UseCollectionOptions<_InferReferenceType<R>[]>
 ): _RefFirestore<_InferReferenceType<R>[]>
 
 /**
@@ -43,15 +44,17 @@ export function useCollection<
  * @param options - optional options
  */
 export function useCollection<T>(
-  collectionRef: MaybeRefOrGetter<_Nullable<CollectionReference | Query>>,
-  options?: UseCollectionOptions
+  collectionRef: MaybeRefOrGetter<
+    _Nullable<CollectionReference<unknown> | Query<unknown>>
+  >,
+  options?: UseCollectionOptions<T[]>
 ): _RefFirestore<VueFirestoreQueryData<T>>
 
 export function useCollection<T>(
   collectionRef: MaybeRefOrGetter<
     _Nullable<CollectionReference<unknown> | Query<unknown>>
   >,
-  options?: UseCollectionOptions
+  options?: UseCollectionOptions<T[]>
 ): _RefFirestore<VueFirestoreQueryData<T>> {
   return _useFirestoreRef(collectionRef, {
     target: ref([]),

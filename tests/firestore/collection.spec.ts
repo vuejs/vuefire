@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, expectTypeOf, it } from 'vitest'
 import {
   collection as originalCollection,
   CollectionReference,
@@ -40,7 +40,7 @@ describe(
       options,
       ref = collection(),
     }: {
-      options?: UseCollectionOptions
+      options?: UseCollectionOptions<T[]>
       ref?: MaybeRefOrGetter<_Nullable<CollectionReference<T>>>
     } = {}) {
       let data!: _RefFirestore<VueFirestoreQueryData<T>>
@@ -79,7 +79,7 @@ describe(
       options,
       ref,
     }: {
-      options?: UseCollectionOptions
+      options?: UseCollectionOptions<AppModelType[]>
       ref?: MaybeRefOrGetter<_Nullable<Query<AppModelType, DbModelType>>>
     } = {}) {
       let data!: _RefFirestore<VueFirestoreQueryData<AppModelType>>
@@ -88,7 +88,6 @@ describe(
         defineComponent({
           template: 'no',
           setup() {
-            // @ts-expect-error: generic forced
             data = useCollection(
               // split for ts
               ref,
@@ -490,7 +489,17 @@ describe(
         // @ts-expect-error: no id with custom converter
       ).value[0].id
 
-      expectType<Ref<TodoI[]>>(useCollection<TodoI>(collection(db, 'todos')))
+      expectTypeOf(useCollection<TodoI>(collection(db, 'todos'))).toMatchTypeOf<
+        Ref<TodoI[]>
+      >()
+
+      // TODO: can this be improved to not have the generic
+      expectTypeOf(
+        useCollection<TodoI>(collection(db, 'todos'), {
+          target: ref<TodoI[]>([]),
+        })
+      ).toMatchTypeOf<Ref<TodoI[]>>()
+
       expectType<Ref<TodoI[]>>(
         useCollection<TodoI>(collection(db, 'todos')).data
       )

@@ -18,7 +18,7 @@ describe('Firestore refs in documents', async () => {
     options,
     ref = doc(),
   }: {
-    options?: UseDocumentOptions
+    options?: UseDocumentOptions<T>
     ref?: MaybeRefOrGetter<DocumentReference<T>>
   } = {}) {
     let data!: _RefFirestore<VueFirestoreDocumentData<T>>
