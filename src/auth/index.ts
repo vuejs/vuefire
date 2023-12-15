@@ -10,7 +10,6 @@ import {
   Auth,
 } from 'firebase/auth'
 import { type App, ref, inject } from 'vue-demi'
-import { useFirebaseApp } from '../app'
 import { getGlobalScope } from '../globals'
 import { isClient, _Nullable } from '../shared'
 import { authUserMap, setupOnAuthStateChanged } from './user'
@@ -37,6 +36,17 @@ export interface VueFireAuthOptions {
    * Options to pass to `initializeAuth()`.
    */
   dependencies: AuthDependencies
+}
+
+/**
+ * Options for VueFire Auth module when passing the auth instance directly.
+ */
+export interface VueFireAuthOptionsFromAuth
+  extends Pick<VueFireAuthOptions, 'initialUser'> {
+  /**
+   * Auth instance to use.
+   */
+  auth: Auth
 }
 
 /**
@@ -82,6 +92,29 @@ export function VueFireAuth(initialUser?: _Nullable<User>): VueFireModule {
 export const _VueFireAuthKey = Symbol('VueFireAuth')
 
 /**
+ * VueFire Auth Module to be added to the `VueFire` Vue plugin options. It accepts an auth instance rather than the
+ * dependencies. It allows manually calling emulators and other advanced use cases. Prefer using
+ * `VueFireAuthWithDependencies()` and `VueFireAuth()` for most use cases.
+ *
+ * @param options - auth instance and initial user
+ */
+export function VueFireAuthOptionsFromAuth({
+  auth,
+  initialUser,
+}: VueFireAuthOptionsFromAuth): VueFireModule {
+  return (firebaseApp: FirebaseApp, app: App) => {
+    const [user, _auth] = _VueFireAuthInit(
+      firebaseApp,
+      app,
+      initialUser,
+      undefined,
+      auth
+    )
+    setupOnAuthStateChanged(user, _auth)
+  }
+}
+
+/**
  * VueFire Auth Module to be added to the `VueFire` Vue plugin options. It accepts dependencies to pass to
  * `initializeAuth()` to better control the bundle size.
  *
@@ -110,14 +143,14 @@ export function _VueFireAuthInit(
   firebaseApp: FirebaseApp,
   app: App,
   initialUser: _Nullable<User>,
-  dependencies: AuthDependencies
+  dependencies?: AuthDependencies,
+  auth = initializeAuth(firebaseApp, dependencies)
 ) {
   const user = getGlobalScope(firebaseApp, app).run(() =>
     ref<_Nullable<User>>(initialUser)
   )!
   // TODO: Is it okay to have it both server and client?
   authUserMap.set(firebaseApp, user)
-  const auth = initializeAuth(firebaseApp, dependencies)
   app.provide(_VueFireAuthKey, auth)
 
   return [user, auth] as const
