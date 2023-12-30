@@ -57,7 +57,8 @@
     "test:unit": "vitest --coverage",
     "firebase:emulators": "firebase emulators:start",
     "test:dev": "vitest",
-    "test": "pnpm run lint && pnpm run test:types && pnpm run build && pnpm run -C packages/nuxt build && pnpm run test:unit run"
+    "test": "pnpm run lint && pnpm run test:types && pnpm run build && pnpm run -C packages/nuxt build && pnpm run test:unit run",
+    "postinstall": "simple-git-hooks"
   },
   "keywords": [
     "vue",
@@ -107,22 +108,25 @@
     "p-series": "^3.0.0",
     "prettier": "^2.8.8",
     "semver": "^7.5.4",
+    "simple-git-hooks": "^2.9.0",
     "typedoc": "^0.25.4",
     "typedoc-plugin-markdown": "^3.17.1",
     "typescript": "~5.3.3",
     "unbuild": "^2.0.0",
     "vitepress": "1.0.0-rc.31",
     "vitest": "^1.0.4",
-    "vue": "^3.3.11",
-    "yorkie": "^2.0.0"
+    "vue": "^3.3.11"
   },
-  "gitHooks": {
-    "pre-commit": "lint-staged",
+  "simple-git-hooks": {
+    "pre-commit": "pnpm lint-staged",
     "commit-msg": "node scripts/verifyCommit.mjs"
   },
   "lint-staged": {
-    "*.(j|t)s": [
+    "*.{js,mjs,json,cjs}": [
       "prettier --write"
+    ],
+    "*.ts?(x)": [
+      "prettier --parser=typescript --write"
     ]
   },
   "repository": {
