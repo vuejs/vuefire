@@ -78,6 +78,13 @@ This service account file contains sensitive information and should **not be com
 echo service-account.json >> .gitignore
 ```
 
+:::tip
+During deployment to Google Cloud or Firebase, it is important that the .env file pointing to a local `service-account.json` is not deployed to Firebase. If you're deploying from a local machine and you forget to delete your `.env` file, you may get the following error in your Google Cloud function logs:
+
+```
+Failed to read credentials from file service-account.json: Error: ENOENT: no such file or directory, open 'service-account.json'
+```
+
 :::
 
 ### Additional configuration
