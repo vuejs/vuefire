@@ -170,6 +170,7 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
     // this adds the VueFire plugin and handle SSR state serialization and hydration
     addPluginTemplate({
       src: normalize(resolve(templatesDir, 'plugin.ejs')),
+      filename: 'vuefire-plugin.mjs',
       options: {
         ssr: nuxt.options.ssr,
       },
@@ -232,6 +233,7 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
       // hydrates the user if any
       addPluginTemplate({
         src: normalize(resolve(runtimeDir, 'auth/plugin.client.ejs')),
+        filename: 'vuefire-auth-plugin.mjs',
         options: {
           ...options.auth,
         },
