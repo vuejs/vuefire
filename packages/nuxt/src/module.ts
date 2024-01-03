@@ -233,7 +233,7 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
       // hydrates the user if any
       addPluginTemplate({
         src: normalize(resolve(runtimeDir, 'auth/plugin.client.ejs')),
-        filename: 'vuefire-auth-plugin.mjs',
+        filename: 'vuefire-auth-plugin.client.mjs',
         options: {
           ...options.auth,
         },
