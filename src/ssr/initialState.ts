@@ -112,8 +112,8 @@ function getDataSourceInfo(
   return isFirestoreDataReference(dataSource) || isFirestoreQuery(dataSource)
     ? (['f', dataSource.path] as const)
     : isDatabaseReference(dataSource)
-    ? (['r', dataSource.toString()] as const)
-    : isStorageReference(dataSource)
-    ? (['s', dataSource.toString()] as const)
-    : []
+      ? (['r', dataSource.toString()] as const)
+      : isStorageReference(dataSource)
+        ? (['s', dataSource.toString()] as const)
+        : []
 }

@@ -66,7 +66,7 @@
     "@nuxt/module-builder": "^0.5.5",
     "@nuxt/schema": "^3.9.0",
     "@nuxt/test-utils": "^3.9.0",
-    "eslint": "^8.55.0",
+    "eslint": "^8.56.0",
     "firebase": "^10.7.0",
     "firebase-admin": "^11.11.1",
     "firebase-functions": "^4.5.0",

@@ -138,7 +138,7 @@ export function isFirestoreDataReference<T = unknown>(
 
 export function isFirestoreQuery<
   AppModelType = DocumentData,
-  DbModelType extends DocumentData = DocumentData
+  DbModelType extends DocumentData = DocumentData,
 >(
   source: unknown
 ): source is FirestoreQuery<AppModelType, DbModelType> & { path: undefined } {
@@ -156,12 +156,12 @@ export function getDataSourcePath(
   return isFirestoreDataReference(source)
     ? source.path
     : isDatabaseReference(source)
-    ? // gets a path like /users/1?orderByKey=true
-      source.toString()
-    : isFirestoreQuery(source)
-    ? // internal id
-      null // FIXME: find a way to get the canonicalId that no longer exists
-    : null
+      ? // gets a path like /users/1?orderByKey=true
+        source.toString()
+      : isFirestoreQuery(source)
+        ? // internal id
+          null // FIXME: find a way to get the canonicalId that no longer exists
+        : null
 }
 
 export function isDatabaseReference(

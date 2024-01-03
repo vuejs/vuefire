@@ -52,11 +52,14 @@ export function extractRefs(
     {},
   ]
 
-  const subsByPath = Object.keys(subs).reduce((resultSubs, subKey) => {
-    const sub = subs[subKey]
-    resultSubs[sub.path] = sub.data()
-    return resultSubs
-  }, {} as Record<string, DocumentData | null>)
+  const subsByPath = Object.keys(subs).reduce(
+    (resultSubs, subKey) => {
+      const sub = subs[subKey]
+      resultSubs[sub.path] = sub.data()
+      return resultSubs
+    },
+    {} as Record<string, DocumentData | null>
+  )
 
   function recursiveExtract(
     doc: DocumentData,

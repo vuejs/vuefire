@@ -29,7 +29,7 @@ export type { _RefFirestore, VueFirestoreDocumentData, VueFirestoreQueryData }
  */
 export function useCollection<
   // explicit generic as unknown to allow arbitrary types like numbers or strings
-  R extends CollectionReference<unknown> | Query<unknown>
+  R extends CollectionReference<unknown> | Query<unknown>,
 >(
   collectionRef: MaybeRefOrGetter<_Nullable<R>>,
   options?: UseCollectionOptions<_InferReferenceType<R>[]>
@@ -74,7 +74,7 @@ export interface UseDocumentOptions<TData = unknown>
  */
 export function useDocument<
   // explicit generic as unknown to allow arbitrary types like numbers or strings
-  R extends DocumentReference<unknown>
+  R extends DocumentReference<unknown>,
 >(
   documentRef: MaybeRefOrGetter<_Nullable<R>>,
   options?: UseDocumentOptions<_InferReferenceType<R>>
