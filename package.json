@@ -58,7 +58,7 @@
     "firebase:emulators": "firebase emulators:start",
     "test:dev": "vitest",
     "test": "pnpm run lint && pnpm run test:types && pnpm run build && pnpm run -C packages/nuxt build && pnpm run test:unit run",
-    "postinstall": "simple-git-hooks"
+    "prepare": "simple-git-hooks"
   },
   "keywords": [
     "vue",
