@@ -51,7 +51,6 @@ export function useIsCurrentUserLoaded(name?: string) {
  * Updates the current user profile and updates the current user state. This function internally calls `updateProfile()`
  * from 'firebase/auth' and then updates the current user state.
  *
- * @param user - the user to update
  * @param profile - the new profile information
  */
 export function updateCurrentUserProfile(profile: {

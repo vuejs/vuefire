@@ -85,7 +85,7 @@ export function useDocument<
  * Accepts a generic to **enforce the type** of the returned Ref. Note you can (and probably should) use
  * `.withConverter()` to have stricter type safe version of a collection reference.
  *
- * @param collectionRef - query or collection
+ * @param documentRef - query or collection
  * @param options - optional options
  */
 export function useDocument<T>(

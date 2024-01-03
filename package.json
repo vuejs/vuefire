@@ -109,11 +109,11 @@
     "prettier": "^2.8.8",
     "semver": "^7.5.4",
     "simple-git-hooks": "^2.9.0",
-    "typedoc": "^0.25.4",
+    "typedoc": "^0.25.6",
     "typedoc-plugin-markdown": "^3.17.1",
     "typescript": "~5.3.3",
     "unbuild": "^2.0.0",
-    "vitepress": "1.0.0-rc.31",
+    "vitepress": "1.0.0-rc.34",
     "vitest": "^1.1.1",
     "vue": "^3.4.3"
   },
