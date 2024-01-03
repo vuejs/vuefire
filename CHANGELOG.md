@@ -1,3 +1,7 @@
+## [3.1.21](https://github.com/vuejs/vuefire/compare/vuefire@3.1.20...vuefire@3.1.21) (2024-01-03)
+
+- fixed an issue when installing the package
+
 ## [3.1.20](https://github.com/vuejs/vuefire/compare/vuefire@3.1.19...vuefire@3.1.20) (2024-01-03)
 
 ### Bug Fixes
