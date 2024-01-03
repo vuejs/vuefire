@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@1.0.0...nuxt-vuefire@1.0.1) (2024-01-03)
+
+### Bug Fixes
+
+- **nuxt:** ensure client only plugin ([4514650](https://github.com/vuejs/vuefire/commit/4514650ef92aa39580c06d0a2814f7b985e62db5))
+- **nuxt:** give plugins `.mjs` extension so they're processed ([#1479](https://github.com/vuejs/vuefire/issues/1479)) ([e51ab1a](https://github.com/vuejs/vuefire/commit/e51ab1a06640901bb143ec2f48b0d9ddc899dc65))
+
 # [1.0.0](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@0.4.1...nuxt-vuefire@1.0.0) (2023-12-01)
 
 ### Features

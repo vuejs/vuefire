@@ -1,3 +1,14 @@
+## [3.1.20](https://github.com/vuejs/vuefire/compare/vuefire@3.1.19...vuefire@3.1.20) (2024-01-03)
+
+### Bug Fixes
+
+- **types:** infer type from target RTDB ([fece76e](https://github.com/vuejs/vuefire/commit/fece76ef734994ea28f56e429f9d228167efa1a1))
+- **types:** infer type from target firestore ([8814646](https://github.com/vuejs/vuefire/commit/88146460e7abd0a134b5372fa2ed646dff63098f))
+
+### Features
+
+- **auth:** allow directly passing the auth instance ([d5d5e1b](https://github.com/vuejs/vuefire/commit/d5d5e1b650e679a6d85ad4887e077c1cd09499e4)), closes [#1459](https://github.com/vuejs/vuefire/issues/1459)
+
 ## [3.1.19](https://github.com/vuejs/vuefire/compare/vuefire@3.1.18...vuefire@3.1.19) (2023-12-01)
 
 ### Bug Fixes
