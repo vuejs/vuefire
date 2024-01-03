@@ -91,7 +91,7 @@
   },
   "devDependencies": {
     "@vitest/coverage-v8": "^1.1.1",
-    "@vue/runtime-core": "^3.3.11",
+    "@vue/runtime-core": "^3.4.3",
     "@vue/test-utils": "^2.4.3",
     "chalk": "^5.3.0",
     "consola": "^3.2.3",
@@ -115,7 +115,7 @@
     "unbuild": "^2.0.0",
     "vitepress": "1.0.0-rc.31",
     "vitest": "^1.1.1",
-    "vue": "^3.3.11"
+    "vue": "^3.4.3"
   },
   "simple-git-hooks": {
     "pre-commit": "pnpm lint-staged",
