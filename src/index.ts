@@ -21,12 +21,12 @@ export type {
   UseObjectOptions,
   UseDatabaseRefOptions,
 } from './database'
+export { createRecordFromDatabaseSnapshot as databaseDefaultSerializer } from './database/utils'
 export type {
   DatabaseSnapshotSerializer,
   _RefDatabase,
   VueDatabaseDocumentData,
   VueDatabaseQueryData,
-  createRecordFromDatabaseSnapshot as databaseDefaultSerializer,
 } from './database/utils'
 
 /**
