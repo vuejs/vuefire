@@ -1,3 +1,9 @@
+## [3.1.22](https://github.com/vuejs/vuefire/compare/vuefire@3.1.21...vuefire@3.1.22) (2024-01-05)
+
+### Bug Fixes
+
+- export databaseDefaultSerializer ([#1481](https://github.com/vuejs/vuefire/issues/1481)) ([#1482](https://github.com/vuejs/vuefire/issues/1482)) ([cd6f903](https://github.com/vuejs/vuefire/commit/cd6f9035666b0a0ab70b4e6c770f41191713d6a3))
+
 ## [3.1.21](https://github.com/vuejs/vuefire/compare/vuefire@3.1.20...vuefire@3.1.21) (2024-01-03)
 
 - fixed an issue when installing the package
