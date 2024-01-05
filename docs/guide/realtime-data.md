@@ -101,10 +101,10 @@ On top of that, VueFire also allows `null` as a value for the data source. This 
 
 ```ts
 const user = useCurrentUser()
-const myContactList = useCollection(() =>
+const myContactList = useDatabaseList(() =>
   user.value
-    ? // Firebase will error if a null value is passed to `collection()`
-      collection(db, 'users', user.value.id, 'contacts')
+    ? // Firebase will error if a null value is passed to `dbRef()`
+      dbRef(db, 'users', user.value.id, 'contacts')
     : // this will be considered as no data source
       null
 )
@@ -112,10 +112,10 @@ const myContactList = useCollection(() =>
 
 ```ts
 const user = useCurrentUser()
-const myContactList = useDatabaseList(() =>
+const myContactList = useCollection(() =>
   user.value
-    ? // Firebase will error if a null value is passed to `dbRef()`
-      dbRef(db, 'users', user.value.id, 'contacts')
+    ? // Firebase will error if a null value is passed to `collection()`
+      collection(db, 'users', user.value.id, 'contacts')
     : // this will be considered as no data source
       null
 )
