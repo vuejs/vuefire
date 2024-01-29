@@ -33,7 +33,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   const user = await getCurrentUser()
 
   // redirect the user to the login page
-  if (!user && to.path != '/login') {
+  if (!user) {
     return navigateTo({
       path: '/login',
       query: {
@@ -53,6 +53,24 @@ definePageMeta({
 })
 </script>
 ```
+
+::: warning
+
+If you are using a [global middleware](https://nuxt.com/docs/getting-started/routing#route-middleware), make sure **you are not getting into a redirect loop** by ensuring `navigateTo()` is only called if the target location is not the same page:
+
+```ts{4}
+// middleware/auth.global.ts
+export default defineNuxtRouteMiddleware(async (to, from) => {
+  // ...
+  if (!user && to.path !== '/login') {
+    return navigateTo({ path: '/login' })
+  }
+})
+```
+
+:::
+
+````vue{2-4}
 
 You can even automatically handle the auth state by _watching_ the current user. We recommend you do this in either a layout or the `app.vue` component so the watcher is always active:
 
