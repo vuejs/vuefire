@@ -70,11 +70,9 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
 
 :::
 
-````vue{2-4}
-
 You can even automatically handle the auth state by _watching_ the current user. We recommend you do this in either a layout or the `app.vue` component so the watcher is always active:
 
-```vue
+```vue{8-15}
 <script setup>
 const router = useRouter()
 const route = useRoute()
