@@ -164,9 +164,7 @@ export function _useFirestoreRef(
   }
 
   let stopWatcher = noop
-  if (isRef(docOrCollectionRef)) {
-    stopWatcher = watch(docOrCollectionRef, bindFirestoreRef)
-  }
+  stopWatcher = watch(() => toValue(docOrCollectionRef), bindFirestoreRef)
 
   bindFirestoreRef()
 
