@@ -11,7 +11,7 @@ import {
   computed,
   nextTick,
   ref,
-  unref,
+  toValue,
   watch,
   type Ref,
   defineComponent,
@@ -53,7 +53,7 @@ describe('Database lists', () => {
     return {
       wrapper,
       // to simplify tests
-      listRef: unref(ref) as DatabaseReference,
+      listRef: toValue(ref) as DatabaseReference,
       // non enumerable properties cannot be spread
       data: data.data,
       pending: data.pending,
@@ -338,7 +338,7 @@ describe('Database lists', () => {
     })
 
     expect(error.value).toBeUndefined()
-    await expect(unref(promise)).rejects.toThrow()
+    await expect(toValue(promise)).rejects.toThrow()
     expect(error.value).toBeTruthy()
   })
 
@@ -349,7 +349,7 @@ describe('Database lists', () => {
     const { error, promise, data, pending } = factory({ ref })
 
     expect(pending.value).toBe(true)
-    await expect(unref(promise)).resolves.toEqual(expect.anything())
+    await expect(toValue(promise)).resolves.toEqual(expect.anything())
     expect(pending.value).toBe(false)
     expect(data.value).toContainEqual({ name: 'a' })
     expect(data.value).toContainEqual({ name: 'b' })

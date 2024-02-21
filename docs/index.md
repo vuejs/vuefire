@@ -29,3 +29,9 @@ features:
 
 footer: MIT Licensed | Copyright © 2016-present Eduardo San Martin Morote
 ---
+
+<script setup>
+import HomeSponsors from './.vitepress/theme/components/HomeSponsors.vue'
+</script>
+
+<HomeSponsors />
