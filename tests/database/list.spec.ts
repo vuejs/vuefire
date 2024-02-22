@@ -287,6 +287,33 @@ describe('Database lists', () => {
     expect(data.value).toContainEqual({ text: 'task 3' })
   })
 
+  it('can be bound to a getter', async () => {
+    const listA = databaseRef()
+    const listB = databaseRef()
+    await push(listA, { text: 'task 1' })
+    await push(listA, { text: 'task 2' })
+    await push(listB, { text: 'task 3' })
+    await push(listA, { text: 'task 4' })
+    const showFinished = ref(true)
+
+    const { wrapper, data, promise } = factory({
+      ref: () => (showFinished.value ? listA : listB),
+    })
+
+    await promise.value
+    expect(data.value).toHaveLength(3)
+    expect(data.value).toContainEqual({ text: 'task 1' })
+    expect(data.value).toContainEqual({ text: 'task 2' })
+    expect(data.value).toContainEqual({ text: 'task 4' })
+
+    showFinished.value = false
+    await nextTick()
+    await promise.value
+    await nextTick()
+    expect(data.value).toHaveLength(1)
+    expect(data.value).toContainEqual({ text: 'task 3' })
+  })
+
   it('reorders items in the array', async () => {
     const listRef = databaseRef()
     const orderedListRef = query(listRef, orderByChild('n'))
