@@ -134,7 +134,7 @@ export function _useDatabaseRef(
   }
 
   let stopWatcher = noop
-  if (isRef(reference)) {
+  if (isRef(reference) || typeof reference === 'function') {
     stopWatcher = watch(reference, bindDatabaseRef)
   }
   bindDatabaseRef()
