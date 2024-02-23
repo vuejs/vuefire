@@ -75,7 +75,7 @@ export function useStorageFileUrl(
   }
 
   refresh()
-  if (isRef(storageRef)) {
+  if (isRef(storageRef) || typeof storageRef === 'function') {
     watch(storageRef, refresh)
   }
 
@@ -255,7 +255,7 @@ export function useStorageFile(
     return Promise.all([refreshUrl(), refreshMetadata()])
   }
 
-  if (isRef(storageRef)) {
+  if (isRef(storageRef) || typeof storageRef === 'function') {
     watch(storageRef, (storageSource) => {
       if (!storageSource) {
         if (uploadTask.value) {

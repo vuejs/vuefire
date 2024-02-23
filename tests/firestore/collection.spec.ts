@@ -74,7 +74,7 @@ describe(
 
     function factoryQuery<
       AppModelType = DocumentData,
-      DbModelType extends DocumentData = DocumentData
+      DbModelType extends DocumentData = DocumentData,
     >({
       options,
       ref,
@@ -358,8 +358,8 @@ describe(
         showFinished.value
           ? finishedListRef
           : showFinished.value === false
-          ? unfinishedListRef
-          : null
+            ? unfinishedListRef
+            : null
       )
       await addDoc(listRef, { text: 'task 1', finished: false })
       await addDoc(listRef, { text: 'task 2', finished: false })
@@ -396,6 +396,31 @@ describe(
       await nextTick()
       expect(data.value).toHaveLength(1)
       expect(data.value).toContainEqual({ text: 'task 3', finished: true })
+    })
+
+    it('can be bound to a getter', async () => {
+      const listCollectionRef = collection<{ name: string }>(
+        'populatedCollection'
+      )
+      const collectionName = ref('populatedCollection')
+
+      const { wrapper, promise } = factory({
+        ref: () => collection(collectionName.value),
+      })
+
+      await promise.value
+      await addDoc(listCollectionRef, { name: 'a' })
+      await addDoc(listCollectionRef, { name: 'b' })
+
+      expect(wrapper.vm.list).toHaveLength(2)
+      expect(wrapper.vm.list).toContainEqual({ name: 'a' })
+      expect(wrapper.vm.list).toContainEqual({ name: 'b' })
+
+      collectionName.value = 'emptyCollection'
+      await nextTick()
+      await promise.value
+      await nextTick()
+      expect(wrapper.vm.list).toHaveLength(0)
     })
 
     it('can be bound to a null ref', async () => {

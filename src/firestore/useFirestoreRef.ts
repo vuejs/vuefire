@@ -164,7 +164,7 @@ export function _useFirestoreRef(
   }
 
   let stopWatcher = noop
-  if (isRef(docOrCollectionRef)) {
+  if (isRef(docOrCollectionRef) || typeof docOrCollectionRef === 'function') {
     stopWatcher = watch(docOrCollectionRef, bindFirestoreRef)
   }
 
