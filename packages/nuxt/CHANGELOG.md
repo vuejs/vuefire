@@ -1,3 +1,5 @@
+## [1.0.2](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@1.0.1...nuxt-vuefire@1.0.2) (2024-02-23)
+
 ## [1.0.1](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@1.0.0...nuxt-vuefire@1.0.1) (2024-01-03)
 
 ### Bug Fixes

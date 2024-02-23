@@ -1,3 +1,9 @@
+## [3.1.23](https://github.com/vuejs/vuefire/compare/vuefire@3.1.22...vuefire@3.1.23) (2024-02-23)
+
+### Bug Fixes
+
+- bindFirestoreRef not reacting to getter ([#1496](https://github.com/vuejs/vuefire/issues/1496)) ([e459dd1](https://github.com/vuejs/vuefire/commit/e459dd18ad7b784e0fd6e84fbb4de48beca7231c))
+
 ## [3.1.22](https://github.com/vuejs/vuefire/compare/vuefire@3.1.21...vuefire@3.1.22) (2024-01-05)
 
 ### Bug Fixes
