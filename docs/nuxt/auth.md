@@ -1,6 +1,6 @@
 # Authentication
 
-Nuxt VueFire integrates with [Firebase Authentication](https://firebase.google.com/docs/auth) module to automatically synchronize the current user state on the server and the client. Activate this module by setting the `vuefire.auth` to `true` in `nuxt.config.ts`:
+Nuxt VueFire integrates with [Firebase Authentication](https://firebase.google.com/docs/auth) module to automatically synchronize the current user state on the server and the client. Activate this module by setting the `vuefire.auth.enabled` to `true` in `nuxt.config.ts`:
 
 ```ts{5-7}
 export default defineNuxtConfig({
