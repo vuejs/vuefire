@@ -157,6 +157,9 @@ await usePendingPromises()
 </script>
 ```
 
+<!--
+TODO: implement
+
 ## Exclude from hydration
 
 You can exclude data from hydration by passing `false` to the `ssrKey` option. This is useful when there is no point in waiting for the data to be fetched on the server, e.g. when the data is not being rendered on the server.
@@ -167,7 +170,9 @@ useDatabaseList(..., { ssrKey: false })
 // etc
 ```
 
-This only works if you avoid rendering on server these documents or collections. **If still render them on server, you will get a hydration error on client**.
+This only works if you avoid rendering on server these documents or collections. **If you still render them on the server, you will get a hydration error on client**.
+
+-->
 
 <!-- TODO: I wonder if we could attach effect scopes to applications so `onServerPrefetch()` is still awaited when attached -->
 
