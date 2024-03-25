@@ -57,14 +57,14 @@ const { data: config, promise } = useDocument(configRef, { wait: true })
 
 onMounted(() => {
   promise.value.then((data) => {
-    if (process.client) {
+    if (import.meta.client) {
       console.log('promise resolved', toRaw(data))
     }
     isDoneFetching.value = true
   })
 
   usePendingPromises().then((data) => {
-    if (process.client) {
+    if (import.meta.client) {
       console.log('pending promise resolved', toRaw(data))
     }
     isAllDoneFetching.value = true

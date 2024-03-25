@@ -10,7 +10,7 @@ export default defineNuxtPlugin((nuxtApp) => {
   nuxtApp.vueApp.use(VueFire, { firebaseApp })
 
   <% if(options.ssr) { %>
-  if (process.server) {
+  if (import.meta.server) {
     // collect the initial state
     nuxtApp.payload.vuefire = useSSRInitialState(undefined, firebaseApp)
   } else if (nuxtApp.payload?.vuefire) {
