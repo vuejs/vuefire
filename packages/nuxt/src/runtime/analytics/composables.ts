@@ -8,5 +8,5 @@ import { useFirebaseApp } from '../app/composables'
  * @returns the Analytics instance
  */
 export function useAnalytics() {
-  return process.client ? getAnalytics(useFirebaseApp()) : null
+  return import.meta.client ? getAnalytics(useFirebaseApp()) : null
 }
