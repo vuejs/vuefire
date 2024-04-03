@@ -90,8 +90,7 @@ You can follow the progress and future plans on [the Roadmap issue](https://gith
 VueFire requires the `firebase` package to be installed as well as `vuefire`:
 
 ```bash
-npm install firebase
-npx nuxi@latest module add vuefire
+npm install vuefire firebase
 ```
 
 Check [the documentation](https://vuefire.vuejs.org/nuxt/getting-started.html) for Nuxt instructions.
