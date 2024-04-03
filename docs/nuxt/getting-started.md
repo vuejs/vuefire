@@ -3,22 +3,9 @@
 VueFire comes with an official Nuxt module that automatically handles most of the hassle of setting up VueFire in your Nuxt project.
 
 ## Installation
-
-::: code-group
-
-```sh [pnpm]
-pnpm install vuefire nuxt-vuefire firebase
+```bash
+npx nuxi@latest module add vuefire
 ```
-
-```sh [yarn]
-yarn add vuefire nuxt-vuefire firebase
-```
-
-```sh [npm]
-npm install vuefire nuxt-vuefire firebase
-```
-
-:::
 
 Additionally, if you are using [SSR](https://nuxt.com/docs/api/configuration/nuxt-config/#ssr), you need to install `firebase-admin` and its peer dependencies:
 
