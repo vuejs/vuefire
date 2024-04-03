@@ -4,6 +4,7 @@ VueFire comes with an official Nuxt module that automatically handles most of th
 
 ## Installation
 ```bash
+npm install firebase
 npx nuxi@latest module add vuefire
 ```
 
