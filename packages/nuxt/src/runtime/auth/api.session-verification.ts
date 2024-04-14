@@ -10,6 +10,7 @@ import {
 import { ensureAdminApp } from 'vuefire/server'
 import { logger } from '../logging'
 import { useRuntimeConfig } from '#imports'
+import { parseTenantFromFirebaseJwt } from 'vuefire'
 
 /**
  * Setups an API endpoint to be used by the client to mint a cookie based auth session.
@@ -27,7 +28,12 @@ export default defineEventHandler(async (event) => {
     },
     'session-verification'
   )
-  const adminAuth = getAdminAuth(adminApp)
+
+  const tenant = parseTenantFromFirebaseJwt(token)
+
+  const adminAuth = tenant
+    ? getAdminAuth(adminApp).tenantManager().authForTenant(tenant)
+    : getAdminAuth(adminApp)
 
   logger.debug(token ? 'Verifying the token' : 'Deleting the session cookie')
   const verifiedIdToken = token ? await adminAuth.verifyIdToken(token) : null

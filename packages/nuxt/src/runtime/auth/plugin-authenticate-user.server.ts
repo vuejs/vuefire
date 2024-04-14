@@ -17,7 +17,6 @@ export default defineNuxtPlugin(async (nuxtApp) => {
   const event = useRequestEvent()
   const firebaseApp = nuxtApp.$firebaseApp as FirebaseApp
   const firebaseAdminApp = nuxtApp.$firebaseAdminApp as AdminApp
-  const adminAuth = getAdminAuth(firebaseAdminApp)
   const auth = nuxtApp.$firebaseAuth as Auth
 
   const decodedToken = nuxtApp[
@@ -26,6 +25,12 @@ export default defineNuxtPlugin(async (nuxtApp) => {
   ] as DecodedIdToken | null | undefined
 
   const uid = decodedToken?.uid
+
+  const tenant = decodedToken?.firebase?.tenant
+
+  const adminAuth = tenant
+    ? getAdminAuth(firebaseAdminApp).tenantManager().authForTenant(tenant)
+    : getAdminAuth(firebaseAdminApp)
 
   // this is also undefined if the user hasn't enabled the session cookie option
   if (uid) {

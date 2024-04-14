@@ -12,7 +12,7 @@ export default defineNuxtPlugin(async (nuxtApp) => {
   const adminApp = nuxtApp.$firebaseAdminApp as AdminApp
 
   const decodedToken = await decodeSessionCookie(
-    getCookie(event, AUTH_COOKIE_NAME),
+    event && getCookie(event, AUTH_COOKIE_NAME),
     adminApp
   )
 

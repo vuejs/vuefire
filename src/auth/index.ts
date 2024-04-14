@@ -14,6 +14,8 @@ import { getGlobalScope } from '../globals'
 import { isClient, _Nullable } from '../shared'
 import { authUserMap, setupOnAuthStateChanged } from './user'
 import { type VueFireModule } from '..'
+import { jwtDecode } from 'jwt-decode'
+import type { DecodedIdToken } from 'firebase-admin/auth'
 
 export {
   useCurrentUser,
@@ -180,4 +182,26 @@ export function useFirebaseAuth(name?: string) {
     )
   }
   return isClient ? inject(_VueFireAuthKey) : null
+}
+
+export function parseTenantFromFirebaseJwt(
+  jwt?: string | undefined | null
+): string | null {
+  if (!jwt) return null
+
+  try {
+    const decodedToken = jwtDecode<DecodedIdToken>(jwt)
+    if (!decodedToken) return null
+
+    const firebase = decodedToken.firebase
+    if (!firebase) return null
+
+    return firebase.tenant ?? null
+  } catch (error) {
+    if (process.env.NODE_ENV !== 'production') {
+      console.warn('[VueFire] could not parse tenant from jwt: ', error)
+    }
+  }
+
+  return null
 }

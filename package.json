@@ -71,6 +71,7 @@
   ],
   "license": "MIT",
   "dependencies": {
+    "jwt-decode": "^4.0.0",
     "vue-demi": "latest"
   },
   "peerDependencies": {

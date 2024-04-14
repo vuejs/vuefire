@@ -9,7 +9,7 @@ import type { App as AdminApp } from 'firebase-admin/app'
 import { getAuth as getAdminAuth } from 'firebase-admin/auth'
 import { logger } from './logging'
 import { isFirebaseError } from './utils'
-import { _VueFireAuthKey } from '../auth'
+import { _VueFireAuthKey, parseTenantFromFirebaseJwt } from '../auth'
 
 // MUST be named `__session` to be kept in Firebase context, therefore this name is hardcoded
 // https://firebase.google.com/docs/hosting/manage-cache#using_cookies
@@ -112,9 +112,13 @@ export async function decodeSessionCookie(
   adminApp: AdminApp
 ): Promise<DecodedIdToken | null> {
   if (sessionCookie) {
-    const adminAuth = getAdminAuth(adminApp)
-
     try {
+      const tenant = parseTenantFromFirebaseJwt(sessionCookie)
+
+      const adminAuth = tenant
+        ? getAdminAuth(adminApp).tenantManager().authForTenant(tenant)
+        : getAdminAuth(adminApp)
+
       // TODO: should we check for the revoked status of the token here?
       // we await to try/catch
       // return await adminAuth.verifyIdToken(token /*, checkRevoked */)

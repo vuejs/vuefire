@@ -96,6 +96,7 @@ export {
   _VueFireAuthKey,
   getCurrentUser,
   updateCurrentUserProfile,
+  parseTenantFromFirebaseJwt,
 } from './auth'
 
 /**
