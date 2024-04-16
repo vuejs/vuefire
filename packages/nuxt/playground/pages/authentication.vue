@@ -45,7 +45,9 @@ watch(user, (user) => {
 // new user
 const email = ref('')
 const password = ref('')
-function signUp() {
+const tenant = ref<string | null>(null)
+
+async function signUp() {
   // link to an existing anonymous account
   if (user.value?.isAnonymous) {
     credential = EmailAuthProvider.credential(email.value, password.value)
@@ -59,7 +61,7 @@ function signUp() {
   return createUserWithEmailAndPassword(auth, email.value, password.value)
 }
 
-function signinPopup() {
+async function signinPopup() {
   return signInWithPopup(auth, googleAuthProvider).then((result) => {
     const googleCredential = GoogleAuthProvider.credentialFromResult(result)
     credential = googleCredential
@@ -96,37 +98,42 @@ onMounted(() => {
 <template>
   <main>
     <h1>Auth playground</h1>
-    <button @click="signOut(auth)">SignOut</button>
-    <button @click="signInAnonymously(auth)">Anonymous signIn</button>
-    <button @click="signinPopup()">Signin Google (popup)</button>
-    <button @click="signinRedirect()">Signin Google (redirect)</button>
-    <button @click="changeUserImage">Change User picture</button>
+    <button data-testid="sign-out" @click="auth.tenantId = null; signOut(auth)">SignOut</button>
+    <button data-testid="anonymous-sign-in" @click="auth.tenantId = null; signInAnonymously(auth)">Anonymous signIn</button>
+    <button data-testid="google-popup-sign-in" @click="auth.tenantId = null; signinPopup()">Signin Google (popup)</button>
+    <button data-testid="google-redirect-sign-in" @click="auth.tenantId = null; signinRedirect()">Signin Google (redirect)</button>
+    <button data-testid="change-user-picture" @click="changeUserImage">Change User picture</button>
 
-    <form @submit.prevent="signUp()">
+    <p>
+      Tenant: <input v-model="tenant" data-testid="tenant" type="text" placeholder="leave empty for default tenant"/>
+    </p>
+
+
+    <form @submit.prevent="auth.tenantId = tenant || null; signUp()">
       <fieldset>
         <legend>New User</legend>
 
-        <label> Email: <input v-model="email" type="email" required /> </label>
+        <label> Email: <input v-model="email" data-testid="email-signup" type="email" required /> </label>
 
         <label>
-          Password: <input v-model="password" type="password" required />
+          Password: <input v-model="password" data-testid="password-signup" type="password" required />
         </label>
 
-        <button>Create</button>
+        <button data-testid="submit-signup">Create</button>
       </fieldset>
     </form>
 
-    <form @submit.prevent="signInWithEmailAndPassword(auth, email, password)">
+    <form @submit.prevent="auth.tenantId = tenant || null; signInWithEmailAndPassword(auth, email, password)">
       <fieldset>
         <legend>Sign in</legend>
 
-        <label> Email: <input v-model="email" type="email" required /> </label>
+        <label> Email: <input v-model="email" data-testid="email-signin" type="email" required /> </label>
 
         <label>
-          Password: <input v-model="password" type="password" required />
+          Password: <input v-model="password" data-testid="password-signin" type="password" required />
         </label>
 
-        <button>Signin</button>
+        <button data-testid="submit-signin">Signin</button>
       </fieldset>
     </form>
 
@@ -144,7 +151,7 @@ onMounted(() => {
     <!-- this is for debug purposes only, displaying it on the server would create a hydration mismatch -->
     <ClientOnly>
       <p>Current User:</p>
-      <pre>{{ user }}</pre>
+      <pre data-testid="user-data">{{ user }}</pre>
     </ClientOnly>
   </main>
 </template>
