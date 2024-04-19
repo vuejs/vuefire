@@ -78,8 +78,7 @@
 
 ## Status
 
-- VueFire is currently stable
-- Nuxt VueFire is in _Preview_
+- VueFire and Nuxt VueFire are both currently stable
 
 ## Roadmap
 
