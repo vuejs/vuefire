@@ -32,8 +32,8 @@
     "build": "nuxt-module-build build",
     "lint": "eslint src",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s --commit-path . -l nuxt-vuefire -r 1",
-    "test": "vitest",
-    "dev": "nuxi dev playground",
+    "test": "cross-env GOOGLE_CLOUD_PROJECT='vue-fire-store' vitest",
+    "dev": "cross-env GOOGLE_CLOUD_PROJECT='vue-fire-store' nuxi dev playground",
     "dev:build": "nuxi build playground",
     "dev:prepare": "nuxt-module-build --stub"
   },

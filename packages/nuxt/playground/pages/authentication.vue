@@ -151,7 +151,13 @@ onMounted(() => {
     <!-- this is for debug purposes only, displaying it on the server would create a hydration mismatch -->
     <ClientOnly>
       <p>Current User:</p>
-      <pre data-testid="user-data">{{ user }}</pre>
+      <pre data-testid="user-data-client">{{ user }}</pre>
     </ClientOnly>
+
+    <ServerOnlyPre 
+      v-if="user" 
+      :data="user"
+      testid="user-data-server"
+    />
   </main>
 </template>
