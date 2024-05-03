@@ -40,6 +40,7 @@
   "dependencies": {
     "@nuxt/kit": "^3.10.3",
     "@posva/lru-cache": "^10.0.1",
+    "lodash-es": "^4.17.21",
     "strip-json-comments": "^5.0.1"
   },
   "peerDependencies": {
