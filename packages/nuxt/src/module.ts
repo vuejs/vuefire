@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs'
+import { template } from 'lodash-es'
 /**
  * @module nuxt-vuefire
  */
@@ -169,7 +171,13 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
 
     // this adds the VueFire plugin and handle SSR state serialization and hydration
     addPluginTemplate({
-      src: normalize(resolve(templatesDir, 'plugin.ejs')),
+      getContents({ options }) {
+        const contents = readFileSync(
+          normalize(resolve(templatesDir, 'plugin.ejs')),
+          'utf-8'
+        )
+        return template(contents)({ options })
+      },
       filename: 'vuefire-plugin.mjs',
       options: {
         ssr: nuxt.options.ssr,
@@ -232,7 +240,13 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
     if (options.auth.enabled) {
       // hydrates the user if any
       addPluginTemplate({
-        src: normalize(resolve(runtimeDir, 'auth/plugin.client.ejs')),
+        getContents({ options }) {
+          const contents = readFileSync(
+            normalize(resolve(runtimeDir, 'auth/plugin.client.ejs')),
+            'utf-8'
+          )
+          return template(contents)({ options })
+        },
         filename: 'vuefire-auth-plugin.client.mjs',
         options: {
           ...options.auth,
