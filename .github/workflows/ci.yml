@@ -21,34 +21,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
-
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: 20
-
-      - uses: pnpm/action-setup@v2
-        with:
-          version: 8.10.2
-          run_install: false
-
-      - name: Get pnpm store directory
-        id: pnpm-cache
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
-
-      - uses: actions/cache@v3
-        name: Setup pnpm cache
-        with:
-          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
+          node-version: '>=20'
+          cache: 'pnpm'
 
       - name: Cache firebase tools
         id: cache-firebase-tools
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         env:
           cache-name: cache-firebase-tools
         with:
@@ -81,4 +63,6 @@ jobs:
         working-directory: ./packages/nuxt
         run: pnpm run build
 
-      - uses: codecov/codecov-action@v2
+      - uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
