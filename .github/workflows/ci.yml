@@ -13,6 +13,9 @@ on:
       - 'playground/**'
       - 'examples/**'
 
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
