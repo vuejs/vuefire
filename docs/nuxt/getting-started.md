@@ -26,6 +26,15 @@ npm install firebase-admin firebase-functions @firebase/app-types
 
 :::
 
+::: tip
+
+Depending on your needs, you might want to set up SSR or not. The final complexity of the project is really different. If you want a starter project see the existing templates:
+
+- [Spark Plan](https://github.com/posva/nuxt--vuefire-example-spark-plan)
+- [Blaze Plan](https://github.com/posva/nuxt--vuefire-example-blaze-plan)
+
+:::
+
 ## Configuration
 
 Next, add `nuxt-vuefire` to the `modules` section of `nuxt.config.js` and configure it with the credentials created in your app settings in your project overview (`https://console.firebase.google.com/project/YOUR_PROJECT_NAME/overview)`. You can find more details [in Firebase Documentation](https://firebase.google.com/docs/web/setup#create-project). It should look something like this:
