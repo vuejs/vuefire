@@ -16,7 +16,7 @@ Use the `useCollection()`, `useDatabaseList()`, `useDocument()`, and `useDatabas
 
 ```vue
 <script setup>
-import { useDatabaseList } from 'vuefire'
+import { useDatabaseList, useDatabaseObject } from 'vuefire'
 import { ref as dbRef } from 'firebase/database'
 
 const todos = useDatabaseList(dbRef(db, 'todos'))
