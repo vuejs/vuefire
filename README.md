@@ -7,7 +7,7 @@
 <p align="center">
   <a href="https://npmjs.com/package/vuefire"><img src="https://badgen.net/npm/v/vuefire" alt="npm package"></a>
   <a href="https://github.com/vuejs/vuefire/actions/workflows/test.yml"><img src="https://github.com/vuejs/vuefire/workflows/test/badge.svg?branch=main" alt="build status"></a>
-  <a href="https://codecov.io/github/vuejs/vuefire"><img src="https://badgen.net/codecov/c/github/vuejs/vuefire/main" alt="code coverage"></a>
+  <a href="https://codecov.io/gh/vuejs/vuefire"><img src="https://codecov.io/gh/vuejs/vuefire/graph/badge.svg?token=CSDk1ePUQc"/></a>
 </p>
 <br/>
 
