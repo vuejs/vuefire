@@ -17,7 +17,6 @@ export default defineNuxtPlugin(async (nuxtApp) => {
   const event = useRequestEvent()
   const firebaseApp = nuxtApp.$firebaseApp as FirebaseApp
   const firebaseAdminApp = nuxtApp.$firebaseAdminApp as AdminApp
-  const adminAuth = getAdminAuth(firebaseAdminApp)
   const auth = nuxtApp.$firebaseAuth as Auth
 
   const decodedToken = nuxtApp[
@@ -27,10 +26,17 @@ export default defineNuxtPlugin(async (nuxtApp) => {
 
   const uid = decodedToken?.uid
 
+  const tenant = decodedToken?.firebase?.tenant
+
+  const adminAuth = tenant
+    ? getAdminAuth(firebaseAdminApp).tenantManager().authForTenant(tenant)
+    : getAdminAuth(firebaseAdminApp)
+
   // this is also undefined if the user hasn't enabled the session cookie option
   if (uid) {
     // reauthenticate if the user is not the same (e.g. invalidated)
-    if (auth.currentUser?.uid !== uid) {
+    // OR multi tenancy is used, otherwise tenantId won't be present in SSR accessToken
+    if (auth.currentUser?.uid !== uid || tenant) {
       const customToken = await adminAuth
         .createCustomToken(uid)
         .catch((err) => {
@@ -40,6 +46,8 @@ export default defineNuxtPlugin(async (nuxtApp) => {
       // console.timeLog('token', `got token for ${user.uid}`)
       if (customToken) {
         logger.debug('Signing in with custom token')
+        // Update firebase/auth tenantId to ensure it is set during SSR
+        auth.tenantId = tenant ?? null
         // TODO: allow user to handle error?
         await signInWithCustomToken(auth, customToken)
         // console.timeLog('token', `signed in with token for ${user.uid}`)
