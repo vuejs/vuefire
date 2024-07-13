@@ -28,19 +28,6 @@ jobs:
           node-version: '>=20'
           cache: 'pnpm'
 
-      - name: Cache firebase tools
-        id: cache-firebase-tools
-        uses: actions/cache@v4
-        env:
-          cache-name: cache-firebase-tools
-        with:
-          path: ~/.cache/firebase/emulators
-          key: ${{ runner.os }}-build-${{ env.cache-name }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
-
       - name: Install
         run: pnpm install --frozen-lockfile
 
