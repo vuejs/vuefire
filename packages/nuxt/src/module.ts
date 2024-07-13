@@ -32,7 +32,7 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
     name: 'vuefire',
     configKey: 'vuefire',
     compatibility: {
-      nuxt: '^3.1.0',
+      nuxt: '>=3.1.0',
     },
   },
 
