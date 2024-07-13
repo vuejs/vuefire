@@ -1,3 +1,14 @@
+## [1.0.3](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@1.0.2...nuxt-vuefire@1.0.3) (2024-07-13)
+
+### Bug Fixes
+
+- **nuxt:** use `lodash.template` directly to compile templates ([#1525](https://github.com/vuejs/vuefire/issues/1525)) ([f62ba9c](https://github.com/vuejs/vuefire/commit/f62ba9c1dcb91a26753af468ea550400ebc150bf))
+- opt in to `import.meta.*` properties ([#1514](https://github.com/vuejs/vuefire/issues/1514)) ([2e81d21](https://github.com/vuejs/vuefire/commit/2e81d21420637a711574c1820c7170c331dda57c))
+
+### Features
+
+- upgrade firebase support ([20f7cc3](https://github.com/vuejs/vuefire/commit/20f7cc3a64441d9ebe86624dac7e50203f92bd12)), closes [#1554](https://github.com/vuejs/vuefire/issues/1554)
+
 ## [1.0.2](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@1.0.1...nuxt-vuefire@1.0.2) (2024-02-23)
 
 ## [1.0.1](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@1.0.0...nuxt-vuefire@1.0.1) (2024-01-03)

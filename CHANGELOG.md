@@ -1,3 +1,7 @@
+## [3.1.24](https://github.com/vuejs/vuefire/compare/vuefire@3.1.23...vuefire@3.1.24) (2024-07-13)
+
+- Update firebase peer dependencies
+
 ## [3.1.23](https://github.com/vuejs/vuefire/compare/vuefire@3.1.22...vuefire@3.1.23) (2024-02-23)
 
 ### Bug Fixes
