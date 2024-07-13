@@ -20,9 +20,11 @@ import {
   indexedDBLocalPersistence,
   prodErrorMap,
 } from 'firebase/auth'
+import { routes } from 'vue-router/auto-routes'
 
 const router = createRouter({
   history: createWebHistory(),
+  routes,
 })
 
 router.beforeEach(async () => {

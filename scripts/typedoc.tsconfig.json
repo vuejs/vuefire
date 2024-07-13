@@ -18,7 +18,7 @@
 
     "target": "esnext",
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "Bundler",
     "allowJs": false,
     "skipLibCheck": true,
 
