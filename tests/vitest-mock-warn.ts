@@ -1,6 +1,6 @@
 // https://github.com/posva/jest-mock-warn/blob/master/src/index.js
 
-import { afterEach, beforeEach, expect, SpyInstance, vi } from 'vitest'
+import { afterEach, beforeEach, expect, MockInstance, vi } from 'vitest'
 
 export function mockWarn() {
   expect.extend({
@@ -77,7 +77,7 @@ export function mockWarn() {
     },
   })
 
-  let warn: SpyInstance
+  let warn: MockInstance<typeof console.warn>
   const asserted = new Map<string, string | RegExp>()
 
   beforeEach(() => {
