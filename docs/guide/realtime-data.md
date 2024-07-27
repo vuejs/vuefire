@@ -54,7 +54,7 @@ const someTodo = useDocument(doc(collection(db, 'todos'), 'someId'))
 
 Each of these composables return a Vue `Ref` containing the data. Note **this is a readonly data**, you shouldn't mutate it directly, you should instead [use the Firebase SDK](./writing-data.md). VueFire will automatically keep the data in sync with the database.
 
-Sometimes, you need to start observing a different document or collection, let's say you have a _collection_ of contacts and that you display a specific contact based on the URL, e.g. displaying the contact with an id equal to `24` on `/contacts/24`, you can achieve this this by passing a _reactive variable of the data source_ to the `useDocument()`, `useDatabaseObject()`, etc composables:
+Sometimes, you need to start observing a different document or collection, let's say you have a _collection_ of contacts and that you display a specific contact based on the URL, e.g. displaying the contact with an id equal to `24` on `/contacts/24`, you can achieve this by passing a _reactive variable of the data source_ to the `useDocument()`, `useDatabaseObject()`, etc composables:
 
 <FirebaseExample>
 
