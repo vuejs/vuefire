@@ -107,6 +107,10 @@ Check [the documentation](https://vuefire.vuejs.org/nuxt/getting-started.html) f
   - [Realtime database](https://firebase.google.com/docs/database/)
   - [Cloud Firestore](https://firebase.google.com/docs/firestore/)
 
+## Contributors
+
+<img src="https://markupgo.com/github/vuejs/vuefire/contributors?center=true" width="100%" /> 
+
 ## License
 
 [MIT](http://opensource.org/licenses/MIT)
