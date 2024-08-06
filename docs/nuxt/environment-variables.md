@@ -2,6 +2,9 @@
 
 Nuxt VueFire automatically picks up a few environment variables to configure Firebase from your `.env` file. These usually take precedence over other options defined in `nuxt.config.ts`. They usually try to support the existing Firebase environment variables better.
 
+Since VueFire config is treated as _Public Runtime Config_, it can also be overridden with [env variables by following the Nuxt convention](https://nuxt.com/docs/guide/going-further/runtime-config#environment-variables). For example, an environment variable named `NUXT_PUBLIC_VUEFIRE_CONFIG_API_KEY=xyz` will override the `config.apiKey`.
+Note you still need to provide empty string values to each `config` property that is defined this way.
+
 ## Admin SDK
 
 During development, if you are doing SSR, you must provide the `GOOGLE_APPLICATION_CREDENTIALS` environment variable with the path to the service account file. This is usually a JSON file you can download from the Firebase Console > Project Settings > Service Accounts > Generate new private key.
