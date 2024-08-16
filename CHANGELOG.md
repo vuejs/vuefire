@@ -1,3 +1,9 @@
+# [3.2.0](https://github.com/vuejs/vuefire/compare/vuefire@3.1.24...vuefire@3.2.0) (2024-08-16)
+
+### Bug Fixes
+
+- **types:** augment `vue` rather than `@vue/runtime-core` ([#1565](https://github.com/vuejs/vuefire/issues/1565)) ([ad462bd](https://github.com/vuejs/vuefire/commit/ad462bdbf7614927b6fd2511aba7620a806ced23))
+
 ## [3.1.24](https://github.com/vuejs/vuefire/compare/vuefire@3.1.23...vuefire@3.1.24) (2024-07-13)
 
 - Update firebase peer dependencies

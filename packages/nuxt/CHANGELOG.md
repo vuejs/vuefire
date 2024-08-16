@@ -1,3 +1,9 @@
+## [1.0.4](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@1.0.3...nuxt-vuefire@1.0.4) (2024-08-16)
+
+### Bug Fixes
+
+- **types:** augment `vue` rather than `@vue/runtime-core` ([#1565](https://github.com/vuejs/vuefire/issues/1565)) ([ad462bd](https://github.com/vuejs/vuefire/commit/ad462bdbf7614927b6fd2511aba7620a806ced23))
+
 ## [1.0.3](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@1.0.2...nuxt-vuefire@1.0.3) (2024-07-13)
 
 ### Bug Fixes
