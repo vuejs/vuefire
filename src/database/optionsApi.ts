@@ -186,7 +186,7 @@ export function VueFireDatabaseOptionsAPI(
 
 type Mutable<T> = { -readonly [P in keyof T]: T[P] }
 
-declare module '@vue/runtime-core' {
+declare module 'vue' {
   export interface ComponentCustomProperties {
     /**
      * Binds a reference

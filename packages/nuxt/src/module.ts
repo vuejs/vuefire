@@ -449,7 +449,7 @@ declare module '#app' {
     $firebaseAdminApp: FirebaseAdminApp
   }
 }
-declare module '@vue/runtime-core' {
+declare module 'vue' {
   interface ComponentCustomProperties {
     /**
      * Firebase App instance.

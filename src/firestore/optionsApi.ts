@@ -184,7 +184,7 @@ export function VueFireFirestoreOptionsAPI(
   }
 }
 
-declare module '@vue/runtime-core' {
+declare module 'vue' {
   export interface ComponentCustomProperties {
     /**
      * Binds a reference
