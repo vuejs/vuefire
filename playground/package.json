@@ -12,22 +12,22 @@
     "type-check": "vue-tsc --noEmit"
   },
   "dependencies": {
-    "pinia": "^2.2.2",
-    "vue": "^3.4.38",
-    "vue-router": "^4.4.3",
+    "pinia": "^2.2.4",
+    "vue": "^3.5.12",
+    "vue-router": "^4.4.5",
     "vuefire": "workspace:*",
     "vuex": "^4.1.0"
   },
   "devDependencies": {
     "@firebase/app-types": "^0.9.0",
     "@types/node": "^20.11.20",
-    "@vitejs/plugin-vue": "^5.1.2",
+    "@vitejs/plugin-vue": "^5.1.4",
     "@vue/tsconfig": "^0.5.1",
     "@vueuse/core": "^10.8.0",
     "npm-run-all": "^4.1.5",
     "typescript": "~5.5.4",
-    "unplugin-vue-router": "^0.10.6",
-    "vite": "^5.4.1",
-    "vue-tsc": "^2.0.29"
+    "unplugin-vue-router": "^0.10.8",
+    "vite": "^5.4.10",
+    "vue-tsc": "^2.1.6"
   }
 }
