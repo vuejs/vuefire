@@ -14,7 +14,7 @@ import { defineNuxtPlugin, useRequestEvent } from '#imports'
  * Setups the auth state based on the cookie.
  */
 export default defineNuxtPlugin(async (nuxtApp) => {
-  const event = useRequestEvent()
+  const event = useRequestEvent()!
   const firebaseApp = nuxtApp.$firebaseApp as FirebaseApp
   const firebaseAdminApp = nuxtApp.$firebaseAdminApp as AdminApp
   const adminAuth = getAdminAuth(firebaseAdminApp)
