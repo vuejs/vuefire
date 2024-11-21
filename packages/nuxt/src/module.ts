@@ -208,7 +208,7 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
       }
 
       // loads the user on the current app
-      if(!options.auth.clientOnly){
+      if (!options.auth.clientOnly) {
         addPlugin(resolve(runtimeDir, 'auth/plugin-authenticate-user.server'))
       }
     }
