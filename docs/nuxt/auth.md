@@ -136,7 +136,7 @@ export default defineNuxtConfig({
   vuefire: {
     // ensures the auth module is enabled
     auth: {
-      enabled: true
+      enabled: true,
       // enables the sessionCookie
       sessionCookie: true
     },
