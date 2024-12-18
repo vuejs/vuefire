@@ -1,5 +1,5 @@
 {
   "projects": {
-    "default": "demo-vuefire"
+    "default": "vue-fire-store"
   }
 }

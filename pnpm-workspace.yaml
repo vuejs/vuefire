@@ -2,3 +2,4 @@ packages:
   - playground
   - packages/*
   - packages/nuxt/playground
+  - functions

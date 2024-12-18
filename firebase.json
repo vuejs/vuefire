@@ -11,6 +11,7 @@
   "hosting": {
     "public": "docs/.vitepress/dist"
   },
+  "extensions": {},
   "emulators": {
     "auth": {
       "port": 9099
@@ -20,9 +21,6 @@
     },
     "database": {
       "port": 8081
-    },
-    "functions": {
-      "port": 5001
     },
     "storage": {
       "port": 9199
@@ -34,5 +32,18 @@
       "enabled": true
     },
     "singleProjectMode": true
-  }
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ]
+    }
+  ]
 }
