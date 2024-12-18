@@ -1,5 +1,6 @@
 {
   "name": "functions",
+  "private": true,
   "description": "Cloud Functions for Firebase",
   "scripts": {
     "serve": "firebase emulators:start --only functions",
@@ -15,9 +16,5 @@
   "dependencies": {
     "firebase-admin": "^13.0.0",
     "firebase-functions": "^6.0.1"
-  },
-  "devDependencies": {
-    "firebase-functions-test": "^3.1.0"
-  },
-  "private": true
+  }
 }
