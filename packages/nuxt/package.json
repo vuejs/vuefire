@@ -1,7 +1,7 @@
 {
   "name": "nuxt-vuefire",
   "description": "Nuxt.js module for VueFire",
-  "version": "1.0.4",
+  "version": "1.0.5-beta.0",
   "license": "MIT",
   "type": "module",
   "exports": {
@@ -47,7 +47,7 @@
     "firebase": "^9.0.0 || ^10.0.0",
     "firebase-admin": "^11.3.0 || ^12.2.0",
     "firebase-functions": "^4.1.0 || ^5.0.0",
-    "vuefire": ">=3.2.0"
+    "vuefire": ">=3.2.1-beta.0"
   },
   "peerDependenciesMeta": {
     "@firebase/app-types": {

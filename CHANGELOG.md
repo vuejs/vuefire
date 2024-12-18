@@ -1,3 +1,7 @@
+### [3.2.1-beta.0](https://github.com/vuejs/vuefire/compare/v3.0.0-alpha.11...v3.2.1-beta.0) (2024-12-18)
+
+Support Firebase 11
+
 # [3.2.0](https://github.com/vuejs/vuefire/compare/vuefire@3.1.24...vuefire@3.2.0) (2024-08-16)
 
 ### Bug Fixes
