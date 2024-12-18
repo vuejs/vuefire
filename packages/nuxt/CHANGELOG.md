@@ -1,6 +1,8 @@
-### [1.0.5-beta.0](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@1.0.4...nuxt-vuefire@1.0.5-beta.0) (2024-12-18)
+## [1.0.5-beta.1](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@1.0.5-beta.0...nuxt-vuefire@1.0.5-beta.1) (2024-12-18)
 
-Support Firebase 11
+### Features
+
+- support latest firebase ([062c044](https://github.com/vuejs/vuefire/commit/062c0441903d3b8f9b6467e292a896ff4aed0cd1))
 
 ## [1.0.4](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@1.0.3...nuxt-vuefire@1.0.4) (2024-08-16)
 
