@@ -1,4 +1,4 @@
-## [1.0.5-beta.1](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@1.0.5-beta.0...nuxt-vuefire@1.0.5-beta.1) (2024-12-18)
+## [1.0.5](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@1.0.5-beta.1...nuxt-vuefire@1.0.5) (2024-12-18)
 
 ### Features
 
