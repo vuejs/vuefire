@@ -44,9 +44,9 @@
   },
   "peerDependencies": {
     "@firebase/app-types": ">=0.8.1",
-    "firebase": "^9.0.0 || ^10.0.0",
-    "firebase-admin": "^11.3.0 || ^12.2.0",
-    "firebase-functions": "^4.1.0 || ^5.0.0",
+    "firebase": "^9.0.0 || ^10.0.0 || ^11.1.0",
+    "firebase-admin": "^11.3.0 || ^12.2.0 || ^13.0.1",
+    "firebase-functions": "^4.1.0 || ^5.0.0 || ^6.1.2",
     "vuefire": ">=3.2.1-beta.0"
   },
   "peerDependenciesMeta": {
