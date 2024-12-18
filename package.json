@@ -96,7 +96,7 @@
     "@vue/test-utils": "^2.4.6",
     "chalk": "^5.3.0",
     "consola": "^3.2.3",
-    "conventional-changelog-cli": "^4.1.0",
+    "conventional-changelog-cli": "~4.1.0",
     "enquirer": "^2.4.1",
     "execa": "^9.5.2",
     "firebase": "^11.1.0",
