@@ -54,7 +54,7 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
     // resolve options
     const isAuthEnabled =
       typeof _options.auth === 'object'
-        ? _options.auth.enabled ?? true // allows user to comment out enabled: false
+        ? (_options.auth.enabled ?? true) // allows user to comment out enabled: false
         : !!_options.auth
 
     const options = {
@@ -65,7 +65,7 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
       emulators: {
         enabled:
           typeof _options.emulators === 'object'
-            ? _options.emulators.enabled ?? true // allows user to comment out enabled: false
+            ? (_options.emulators.enabled ?? true) // allows user to comment out enabled: false
             : !!_options.emulators,
         ...(typeof _options.emulators === 'object' ? _options.emulators : {}),
       },
