@@ -280,7 +280,10 @@ function sidebarApi(): SidebarGroup {
     text: 'API Reference',
     items: [
       { text: 'Package List', link: '/api/' },
-      { text: 'nuxt-vuefire', link: '/api/modules/nuxt_vuefire.html' },
+      {
+        text: 'nuxt-vuefire',
+        link: '/api/modules/packages_nuxt_src_module.html',
+      },
       { text: 'vuefire', link: '/api/modules/vuefire.html' },
     ],
   }
