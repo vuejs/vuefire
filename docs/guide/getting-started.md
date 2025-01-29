@@ -38,7 +38,7 @@ Most of the time, you should gather collection references in one of your files a
 
 ```js
 import { initializeApp } from 'firebase/app'
-import { getDatabase, dbRef } from 'firebase/database'
+import { getDatabase, ref as dbRef } from 'firebase/database'
 // ... other firebase imports
 
 export const firebaseApp = initializeApp({
