@@ -17,6 +17,11 @@ export function getGlobalScope(firebaseApp: FirebaseApp, app: App) {
   if (!scopeMap.has(firebaseApp)) {
     const scope = effectScope(true)
     scopeMap.set(firebaseApp, scope)
+    // TODO: only Vue 3.5+
+    // app.onUnmount(() => {
+    //   scope.stop()
+    //   scopeMap.delete(firebaseApp)
+    // })
     const { unmount } = app
     // dispose up the scope when the app is unmounted
     app.unmount = () => {
