@@ -19,7 +19,7 @@ export default defineEventHandler(async (event) => {
   const { token } = await readBody<{ token?: string }>(event)
   const runtimeConfig = useRuntimeConfig()
 
-  const adminApp = ensureAdminApp(
+  const adminApp = await ensureAdminApp(
     {
       // NOTE: ensured by the module
       projectId: runtimeConfig.public.vuefire!.config!.projectId,
