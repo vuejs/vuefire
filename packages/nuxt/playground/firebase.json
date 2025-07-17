@@ -1,6 +1,6 @@
 {
   "functions": {
-    "runtime": "nodejs18",
+    "runtime": "nodejs20",
     "source": ".output/server"
   },
   "hosting": {
