@@ -1,3 +1,9 @@
+## [3.2.2](https://github.com/vuejs/vuefire/compare/v3.2.1...v3.2.2) (2025-07-20)
+
+### Features
+
+- support Firebase 12 ([#1629](https://github.com/vuejs/vuefire/issues/1629)) ([3b2405f](https://github.com/vuejs/vuefire/commit/3b2405f027e17902044d4be5887d811c9dc39f7c))
+
 ## [3.2.1](https://github.com/vuejs/vuefire/compare/v3.2.1-beta.0...v3.2.1) (2024-12-18)
 
 ### Features
