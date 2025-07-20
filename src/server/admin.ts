@@ -1,13 +1,19 @@
-import {
-  initializeApp as initializeAdminApp,
-  cert,
-  getApps as getAdminApps,
-  applicationDefault,
+import { createRequire } from 'node:module'
+import type {
+  App as AdminApp,
+  AppOptions,
   // renamed because there seems to be a global Credential type in vscode
   Credential as FirebaseAdminCredential,
-  AppOptions,
 } from 'firebase-admin/app'
 import { logger } from './logging'
+
+const require = createRequire(import.meta.url)
+const {
+  initializeApp: initializeAdminApp,
+  cert,
+  getApps: getAdminApps,
+  applicationDefault,
+} = require('firebase-admin/app')
 
 const FIREBASE_ADMIN_APP_NAME = 'vuefire-admin'
 
@@ -25,7 +31,7 @@ export function ensureAdminApp(
   // only initialize the admin sdk once
   logger.debug(`Checking if admin app "${name}" exists...`)
 
-  if (!getAdminApps().find((app) => app.name === name)) {
+  if (!getAdminApps().find((app: AdminApp) => app.name === name)) {
     const {
       // these can be set by the user on other platforms
       FIREBASE_PROJECT_ID,
@@ -120,5 +126,5 @@ export function ensureAdminApp(
   }
 
   // we know have a valid admin app
-  return getAdminApps().find((app) => app.name === name)!
+  return getAdminApps().find((app: AdminApp) => app.name === name)!
 }
