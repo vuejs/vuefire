@@ -1,10 +1,10 @@
 import { readFileSync } from 'node:fs'
-import { template } from 'lodash-es'
 /**
  * @module nuxt-vuefire
  */
 import { fileURLToPath } from 'node:url'
 import { normalize } from 'node:path'
+import { template } from 'lodash-es'
 import {
   addImports,
   addPlugin,
@@ -18,9 +18,9 @@ import type { FirebaseApp, FirebaseOptions } from 'firebase/app'
 import type { App as FirebaseAdminApp } from 'firebase-admin/app'
 import { markRaw } from 'vue'
 import { consola } from 'consola'
-import {
-  type VueFireNuxtModuleOptions,
-  type VueFireNuxtModuleOptionsResolved,
+import type {
+  VueFireNuxtModuleOptions,
+  VueFireNuxtModuleOptionsResolved,
 } from './module/options'
 import {
   type FirebaseEmulatorsToEnable,
