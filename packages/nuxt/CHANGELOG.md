@@ -1,3 +1,10 @@
+## [1.1.0](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@1.0.5...nuxt-vuefire@1.1.0) (2025-07-20)
+
+### Features
+
+- **nuxt:** allow Firebase 12 ([#1632](https://github.com/vuejs/vuefire/issues/1632)) ([5139259](https://github.com/vuejs/vuefire/commit/5139259cdc8bc38ec0ac711408672a5714d8a9ef))
+- support Firebase 12 ([#1629](https://github.com/vuejs/vuefire/issues/1629)) ([3b2405f](https://github.com/vuejs/vuefire/commit/3b2405f027e17902044d4be5887d811c9dc39f7c))
+
 ## [1.0.5](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@1.0.5-beta.1...nuxt-vuefire@1.0.5) (2024-12-18)
 
 ### Features
