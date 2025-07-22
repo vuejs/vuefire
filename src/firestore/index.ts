@@ -109,6 +109,10 @@ export function useDocument<T>(
  * @param name - name of the application
  * @returns the Firestore instance
  */
-export function useFirestore(name?: string) {
-  return getFirestore(useFirebaseApp(name))
+export function useFirestore(options?: string | { appName?: string; databaseId?: string }) {
+  if (typeof options === "object") {
+     return getFirestore(useFirebaseApp(options.appName), options.databaseId)
+  }
+
+  return getFirestore(useFirebaseApp(options))
 }
