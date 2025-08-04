@@ -79,7 +79,7 @@ VueFire also exposes a smaller composable that only retrieves the url of a file.
 <script setup lang="ts">
 import { useFileDialog } from '@vueuse/core'
 import { ref as storageRef } from 'firebase/storage'
-import { useFirebaseStorage, useStorageFile } from 'vuefire'
+import { useFirebaseStorage, useStorageFile, useStorageFileUrl } from 'vuefire'
 
 const storage = useFirebaseStorage()
 const mountainFileRef = storageRef(storage, 'images/mountains.jpg')
