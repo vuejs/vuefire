@@ -12,7 +12,7 @@ You can access the Firebase Storage from within any component with the composabl
 
 You can upload and monitor the progress of a file upload with the `useStorageFile()` composable. This also exposes the URL of the file once it's uploaded and its metadata, let's start with a full example of a form upload:
 
-```vue
+```vue{4,?}
 <script setup lang="ts">
 // See https://vueuse.org/core/useFileDialog
 import { useFileDialog } from '@vueuse/core'
@@ -75,11 +75,10 @@ Once the picture is uploaded, you can use the `url` reactive variable. For examp
 
 VueFire also exposes a smaller composable that only retrieves the url of a file. This is useful if you don't need to upload a file but only display it:
 
-```vue
+```vue{4,?}
 <script setup lang="ts">
-import { useFileDialog } from '@vueuse/core'
 import { ref as storageRef } from 'firebase/storage'
-import { useFirebaseStorage, useStorageFile, useStorageFileUrl } from 'vuefire'
+import { useFirebaseStorage, useStorageFileUrl } from 'vuefire'
 
 const storage = useFirebaseStorage()
 const mountainFileRef = storageRef(storage, 'images/mountains.jpg')
@@ -95,9 +94,8 @@ const {
 
 The same way you can access the file URL you can also access the file metadata. You can also use the `update()` function to update the metadata and keep the reactive variable up to date:
 
-```vue
+```vue{4,?}
 <script setup lang="ts">
-import { useFileDialog } from '@vueuse/core'
 import { ref as storageRef } from 'firebase/storage'
 import { useFirebaseStorage, useStorageFile } from 'vuefire'
 
