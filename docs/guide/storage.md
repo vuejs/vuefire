@@ -1,6 +1,6 @@
 # Firebase Storage
 
-[Firebase Storage](https://firebase.google.com/docs/storage/web/start) is a cloud storage service for Firebase. It allows you to store and serve user-generated content like images, audio, video, and other files. While most of the APIs can be used as you would normally do with Firebase, VueFire exposes a few composables to integrate better with Vue that not only give you access to reactive variables but also to some actions like `upload()` to update a file while keeping the reactive variable up to date at the same time.
+[Firebase Storage](https://firebase.google.com/docs/storage/web/start) is a cloud storage service for Firebase. It allows you to store and serve user-generated content like images, audio, video, and other files. While most of the APIs can be used as you would normally do with Firebase, VueFire exposes a few composables to integrate better with Vue. These not only give you access to reactive variables, but also to some actions like `upload()` which updates a file while also keeping the reactive variable up to date.
 
 ## Installation
 
@@ -10,9 +10,9 @@ You can access the Firebase Storage from within any component with the composabl
 
 ## Uploading Files
 
-You can upload and monitor the progress of a file upload with the `useStorageFile()` composable. This also exposes the URL of the file once it's uploaded and its metadata, let's start with a full example of a form upload:
+To upload and monitor the upload progress of a file, use the `useStorageFile()` composable. This will expose the URL and metadata of the file once it's uploaded. Here's a full example of a form upload:
 
-```vue{4,?}
+```vue{5,18}
 <script setup lang="ts">
 // See https://vueuse.org/core/useFileDialog
 import { useFileDialog } from '@vueuse/core'
@@ -73,9 +73,9 @@ Once the picture is uploaded, you can use the `url` reactive variable. For examp
 
 ## Downloading Files
 
-VueFire also exposes a smaller composable that only retrieves the url of a file. This is useful if you don't need to upload a file but only display it:
+To get the download URL for a file, use the `useStorageFileUrl()` composable. This is useful if you only need to display a file:
 
-```vue{4,?}
+```vue{3,11}
 <script setup lang="ts">
 import { ref as storageRef } from 'firebase/storage'
 import { useFirebaseStorage, useStorageFileUrl } from 'vuefire'
@@ -92,12 +92,12 @@ const {
 
 ## File metadata
 
-The same way you can access the file URL you can also access the file metadata. You can also use the `update()` function to update the metadata and keep the reactive variable up to date:
+To access the file metadata, use the `useStorageFileMetadata()` composable. You can use the `update()` function to keep the metadata and reactive variable up to date:
 
-```vue{4,?}
+```vue{3,13}
 <script setup lang="ts">
 import { ref as storageRef } from 'firebase/storage'
-import { useFirebaseStorage, useStorageFile } from 'vuefire'
+import { useFirebaseStorage, useStorageFileMetadata } from 'vuefire'
 
 const storage = useFirebaseStorage()
 const mountainFileRef = storageRef(storage, 'images/mountains.jpg')
