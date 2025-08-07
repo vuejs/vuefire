@@ -73,7 +73,7 @@ Once the picture is uploaded, you can use the `url` reactive variable. For examp
 
 ## Downloading Files
 
-To get the download URL for a file, use the `useStorageFileUrl()` composable. This is useful if you only need to display a file:
+To get the download URL for a file, use the `useStorageFileUrl()` composable. This is useful if you **only** need to display a file:
 
 ```vue{3,11}
 <script setup lang="ts">
