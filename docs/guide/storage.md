@@ -92,7 +92,7 @@ const {
 
 ## File metadata
 
-To access the file metadata, use the `useStorageFileMetadata()` composable. You can use the `update()` function to keep the metadata and reactive variable up to date:
+To **only** access the file metadata, use the `useStorageFileMetadata()` composable. You can use the `update()` function to keep the metadata and reactive variable up to date:
 
 ```vue{3,13}
 <script setup lang="ts">
