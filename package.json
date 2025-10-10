@@ -104,7 +104,7 @@
     "firebase-tools": "^13.29.1",
     "focus-visible": "^5.2.1",
     "globby": "^14.0.0",
-    "happy-dom": "^15.7.4",
+    "happy-dom": "^20.0.0",
     "lint-staged": "^15.2.10",
     "minimist": "^1.2.8",
     "p-series": "^3.0.0",
