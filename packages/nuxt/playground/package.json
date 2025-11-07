@@ -8,7 +8,7 @@
     "prepare": "nuxi prepare"
   },
   "devDependencies": {
-    "@nuxt/devtools": "^1.0.8",
+    "@nuxt/devtools": "^2.6.4",
     "nuxt": "^3.12.4"
   },
   "dependencies": {
