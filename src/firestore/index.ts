@@ -3,6 +3,7 @@ import {
   DocumentReference,
   Query,
   getFirestore,
+  type Firestore,
 } from 'firebase/firestore'
 import { ref, MaybeRefOrGetter } from 'vue-demi'
 import { useFirebaseApp } from '../app'
@@ -110,6 +111,24 @@ export function useDocument<T>(
  * @param database - name of the database
  * @returns the Firestore instance
  */
-export function useFirestore({name, database}: {name?: string, database?: string}) {
-  return getFirestore(useFirebaseApp(name), database)
+export function useFirestore(database: string): Firestore
+export function useFirestore(options: {
+  name?: string
+  database?: string
+}): Firestore
+export function useFirestore(
+  optionsOrDatabase: string | { name?: string; database?: string }
+): Firestore {
+  if (typeof optionsOrDatabase === 'string') {
+    return getFirestore(useFirebaseApp(), optionsOrDatabase)
+  }
+
+  if (optionsOrDatabase.database) {
+    return getFirestore(
+      useFirebaseApp(optionsOrDatabase.name),
+      optionsOrDatabase.database
+    )
+  }
+
+  return getFirestore(useFirebaseApp(optionsOrDatabase.name))
 }
