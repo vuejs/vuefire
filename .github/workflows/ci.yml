@@ -1,6 +1,8 @@
 name: test
 
 on:
+  # Manually triggerable
+  workflow_dispatch:
   push:
     paths-ignore:
       - 'docs/**'
