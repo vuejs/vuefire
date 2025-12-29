@@ -103,8 +103,8 @@ importers:
         specifier: ^13.0.0
         version: 13.0.1(encoding@0.1.13)
       firebase-functions:
-        specifier: ^6.0.1
-        version: 6.1.2(firebase-admin@13.0.1(encoding@0.1.13))
+        specifier: ^7.0.0
+        version: 7.0.2(firebase-admin@13.0.1(encoding@0.1.13))
 
   packages/nuxt:
     dependencies:
@@ -149,8 +149,8 @@ importers:
         specifier: ^13.0.1
         version: 13.0.1(encoding@0.1.13)
       firebase-functions:
-        specifier: ^6.1.2
-        version: 6.1.2(firebase-admin@13.0.1(encoding@0.1.13))
+        specifier: ^7.0.0
+        version: 7.0.2(firebase-admin@13.0.1(encoding@0.1.13))
       nuxt:
         specifier: ^3.14.1592
         version: 3.16.0(@electric-sql/pglite@0.2.15)(@parcel/watcher@2.5.1)(@types/node@22.10.2)(db0@0.3.1(@electric-sql/pglite@0.2.15))(encoding@0.1.13)(eslint@9.17.0(jiti@2.4.2))(ioredis@5.6.0)(magicast@0.3.5)(optionator@0.9.4)(rollup@4.36.0)(terser@5.39.0)(typescript@5.7.2)(vite@6.2.5(@types/node@22.10.2)(jiti@2.4.2)(terser@5.39.0)(yaml@2.7.0))(vue-tsc@2.1.10(typescript@5.5.4))(yaml@2.7.0)
@@ -4513,9 +4513,9 @@ packages:
     resolution: {integrity: sha512-sKQ/Yw8o/WdC9qTKvuLMBjTbdcBISIXW4+M9PXk0bNjxEbZf1Er7EVq47eRb5+bnKof10xlns6zAIbj4tmSexg==}
     engines: {node: '>=18'}
 
-  firebase-functions@6.1.2:
-    resolution: {integrity: sha512-1ZKLLOs4YhpzfWOZo0wsqNBusy9113GUfRs89BF6yOlmkxlcJxdJzZEs/ygWeXVJKquZhW2K1Gm10Gir4RJxGQ==}
-    engines: {node: '>=14.10.0'}
+  firebase-functions@7.0.2:
+    resolution: {integrity: sha512-AFAZOn2iMp6X6lvCzEI92/J/JfT2ZAGSHKAfop4btWZdIqeHU40gFwVBGPl53bnqEpuv5VYKirmkxGuPu4OHpA==}
+    engines: {node: '>=18.0.0'}
     hasBin: true
     peerDependencies:
       firebase-admin: ^11.10.0 || ^12.0.0 || ^13.0.0
@@ -13874,7 +13874,7 @@ snapshots:
       - encoding
       - supports-color
 
-  firebase-functions@6.1.2(firebase-admin@13.0.1(encoding@0.1.13)):
+  firebase-functions@7.0.2(firebase-admin@13.0.1(encoding@0.1.13)):
     dependencies:
       '@types/cors': 2.8.17
       '@types/express': 4.17.21
