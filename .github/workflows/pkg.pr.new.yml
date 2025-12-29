@@ -1,0 +1,46 @@
+name: Publish Any Commit
+
+on:
+  pull_request:
+    branches: main
+    paths-ignore:
+      - 'docs/**'
+      - 'examples/**'
+      - 'functions/**'
+      - 'tests/**'
+
+  push:
+    branches:
+      - '**'
+    tags:
+      - '!**'
+    paths-ignore:
+      - 'docs/**'
+      - 'examples/**'
+      - 'functions/**'
+      - 'tests/**'
+
+jobs:
+  build:
+    if: github.repository == 'vuejs/vuefire'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm run build
+
+      - name: Release
+        run: pnpm dlx pkg-pr-new publish --compact --pnpm .
