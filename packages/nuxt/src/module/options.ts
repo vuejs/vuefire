@@ -46,6 +46,13 @@ export interface VueFireNuxtModuleOptions {
   }
 
   /**
+   * If `true` uses role based authentication instead of environment variable GOOGLE_ACCOUNT_CREDENTIALS.
+   * Be sure the role `Service Account Token Creator`, which has the permission `iam.serviceAccounts.signBlob`
+   * is assigned to the Firebase App Hosting compute user.
+   */
+  useRole?: boolean
+
+  /**
    * Enables AppCheck on the client and server. Note you only need to pass the options for the client, on the server,
    * the configuration will be handled automatically.
    */

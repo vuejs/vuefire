@@ -41,6 +41,7 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
   defaults: {
     optionsApiPlugin: false,
     emulators: { enabled: true },
+    useRole: false,
   },
 
   async setup(_options, nuxt) {
@@ -76,6 +77,7 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
         popupRedirectResolver: 'browser',
         ...(typeof _options.auth === 'object' ? _options.auth : {}),
       },
+      useRole: _options.useRole,
     } satisfies VueFireNuxtModuleOptionsResolved
 
     nuxt.options.runtimeConfig.public.vuefire ??= {}
@@ -109,8 +111,9 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
     // This one is set by servers, we set the GOOGLE_APPLICATION_CREDENTIALS env variable instead that has a lower priority and can be both a path or a JSON string
     // process.env.FIREBASE_CONFIG ||= JSON.stringify(options.config)
     const hasServiceAccount =
-      typeof process.env.GOOGLE_APPLICATION_CREDENTIALS === 'string' &&
-      process.env.GOOGLE_APPLICATION_CREDENTIALS.length > 0
+      options.useRole ||
+      (typeof process.env.GOOGLE_APPLICATION_CREDENTIALS === 'string' &&
+        process.env.GOOGLE_APPLICATION_CREDENTIALS.length > 0)
 
     // resolve the credentials in case of monorepos and other projects started from a different folder
     if (
@@ -128,9 +131,13 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
     // plugins
 
     if (options.appCheck) {
-      if (!process.env.GOOGLE_APPLICATION_CREDENTIALS && emulatorsConfig) {
+      if (
+        !options.useRole &&
+        !process.env.GOOGLE_APPLICATION_CREDENTIALS &&
+        emulatorsConfig
+      ) {
         logger.info(
-          'Disabling App Check in the context of emulators as no "GOOGLE_APPLICATION_CREDENTIALS" env variable was defined.'
+          'Disabling App Check in the context of emulators as no "GOOGLE_APPLICATION_CREDENTIALS" env variable was defined and no useRole authentication.'
         )
       } else {
         if (
