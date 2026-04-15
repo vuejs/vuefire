@@ -42,6 +42,14 @@
     "lodash-es": "^4.17.21",
     "strip-json-comments": "^5.0.1"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vuejs/vuefire.git"
+  },
+  "bugs": {
+    "url": "https://github.com/vuejs/vuefire/issues"
+  },
+  "homepage": "https://github.com/vuejs/vuefire#readme",
   "peerDependencies": {
     "@firebase/app-types": ">=0.8.1",
     "firebase": "^9.0.0 || ^10.0.0 || ^11.1.0 || ^12.0.0",
