@@ -3,6 +3,7 @@ import {
   DocumentReference,
   Query,
   getFirestore,
+  type Firestore,
 } from 'firebase/firestore'
 import { ref, MaybeRefOrGetter } from 'vue-demi'
 import { useFirebaseApp } from '../app'
@@ -107,8 +108,9 @@ export function useDocument<T>(
  * Retrieves the Firestore instance.
  *
  * @param name - name of the application
+ * @param database - name of the database
  * @returns the Firestore instance
  */
-export function useFirestore(name?: string) {
-  return getFirestore(useFirebaseApp(name))
+export function useFirestore(name?: string, database?: string): Firestore {
+  return getFirestore(useFirebaseApp(name), database)
 }
