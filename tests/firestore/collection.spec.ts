@@ -256,19 +256,10 @@ describe(
       expect(data.value).toEqual(copy)
     })
 
-    // Collections don't naturally produce subscription errors in the emulator like documents do.
-    // Permission-based errors that work for documents (e.g., 'no/rights') don't apply to collections.
-    // Invalid paths throw synchronously during construction, not during subscription.
-    // This test is skipped as there's no reliable way to trigger async collection errors in tests.
-    it.skip('rejects on error', async () => {
-      const { error, promise } = factory({
-        ref: originalCollection(firestore, 'cannot exist'),
-      })
-
-      expect(error.value).toBeUndefined()
-      await expect(toValue(promise)).rejects.toThrow()
-      expect(error.value).toBeTruthy()
-    })
+    // The emulator returns empty snapshots (not errors) for collection
+    // listens denied by rules, so the subscription error path cannot be
+    // triggered against the live emulator. See `collection-error.spec.ts`
+    // for a unit test that mocks `onSnapshot` to cover that wiring.
 
     it('resolves when the ref is populated', async () => {
       const ref = collection()
