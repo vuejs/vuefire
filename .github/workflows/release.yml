@@ -1,0 +1,153 @@
+name: Publish to npm
+
+# Setup notes:
+# - npm trusted publisher must be configured for each package (vuefire, nuxt-vuefire)
+#   pointing at this workflow with environment "release".
+# - A GitHub Environment named "release" must exist on this repo.
+
+on:
+  push:
+    tags:
+      - '**' # we filter manually otherwise it doesn't work well
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    # prevent running on forks and with other tags
+    if: |
+      (startsWith(github.ref_name, 'v') ||
+      contains(github.ref_name, '@')) &&
+      github.repository == 'vuejs/vuefire'
+
+    environment: release
+
+    permissions:
+      contents: write # for the GitHub Changelog
+      id-token: write # required for npm trusted publishing
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0 # needed for changelogithub
+
+      - name: Resolve tag info
+        id: resolve
+        run: |
+          echo "Resolving tag info…"
+
+          TAG="${GITHUB_REF#refs/tags/}"
+          echo "Current tag: $TAG"
+          echo "TAG=$TAG" >>$GITHUB_OUTPUT
+
+          # ========= Determine package type =========
+          if [[ "$TAG" =~ ^v[0-9] ]]; then
+            # Main package
+            PKG_NAME="<main>"
+            PACKAGE_PATH="."
+            GIT_DESCRIBE_MATCH="v*"
+          else
+            # Scoped package: extract prefix before last @
+            PKG_NAME="${TAG%@*}"
+            GIT_DESCRIBE_MATCH="${PKG_NAME}@*"
+
+            # Package folder mapping
+            declare -A MAP=(
+              ["nuxt-vuefire"]="packages/nuxt"
+            )
+
+            if [[ -z "${MAP[$PKG_NAME]}" ]]; then
+              echo "❌ Unknown package name '$PKG_NAME'" >&2
+              exit 1
+            fi
+
+            PACKAGE_PATH="${MAP[$PKG_NAME]}"
+          fi
+
+          echo "PKG_NAME=$PKG_NAME" >>$GITHUB_OUTPUT
+          echo "PACKAGE_PATH=$PACKAGE_PATH" >>$GITHUB_OUTPUT
+          echo "GIT_DESCRIBE_MATCH=$GIT_DESCRIBE_MATCH" >>$GITHUB_OUTPUT
+
+          # ========= Compute previous tag (skip current tag) =========
+          echo "Finding previous tag using: git describe --match '$GIT_DESCRIBE_MATCH'"
+
+          set +e
+          FROM_TAG=$(git describe --tags --abbrev=0 --match "$GIT_DESCRIBE_MATCH" "${TAG}^" 2>/dev/null)
+          STATUS=$?
+          set -e
+
+          if [[ $STATUS -eq 0 ]]; then
+            echo "Found previous tag: $FROM_TAG"
+          else
+            echo "No previous tag found. Using first commit."
+            FROM_TAG=$(git rev-list --max-parents=0 HEAD)
+          fi
+
+          echo "FROM_TAG=$FROM_TAG" >>$GITHUB_OUTPUT
+
+          # ========= Determine npm dist-tag =========
+          if [[ "$TAG" =~ ^v[0-9] ]]; then
+            VERSION="${TAG#v}"
+          else
+            VERSION="${TAG##*@}"
+          fi
+
+          if [[ "$VERSION" =~ -beta ]]; then
+            NPM_TAG="beta"
+          elif [[ "$VERSION" =~ -alpha ]]; then
+            NPM_TAG="alpha"
+          elif [[ "$VERSION" =~ -rc ]]; then
+            NPM_TAG="rc"
+          else
+            NPM_TAG="latest"
+          fi
+
+          echo "NPM_TAG=$NPM_TAG" >>$GITHUB_OUTPUT
+
+          echo "Resolved:"
+          echo "  TAG=$TAG"
+          echo "  PKG_NAME=$PKG_NAME"
+          echo "  PACKAGE_PATH=$PACKAGE_PATH"
+          echo "  FROM_TAG=$FROM_TAG"
+          echo "  NPM_TAG=$NPM_TAG"
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup node
+        uses: actions/setup-node@v6
+        with:
+          node-version: lts/*
+          cache: pnpm
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies
+        shell: bash
+        run: pnpm install --frozen-lockfile
+
+      - name: Copy root README for main package
+        if: ${{ steps.resolve.outputs.PKG_NAME == '<main>' && steps.resolve.outputs.PACKAGE_PATH != '.' }}
+        run: |
+          echo "Copying README.md to ${{ steps.resolve.outputs.PACKAGE_PATH }}"
+          cp README.md "${{ steps.resolve.outputs.PACKAGE_PATH }}/README.md"
+
+      - name: Build
+        run: |
+          if [[ "${{ steps.resolve.outputs.PKG_NAME }}" == "<main>" ]]; then
+            pnpm build
+          else
+            # build the package and all its workspace dependencies in topological order
+            pnpm -F "${{ steps.resolve.outputs.PKG_NAME }}..." build
+          fi
+
+      - name: Publish to NPM
+        run: pnpm publish --access public --no-git-checks --tag ${{ steps.resolve.outputs.NPM_TAG }}
+        working-directory: ${{ steps.resolve.outputs.PACKAGE_PATH }}
+
+      - name: Generate GitHub Changelog
+        run: pnpx changelogithub@14.0.0 --from "$FROM_TAG" --to "$TAG"
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ steps.resolve.outputs.TAG }}
+          FROM_TAG: ${{ steps.resolve.outputs.FROM_TAG }}
