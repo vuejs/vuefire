@@ -1,3 +1,7 @@
+## [1.1.1](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@1.1.0...nuxt-vuefire@1.1.1) (2026-04-15)
+
+- Support firebase-functions 7
+
 ## [1.1.0](https://github.com/vuejs/vuefire/compare/nuxt-vuefire@1.0.5...nuxt-vuefire@1.1.0) (2025-07-20)
 
 ### Features

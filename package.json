@@ -1,6 +1,6 @@
 {
   "name": "vuefire",
-  "version": "3.2.2",
+  "version": "3.2.3",
   "description": "Official Firebase bindings for Vue.js",
   "packageManager": "pnpm@10.33.0",
   "engines": {
