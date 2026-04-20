@@ -89,6 +89,9 @@ export default defineNuxtConfig({
     auth: {
       enabled: true
     },
+    // If using Firebase App Hosting, to use role based authentication instead of GOOGLE_APPLICATION_CREDENTIALS, 
+    // set useRole: true
+    useRole: false,
     appCheck: {
       // Allows you to use a debug token in development
       debug: process.env.NODE_ENV !== 'production',
