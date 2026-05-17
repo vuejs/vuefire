@@ -20,6 +20,9 @@ on:
       - 'functions/**'
       - 'tests/**'
 
+permissions:
+  contents: read
+
 jobs:
   build:
     if: github.repository == 'vuejs/vuefire'
