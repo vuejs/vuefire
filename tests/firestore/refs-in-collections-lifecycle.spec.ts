@@ -70,7 +70,7 @@ function emitCollection(
   const snapshot = {
     docChanges: () => changes,
   }
-  snapshots.collections.forEach((listener) => listener(snapshot))
+  Array.from(snapshots.collections).forEach((listener) => listener(snapshot))
 }
 
 function emitDocument(path: string, data: Record<string, unknown>) {
@@ -78,7 +78,8 @@ function emitDocument(path: string, data: Record<string, unknown>) {
     exists: () => true,
     data: () => data,
   }
-  snapshots.documents.get(path)?.forEach((listener) => listener(snapshot))
+  const listeners = snapshots.documents.get(path)
+  if (listeners) Array.from(listeners).forEach((listener) => listener(snapshot))
 }
 
 function messageChange(
@@ -98,8 +99,12 @@ function bindMessages() {
   const target = ref<unknown[]>([])
   let resolveBinding!: (value: unknown) => void
   let rejectBinding!: (reason: unknown) => void
+  let resolvedWith: unknown
   const promise = new Promise((resolve, reject) => {
-    resolveBinding = resolve
+    resolveBinding = (value) => {
+      resolvedWith ??= JSON.parse(JSON.stringify(value))
+      resolve(value)
+    }
     rejectBinding = reject
   })
 
@@ -112,7 +117,7 @@ function bindMessages() {
     { maxRefDepth: 2, wait: true }
   )
 
-  return { promise, stop, target }
+  return { promise, stop, target, resolvedWith: () => resolvedWith }
 }
 
 describe('Firestore nested reference lifecycle', () => {
@@ -213,6 +218,10 @@ describe('Firestore nested reference lifecycle', () => {
         { id: 'message-1', oldIndex: 0, newIndex: 1 }
       ),
     ])
+    expect(target.value[1]).toEqual({
+      sender: { name: 'Ada', createdBy: { name: 'Alice' } },
+    })
+
     emitDocument('agents/a1', {
       name: 'Ada moved',
       createdBy: documentReference('members/m3'),
@@ -227,6 +236,36 @@ describe('Firestore nested reference lifecycle', () => {
         sender: { name: 'Ada moved', createdBy: { name: 'Charlie' } },
       },
     ])
+    stop()
+  })
+
+  it('does not resolve early when a document is removed after resolving', async () => {
+    const { promise, stop, resolvedWith } = bindMessages()
+
+    emitCollection([
+      messageChange(
+        'added',
+        { sender: documentReference('agents/a1') },
+        { id: 'message-1', newIndex: 0 }
+      ),
+      messageChange(
+        'added',
+        { sender: documentReference('agents/a2') },
+        { id: 'message-2', newIndex: 1 }
+      ),
+    ])
+    emitDocument('agents/a2', { name: 'Bob' })
+    emitCollection([
+      messageChange(
+        'removed',
+        { sender: documentReference('agents/a2') },
+        { id: 'message-2', oldIndex: 1 }
+      ),
+    ])
+    emitDocument('agents/a1', { name: 'Ada' })
+
+    await promise
+    expect(resolvedWith()).toEqual([{ sender: { name: 'Ada' } }])
     stop()
   })
 

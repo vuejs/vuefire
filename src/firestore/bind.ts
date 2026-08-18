@@ -392,7 +392,18 @@ export function bindCollection<T = unknown>(
       const array = toValue(arrayRef)
       const subs = arraySubs[oldIndex]
       const oldData = array[oldIndex]
+      // indexed paths are stale after a move so subscriptions must be recreated
+      // while still exposing the values they had already resolved
+      let resolvedSubs: Record<
+        string,
+        { path: string; data: () => DocumentData | null }
+      > = subs
       if (oldIndex !== newIndex) {
+        resolvedSubs = Object.keys(subs).reduce((resolved, key) => {
+          const data = subs[key].data()
+          resolved[key] = { path: subs[key].path, data: () => data }
+          return resolved
+        }, Object.create(null))
         unsubscribeAll(subs)
         Object.keys(subs).forEach((key) => delete subs[key])
       }
@@ -400,7 +411,7 @@ export function bindCollection<T = unknown>(
         // @ts-expect-error: FIXME: Better types
         doc.data(snapshotOptions),
         oldData,
-        subs,
+        resolvedSubs,
         options
       )
       if (oldIndex !== newIndex) {
@@ -451,6 +462,8 @@ export function bindCollection<T = unknown>(
 
       resolve = (data) => {
         if (data && (data as any).id in validDocs) {
+          // a document can be resolved by its refs and by its removal
+          delete validDocs[(data as any).id]
           if (++count >= expectedItems) {
             // if wait is true, finally set the array
             if (wait) {
