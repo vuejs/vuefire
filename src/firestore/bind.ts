@@ -99,8 +99,19 @@ interface FirestoreSubscription {
   // Firestore unique key eg: items/12
   path: string
   data: () => DocumentData | null
+  resolved: boolean
   // // path inside the object to access the data items.3
   // key: string
+}
+
+/**
+ * A row of a bound collection with its current index in the array. The index is
+ * kept up to date so the indexed paths of its nested refs follow the row.
+ * @internal
+ */
+interface _CollectionRow {
+  subs: Record<string, FirestoreSubscription>
+  index: number
 }
 
 function unsubscribeAll(subs: Record<string, FirestoreSubscription>) {
@@ -109,10 +120,23 @@ function unsubscribeAll(subs: Record<string, FirestoreSubscription>) {
   }
 }
 
+/**
+ * A path within the target object. Indexed paths of collection rows shift
+ * whenever a sibling is added, removed or moved, so they are passed around as a
+ * getter and read right before each write instead of being frozen when the
+ * subscription is created.
+ * @internal
+ */
+type _PathSource = string | (() => string)
+
+function resolvePath(path: _PathSource): string {
+  return typeof path === 'function' ? path() : path
+}
+
 function updateDataFromDocumentSnapshot<T>(
   options: _FirestoreRefOptionsWithDefaults,
   target: Ref<T>,
-  path: string,
+  path: _PathSource,
   snapshot: DocumentSnapshot<T>,
   subs: Record<string, FirestoreSubscription>,
   ops: OperationsType,
@@ -120,15 +144,16 @@ function updateDataFromDocumentSnapshot<T>(
   resolve: _ResolveRejectFn,
   reject: _ResolveRejectFn
 ) {
+  const currentPath = resolvePath(path)
   const [data, refs] = extractRefs(
     // Pass snapshot options
     // @ts-expect-error: FIXME: use better types
     snapshot.data(options.snapshotOptions),
-    walkGet(target, path),
+    walkGet(target, currentPath),
     subs,
     options
   )
-  ops.set(target, path, data)
+  ops.set(target, currentPath, data)
   subscribeToRefs(
     options,
     target,
@@ -144,7 +169,7 @@ function updateDataFromDocumentSnapshot<T>(
 
 interface SubscribeToDocumentParameter {
   target: Ref<unknown>
-  path: string
+  path: _PathSource
   depth: number
   resolve: () => void
   reject: _ResolveRejectFn
@@ -166,6 +191,7 @@ function subscribeToDocument(
 ) {
   const subs = Object.create(null)
   let unbind = noop
+  let active = true
 
   if (options.once) {
     getDoc(ref)
@@ -183,7 +209,7 @@ function subscribeToDocument(
             reject
           )
         } else {
-          ops.set(target, path, null)
+          ops.set(target, resolvePath(path), null)
           resolve()
         }
       })
@@ -192,21 +218,27 @@ function subscribeToDocument(
     unbind = onSnapshot(
       ref,
       (snapshot) => {
-        if (snapshot.exists()) {
-          updateDataFromDocumentSnapshot(
-            options,
-            target,
-            path,
-            snapshot,
-            subs,
-            ops,
-            depth,
-            resolve,
-            reject
-          )
-        } else {
-          ops.set(target, path, null)
-          resolve()
+        if (!active) return
+
+        try {
+          if (snapshot.exists()) {
+            updateDataFromDocumentSnapshot(
+              options,
+              target,
+              path,
+              snapshot,
+              subs,
+              ops,
+              depth,
+              resolve,
+              reject
+            )
+          } else {
+            ops.set(target, resolvePath(path), null)
+            resolve()
+          }
+        } catch (error) {
+          reject(error)
         }
       },
       reject
@@ -214,9 +246,21 @@ function subscribeToDocument(
   }
 
   return () => {
+    active = false
     unbind()
     unsubscribeAll(subs)
   }
+}
+
+type ReferenceResolutionWaiter = () => void
+
+const pendingRefResolutions = new WeakMap<
+  Record<string, FirestoreSubscription>,
+  Set<ReferenceResolutionWaiter>
+>()
+
+function notifyRefWaiters(waiters: Set<ReferenceResolutionWaiter>) {
+  Array.from(waiters).forEach((waiter) => waiter())
 }
 
 // NOTE: not convinced by the naming of subscribeToRefs and subscribeToDocument
@@ -225,7 +269,7 @@ function subscribeToDocument(
 function subscribeToRefs(
   options: _FirestoreRefOptionsWithDefaults,
   target: Ref<unknown>,
-  path: string | number,
+  path: _PathSource,
   subs: Record<string, FirestoreSubscription>,
   refs: Record<string, DocumentReference>,
   ops: OperationsType,
@@ -242,48 +286,84 @@ function subscribeToRefs(
     subs[refKey].unsub()
     delete subs[refKey]
   })
-  if (!refKeys.length || ++depth > options.maxRefDepth) return resolve(path)
 
-  let resolvedCount = 0
-  const totalToResolve = refKeys.length
-  const validResolves: Record<string, boolean> = Object.create(null)
-  function deepResolve(key: string) {
-    if (key in validResolves) {
-      if (++resolvedCount >= totalToResolve) resolve(path)
-    }
+  let waiters = pendingRefResolutions.get(subs)
+  if (!waiters) {
+    waiters = new Set()
+    pendingRefResolutions.set(subs, waiters)
   }
+  if (missingKeys.length) notifyRefWaiters(waiters)
+
+  if (!refKeys.length || ++depth > options.maxRefDepth)
+    return resolve(resolvePath(path))
+
+  const waiter = () => {
+    if (
+      !refKeys.every((refKey) => !(refKey in subs) || subs[refKey].resolved)
+    ) {
+      return
+    }
+
+    waiters.delete(waiter)
+    resolve(resolvePath(path))
+  }
+  waiters.add(waiter)
 
   refKeys.forEach((refKey) => {
     const sub = subs[refKey]
     const ref = refs[refKey]
-    const docPath = `${path}.${refKey}`
-
-    validResolves[docPath] = true
+    // read lazily: the row this ref belongs to can be shifted by a sibling
+    // while the document is still pending
+    const docPath = () => `${resolvePath(path)}.${refKey}`
 
     // unsubscribe if bound to a different ref
     if (sub) {
-      if (sub.path !== ref.path) sub.unsub()
-      // if has already be bound and as we always walk the objects, it will work
-      else return
+      if (sub.path === ref.path) return
+      sub.unsub()
     }
 
-    subs[refKey] = {
-      data: () => walkGet(target, docPath),
-      unsub: subscribeToDocument(
-        {
-          ref,
-          target,
-          path: docPath,
-          depth,
-          ops,
-          resolve: deepResolve.bind(null, docPath),
-          reject,
-        },
-        options
-      ),
+    let cachedData: DocumentData | null | undefined
+    const entry: FirestoreSubscription = (subs[refKey] = {
+      data: () => cachedData ?? walkGet(target, docPath()),
       path: ref.path,
+      resolved: false,
+      unsub: noop,
+    })
+    const entryOps: OperationsType = {
+      ...ops,
+      set(target, key, value) {
+        const currentDocPath = docPath()
+        if (key === currentDocPath) {
+          cachedData = value as DocumentData | null
+        } else if (
+          cachedData != null &&
+          typeof cachedData === 'object' &&
+          typeof walkGet(target, currentDocPath) === 'string'
+        ) {
+          ops.set(target, currentDocPath, cachedData)
+        }
+        return ops.set(target, key, value)
+      },
     }
+
+    entry.unsub = subscribeToDocument(
+      {
+        ref,
+        target,
+        path: docPath,
+        depth,
+        ops: entryOps,
+        resolve: () => {
+          entry.resolved = true
+          notifyRefWaiters(waiters)
+        },
+        reject,
+      },
+      options
+    )
   })
+
+  waiter()
 }
 
 // TODO: Remove ops and use just a getter function to be able to retrieve the current target ref and make things work with wait as well
@@ -309,13 +389,27 @@ export function bindCollection<T = unknown>(
   let stopOnSnapshot = noop
 
   // contain ref subscriptions of objects
-  // arraySubs is a mirror of array
-  const arraySubs: Record<string, FirestoreSubscription>[] = []
+  // arraySubs is a mirror of array: each row keeps its own index so the nested
+  // refs it is waiting on always write back into it, even when a sibling is
+  // added, removed or moved while they are still pending
+  const arraySubs: _CollectionRow[] = []
+
+  function reindexFrom(start: number) {
+    for (let i = start; i < arraySubs.length; i++) {
+      arraySubs[i].index = i
+    }
+  }
+
+  function rowPath(row: _CollectionRow): () => string {
+    return () => `${key}.${row.index}`
+  }
 
   const change = {
     added: ({ newIndex, doc }: DocumentChange<T>) => {
-      arraySubs.splice(newIndex, 0, Object.create(null))
-      const subs = arraySubs[newIndex]
+      const row: _CollectionRow = { subs: Object.create(null), index: newIndex }
+      arraySubs.splice(newIndex, 0, row)
+      reindexFrom(newIndex)
+      const subs = row.subs
       const [data, refs] = extractRefs(
         // @ts-expect-error: FIXME: wrong cast, needs better types
         doc.data(snapshotOptions),
@@ -327,7 +421,7 @@ export function bindCollection<T = unknown>(
       subscribeToRefs(
         options,
         arrayRef,
-        `${key}.${newIndex}`,
+        rowPath(row),
         subs,
         refs,
         ops,
@@ -338,7 +432,8 @@ export function bindCollection<T = unknown>(
     },
     modified: ({ oldIndex, newIndex, doc }: DocumentChange<T>) => {
       const array = toValue(arrayRef)
-      const subs = arraySubs[oldIndex]
+      const row = arraySubs[oldIndex]
+      const subs = row.subs
       const oldData = array[oldIndex]
       const [data, refs] = extractRefs(
         // @ts-expect-error: FIXME: Better types
@@ -347,15 +442,17 @@ export function bindCollection<T = unknown>(
         subs,
         options
       )
-      // only move things around after extracting refs
-      // only move things around after extracting refs
-      arraySubs.splice(newIndex, 0, subs)
+      if (oldIndex !== newIndex) {
+        arraySubs.splice(oldIndex, 1)
+        arraySubs.splice(newIndex, 0, row)
+        reindexFrom(Math.min(oldIndex, newIndex))
+      }
       ops.remove(array, oldIndex)
       ops.add(array, newIndex, data)
       subscribeToRefs(
         options,
         arrayRef,
-        `${key}.${newIndex}`,
+        rowPath(row),
         subs,
         refs,
         ops,
@@ -364,10 +461,12 @@ export function bindCollection<T = unknown>(
         reject
       )
     },
-    removed: ({ oldIndex }: DocumentChange<T>) => {
+    removed: ({ oldIndex, doc }: DocumentChange<T>) => {
       const array = toValue(arrayRef)
       ops.remove(array, oldIndex)
-      unsubscribeAll(arraySubs.splice(oldIndex, 1)[0])
+      unsubscribeAll(arraySubs.splice(oldIndex, 1)[0].subs)
+      reindexFrom(oldIndex)
+      resolve(doc)
     },
   }
 
@@ -393,6 +492,8 @@ export function bindCollection<T = unknown>(
 
       resolve = (data) => {
         if (data && (data as any).id in validDocs) {
+          // a document can be resolved by its refs and by its removal
+          delete validDocs[(data as any).id]
           if (++count >= expectedItems) {
             // if wait is true, finally set the array
             if (wait) {
@@ -437,7 +538,7 @@ export function bindCollection<T = unknown>(
       const value = typeof reset === 'function' ? reset() : []
       ops.set(target, key, value)
     }
-    arraySubs.forEach(unsubscribeAll)
+    arraySubs.forEach((row) => unsubscribeAll(row.subs))
   }
 }
 

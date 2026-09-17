@@ -102,7 +102,7 @@ export function extractRefs(
           // otherwise set the path as a string so it can be bound later
           // https://github.com/vuejs/vuefire/issues/831
           // https://github.com/vuejs/vuefire/pull/1223
-          refSubKey in subs ? oldDoc[key] : ref.path
+          refSubKey in subs ? subs[refSubKey].data() : ref.path
         // TODO: handle subpathes?
         refs[refSubKey] = ref.converter
           ? ref
