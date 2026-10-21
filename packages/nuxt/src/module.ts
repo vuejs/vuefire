@@ -26,6 +26,7 @@ import {
   type FirebaseEmulatorsToEnable,
   autodetectEmulators,
 } from './module/emulators'
+import { firebaseAdminCjsPlugin } from './module/firebase-admin-cjs'
 
 const logger = consola.withTag('nuxt-vuefire module')
 
@@ -356,6 +357,9 @@ export default defineNuxtModule<VueFireNuxtModuleOptions>({
       viteInlineConfig.optimizeDeps ??= {}
       viteInlineConfig.optimizeDeps.exclude ??= []
       viteInlineConfig.optimizeDeps.exclude.push(...deps)
+
+      viteInlineConfig.plugins ??= []
+      viteInlineConfig.plugins.push(firebaseAdminCjsPlugin())
     },
   },
 })

@@ -7,9 +7,9 @@ import {
   deleteCookie,
   setResponseStatus,
 } from 'h3'
+import { useRuntimeConfig } from 'nitropack/runtime'
 import { ensureAdminApp } from 'vuefire/server'
 import { logger } from '../logging'
-import { useRuntimeConfig } from '#imports'
 
 /**
  * Setups an API endpoint to be used by the client to mint a cookie based auth session.
