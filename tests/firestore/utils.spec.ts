@@ -1,4 +1,17 @@
-import { GeoPoint, getDoc, Timestamp } from 'firebase/firestore'
+import {
+  BsonObjectId,
+  BsonTimestamp,
+  Bytes,
+  Decimal128Value,
+  GeoPoint,
+  getDoc,
+  Int32Value,
+  MaxKey,
+  MinKey,
+  RegexValue,
+  Timestamp,
+  vector,
+} from 'firebase/firestore'
 import { beforeEach, describe, expect, it } from 'vitest'
 import {
   extractRefs,
@@ -111,6 +124,65 @@ describe('Firestore and Database utils', () => {
     )
     expect(doc.foo).toBe(1)
     expect(doc.bar).toBe(d)
+    expect(refs).toEqual({})
+  })
+
+  it.each([
+    ['Bytes', Bytes.fromBase64String('AQID')],
+    ['VectorValue', vector([1, 2, 3])],
+    ['BsonObjectId', new BsonObjectId('507f1f77bcf86cd799439011')],
+    ['BsonTimestamp', new BsonTimestamp(1, 2)],
+    ['Decimal128Value', new Decimal128Value('1.5')],
+    ['Int32Value', new Int32Value(42)],
+    ['RegexValue', new RegexValue('^a', 'i')],
+    ['MinKey', MinKey.instance()],
+    ['MaxKey', MaxKey.instance()],
+  ])('keeps %s when extracting refs', (_name, value) => {
+    const [doc, refs] = extractRefs(
+      {
+        foo: 1,
+        bar: value,
+        nested: { bar: value },
+        arr: [value],
+      },
+      undefined,
+      {},
+      globalFirestoreOptions
+    )
+    expect(doc.foo).toBe(1)
+    expect(doc.bar).toBe(value)
+    expect(doc.nested.bar).toBe(value)
+    expect(doc.arr[0]).toBe(value)
+    expect(refs).toEqual({})
+  })
+
+  it('extracts refs nested in objects without a prototype', () => {
+    const nested = Object.create(null)
+    nested.ref = docRef
+    const [noRefsDoc, refs] = extractRefs(
+      { obj: nested },
+      undefined,
+      {},
+      globalFirestoreOptions
+    )
+    expect(noRefsDoc.obj.ref).toBe(docRef.path)
+    expect(refs).toEqual({
+      'obj.ref': expect.objectContaining({ id: docRef.id }),
+    })
+  })
+
+  it('keeps nested class instances as values', () => {
+    class Profile {
+      constructor(public team: unknown) {}
+    }
+    const profile = new Profile(docRef)
+    const [noRefsDoc, refs] = extractRefs(
+      { profile },
+      undefined,
+      {},
+      globalFirestoreOptions
+    )
+    expect(noRefsDoc.profile).toBe(profile)
     expect(refs).toEqual({})
   })
 

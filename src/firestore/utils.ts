@@ -7,7 +7,7 @@ import {
   FirestoreDataConverter,
   Timestamp,
 } from 'firebase/firestore'
-import { isObject, isDocumentRef, TODO, isPOJO } from '../shared'
+import { isDocumentRef, TODO, isPOJO } from '../shared'
 import { VueFirestoreDocumentData } from '.'
 import type { _UseFirestoreRefOptions } from './useFirestoreRef'
 import { _FirestoreRefOptionsWithDefaults } from './bind'
@@ -82,15 +82,7 @@ export function extractRefs(
     // recursively traverse doc to copy values and extract references
     for (const key in doc) {
       const ref: unknown = doc[key]
-      if (
-        // primitives
-        ref == null ||
-        // TODO: check and remove
-        // Firestore < 4.13
-        ref instanceof Date ||
-        ref instanceof Timestamp ||
-        ref instanceof GeoPoint
-      ) {
+      if (ref == null) {
         data[key] = ref
       } else if (isDocumentRef(ref)) {
         // key for the subscription
@@ -123,8 +115,8 @@ export function extractRefs(
           data[key],
           refs,
         ])
-      } else if (isObject(ref)) {
-        // dive into nested refs
+      } else if (isPOJO(ref)) {
+        // dive into nested refs, class instances (Timestamp, Bytes, BSON types...) are values
         data[key] = {}
         recursiveExtract(ref, oldDoc[key], path + key + '.', [data[key], refs])
       } else {

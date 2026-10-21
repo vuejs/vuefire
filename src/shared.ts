@@ -102,12 +102,15 @@ export function isObject(o: unknown): o is Record<any, unknown> {
 
 const ObjectPrototype = Object.prototype
 /**
- *  Check if an object is a plain js object. Differently from `isObject()`, this excludes class instances.
+ *  Check if an object is a plain js object, including one created with `Object.create(null)`. Differently from
+ *  `isObject()`, this excludes class instances.
  *
  * @param obj - object to check
  */
 export function isPOJO(obj: unknown): obj is Record<any, unknown> {
-  return isObject(obj) && Object.getPrototypeOf(obj) === ObjectPrototype
+  if (!isObject(obj)) return false
+  const proto = Object.getPrototypeOf(obj)
+  return proto === ObjectPrototype || proto === null
 }
 
 /**
