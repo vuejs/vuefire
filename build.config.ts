@@ -37,19 +37,17 @@ export default defineBuildConfig({
     emitCJS: true,
   },
 
-  // hooks: {
-  //   'rollup:options': (ctx, options) => {
-  //     if (!Array.isArray(options.output)) {
-  //       options.output = options.output ? [options.output] : []
-  //     }
-  //     options.output.push({
-  //       dir: ctx.options.outDir,
-  //       format: 'cjs',
-  //       entryFileNames: '[name].cjs',
-  //       exports: 'auto',
-  //       externalLiveBindings: false,
-  //       freeze: false,
-  //     })
-  //   },
-  // },
+  hooks: {
+    // One ESM output file per source module, so bundlers can drop the feature
+    // modules an app never imports — and their `firebase/*` imports with them.
+    // A single bundle keeps every `firebase/*` import: the SDK packages
+    // register themselves on import and declare no `sideEffects`.
+    // CJS doesn't tree-shake, so it stays bundled (`rollup.output` would
+    // apply to both formats).
+    'rollup:options'(_ctx, options) {
+      for (const output of [options.output].flat()) {
+        if (output?.format === 'esm') output.preserveModules = true
+      }
+    },
+  },
 })

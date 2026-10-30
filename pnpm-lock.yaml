@@ -36,6 +36,9 @@ importers:
       enquirer:
         specifier: ^2.4.1
         version: 2.4.1
+      esbuild:
+        specifier: ^0.25.1
+        version: 0.25.1
       firebase:
         specifier: ^11.1.0
         version: 11.1.0

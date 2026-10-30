@@ -48,6 +48,7 @@
     "docs:build": "pnpm run docs:api:build && vitepress build docs",
     "docs:api:build": "node ./scripts/run-typedoc.mjs",
     "build": "unbuild",
+    "size": "node scripts/size-check.mjs",
     "release": "node scripts/release.ts",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s --commit-path src -l vuefire -r 1",
     "play": "pnpm run -C playground dev",
@@ -57,7 +58,7 @@
     "test:unit": "vitest --coverage",
     "firebase:emulators": "firebase emulators:start",
     "test:dev": "vitest --ui",
-    "test": "pnpm run lint && pnpm run test:types && pnpm run build && pnpm run -C packages/nuxt build && pnpm run test:unit run",
+    "test": "pnpm run lint && pnpm run test:types && pnpm run build && pnpm run size && pnpm run -C packages/nuxt build && pnpm run test:unit run",
     "prepare": "simple-git-hooks"
   },
   "keywords": [
@@ -98,6 +99,7 @@
     "consola": "^3.2.3",
     "conventional-changelog-cli": "~4.1.0",
     "enquirer": "^2.4.1",
+    "esbuild": "^0.25.1",
     "firebase": "^11.1.0",
     "firebase-admin": "^13.0.1",
     "firebase-tools": "^13.29.1",
